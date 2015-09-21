@@ -1,3 +1,6 @@
+/* global Template */
+/* global SessionCounter */
+/* global Meteor */
 if (Meteor.isClient) {
   // counter starts at 0
 
