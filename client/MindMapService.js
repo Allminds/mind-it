@@ -17,6 +17,7 @@ SessionCounter = {
     }
     return count;
   },
+  
   incrementCount:function(){
     Session.set('counter', SessionCounter.getCount('counter') + 1);
   }
