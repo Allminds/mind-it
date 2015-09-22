@@ -5,7 +5,7 @@
 MindMapService = function MindMapService() {};
 
 MindMapService.prototype.sayHello = function(name) {
-  return 'Hello' + name;
+  return 'Hello ' + name;
 };
 SessionCounter = {
   getCount :function(){
