@@ -1,14 +1,30 @@
-<head>
-  <title>allminds</title>
-</head>
+<template name='main'>
 
-<body>
-  <h1>Welcome to Meteor!</h1>
+ <head>
+   <title>All Minds</title>
+ </head>
+ <body>
+   <h1>All Minds</h1> {{> yield}}
+   <hr />
 
-  {{> hello}}
-</body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+
+
+
+   <footer>Copyrights &copy; All Minds, 2015-2016</footer>
+ </body>
+</template>
+<!--Home template -->
+<template name='home'>
+ {{> MyButton}}
+</template>
+<template name='create'>
+ <h1>Create Mind Map</h1>
+ <p>{{name}}</p>
+ <div id='mindmap'></div>
+</template>
+
+
+<template name="MyButton">
+  <button id="clickme">Create MindMap</button>
 </template>
