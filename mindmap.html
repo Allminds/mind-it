@@ -1,14 +1,29 @@
 <head>
-  <title>allminds</title>
+  <title>AllMinds</title>
+ <div class="page-header">
+  <h1>All Minds</h1>
+</div>
 </head>
 
 <body>
-  <h1>Welcome to Meteor!</h1>
+    <img align ="center" src="mindmap.png" >
 
-  {{> hello}}
+  	<center>
+  	{{> create_map}}
+  	</center>
+    
 </body>
 
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
+
+<template name="create_map">
+<!--   <button >Create New Mind Map</button>
+ -->
+
+  <button type="button" class="btn btn-primary btn-lg" color="">
+    Create New Mind Map
+  </button>
+  
+
+
+  
 </template>

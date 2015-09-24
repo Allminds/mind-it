@@ -1,1 +1,25 @@
 /* CSS declarations go here */
+body {
+  text-align: center;
+  background-color: #e9ece5;
+ }
+
+.btn {
+ 	background-color: #3fb0ac;
+ 	border:none;
+ }
+
+ .btn:hover{
+ 	background-color: #173e43;
+ 	border:none;
+ }
+
+ h1{
+ 	text-shadow: 1px 1px #ffffff;
+ 	font-size: 400%;
+ }
+
+ /*.page-header{
+ 	background-color: #3fb0ac;
+ 	border:none;
+ }*/

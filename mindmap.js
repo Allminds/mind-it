@@ -4,18 +4,12 @@
 if (Meteor.isClient) {
   // counter starts at 0
 
-  Template.hello.helpers({
-    counter: function () {
-      return SessionCounter.getCount();
-    }
+  Template.create_map.helpers({
+    
   });
 
-  Template.hello.events({
-    'click button': function () {
-      // increment the counter when button is clicked
-      SessionCounter.incrementCount();
-
-    }
+  Template.create_map.events({
+    
   });
 }
 
