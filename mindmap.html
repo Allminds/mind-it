@@ -1,29 +1,31 @@
-<head>
-  <title>AllMinds</title>
- <div class="page-header">
-  <h1>All Minds</h1>
-</div>
-</head>
+  <!--Main template -->
+  <template name='main'>
+    <head>
+      <title>All Minds</title>
+    </head>
+    <body>
+      <div class="page-header">
+        <h1>All Minds</h1>
+      </div>
+      {{> yield}}
+      <hr />
+      <footer>Copyrights &copy; All Minds, 2015-2016</footer>
+    </body>
+  </template>
+  <!--Home template -->
+  <template name='home'>
+   <img align="center" src="mindmap.png">
+  <center>
+    {{> MyButton}}
+  </center>
+  </template>
+  <!-- Create template -->
+  <template name='create'>
+    <h2>{{name}}</h2>
+    <div id='mindmap'></div>
+  </template>
 
-<body>
-    <img align ="center" src="mindmap.png" >
-
-  	<center>
-  	{{> create_map}}
-  	</center>
-    
-</body>
-
-
-<template name="create_map">
-<!--   <button >Create New Mind Map</button>
- -->
-
-  <button type="button" class="btn btn-primary btn-lg" color="">
-    Create New Mind Map
-  </button>
-  
-
-
-  
-</template>
+  <!-- Button template -->
+  <template name="MyButton">
+    <button id="clickme" class="btn btn-primary btn-lg">Create MindMap</button>
+  </template>

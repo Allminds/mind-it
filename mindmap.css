@@ -18,8 +18,11 @@ body {
  	text-shadow: 1px 1px #ffffff;
  	font-size: 400%;
  }
+#mindmap {
+	border: 1px solid silver;
+    overflow: scroll;
+    height: 500px;
+	background-color: white;
+	margin: .5em;
+}
 
- /*.page-header{
- 	background-color: #3fb0ac;
- 	border:none;
- }*/

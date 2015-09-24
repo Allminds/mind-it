@@ -8,5 +8,6 @@ meteor-platform
 insecure
 sanjo:jasmine
 velocity:html-reporter
-less
-nemo64:bootstrap
+d3
+iron:router
+autopublish
