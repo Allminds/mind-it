@@ -1,30 +1,25 @@
+ <!--Main template -->
 <template name='main'>
-
- <head>
-   <title>All Minds</title>
- </head>
- <body>
-   <h1>All Minds</h1> {{> yield}}
-   <hr />
-
-
-
-
-
-   <footer>Copyrights &copy; All Minds, 2015-2016</footer>
- </body>
+  <head>
+    <title>All Minds</title>
+  </head>
+  <body>
+    <h1>All Minds</h1> {{> yield}}
+    <hr />
+    <footer>Copyrights &copy; All Minds, 2015-2016</footer>
+  </body>
 </template>
 <!--Home template -->
 <template name='home'>
- {{> MyButton}}
+  {{> MyButton}}
 </template>
+<!-- Create template -->
 <template name='create'>
- <h1>Create Mind Map</h1>
- <p>{{name}}</p>
- <div id='mindmap'></div>
+  <h2>{{name}}</h2>
+  <div id='mindmap'></div>
 </template>
 
-
+<!-- Button template -->
 <template name="MyButton">
   <button id="clickme">Create MindMap</button>
 </template>

@@ -1,3 +1,4 @@
+/* global Mindmaps */
 /* global Session */
 /* global SessionCounter */
 /* global MindMapService */
