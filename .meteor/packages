@@ -10,4 +10,3 @@ sanjo:jasmine
 velocity:html-reporter
 d3
 iron:router
-autopublish

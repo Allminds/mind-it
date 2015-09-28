@@ -1,4 +1,8 @@
 /* CSS declarations go here */
+*{
+	margin: 0;
+	padding: 0;
+}
 body {
   text-align: center;
   background-color: #e9ece5;
