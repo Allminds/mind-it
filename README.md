@@ -15,10 +15,10 @@ AllMinds is an open source tool for creating collaborative mindmaps.
 3) Build tool
    Isobuild is built into the Meteor Tool. Builds will be run automatically when you run commands like meteor run or meteor deploy, or can be performed manually with the meteor build command. Isobuild isn't available as a standalone download yet but could be in the future.
 
- 4) Codeship, a Countinous Integration tool - setup and test commands:
- 
+ 4) Codeship, Countinous Integration tool - setup and test commands
+	
 	git config --global url."https://".insteadOf git://
-
+	
 	Install node.js
 	nvm install 0.10.33
 	nvm use 0.10.33
