@@ -21,6 +21,88 @@ Router.route('/create/:_id', {
       }
 });
 
+function make_editable(d, field,treeData)
+{
+
+    this
+      .on("mouseover", function() {
+            d3.select(this.parentNode).select('ellipse').style("fill", "whitesmoke");
+      })
+      .on("mouseout", function() {
+            d3.select(this.parentNode).select('ellipse').style("fill", null);
+      })
+      .on("dblclick", function(d) {
+        var p = this.parentNode;
+        // inject a HTML form to edit the content here...
+        // bug in the getBBox logic here, but don't know what I've done wrong here;
+        // anyhow, the coordinates are completely off & wrong. :-((
+        var xy = this.getBBox();
+        var p_xy = p.getBBox();
+
+        xy.x = p_xy.x;
+        xy.y = p_xy.y + 5;
+
+        var el = d3.select(p).select('text');
+        var p_el = d3.select(p);
+
+        var frm = p_el.append("foreignObject");
+
+        var inp = frm
+            .attr("x", xy.x)
+            .attr("y", xy.y)
+            .attr("width", 160)
+            .attr("height", 40)
+            .append("xhtml:form")
+                    .append("input")
+                        .attr("value", function() {
+                            // nasty spot to place this call, but here we are sure that the <input> tag is available
+                            // and is handily pointed at by 'this':
+                            this.focus();
+
+                             return d[field];
+                        }).attr('',function(){
+                             this.value = this.value;
+                        })
+                        .attr("style", "width: 100px;")
+                        // make the form go away when you jump out (form looses focus) or hit ENTER:
+                        .on("blur", function() {
+
+                            var txt = inp.node().value;
+                            d[field] = txt;
+                            el.text(function(d) { return d[field]; });
+
+                            // Note to self: frm.remove() will remove the entire <g> group! Remember the D3 selection logic!
+                            //MindMapService.update();
+                            p_el.select("foreignObject").remove();
+                        })
+                        .on("keypress", function() {
+
+                            // IE fix
+                            if (!d3.event)
+                                d3.event = window.event;
+
+                            var e = d3.event;
+                            if (e.keyCode == 13)
+                            {
+                                if (typeof(e.cancelBubble) !== 'undefined') // IE
+                                  e.cancelBubble = true;
+                                if (e.stopPropagation)
+                                  e.stopPropagation();
+                                e.preventDefault();
+
+                                var txt = inp.node().value;
+                                d[field] = txt;
+                                el.text(function(d) { return d[field]; });
+                                mindMapService.updateNode(treeData);
+
+                                // odd. Should work in Safari, but the debugger crashes on this instead.
+                                // Anyway, it SHOULD be here and it doesn't hurt otherwise.
+                                p_el.select("foreignObject").remove();
+                            }
+                        });
+            
+      });
+}
 if (Meteor.isClient) {
       Meteor.subscribe('mindmaps');
       // counter starts at 0
@@ -60,19 +142,21 @@ if (Meteor.isClient) {
                   .attr("rx", 80).attr('ry', 20)
                   .attr("stroke", "black")
                   .attr("fill", "white")
+                  .call(make_editable,"name", treeData);
       
  
             // place the name atribute left or right depending if children
             node.append("svg:text")
                   .attr("dx", function (d) { return d.children ? -50 : 50; })
                   .text(function (d) { return d.name; })
+                  .call(make_editable,"name", treeData);;
 
 
       }
 
       mindMapService = new MindMapService();
       Template.MyButton.events({
-            'click #clickme': function () {
+            'dblclick #clickme': function () {
                   // 1. cretate root node with defualt title
                   var mindMapId = mindMapService.createNode('New Mindmap'),
                         link = '/create/' + mindMapId;
