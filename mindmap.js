@@ -156,7 +156,7 @@ if (Meteor.isClient) {
 
       mindMapService = new MindMapService();
       Template.MyButton.events({
-            'dblclick #clickme': function () {
+            'click #clickme': function () {
                   // 1. cretate root node with defualt title
                   var mindMapId = mindMapService.createNode('New Mindmap'),
                         link = '/create/' + mindMapId;
