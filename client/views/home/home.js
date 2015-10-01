@@ -1,3 +1,6 @@
+/* global MindMapService */
+/* global Router */
+/* global mindMapService */
 mindMapService = new MindMapService();
 Template.MyButton.events({
 	'click #clickme': function () {
