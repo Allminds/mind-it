@@ -2,6 +2,7 @@
 /* global d3 */
 mindMapService = new MindMapService();
 Template.create.rendered = function () {
+      
       var treeData = this.data;
       // Create a svg canvas
       var vis = d3.select("#mindmap").append("svg:svg")
