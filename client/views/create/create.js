@@ -12,7 +12,6 @@ Template.create.rendered = function (d) {
                   .projection(function (d) { return [d.y, d.x]; }),
             nodes = tree.nodes(rootNodeData),// Preparing the data for the tree layout, convert data into an array of nodes
             links = tree.links(nodes);// Create an array with all the links
-      
       vis.selectAll("pathlink")
             .data(links)
             .enter().append("svg:path")
