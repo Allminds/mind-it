@@ -25,6 +25,7 @@ Template.create.rendered = function (d) {
  
       // Add the dot at every node
       node.append("svg:ellipse")
+            .attr("cx",10).attr("cy",3)
             .attr("rx", 80).attr('ry', 20)
             .attr("stroke", "black")
             .attr("fill", "white")
@@ -35,10 +36,16 @@ Template.create.rendered = function (d) {
       node.append("svg:text")
             .attr("dx", function (d) { return d.children ? -50 : 50; })
             .text(function (d) { return d.name; })
-            .call(make_editable, "name", rootNodeData);;
+            .call(make_editable, "name", rootNodeData);
+
+      
+
+
 }
 
 function showEditor(nodeData, field, rootNodeData) {
+      var bbox=0;
+
       var parentBox = this.parentNode.getBBox(),
             position = { x: parentBox.x, y: parentBox.y + 5 },
             parentElement = d3.select(this.parentNode),
@@ -50,7 +57,16 @@ function showEditor(nodeData, field, rootNodeData) {
             updateNode = function () {
                   var txt = inp.node().value;
                   nodeData[field] = txt;
-                  currentElement.text(function (d) { return d[field]; });
+                  currentElement.text(function (d) {  return d[field]; });
+
+                  parentElement.selectAll('ellipse')
+                  .attr("cx",10).attr("cy",3)
+                  .attr("rx", function(d) {return this.parentNode.getBBox().width/2+7;})
+
+                  currentElement.attr("dx","1em")
+                  currentElement.attr("dy","0.5em")
+                  currentElement.attr("text-anchor", "middle")
+
                   parentElement.select("foreignObject").remove();
                   mindMapService.updateNode(rootNodeData);
             };
