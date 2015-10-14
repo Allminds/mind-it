@@ -85,6 +85,7 @@ function showEditor(nodeData, field, rootNodeData) {
       }).attr('', function () {
             this.value = this.value; // hack for focusing node title
             this.focus();
+            this.select();
       })
       .attr("style","height:30px;")
      .style("width", function(d) {return ((d.name.length*10)+ "px");})
