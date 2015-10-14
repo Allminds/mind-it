@@ -22,21 +22,28 @@ Template.create.rendered = function (d) {
             .data(nodes)
             .enter().append("svg:g")
             .attr("transform", function (d) { return "translate(" + d.y + "," + (d.x - 150) + ")"; })
- 
-      // Add the dot at every node
+
+
+   //Add the dot at every node
       node.append("svg:ellipse")
-            .attr("cx",10).attr("cy",3)
-            .attr("rx", 80).attr('ry', 20)
+            .attr("cx",300).attr("cy",3)
+            .attr("rx", function(d) {return d.name.length * 4.5}).attr("ry", 20)
             .attr("stroke", "black")
             .attr("fill", "white")
             .call(make_editable, "name", rootNodeData);
-      
- 
+
+
+
       // place the name atribute left or right depending if children
       node.append("svg:text")
-            .attr("dx", function (d) { return d.children ? -50 : 50; })
+            .attr("x",300).attr("y",3)
+            .attr("dx","0em")
+            .attr("dy","0.5em")
             .text(function (d) { return d.name; })
+            .attr("text-anchor", "middle")
             .call(make_editable, "name", rootNodeData);
+
+
 
       
 
@@ -60,10 +67,10 @@ function showEditor(nodeData, field, rootNodeData) {
                   currentElement.text(function (d) {  return d[field]; });
 
                   parentElement.selectAll('ellipse')
-                  .attr("cx",10).attr("cy",3)
-                  .attr("rx", function(d) {return this.parentNode.getBBox().width/2+7;})
+                  .attr("cx",300).attr("cy",3)
+                  .attr("rx", function(d) {return d.name.length * 4.5;})
 
-                  currentElement.attr("dx","1em")
+                  currentElement.attr("dx","0em")
                   currentElement.attr("dy","0.5em")
                   currentElement.attr("text-anchor", "middle")
 
@@ -76,7 +83,7 @@ function showEditor(nodeData, field, rootNodeData) {
       }).attr('', function () {
             this.value = this.value; // hack for focusing node title
             this.focus();
-      }).attr("style", "width: 100px;")
+      }).attr("style", "height: 30px;width: 150px;")
             .on("blur", updateNode)
             .on("keypress", function () {
                   // IE fix
