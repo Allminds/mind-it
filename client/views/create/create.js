@@ -4,7 +4,7 @@ mindMapService = new MindMapService();
 Template.create.rendered = function (d) {
       var rootNodeData = this.data,
             vis = d3.select("#mindmap").append("svg:svg")
-                  .attr("width", 1000).attr("height", 500)
+                  .attr("width", 1500).attr("height", 500)
                   .append("svg:g").attr("transform", "translate(150, 0)"),
             tree = d3.layout.tree()
                   .size([800, 500]),
@@ -34,7 +34,7 @@ Template.create.rendered = function (d) {
 
 
 
-      // place the name atribute left or right depending if children
+      // place the name attribute left or right depending if children
       node.append("svg:text")
             .attr("x",300).attr("y",3)
             .attr("dx","0em")
@@ -51,7 +51,7 @@ Template.create.rendered = function (d) {
 }
 
 function showEditor(nodeData, field, rootNodeData) {
-      var bbox=0;
+
 
       var parentBox = this.parentNode.getBBox(),
             position = { x: parentBox.x, y: parentBox.y + 5 },
@@ -77,15 +77,18 @@ function showEditor(nodeData, field, rootNodeData) {
                   parentElement.select("foreignObject").remove();
                   mindMapService.updateNode(rootNodeData);
             };
+      currentElement.text(""); // erase text on  double click event
 
       inp.attr("value", function () {
             return nodeData[field];
       }).attr('', function () {
             this.value = this.value; // hack for focusing node title
             this.focus();
-      }).attr("style", "height: 30px;width: 150px;")
-            .on("blur", updateNode)
-            .on("keypress", function () {
+      })
+      .attr("style","height:30px;")
+     .style("width", function(d) {return ((d.name.length*10)+ "px");})
+       .on("blur", updateNode)
+       .on("keypress", function () {
                   // IE fix
                   if (!d3.event)
                         d3.event = window.event;
@@ -100,7 +103,6 @@ function showEditor(nodeData, field, rootNodeData) {
                         updateNode();
                   }
             });
-
 };
 function make_editable(d, field, rootNodeData) {
       this.on("mouseover", function () {
