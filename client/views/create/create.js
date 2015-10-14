@@ -65,6 +65,7 @@ function showEditor(nodeData, field, rootNodeData) {
                   var txt = inp.node().value;
                   nodeData[field] = txt;
                   currentElement.text(function (d) {  return d[field]; });
+                  currentElement.attr("visibility","visible");
 
                   parentElement.selectAll('ellipse')
                   .attr("cx",300).attr("cy",3)
@@ -77,7 +78,7 @@ function showEditor(nodeData, field, rootNodeData) {
                   parentElement.select("foreignObject").remove();
                   mindMapService.updateNode(rootNodeData);
             };
-      currentElement.text(""); // erase text on  double click event
+      currentElement.attr("visibility", "hidden"); // erase text on  double click event
 
       inp.attr("value", function () {
             return nodeData[field];
