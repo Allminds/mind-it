@@ -27,7 +27,8 @@ Template.create.rendered = function (d) {
    //Add the dot at every node
       node.append("svg:ellipse")
             .attr("cx",300).attr("cy",3)
-            .attr("rx", function(d) {return d.name.length * 4.5}).attr("ry", 20)
+            .attr("rx", function(d) {if(d.name.length>0)return d.name.length * 10 + "px"; else return 150+"px";})
+            .attr("ry", 20)
             .attr("stroke", "black")
             .attr("fill", "white")
             .call(make_editable, "name", rootNodeData);
@@ -56,12 +57,18 @@ function showEditor(nodeData, field, rootNodeData) {
       var parentBox = this.parentNode.getBBox(),
             position = { x: parentBox.x, y: parentBox.y + 5 },
             parentElement = d3.select(this.parentNode),
-            currentElement = parentElement.select('text'),
+            currentElement = parentElement.select('text');
+
+           // console.log("x is :"+ position.x +"and y is "+ position.y+ "cx is :"+  this.parentBox.cx+"and y is "+  this.parentBox.cy);
+
             inp = parentElement.append("foreignObject")
-                  .attr("x", position.x).attr("y", position.y)
+                  .attr("x",function(d){ if (position.x == 0) return 300; else return position.x;})
+                  .attr("y", position.y)
                   .attr("width", 160).attr("height", 40)
-                  .append("xhtml:form").append("input"),
+                  .append("xhtml:form").append("input");
+
             updateNode = function () {
+
                   var txt = inp.node().value;
                   nodeData[field] = txt;
                   currentElement.text(function (d) {  return d[field]; });
@@ -69,7 +76,13 @@ function showEditor(nodeData, field, rootNodeData) {
 
                   parentElement.selectAll('ellipse')
                   .attr("cx",300).attr("cy",3)
-                  .attr("rx", function(d) {return d.name.length * 4.5;})
+                  .attr("rx", function(d) {
+                   stringLength=d.name.length;
+                   if(stringLength>0)
+                       stringLength=stringLength * 4.5;
+                   else
+                        stringLength = 80;
+                   return stringLength ;})
 
                   currentElement.attr("dx","0em")
                   currentElement.attr("dy","0.5em")
@@ -78,6 +91,7 @@ function showEditor(nodeData, field, rootNodeData) {
                   parentElement.select("foreignObject").remove();
                   mindMapService.updateNode(rootNodeData);
             };
+
       currentElement.attr("visibility", "hidden"); // erase text on  double click event
 
       inp.attr("value", function () {
@@ -88,7 +102,7 @@ function showEditor(nodeData, field, rootNodeData) {
             this.select();
       })
       .attr("style","height:30px;")
-     .style("width", function(d) {return ((d.name.length*10)+ "px");})
+     .style("width", function(d) {if(d.name.length>0)return d.name.length * 10 + "px"; else return 150+"px"; })
        .on("blur", updateNode)
        .on("keypress", function () {
                   // IE fix
@@ -102,7 +116,7 @@ function showEditor(nodeData, field, rootNodeData) {
                         if (e.stopPropagation)
                               e.stopPropagation();
                         e.preventDefault();
-                        updateNode();
+                    updateNode();
                   }
             });
 };
