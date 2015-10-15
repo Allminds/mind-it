@@ -2,9 +2,10 @@
 /* global d3 */
 
 var currentNode; //use this
-currentDir = "Right"
+currentDir = "right"
 mindMapService = new MindMapService();
 Template.create.rendered = function (d) {
+   console.log(this.data)
        rootNodeData = this.data,
             vis = d3.select("#mindmap").append("svg:svg")
                   .attr("width", 1000).attr("height", 500)
@@ -60,15 +61,15 @@ function update() {
    rootNodeData = Mindmaps.findOne(rootNodeData._id)
    vis.selectAll("*").remove();
    var nodes = tree.nodes(rootNodeData)
-   console.log(nodes)
+   // console.log(nodes)
    var links = tree.links(nodes);
    var diagonal = d3.svg.diagonal() 
             .projection(function (d) {
-               console.log(d.direction)
+               // console.log(d.direction)
                switch(d.direction)
                {
-                  case "Right": return [d.y, d.x];
-                  case "Left" : return [-d.y, d.x];
+                  case "right": return [d.y, d.x];
+                  case "left" : return [-d.y, d.x];
                   default     : return [d.y, d.x];
                }
             });
@@ -85,8 +86,12 @@ function update() {
             .data(nodes)
             .enter().append("svg:g")
             .attr("transform", function (d) {
-                  
-               return "translate(" + (-d.y) + "," + (d.x /*- 150*/) + ")"; })
+                  switch(d.direction) {
+                     case "Right":return "translate(" + d.y + "," + d.x + ")";
+                     case "Left":return "translate(" + -d.y + "," + d.x + ")";
+                     default :return "translate(" + d.y + "," + d.x + ")";
+        }
+     })
  
       // Add the dot at every node
       node.append("svg:ellipse")
@@ -118,8 +123,10 @@ function showEditor(nodeData, field, rootNodeData) {
                   .append("xhtml:form").append("input"),
             updateNode = function () {
                   var txt = inp.node().value;
+                  // console.log(txt)
                   nodeData[field] = txt;
-                  currentElement.text(function (d) {  return d[field]; });
+                  // console.log(nodeData)
+                  currentElement.text(function (d) { return d[field]; });
 
                   parentElement.selectAll('ellipse')
                   .attr("cx",10).attr("cy",3)
@@ -130,6 +137,7 @@ function showEditor(nodeData, field, rootNodeData) {
                   currentElement.attr("text-anchor", "middle")
 
                   parentElement.select("foreignObject").remove();
+                  // console.log(nodeData)
                   mindMapService.updateNode(rootNodeData);
                   //mindMapService.addRightChild(rootNodeData);
             };
@@ -167,9 +175,9 @@ function make_editable(d, field, rootNodeData) {
            // d3.select(this.parentNode).select('ellipse').style("fill", null);
       }).on("click",function(d){
             d3.select(this.parentNode).select('ellipse').style("fill", "whitesmoke");
-            currentDir = "Right"
+            currentDir = "right"
              if(toggle === true) {
-                currentDir = "Left"
+                currentDir = "left"
                toggle = false
              }
 
@@ -185,15 +193,15 @@ function make_editable(d, field, rootNodeData) {
 
 document.addEventListener('keydown', function(e){
                if( e.keyCode == '9' ){
-                  console.log(currentDir)
+                  // console.log(currentDir)
                   mindMapService.addChild(rootNodeData, currentDir); 
                     toggle = true
                   update();
                }
                else if(e.keyCode == '13' ){
-                 mindMapService.addChild(rootNodeData, currentDir); 
-                  toggle = true
-                  update();
+                 // mindMapService.addChild(rootNodeData, currentDir); 
+                 //  toggle = true
+                 //  update();
                }
                else if(e.keyCode == '32' ){
                  //collapse(currentNode);
