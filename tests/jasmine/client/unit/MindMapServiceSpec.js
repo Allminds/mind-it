@@ -16,7 +16,7 @@ describe('MindMapService', function () {
     it('should return id after inserting node in DB', function () {
 
       var mindmapId = 1, name = 'string'
-        , result = { name: name, left : [], right: [] };
+        , result = { name: name, children : [], direction : null };
       spyOn(Mindmaps, 'insert').and.returnValue(mindmapId);
 
       expect(mindMapService.createRootNode(name)).toBe(mindmapId);
@@ -24,38 +24,29 @@ describe('MindMapService', function () {
     });
   });
 
-  describe("updateNode", function () {
+   describe("updateNode", function () {
     it('state of the object should remain same after DB update', function () {
-      var node = { _id: 1, left: [],right: [], name: 'someNode' };
+      var node = { _id: 1, children: [],direction: "right", name: 'someNode' },
+        key = { _id: node._id },
+        updatedMap = { children: [],direction:"right", name: 'someNode' };
       spyOn(Mindmaps, 'update');
       mindMapService.updateNode(node);
-      expect(Mindmaps.update.calls.argsFor(0)).toEqual([{_id: 1},{$set: {name:"someNode"}}]);
+      expect(Mindmaps.update.calls.argsFor(0)).toEqual([key, updatedMap]);
     });
   });
 
-  describe("addRightChild", function(){
-    it('Should add a right node to an existing node', function(){
-      var name= "new mindmap",
-      parent_node={name:name,left:[],right:[]},
-      new_node= {name:name,left:[],right:[], parent:""};
-      mindMapService.addRightChild(parent_node);
-      parent_node.right[0]=new_node;
-      expect(parent_node.right.length).toBe(1);
+  describe("addChild", function(){
+    it('Should add a node to an existing node', function(){
+      var name = "new mindmap", dir = "right"
+      parent_node = {name:name,children:[],direction:dir},
+      new_node = {name:name,children:[],direction:dir};
+      mindMapService.addChild(parent_node);
+      parent_node.children[0] = new_node;
+      expect(parent_node.children.length).toBe(1);
 
     });
   });
 
-  describe("addLeftChild", function(){
-    it('Should add a left node to an existing node', function(){
-      var name= "new mindmap",
-      parent_node={name:name,left:[],right:[]},
-      new_node= {name:name,left:[],right:[], parent:""};
-      mindMapService.addLeftChild(parent_node);
-      parent_node.left[0]=new_node;
-      expect(parent_node.left.length).toBe(1);
-
-    });
-  });
 });
 
  
