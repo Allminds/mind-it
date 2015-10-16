@@ -27,7 +27,7 @@ Template.create.rendered = function (d) {
    //Add the dot at every node
       node.append("svg:ellipse")
             .attr("cx",300).attr("cy",3)
-            .attr("rx", function(d) {if(d.name.length>0)return d.name.length * 10 + "px"; else return 150+"px";})
+            .attr("rx", function(d) {if(d.name.length>0)return d.name.length * 4.5 + "px"; else return 80+"px";})
             .attr("ry", 20)
             .attr("stroke", "black")
             .attr("fill", "white")
@@ -55,16 +55,15 @@ function showEditor(nodeData, field, rootNodeData) {
 
 
       var parentBox = this.parentNode.getBBox(),
-            position = { x: parentBox.x, y: parentBox.y + 5 },
+            position = { x: parentBox.x, y: parentBox.y },
             parentElement = d3.select(this.parentNode),
             currentElement = parentElement.select('text');
 
            // console.log("x is :"+ position.x +"and y is "+ position.y+ "cx is :"+  this.parentBox.cx+"and y is "+  this.parentBox.cy);
 
             inp = parentElement.append("foreignObject")
-                  .attr("x",function(d){ if (position.x == 0) return 300; else return position.x;})
+                  .attr("x",function(d){ if(d.name.length ==0)return parentBox.width/2; else return position.x;})
                   .attr("y", position.y)
-                  .attr("width", 160).attr("height", 40)
                   .append("xhtml:form").append("input");
 
             updateNode = function () {
@@ -102,7 +101,7 @@ function showEditor(nodeData, field, rootNodeData) {
             this.select();
       })
       .attr("style","height:30px;")
-     .style("width", function(d) {if(d.name.length>0)return d.name.length * 10 + "px"; else return 150+"px"; })
+     .style("width","auto")
        .on("blur", updateNode)
        .on("keypress", function () {
                   // IE fix
