@@ -118,7 +118,7 @@ function showEditor(nodeData, field, rootNodeData) {
             this.focus();
             this.select();
       })
-      .attr("style","height:30px;")
+      .attr("style","height:30px;") 
      .style("width","auto")
        .on("blur", updateNode)
        .on("keypress", function () {
