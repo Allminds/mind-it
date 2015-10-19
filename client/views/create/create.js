@@ -61,7 +61,10 @@ Template.create.rendered = function rendered(d) {
                               default: return "translate(" + d.y + "," + d.x + ")";
                         }
                   });
-            node.append("svg:ellipse")
+
+            var rootNode = d3.select(node[0][0]);
+
+            rootNode.append("svg:ellipse")
                   .attr("cx", 50).attr("cy", 3)
                   .attr("rx", function (d) { return getWidth(d) + 'px'; })
                   .attr('ry', 20)
