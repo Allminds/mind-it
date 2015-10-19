@@ -115,7 +115,7 @@ function showEditor(nodeData, field, rootNodeData) {
             .attr("style", "height:30px;")
             .style("width", "auto")
             .on("blur", updateNode)
-            .on("keypress", function () {
+            .on("keydown", function () {
                   // IE fix
                   if (!d3.event)
                         d3.event = window.event;
