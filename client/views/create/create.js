@@ -13,7 +13,6 @@ getWidth = function (d) {
       var width = 80;
       if (d && d.name && typeof d.name == 'string')
             width = d.name.length * 4.5;
-
       return width;
 };
 Template.create.rendered = function rendered(d) {
@@ -67,7 +66,7 @@ Template.create.rendered = function rendered(d) {
                   .attr("fill", "white")
                   .call(make_editable, "name", rootNodeData);
             node.append("svg:text")
-                  .attr("x", 50).attr("y", 3)
+                  .attr("x", 50/*300*/).attr("y", 3)
                   .attr("dx", "0em")
                   .attr("dy", "0.5em")
                   .text(function (d) { return d.name; })
@@ -103,12 +102,13 @@ function showEditor(nodeData, field, rootNodeData) {
 
       currentElement.attr("visibility", "hidden");
 
-      inp.attr("value", function () { return nodeData[field]; })
-            .attr('', function () {
-                  this.value = this.value;
-                  this.focus();
-                  this.select();
-            })
+      inp.attr("value", function () {
+            return nodeData[field];
+      }).attr('', function () {
+            this.value = this.value; // hack for focusing node title
+            this.focus();
+            this.select();
+      })
             .attr("style", "height:30px;")
             .style("width", "auto")
             .on("blur", updateNode)
@@ -130,6 +130,7 @@ function showEditor(nodeData, field, rootNodeData) {
 };
 
 toggle = false
+
 function make_editable(d, field, rootNodeData) {
       this.on("mouseover", function () {
             d3.select(this.parentNode).select('ellipse').style("fill", "whitesmoke");
@@ -137,9 +138,11 @@ function make_editable(d, field, rootNodeData) {
             d3.select(this.parentNode).select('ellipse').style("fill", null);
       }).on("click", function (d) {
             d3.select(this.parentNode).select('ellipse').style("fill", "whitesmoke");
-            currentDir = "right"
             if (toggle === true) {
-                  currentDir = "left"
+                  switch (currentDir) {
+                        case "left": currentDir = "right"; break;
+                        case "right": currentDir = "left"; break;
+                  }
                   toggle = false
             }
       }).on("dblclick", function (d) {
@@ -147,11 +150,12 @@ function make_editable(d, field, rootNodeData) {
       });
 }
 
+
+
 document.addEventListener('keydown', function (e) {
-      if (e.keyCode == '9') {
+      if (e.keyCode == '13') {
             mindMapService.addChild(rootNodeData, currentDir);
-            toggle = true
+            toggle = true;
             drawTree(true);
       }
-
 }, false);
