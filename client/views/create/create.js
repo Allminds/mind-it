@@ -20,10 +20,9 @@ function rendered(d) {
             if (update) {
                   rootNodeData = Mindmaps.findOne(mapId);
             }
-            // vis.selectAll('.treeNode').remove();
                vis.selectAll("*").remove();//dont use .treeNode - it doesnot clear the links
 
-            var nodes = tree.nodes(rootNodeData),
+            var nodes = tree.nodes(rootNodeData).reverse(),
 
                   nodes = tree.nodes(rootNodeData),// Preparing the data for the tree layout, convert data into an nodes = tree.nodes(rootNodeData),// Preparing the data for the tree layout, convert data into an array of nodes
                   links = tree.links(nodes);// Create an array with all the links
@@ -77,7 +76,6 @@ function rendered(d) {
                   .attr("text-anchor", "middle")
                   .call(make_editable, "name", rootNodeData);
 
-                  // console.log(links);
       };
 
       drawTree();
@@ -167,9 +165,11 @@ function make_editable(d, field, rootNodeData) {
             d3.select(this.parentNode).select('ellipse').style("fill", null);
       }).on("click",function(d){
             d3.select(this.parentNode).select('ellipse').style("fill", "whitesmoke");
-            currentDir = "right"
              if(toggle === true) {
-                currentDir = "left"
+                switch(currentDir){
+                    case "left"  : currentDir = "right"; break;
+                    case "right" : currentDir = "left" ; break;
+                }
                toggle = false
              }
       }).on("dblclick", function (d) {
@@ -179,8 +179,7 @@ function make_editable(d, field, rootNodeData) {
 
 document.addEventListener('keydown', function(e){
                if( e.keyCode == '9' ){
-                  // console.log(currentDir)
-                  mindMapService.addChild(rootNodeData, currentDir); 
+                  mindMapService.addChild(rootNodeData, currentDir);
                     toggle = true
                      drawTree(true);
                }
