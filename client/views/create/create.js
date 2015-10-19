@@ -1,3 +1,5 @@
+/* global rootNodeData */
+/* global drawTree */
 /* global currentDir */
 /* global toggle */
 /* global updateNode */
@@ -6,6 +8,7 @@
 /* global Mindmaps */
 /* global mindMapService */
 /* global d3 */
+rootNodeData =  null;
 var mindMapService = new MindMapService();
 drawTree = null;
 currentDir = "right";
@@ -16,7 +19,7 @@ getWidth = function (d) {
       return width;
 };
 Template.create.rendered = function rendered(d) {
-      var rootNodeData = this.data;
+      rootNodeData = this.data;
       var mapId = this.data._id,
             vis = d3.select("#mindmap").append("svg:svg")
                   .attr("width", 1500)
@@ -66,7 +69,7 @@ Template.create.rendered = function rendered(d) {
                   .attr("fill", "white")
                   .call(make_editable, "name", rootNodeData);
             node.append("svg:text")
-                  .attr("x", 50/*300*/).attr("y", 3)
+                  .attr("x", 50).attr("y", 3)
                   .attr("dx", "0em")
                   .attr("dy", "0.5em")
                   .text(function (d) { return d.name; })
