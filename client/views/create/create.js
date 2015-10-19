@@ -179,13 +179,13 @@ function make_editable(d, field, rootNodeData) {
 
 document.addEventListener('keydown', function(e){
                if( e.keyCode == '9' ){
-                  mindMapService.addChild(rootNodeData, currentDir);
-                    toggle = true
-                     drawTree(true);
+//                  mindMapService.addChild(rootNodeData, currentDir);
+//                  toggle = true
+//                  drawTree(true);
                }
                else if(e.keyCode == '13' ){
-                 // mindMapService.addChild(rootNodeData, currentDir); 
-                 //  toggle = true
-                 //  update();
+                    mindMapService.addChild(rootNodeData, currentDir);
+                    toggle = true
+                    drawTree(true);
                }
            }, false);
