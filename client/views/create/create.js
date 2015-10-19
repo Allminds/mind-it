@@ -65,7 +65,7 @@ function rendered(d) {
                   .attr("stroke", "black")
                   .attr("fill", "white")
                   .call(make_editable, "name", rootNodeData);
-      
+
  
             // place the name atribute left or right depending if children
             node.append("svg:text")
@@ -139,7 +139,7 @@ function showEditor(nodeData, field, rootNodeData) {
       .attr("style","height:30px;") 
      .style("width","auto")
        .on("blur", updateNode)
-       .on("keypress", function () {
+       .on("keydown", function () {
                   // IE fix
                   if (!d3.event)
                         d3.event = window.event;
@@ -153,7 +153,7 @@ function showEditor(nodeData, field, rootNodeData) {
                         e.preventDefault();
                         updateNode();
                   }
-            });
+           });
 };
 
 toggle = false
@@ -177,15 +177,12 @@ function make_editable(d, field, rootNodeData) {
       });
 }
 
+
+
 document.addEventListener('keydown', function(e){
-               if( e.keyCode == '9' ){
-//                  mindMapService.addChild(rootNodeData, currentDir);
-//                  toggle = true
-//                  drawTree(true);
-               }
-               else if(e.keyCode == '13' ){
-                    mindMapService.addChild(rootNodeData, currentDir);
-                    toggle = true
+               if(e.keyCode == '13' ){
+                 mindMapService.addChild(rootNodeData, currentDir);
+                    toggle = true;
                     drawTree(true);
                }
            }, false);
