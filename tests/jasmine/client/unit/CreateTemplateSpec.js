@@ -17,11 +17,15 @@ describe('Create Template', function () {
         expect($(div).find("#mindmaps")[0]).not.toBeDefined();
 	});
 	
+
 	it('should update width of ellipse ', function () {
-		spyOn(window, 'getWidth');
-		Template.create.rendered.call({data:{ name:'Node', _id:1}});
-		expect(getWidth).toHaveBeenCalled();
-	});
+
+    spyOn(window, 'getWidth');
+    Template.create.rendered.call({data:{ name:'newMindmappppp', _id:1,children:[]}});
+    expect(getWidth).toHaveBeenCalled();
+    });
+
+
 	it('should have defualt width 80px when node anonymous', function(){
 		var node = {name:null};
 		expect(getWidth(node)).toBe(80);
