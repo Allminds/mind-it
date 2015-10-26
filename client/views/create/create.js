@@ -49,8 +49,8 @@ drawTree = function(arrayOfNodes, rootNodeData, treeNodes, vis, direction){
           links = treeNodes.links(nodes),
           diagonal = d3.svg.diagonal().projection( function (d) {
           switch(direction){
-                      case "right": return [-d.y, d.x];
-                      case "left" : return [d.y, d.x];
+                      case "right": return [d.y, d.x];
+                      case "left" : return [-d.y, d.x];
                   }
           });
       vis.selectAll(".links")
@@ -66,8 +66,8 @@ drawTree = function(arrayOfNodes, rootNodeData, treeNodes, vis, direction){
           .attr('class', 'treeNode')
           .attr("transform", function (d) {
               switch(direction){
-                  case "right": return "translate(" + -d.y + "," + d.x + ")";
-                  case "left" : return "translate(" + d.y + "," + d.x + ")";
+                  case "right": return "translate(" + d.y + "," + d.x + ")";
+                  case "left" : return "translate(" + -d.y + "," + d.x + ")";
               }
           });
 
