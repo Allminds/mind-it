@@ -6,12 +6,34 @@ currentDir = "right";
 count = 0;
 startup = true
 
+var m = [20, 120, 20, 120],
+    w = 500 - m[1] - m[3],
+    h = 1000 - m[0] - m[2],
+    i = 0;
+
 getWidth = function (d) {
       var width = 80;
       if (d && d.name && typeof d.name == 'string')
             width = d.name.length * 4.5;
       return width;
 };
+
+update = function(source,treeLeft,treeRight) {
+    var levelWidth = [1];
+      var childCount = function(level, n) {
+             if(n.children && n.children.length > 0) {
+                  if(levelWidth.length <= level + 1) levelWidth.push(0);
+                   levelWidth[level+1] += n.children.length;
+                        n.children.forEach(function(d) {
+                          childCount(level + 1, d);
+                        });
+             }
+      };
+      childCount(0, rootNodeData);
+       var newHeight = d3.max(levelWidth) * 20; // 20 pixels per line
+       treeRight = treeRight.size([newHeight, w]);
+       treeLeft = treeLeft.size([newHeight, w]);
+}
 
 splitTrees = function(mainTree, leftTree, rightTree){
     for(var i = 0; i < rootNodeData.children.length; i++) {
@@ -20,72 +42,65 @@ splitTrees = function(mainTree, leftTree, rightTree){
               else
                   right.children.push(rootNodeData.children[i])
           }
-
 }
 
-drawTree= function(arrayOfNodes, rootNodeData, treeNodes, vis, direction){
-    var nodes = treeNodes.nodes(arrayOfNodes),
-        links = treeNodes.links(nodes),
-        diagonal = d3.svg.diagonal().projection( function (d) {
-        switch(direction){
-                    case "right": return [-d.y, d.x];
-                    case "left" : return [d.y, d.x];
-                }
-        });
+drawTree = function(arrayOfNodes, rootNodeData, treeNodes, vis, direction){
+      var nodes = treeNodes.nodes(arrayOfNodes),
+          links = treeNodes.links(nodes),
+          diagonal = d3.svg.diagonal().projection( function (d) {
+          switch(direction){
+                      case "right": return [-d.y, d.x];
+                      case "left" : return [d.y, d.x];
+                  }
+          });
+      vis.selectAll(".links")
+         .data(links)
+         .enter().append("svg:path")
+         .attr("class", "link")
+         .attr("fill", "none")
+         .attr("stroke", "#ADADAD")
+         .attr("d", diagonal);
+      var node = vis.selectAll("g.node")
+          .data(nodes)
+          .enter().append("svg:g")
+          .attr('class', 'treeNode')
+          .attr("transform", function (d) {
+              switch(direction){
+                  case "right": return "translate(" + -d.y + "," + d.x + ")";
+                  case "left" : return "translate(" + d.y + "," + d.x + ")";
+              }
+          });
 
-    vis.selectAll(".links")
-       .data(links)
-       .enter().append("svg:path")
-       .attr("class", "link")
-       .attr("fill", "none")
-       .attr("stroke", "#ADADAD")
-       .attr("d", diagonal);
+      if(direction === "left")
+      {
+      var rootNode = d3.select(node[0][0]);
+      console.log(rootNode)
+      rootNode.append("svg:ellipse")
+          .attr("cx", 0).attr("cy", 3)
+          .attr("rx", function (d) { return getWidth(d) + 'px'; })
+          .attr('ry', 20)
+          .attr("stroke", "black")
+          .attr("fill", "white")
+          .attr("fill-opacity", "1")
+          .call(make_editable, "name", rootNodeData);
+      rootNode.append("svg:text")
+          .attr("x", 0).attr("y", 3)
+          .attr("dx", "0em")
+          .attr("dy", "0.5em")
+          .text(function (d) { return d.name; })
+          .attr("text-anchor", "middle")
+          .call(make_editable, "name", rootNodeData);
+      }
+      node[0] = node[0].slice(1);
+      node.append("svg:text")
+              .attr("x", 0).attr("y", 3)
+              .attr("dx", "0em")
+              .attr("dy", "0.5em")
+              .text(function (d) { return d.name; })
+              .attr("text-anchor", "middle")
+              .call(make_editable, "name", rootNodeData);
+  }
 
-    var node = vis.selectAll("g.node")
-        .data(nodes)
-        .enter().append("svg:g")
-        .attr('class', 'treeNode')
-        .attr("transform", function (d) {
-            switch(direction){
-                case "right": return "translate(" + -d.y + "," + d.x + ")";
-                case "left" : return "translate(" + d.y + "," + d.x + ")";
-            }
-
-        });
-
-
-    if(direction === "left")
-    {
-    var rootNode = d3.select(node[0][0]);
-
-    rootNode.append("svg:ellipse")
-        .attr("cx", 50).attr("cy", 3)
-        .attr("rx", function (d) { return getWidth(d) + 'px'; })
-        .attr('ry', 20)
-        .attr("stroke", "black")
-        .attr("fill", "white")
-        .attr("fill-opacity", "1")
-        .call(make_editable, "name", rootNodeData);
-
-    rootNode.append("svg:text")
-        .attr("x", 50).attr("y", 3)
-        .attr("dx", "0em")
-        .attr("dy", "0.5em")
-        .text(function (d) { return d.name; })
-        .attr("text-anchor", "middle")
-        .call(make_editable, "name", rootNodeData);
-    }
-
-    node.append("svg:text")
-            .attr("x", 50).attr("y", 3)
-            .attr("dx", "0em")
-            .attr("dy", "0.5em")
-            .text(function (d) { return d.name; })
-            .attr("text-anchor", "middle")
-            .call(make_editable, "name", rootNodeData);
-
-
-}
 
 
 Template.create.rendered = function rendered(d) {
@@ -95,28 +110,14 @@ Template.create.rendered = function rendered(d) {
 
       splitTrees(rootNodeData, left, right);
 
-
       var mapId = this.data._id,
           vis = d3.select("#mindmap").append("svg:svg")
               .attr("width", 1500)
               .attr("height", 1500)
               .append("svg:g").attr("transform", "translate(750, 0)"),
 
-      treeLeft = d3.layout.tree().size([400, 400]);
-      treeRight = d3.layout.tree().size([400, 400]);
-
-
-      drawTreeLeft = function (update) {
-          left = {name: rootNodeData.name, children: [], direction: null};
-                right = {name:"", children: [], direction: null};
-          if (update) {
-              rootNodeData = Mindmaps.findOne(mapId);
-              splitTrees(rootNodeData,left,right);
-
-          }
-
-          drawTree(left, rootNodeData, treeLeft, vis,"left");
-      };
+       treeLeft = d3.layout.tree().size([h, w]);
+       treeRight = d3.layout.tree().size([h, w]);
 
       drawTreeRight = function (update) {
           left = {name: rootNodeData.name, children: [], direction: null};
@@ -127,17 +128,29 @@ Template.create.rendered = function rendered(d) {
           }
 
       vis.selectAll("*").remove();
-
       drawTree(right, rootNodeData, treeRight, vis, "right");
 
       };
 
+      drawTreeLeft = function (update) {
+           left = {name: rootNodeData.name, children: [], direction: null};
+           right = {name:"", children: [], direction: null};
+           if (update) {
+               rootNodeData = Mindmaps.findOne(mapId);
+               splitTrees(rootNodeData,left,right);
+           }
+
+           drawTree(left, rootNodeData, treeLeft, vis, "left");
+      };
+
+      update(rootNodeData,treeLeft,treeRight);
       drawTreeRight(true);
       drawTreeLeft(true);
 
       Mindmaps.find().observe({
 
             changed: function(){
+                update(rootNodeData,treeLeft,treeRight);
                 drawTreeRight(true);
                 drawTreeLeft(true);
           }
@@ -173,6 +186,7 @@ function showEditor(nodeData, field, rootNodeData) {
                 }
             }
             mindMapService.updateNode(rootNodeData);
+            update(rootNodeData,treeLeft,treeRight);
             drawTreeRight(true);
             drawTreeLeft(true);
 
@@ -232,8 +246,10 @@ document.addEventListener('keydown', function (e) {
       if (e.keyCode == '13') {
             mindMapService.addChild(rootNodeData, currentDir);
             toggle = true;
+            update(rootNodeData,treeLeft,treeRight);
             drawTreeRight(true);
             drawTreeLeft(true);
             count++;
       }
 }, false);
+
