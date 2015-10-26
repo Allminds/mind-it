@@ -115,11 +115,16 @@ Template.create.rendered = function rendered(d) {
 
       splitTrees(rootNodeData, left, right);
 
+
+
       var mapId = this.data._id,
           vis = d3.select("#mindmap").append("svg:svg")
-              .attr("width", 1500)
+              .attr("id", "mindmap-svg")
+              .attr("width", window.innerWidth)
               .attr("height", 1500)
-              .append("svg:g").attr("transform", "translate(750, 0)");
+              .append("svg:g")
+              .attr("transform", "translate(" + window.innerWidth/2 + ", 0)")
+              .attr("class", "map-group");
 
        treeLeft = d3.layout.tree().size([h, w]);
        treeRight = d3.layout.tree().size([h, w]);
@@ -133,6 +138,14 @@ Template.create.rendered = function rendered(d) {
           }
       vis.selectAll("*").remove();
       drawTree(right, rootNodeData, treeRight, vis, "right");
+
+       $(window).on("resize",function(){
+            $("#mindmap-svg")
+                   .attr("width", window.innerWidth);
+           $("#mindmap-svg .map-group")
+                   .attr("transform", "translate(" + window.innerWidth/2 + ", 0)");
+
+       });
 
       };
 
