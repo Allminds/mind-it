@@ -13,107 +13,136 @@ getWidth = function (d) {
       return width;
 };
 
+splitTrees = function(mainTree, leftTree, rightTree){
+    for(var i = 0; i < rootNodeData.children.length; i++) {
+              if(rootNodeData.children[i].direction === "left")
+                  left.children.push(rootNodeData.children[i])
+              else
+                  right.children.push(rootNodeData.children[i])
+          }
+
+}
+
+drawTree= function(arrayOfNodes, rootNodeData, treeNodes, vis, direction){
+    var nodes = treeNodes.nodes(arrayOfNodes),
+        links = treeNodes.links(nodes),
+        diagonal = d3.svg.diagonal().projection( function (d) {
+        switch(direction){
+                    case "right": return [-d.y, d.x];
+                    case "left" : return [d.y, d.x];
+                }
+        });
+
+    vis.selectAll(".links")
+       .data(links)
+       .enter().append("svg:path")
+       .attr("class", "link")
+       .attr("fill", "none")
+       .attr("stroke", "#ADADAD")
+       .attr("d", diagonal);
+
+    var node = vis.selectAll("g.node")
+        .data(nodes)
+        .enter().append("svg:g")
+        .attr('class', 'treeNode')
+        .attr("transform", function (d) {
+            switch(direction){
+                case "right": return "translate(" + -d.y + "," + d.x + ")";
+                case "left" : return "translate(" + d.y + "," + d.x + ")";
+            }
+
+        });
+
+
+    if(direction === "left")
+    {
+    var rootNode = d3.select(node[0][0]);
+
+    rootNode.append("svg:ellipse")
+        .attr("cx", 50).attr("cy", 3)
+        .attr("rx", function (d) { return getWidth(d) + 'px'; })
+        .attr('ry', 20)
+        .attr("stroke", "black")
+        .attr("fill", "white")
+        .attr("fill-opacity", "1")
+        .call(make_editable, "name", rootNodeData);
+
+    rootNode.append("svg:text")
+        .attr("x", 50).attr("y", 3)
+        .attr("dx", "0em")
+        .attr("dy", "0.5em")
+        .text(function (d) { return d.name; })
+        .attr("text-anchor", "middle")
+        .call(make_editable, "name", rootNodeData);
+    }
+
+    node.append("svg:text")
+            .attr("x", 50).attr("y", 3)
+            .attr("dx", "0em")
+            .attr("dy", "0.5em")
+            .text(function (d) { return d.name; })
+            .attr("text-anchor", "middle")
+            .call(make_editable, "name", rootNodeData);
+
+
+}
+
+
 Template.create.rendered = function rendered(d) {
       rootNodeData = this.data;
       left = {name: rootNodeData.name, children: [], direction: null};
-      right = {name: '', children: [], direction: null};
-      for(var i = 0; i < rootNodeData.children.length; i++) {
-          if(rootNodeData.children[i].direction === "left")
-              left.children.push(rootNodeData.children[i])
-          else
-              right.children.push(rootNodeData.children[i])
-}
+      right = {name:"", children: [], direction: null};
+
+      splitTrees(rootNodeData, left, right);
+
+
       var mapId = this.data._id,
           vis = d3.select("#mindmap").append("svg:svg")
               .attr("width", 1500)
               .attr("height", 1500)
               .append("svg:g").attr("transform", "translate(750, 0)"),
+
       treeLeft = d3.layout.tree().size([400, 400]);
       treeRight = d3.layout.tree().size([400, 400]);
 
 
       drawTreeLeft = function (update) {
+          left = {name: rootNodeData.name, children: [], direction: null};
+                right = {name:"", children: [], direction: null};
           if (update) {
               rootNodeData = Mindmaps.findOne(mapId);
+              splitTrees(rootNodeData,left,right);
+
           }
 
-      var nodes = treeLeft.nodes(left),
-          links = treeLeft.links(nodes),
-          diagonal = d3.svg.diagonal().projection( function (d) { return [-d.y, d.x];});
-
-      vis.selectAll(".links")
-          .data(links)
-          .enter().append("svg:path")
-          .attr("class", "link")
-          .attr("fill", "none")
-          .attr("stroke", "#ADADAD")
-          .attr("d", diagonal);
-
-      var node = vis.selectAll("g.node")
-          .data(nodes)
-          .enter().append("svg:g")
-          .attr('class', 'treeNode')
-          .attr("transform", function (d) { return "translate(" + -d.y + "," + d.x + ")"; });
-      var rootNode = d3.select(node[0][0]);
-      rootNode.append("svg:ellipse")
-          .attr("cx", 50).attr("cy", 3)
-          .attr("rx", function (d) { return getWidth(d) + 'px'; })
-          .attr('ry', 20)
-          .attr("stroke", "black")
-          .attr("fill", "white")
-          .attr("fill-opacity", "1")
-          .call(make_editable, "name", rootNodeData);
-      node.append("svg:text")
-          .attr("x", 50).attr("y", 3)
-          .attr("dx", "0em")
-          .attr("dy", "0.5em")
-          .text(function (d) { return d.name; })
-          .attr("text-anchor", "middle")
-          .call(make_editable, "name", rootNodeData);
+          drawTree(left, rootNodeData, treeLeft, vis,"left");
       };
 
       drawTreeRight = function (update) {
+          left = {name: rootNodeData.name, children: [], direction: null};
+                right = {name:"", children: [], direction: null};
           if (update) {
               rootNodeData = Mindmaps.findOne(mapId);
+               splitTrees(rootNodeData,left,right);
           }
+
       vis.selectAll("*").remove();
-      treeRight.nodes(right);
-      var nodes = treeRight.nodes(right),
-          links = treeRight.links(nodes),
-          diagonal = d3.svg.diagonal().projection( function (d) { return [d.y, d.x];});
-      vis.selectAll(".links")
-          .data(links)
-          .enter().append("svg:path")
-          .attr("class", "link")
-          .attr("fill", "none")
-          .attr("stroke", "#ADADAD")
-          .attr("d", diagonal);
 
-      var node = vis.selectAll("g.node")
-          .data(nodes)
-          .enter().append("svg:g")
-          .attr('class', 'treeNodeRight')
-          .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; });
+      drawTree(right, rootNodeData, treeRight, vis, "right");
 
-      var rootNode = d3.select(node[0][0]);
-      node.append("svg:text")
-          .attr("x", 50).attr("y", 3)
-          .attr("dx", "0em")
-          .attr("dy", "0.5em")
-          .text(function (d) { return d.name; })
-          .attr("text-anchor", "middle")
-          .call(make_editable, "name", rootNodeData);
-};
+      };
 
       drawTreeRight(true);
       drawTreeLeft(true);
 
       Mindmaps.find().observe({
-          changed: _.partial(drawTreeLeft, true)
-      });
-      Mindmaps.find().observe({
-          changed: _.partial(drawTreeRight, true)
-      });
+
+            changed: function(){
+                drawTreeRight(true);
+                drawTreeLeft(true);
+          }
+
+     });
 }
 
 function showEditor(nodeData, field, rootNodeData) {
@@ -203,14 +232,14 @@ document.addEventListener('keydown', function (e) {
       if (e.keyCode == '13') {
             mindMapService.addChild(rootNodeData, currentDir);
             toggle = true;
-            rootNodeData = Mindmaps.findOne(rootNodeData._id);
-            if(currentDir === "left")
-                left.children.push(rootNodeData.children[count])
-             else
-                right.children.push(rootNodeData.children[count])
+//            rootNodeData = Mindmaps.findOne(rootNodeData._id);
+//            if(currentDir === "left")
+//                left.children.push(rootNodeData.children[count])
+//             else
+//                right.children.push(rootNodeData.children[count])
 
-                  drawTreeRight(true);
-                  drawTreeLeft(true);
+            drawTreeRight(true);
+            drawTreeLeft(true);
             count++;
       }
 }, false);

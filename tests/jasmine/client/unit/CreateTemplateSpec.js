@@ -16,17 +16,9 @@ describe('Create Template', function () {
 	it('should have mind map', function () {
         expect($(div).find("#mindmaps")[0]).not.toBeDefined();
 	});
-	
-
-	it('should update width of ellipse ', function () {
-
-    spyOn(window, 'getWidth');
-    Template.create.rendered.call({data:{ name:'newMindmappppp', _id:1,children:[]}});
-    expect(getWidth).toHaveBeenCalled();
-    });
 
 
-	it('should have defualt width 80px when node anonymous', function(){
+	it('should have default width 80px when node anonymous', function(){
 		var node = {name:null};
 		expect(getWidth(node)).toBe(80);
 	});
@@ -40,5 +32,7 @@ describe('Create Template', function () {
 		incresedWidth = getWidth(node);
 		expect(incresedWidth > currentWidth).toBeTruthy();	
 	});
+
+
 });
 
