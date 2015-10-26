@@ -2,6 +2,7 @@
   <dictionary name="rupalig">
     <words>
       <w>dblclick</w>
+      <w>keydown</w>
       <w>keypress</w>
       <w>mouseout</w>
       <w>pathlink</w>
