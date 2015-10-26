@@ -232,12 +232,6 @@ document.addEventListener('keydown', function (e) {
       if (e.keyCode == '13') {
             mindMapService.addChild(rootNodeData, currentDir);
             toggle = true;
-//            rootNodeData = Mindmaps.findOne(rootNodeData._id);
-//            if(currentDir === "left")
-//                left.children.push(rootNodeData.children[count])
-//             else
-//                right.children.push(rootNodeData.children[count])
-
             drawTreeRight(true);
             drawTreeLeft(true);
             count++;
