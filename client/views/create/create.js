@@ -14,12 +14,29 @@ var m = [20, 120, 20, 120],
 
 var treeLeft, treeRight;
 
+var state={requestUpdate: false, editingNode:null,textToBeEdited:null,
+    restoreState:function(nodeTexts,rootNodeData){
+        if(!state.editingNode) return;
+        var textToBeEdited = nodeTexts[0].find(function(text){
+            return d3.select(text).data()[0].name == state.editingNode.name;
+        });
+
+        if(textToBeEdited){
+            var data = d3.select(textToBeEdited).data()[0];
+            data.name = state.textToBeEdited;
+            showEditor.call(textToBeEdited,data,'name',rootNodeData);
+        }
+    }
+};
+
 getWidth = function (d) {
       var width = 80;
       if (d && d.name && typeof d.name == 'string')
             width = d.name.length * 4.5;
       return width;
 };
+
+
 
 update = function(source,treeLeft,treeRight) {
     var levelWidth = [1];
@@ -104,6 +121,7 @@ drawTree = function(arrayOfNodes, rootNodeData, treeNodes, vis, direction){
               .text(function (d) { return d.name; })
               .attr("text-anchor", "middle")
               .call(make_editable, "name", rootNodeData);
+
   }
 
 
@@ -167,9 +185,12 @@ Template.create.rendered = function rendered(d) {
       Mindmaps.find().observe({
 
             changed: function(){
+                state.requestUpdate=true;
                 update(rootNodeData,treeLeft,treeRight);
                 drawTreeRight(true);
                 drawTreeLeft(true);
+                state.restoreState(d3.selectAll('text'),rootNodeData);
+                state.requestUpdate=false;
           }
 
      });
@@ -184,18 +205,27 @@ function showEditor(nodeData, field, rootNodeData) {
                   .attr("x", function (d) { if (d.name.length == 0) return parentBox.width / 2; else return position.x;  })
                   .attr("y", position.y)
                   .append("xhtml:form").append("input");
+      state.editingNode=nodeData;
+      state.textToBeEdited= nodeData[field];
+
+
 
       updateNode = function () {
+            if(state.requestUpdate || !state.editingNode)
+                return;
+
             var txt = inp.node().value;
+
+            currentElement.attr("visibility", "");
             nodeData[field] = txt;
+            console.log("I'm in update node");
+            state.editingNode=null;
+            state.textToBeEdited=null;
+            d3.select("foreignObject").remove();
+
             rootNodeData.name = left.name;
-            var j = 0;
-            var k = 0;
-            parentElement.select("foreignObject").remove();
             mindMapService.updateNode(rootNodeData);
             update(rootNodeData,treeLeft,treeRight);
-            drawTreeRight(true);
-            drawTreeLeft(true);
 
       };
 
@@ -225,6 +255,11 @@ function showEditor(nodeData, field, rootNodeData) {
                         e.preventDefault();
                         updateNode();
                   }
+            })
+            .on("keyup",function (){
+                state.textToBeEdited=inp.node().value;
+                console.log(state.textToBeEdited);
+
             });
 };
 
@@ -245,8 +280,6 @@ function make_editable(d, field, rootNodeData) {
                   toggle = false
             }
       }).on("dblclick", function (d) {
-//            console.log("Inside make editable: ");
-//            console.log(rootNodeData);
             showEditor.call(this, d, field, rootNodeData);
       });
 }
@@ -256,8 +289,6 @@ document.addEventListener('keydown', function (e) {
             mindMapService.addChild(rootNodeData, currentDir);
             toggle = true;
             update(rootNodeData,treeLeft,treeRight);
-            drawTreeRight(true);
-            drawTreeLeft(true);
             count++;
       }
 }, false);
