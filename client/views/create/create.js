@@ -217,18 +217,20 @@ function showEditor(nodeData, field, rootNodeData) {
     state.textToBeEdited = nodeData[field];
 
 
+    function resetEditor() {
+        currentElement.attr("visibility", "");
+        state.editingNode = null;
+        state.textToBeEdited = null;
+        d3.select("foreignObject").remove();
+    }
+
     updateNode = function () {
         if (state.requestUpdate || !state.editingNode)
             return;
 
-        var txt = inp.node().value;
+        nodeData[field] = inp.node().value;
 
-        currentElement.attr("visibility", "");
-        nodeData[field] = txt;
-        state.editingNode = null;
-        state.textToBeEdited = null;
-        d3.select("foreignObject").remove();
-
+        resetEditor();
         rootNodeData.name = left.name;
         mindMapService.updateNode(rootNodeData);
         update(rootNodeData, treeLeft, treeRight);
@@ -240,8 +242,7 @@ function showEditor(nodeData, field, rootNodeData) {
     inp.attr("value", function () {
         return nodeData[field];
     }).attr('', function () {
-        var value = this.value;
-        this.value = value;
+        this.value = this.value;
         this.focus();
         this.select();
     })
@@ -261,6 +262,12 @@ function showEditor(nodeData, field, rootNodeData) {
                     e.stopPropagation();
                 e.preventDefault();
                 updateNode();
+            }
+
+
+            if (e.keyCode == 27) {
+                resetEditor();
+                e.preventDefault();
             }
         })
         .on("keyup", function () {
