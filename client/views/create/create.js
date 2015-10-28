@@ -5,6 +5,7 @@ drawTree = null;
 currentDir = "right";
 count = 0;
 startup = true;
+index = 0;
 
 var m = [20, 120, 20, 120],
     w = 500 - m[1] - m[3],
@@ -16,10 +17,12 @@ var treeLeft, treeRight;
 
 var state = {
     requestUpdate: false, editingNode: null, textToBeEdited: null,
+
     restoreState: function (nodeTexts, rootNodeData) {
         if (!state.editingNode) return;
         var textToBeEdited = nodeTexts[0].find(function (text) {
-            return d3.select(text).data()[0].name == state.editingNode.name;
+
+            return d3.select(text).data()[0].id == state.editingNode.id;
         });
 
         if (textToBeEdited) {
@@ -95,6 +98,8 @@ drawTree = function (arrayOfNodes, rootNodeData, treeNodes, vis, direction) {
             }
         });
 
+
+
     if (direction === "left") {
         var rootNode = d3.select(node[0][0]);
         rootNode.append("svg:ellipse")
@@ -135,6 +140,7 @@ drawTree = function (arrayOfNodes, rootNodeData, treeNodes, vis, direction) {
 
 Template.create.rendered = function rendered() {
     rootNodeData = this.data;
+    index = rootNodeData.children.length;
     left = {name: rootNodeData.name, children: [], direction: null};
     right = {name: "", children: [], direction: null};
 
@@ -193,6 +199,7 @@ Template.create.rendered = function rendered() {
         changed: function () {
             state.requestUpdate = true;
             update(rootNodeData, treeLeft, treeRight);
+
             drawTreeRight(true);
             drawTreeLeft(true);
             state.restoreState(d3.selectAll('text'), rootNodeData);
@@ -255,7 +262,7 @@ function showEditor(nodeData, field, rootNodeData) {
                 d3.event = window.event;
 
             var e = d3.event;
-            if (e.keyCode == 13) {
+            if (e.keyCode == 13) {              //enter key
                 if (typeof (e.cancelBubble) !== 'undefined') // IE
                     e.cancelBubble = true;
                 if (e.stopPropagation)
@@ -265,7 +272,7 @@ function showEditor(nodeData, field, rootNodeData) {
             }
 
 
-            if (e.keyCode == 27) {
+            if (e.keyCode == 27) {              //escape key
                 resetEditor();
                 e.preventDefault();
             }
@@ -302,7 +309,7 @@ function make_editable(d, field, rootNodeData) {
 
 document.addEventListener('keydown', function (e) {
     if (e.keyCode == '13') {
-        mindMapService.addChild(rootNodeData, currentDir);
+        mindMapService.addChild(rootNodeData, currentDir,++index);
         toggle = true;
         update(rootNodeData, treeLeft, treeRight);
         count++;
