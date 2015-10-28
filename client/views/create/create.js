@@ -19,16 +19,18 @@ var state = {
     requestUpdate: false, editingNode: null, textToBeEdited: null,
 
     restoreState: function (nodeTexts, rootNodeData) {
+
         if (!state.editingNode) return;
         var textToBeEdited = nodeTexts[0].find(function (text) {
+         console.log("in restore update");
+            console.log(state.editingNode);
 
             return d3.select(text).data()[0].id == state.editingNode.id;
         });
-
         if (textToBeEdited) {
             var data = d3.select(textToBeEdited).data()[0];
             data.name = state.textToBeEdited;
-            showEditor.call(textToBeEdited, data, 'name', rootNodeData);
+            showEditor.call(textToBeEdited, data, 'name', rootNodeData, state.editingNode.id);
         }
     }
 };
@@ -209,13 +211,14 @@ Template.create.rendered = function rendered() {
     });
 };
 
-function showEditor(nodeData, field, rootNodeData) {
+function showEditor(nodeData, field, rootNodeData, id) {
     var parentBox = this.parentNode.getBBox(),
         position = {x: parentBox.x, y: parentBox.y},
         parentElement = d3.select(this.parentNode),
         currentElement = parentElement.select('text'),
         inp = parentElement.append("foreignObject")
-            .attr("x", function (d) {
+            .attr("x",
+            function (d) {
                 if (d.name.length == 0) return parentBox.width / 2; else return position.x;
             })
             .attr("y", position.y)
@@ -238,6 +241,7 @@ function showEditor(nodeData, field, rootNodeData) {
         nodeData[field] = inp.node().value;
 
         resetEditor();
+        rootNodeData.children[id - 1]= nodeData;
         rootNodeData.name = left.name;
         mindMapService.updateNode(rootNodeData);
         update(rootNodeData, treeLeft, treeRight);
@@ -307,12 +311,18 @@ function make_editable(d, field, rootNodeData) {
     });
 }
 
-document.addEventListener('keydown', function (e) {
+document.addEventListener('keypress', function (e) {
     if (e.keyCode == '13') {
         mindMapService.addChild(rootNodeData, currentDir,++index);
         toggle = true;
         update(rootNodeData, treeLeft, treeRight);
         count++;
+
+        state.editingNode = d3.select(d3.selectAll('.treeNode').filter(function(d){ return d.id === index;}))[0][0].data()[0];
+        state.textToBeEdited = state.editingNode.name;
+        state.requestUpdate = true;
+        state.restoreState(d3.selectAll('text'), rootNodeData);
+        state.requestUpdate = false;
     }
 }, false);
 
