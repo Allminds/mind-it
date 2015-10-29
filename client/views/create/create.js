@@ -255,6 +255,7 @@ function showEditor(nodeData, field, rootNodeData, id) {
     }).attr('', function () {
         this.value = this.value;
         this.focus();
+        //if(state.requestUpdate)
         this.select();
     })
         .attr("style", "height:30px;")

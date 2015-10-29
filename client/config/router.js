@@ -10,4 +10,5 @@ Router.route('/create/:_id', {
 	data: function () {
 		return Mindmaps.findOne(this.params._id);
 	}
+	 fastRender: true
 });
