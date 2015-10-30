@@ -9,6 +9,6 @@ Router.route('/create/:_id', {
         return Meteor.subscribe("mindmaps");
     },
     data: function () {
-        return mindMapService.findTree(this.params._id);
+        return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
     }
 });

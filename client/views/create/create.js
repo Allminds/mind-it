@@ -1,7 +1,8 @@
-Meteor.subscribe("mindmaps")
+
 var mindMapService = new MindMapService();
 Template.create.rendered = function rendered() {
-    rootNodeData = this.data;
+    var treeData = this.data;
+    rootNodeData = mindMapService.buildTree(treeData.id,treeData.data);
 
 
     update(rootNodeData);
