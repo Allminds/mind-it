@@ -1,7 +1,6 @@
 /* global Router */
-var mindMapService = new MindMapService();
-Router.configure({layoutTemplate: 'main'});
-Router.route('/', {template: 'home'});
+Router.configure({ layoutTemplate: 'main' });
+Router.route('/', { template: 'home' });
 Router.route('/create/:_id', {
     name: "create",
     template: "create",
