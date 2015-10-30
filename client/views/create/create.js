@@ -1,4 +1,9 @@
 var mindMapService = new MindMapService();
+var directionToggler = {
+     currentDir : "right",
+     canToggle : false
+    };
+
 Template.create.rendered = function rendered() {
     rootNodeData = mindMapService.buildTree(this.data.id, this.data.data);
 
@@ -98,6 +103,14 @@ var chart = MindMap()
         d3.select(".selected").classed("selected", false);
         // Select current item
         d3.select(this).classed("selected", true);
+        if(!this.position && directionToggler.canToggle)
+        {
+            switch(directionToggler.currentDir){
+                case "left" : directionToggler.currentDir = "right"; break;
+                case "right": directionToggler.currentDir = "left"; break;
+            }
+            directionToggler.canToggle = false;
+        }
     })
     .dblClick(showEditor);
 
@@ -116,6 +129,7 @@ var getDirection = function (data) {
     }
     return getDirection(data.parent);
 };
+
 Mousetrap.bind('enter', function () {
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
@@ -124,7 +138,8 @@ Mousetrap.bind('enter', function () {
         var name = prompt('New name');
         if (name) {
             if (dir === 'root') {
-                dir = data.right.length > data.left.length ? 'left' : 'right';
+                directionToggler.canToggle = true;
+                dir = directionToggler.currentDir;
             }
             var cl = data[dir] || data.children || data._children;
             if (!cl) {
