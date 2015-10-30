@@ -1,11 +1,9 @@
-Meteor.subscribe("mindmaps")
 var mindMapService = new MindMapService();
 Template.create.rendered = function rendered() {
-    rootNodeData = this.data;
-
+    rootNodeData = mindMapService.buildTree(this.data.id, this.data.data);
 
     update(rootNodeData);
-    var rootNode = d3.select('.node')[0].find(function (node) {
+    var rootNode = d3.selectAll('.node')[0].find(function (node) {
         return !node.__data__.position;
     });
 
@@ -152,7 +150,7 @@ Mousetrap.bind('del', function () {
             alert('Can\'t delete root');
             return;
         }
-        var cl = data.parent[dir] || data.parent.children ;
+        var cl = data.parent[dir] || data.parent.children;
         if (!cl) {
             alert('Could not locate children');
             return;

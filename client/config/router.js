@@ -1,6 +1,6 @@
 /* global Router */
-Router.configure({ layoutTemplate: 'main' });
-Router.route('/', { template: 'home' });
+Router.configure({layoutTemplate: 'main'});
+Router.route('/', {template: 'home'});
 Router.route('/create/:_id', {
     name: "create",
     template: "create",
@@ -8,6 +8,6 @@ Router.route('/create/:_id', {
         return Meteor.subscribe("mindmaps");
     },
     data: function () {
-        return mindMapService.findTree(this.params._id);
+        return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
     }
 });
