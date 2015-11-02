@@ -12,10 +12,7 @@ Template.create.rendered = function rendered() {
         return !node.__data__.position;
     });
 
-    // Find previously selected, unselect
-    d3.select(".selected").classed("selected", false);
-    // Select current item
-    d3.select(rootNode).classed("selected", true);
+select(rootNode);
 };
 
 var getDims;
@@ -26,6 +23,25 @@ getDims = function () {
         y = w.innerHeight || e.clientHeight || g.clientHeight;
     return {width: x, height: y};
 };
+
+var select = function(node){
+        // Find previously selected, unselect
+        d3.select(".selected").classed("selected", false);
+        // Select current item
+        d3.select(node).classed("selected", true);
+      };
+
+
+var selectNode = function(target){
+       if(target){
+         var sel = d3.selectAll('#mindmap svg .node').filter(function(d){return d._id==target._id})[0][0];
+         if(sel){
+           select(sel);
+         }
+       }
+     };
+
+
 
 var showEditor = function () {
 
@@ -99,10 +115,7 @@ var chart = MindMap()
     })
     .click(function (d) {
         console.log(d._id);
-        // Find previously selected, unselect
-        d3.select(".selected").classed("selected", false);
-        // Select current item
-        d3.select(this).classed("selected", true);
+        select(this);
         if(!this.position && directionToggler.canToggle)
         {
             switch(directionToggler.currentDir){
@@ -193,6 +206,100 @@ Mousetrap.bind('del', function () {
     }
 });
 
+Mousetrap.bind('up', function(){
+        // up key pressed
+        var selection = d3.select(".node.selected")[0][0];
+        if(selection){
+          var data = selection.__data__;
+          var dir = getDirection(data);
+          switch(dir){
+            case('root'):
+              break;
+            case('left'):
+            case('right'):
+              var p = data.parent, nl = p.children || [], i=1;
+              if(p[dir]){
+                nl = p[dir];
+              }
+              l = nl.length;
+              for(; i<l; i++){
+                if(nl[i]._id === data._id){
+                  selectNode(nl[i-1]);
+                  break;
+                }
+              }
+              break;
+          }
+        }
+        return false;
+      });
 
 
+    Mousetrap.bind('down', function(){
+        // down key pressed
+        // up key pressed
+        var selection = d3.select(".node.selected")[0][0];
+        if(selection){
+          var data = selection.__data__;
+          var dir = getDirection(data);
+          switch(dir){
+            case('root'):
+              break;
+            case('left'):
+            case('right'):
+              var p = data.parent, nl = p.children || [], i=0;
+              if(p[dir]){
+                nl = p[dir];
+              }
+              l = nl.length;
+              for(; i<l-1; i++){
+                if(nl[i]._id === data._id){
+                  selectNode(nl[i+1]);
+                  break;
+                }
+              }
+              break;
+          }
+        }
+        return false;
+      });
 
+     Mousetrap.bind('left', function(){
+       // left key pressed
+       var selection = d3.select(".node.selected")[0][0];
+       if(selection){
+         var data = selection.__data__;
+         var dir = getDirection(data);
+         switch(dir){
+           case('right'):
+           case('root'):
+             selectNode(data.parent || data.left[0]);
+             break;
+           case('left'):
+             selectNode((data.children||[])[0]);
+             break;
+           default:
+             break;
+         }
+       }
+     });
+
+     Mousetrap.bind('right', function(){
+       // right key pressed
+       var selection = d3.select(".node.selected")[0][0];
+       if(selection){
+         var data = selection.__data__;
+         var dir = getDirection(data);
+         switch(dir){
+           case('left'):
+           case('root'):
+             selectNode(data.parent || data.right[0]);
+             break;
+           case('right'):
+             selectNode((data.children||[])[0]);
+             break;
+           default:
+             break;
+         }
+       }
+     });
