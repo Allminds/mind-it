@@ -8,7 +8,6 @@ var directionToggler = {
 
 Template.create.rendered = function rendered() {
     rootNodeData = mindMapService.buildTree(this.data.id, this.data.data);
-
     update(rootNodeData);
     var rootNode = d3.selectAll('.node')[0].find(function (node) {
         return !node.__data__.position;

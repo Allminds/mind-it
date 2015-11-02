@@ -1,68 +1,60 @@
 /* CSS declarations go here */
-*{
-	margin: 0;
-	padding: 0;
+* {
+    margin: 0;
+    padding: 0;
 }
+
 body {
-  text-align: center;
-  background-color: #e9ece5;
- }
+    text-align: center;
+    background-color: #e9ece5;
+}
 
 .btn {
- 	background-color: #3fb0ac;
- 	border:none;
- }
+    background-color: #3fb0ac;
+    border: none;
+}
 
- .btn:hover{
- 	background-color: #173e43;
- 	border:none;
- }
+.btn:hover {
+    background-color: #173e43;
+    border: none;
+}
 
- h1{
- 	text-shadow: 1px 1px #ffffff;
- 	font-size: 400%;
- }
+h1 {
+    text-shadow: 1px 1px #ffffff;
+    font-size: 400%;
+}
+
 #mindmap {
-	border: 1px solid silver;
+    border: 1px solid silver;
     overflow: scroll;
     height: 700px;
-	background-color: white;
-	margin: .5em;
+    background-color: white;
+    margin: .5em;
 }
-
 
 .button-0 {
-   padding: 10px 40px;
-   font-family: 'Helvetica', cursive;
-   font-size: 25px;
-   color: #FFF;
-   background-color: #3fb0ac; 
-   text-shadow: 0px -2px #2980B9;
-   transition: all 0.1s;
-   -webkit-transition: all 0.1s;
+    padding: 10px 40px;
+    font-family: 'Helvetica', cursive;
+    font-size: 25px;
+    color: #FFF;
+    background-color: #3fb0ac;
+    text-shadow: 0px -2px #2980B9;
+    transition: all 0.1s;
+    -webkit-transition: all 0.1s;
 }
 
-.button-0:hover, 
+.button-0:hover,
 .button-0:focus {
-   text-decoration: none;
-   color: #fff;
+    text-decoration: none;
+    color: #fff;
 }
 
 .button-0:active {
-   transform: translate(0px,5px);
-   -webkit-transform: translate(0px,5px);
-}
-/* Spike */
-.node circle {
-    cursor: pointer;
-    fill: #fff;
-    stroke: steelblue;
-    stroke-width: 1.5px;
+    transform: translate(0px, 5px);
+    -webkit-transform: translate(0px, 5px);
 }
 
-.node text {
-    font-size: 11px;
-}
+/* Spike */
 
 path.link {
     fill: none;
@@ -70,7 +62,25 @@ path.link {
     stroke-width: 1.5px;
 }
 
-.node.selected circle {
-    fill: green;
+.node ellipse {
+    cursor: pointer;
+    fill: #fff;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+    fill-opacity: 1;
 }
+
+.node text {
+    font-size: 11px;
+}
+
+.node text {
+    text-anchor: middle;
+    fill-opacity: 1;
+}
+
+.node.selected ellipse {
+    fill: #ddd;
+}
+
 

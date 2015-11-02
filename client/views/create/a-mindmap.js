@@ -40,37 +40,43 @@ MindMap = function () {
         text = function (d) {
             return d.name;
         },
+        getWidth = function (d) {
+            var width = 80;
+            if (d && d.name && typeof d.name == 'string')
+                width = d.name.length * 4.5;
+            return width;
+        },
         idx = 0,
         getRootNode = function (node) {
-            return node[0][node[0].length -1];
+            return node[0][node[0].length - 1];
             return node[0].find(function (n) {
                 return !n.__data__.position;
             });
         },
         enterNode = function (node) {
             var rootNode = getRootNode(node);
-            d3.select(rootNode).append("svg:circle")
-                .attr("r", 1e-6);
+            d3.select(rootNode).append("svg:ellipse")
+                .attr("rx", 1e-6)
+                .attr("ry", 1e-6)
 
             node.append("svg:text")
-                .attr("text-anchor", "middle")
-                .attr("dy", 14)
-                .text(text)
-                .style("fill-opacity", 1);
+                .text(text);
         },
         updateNode = function (node) {
             node.select("text")
                 .text(text);
 
             var rootNode = getRootNode(node);
-            d3.select(rootNode).select("circle")
-                .attr("r", 4.5);
+            d3.select(rootNode).select("ellipse")
+                .attr("rx", getWidth)
+                .attr("ry", 20);
         },
         exitNode = function (node) {
             var rootNode = getRootNode(node);
             if (rootNode)
-                d3.select(rootNode).select("circle")
-                    .attr("r", 1e-6);
+                d3.select(rootNode).select("ellipse")
+                    .attr("rx", 1e-6)
+                    .attr("ry", 1e-6);
 
             node.select("text")
                 .style("fill-opacity", 1e-6);
@@ -115,10 +121,13 @@ MindMap = function () {
                 root.right = [];
 
                 for (; i < l; i++) {
-                    switch(root.children[i].position)
-                    {
-                        case 'left' : root.left.push(root.children[i]); break;
-                        case 'right': root.right.push(root.children[i]); break;
+                    switch (root.children[i].position) {
+                        case 'left' :
+                            root.left.push(root.children[i]);
+                            break;
+                        case 'right':
+                            root.right.push(root.children[i]);
+                            break;
                     }
                 }
             }
