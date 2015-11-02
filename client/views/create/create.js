@@ -60,6 +60,7 @@ var selectNode = function (target) {
 };
 
 var showEditor = function () {
+console.log(this);
     var self = this,
         nodeData = this.__data__;
 
@@ -165,8 +166,8 @@ Mousetrap.bind('enter', function () {
     if (selection) {
         var data = selection.__data__;
         var dir = getDirection(data);
-        var name = prompt('New name');
-        if (name) {
+
+   
             if (dir === 'root') {
                 directionToggler.canToggle = true;
                 dir = directionToggler.currentDir;
@@ -176,14 +177,19 @@ Mousetrap.bind('enter', function () {
                 cl = data.children = [];
             }
             var newNode = {
-                name: name, position: dir,
+                name: "default", position: dir,
                 parent_ids: [].concat(data.parent_ids || []).concat([data._id])
             };
+
             newNode._id = mindMapService.addNode(newNode);
 
             cl.push(newNode);
             chart.update();
-        }
+            var sel = d3.selectAll('#mindmap svg .node').filter(function(d){return d._id== newNode._id})[0][0];
+            showEditor.call(sel);
+            return false;
+
+
     }
 });
 
