@@ -4,6 +4,8 @@ var directionToggler = {
      canToggle : false
     };
 
+
+
 Template.create.rendered = function rendered() {
     rootNodeData = mindMapService.buildTree(this.data.id, this.data.data);
 
@@ -12,7 +14,7 @@ Template.create.rendered = function rendered() {
         return !node.__data__.position;
     });
 
-select(rootNode);
+    select(rootNode);
 };
 
 var getDims;
@@ -41,23 +43,16 @@ var selectNode = function(target){
        }
      };
 
-
-
 var showEditor = function () {
-
     var self = this,
         nodeData = this.__data__;
-    var parentBox = this.parentNode.getBBox(),
-        position = {x: parentBox.x, y: parentBox.y},
-        parentElement = d3.select(this.parentNode),
-        currentElement = parentElement.select('text'),
-        inp = parentElement.append("foreignObject")
-            .attr("x", function (d) {
-                if (d.name.length == 0) return parentBox.width / 2; else return position.x;
-            })
-            .attr("y", position.y)
-            .append("xhtml:form").append("input");
 
+     var   parentElement = d3.select(this.children[0].parentNode),
+        currentElement = parentElement.select('text');
+
+
+    var    inp = parentElement.append("foreignObject")
+            .append("xhtml:form").append("input");
 
     function resetEditor() {
         currentElement.attr("visibility", "");
@@ -163,6 +158,7 @@ Mousetrap.bind('enter', function () {
                 parent_ids: [].concat(data.parent_ids || []).concat([data._id])
             };
             newNode._id = mindMapService.addNode(newNode);
+
             cl.push(newNode);
             chart.update();
         }
