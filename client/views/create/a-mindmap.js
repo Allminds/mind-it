@@ -43,7 +43,7 @@ MindMap = function () {
         getWidth = function (d) {
             var width = 80;
             if (d && d.name && typeof d.name == 'string')
-                width = d.name.length * 4.5;
+                width = d.name.length * 5 + 10;
             return width;
         },
         idx = 0,
@@ -58,6 +58,7 @@ MindMap = function () {
             d3.select(rootNode).append("svg:ellipse")
                 .attr("rx", 1e-6)
                 .attr("ry", 1e-6)
+            d3.select(rootNode).classed('rootNode', true);
 
             node.append("svg:text")
                 .text(text);
@@ -65,6 +66,9 @@ MindMap = function () {
         updateNode = function (node) {
             node.select("text")
                 .text(text);
+            node.select("text").attr("y", -2);
+            node.select(".rootNode text").attr("y", 6);
+
 
             var rootNode = getRootNode(node);
             d3.select(rootNode).select("ellipse")
