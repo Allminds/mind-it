@@ -79,7 +79,7 @@ path.link {
     fill-opacity: 1;
 }
 
-.node.selected ellipse {
+.node.selected ellipse, .node.selected rect {
     fill: #ddd;
 }
 

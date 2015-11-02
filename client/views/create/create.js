@@ -1,9 +1,8 @@
 var mindMapService = new MindMapService();
 var directionToggler = {
-     currentDir : "right",
-     canToggle : false
-    };
-
+    currentDir: "right",
+    canToggle: false
+};
 
 
 Template.create.rendered = function rendered() {
@@ -25,33 +24,51 @@ getDims = function () {
     return {width: x, height: y};
 };
 
-var select = function(node){
-        // Find previously selected, unselect
-        d3.select(".selected").classed("selected", false);
-        // Select current item
-        d3.select(node).classed("selected", true);
-      };
+var select = function (node) {
+    // Find previously selected, unselect
+    d3.select(".selected rect").remove();
+    d3.select(".selected").classed("selected", false);
+
+    // Select current item
+    d3.select(node).classed("selected", true);
+
+    if (d3.select(node).select("ellipse")[0][0])
+        return;
+
+    var text = d3.select(node).select("text")[0][0],
+        bBox = text.getBBox(),
+        rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+    rect.setAttribute("x", bBox.x);
+    rect.setAttribute("y", bBox.y);
+    rect.setAttribute("width", bBox.width);
+    rect.setAttribute("height", bBox.height);
+    node.insertBefore(rect, text);
+
+};
 
 
-var selectNode = function(target){
-       if(target){
-         var sel = d3.selectAll('#mindmap svg .node').filter(function(d){return d._id==target._id})[0][0];
-         if(sel){
-           select(sel);
-         }
-       }
-     };
+var selectNode = function (target) {
+    if (target) {
+        var sel = d3.selectAll('#mindmap svg .node').filter(function (d) {
+            return d._id == target._id
+        })[0][0];
+        if (sel) {
+            select(sel);
+        }
+    }
+};
 
 var showEditor = function () {
     var self = this,
         nodeData = this.__data__;
 
-     var   parentElement = d3.select(this.children[0].parentNode),
+    var parentElement = d3.select(this.children[0].parentNode),
         currentElement = parentElement.select('text');
 
 
-    var    inp = parentElement.append("foreignObject")
-            .append("xhtml:form").append("input");
+    var inp = parentElement.append("foreignObject")
+        .append("xhtml:form").append("input");
 
     function resetEditor() {
         currentElement.attr("visibility", "");
@@ -63,6 +80,9 @@ var showEditor = function () {
         mindMapService.updateNode(nodeData._id, {name: nodeData.name});
         resetEditor();
         chart.update();
+        setTimeout(function(){
+            selectNode(nodeData);
+        },10);
     };
 
     currentElement.attr("visibility", "hidden");
@@ -110,11 +130,14 @@ var chart = MindMap()
     .click(function (d) {
         console.log(d._id);
         select(this);
-        if(!this.position && directionToggler.canToggle)
-        {
-            switch(directionToggler.currentDir){
-                case "left" : directionToggler.currentDir = "right"; break;
-                case "right": directionToggler.currentDir = "left"; break;
+        if (!this.position && directionToggler.canToggle) {
+            switch (directionToggler.currentDir) {
+                case "left" :
+                    directionToggler.currentDir = "right";
+                    break;
+                case "right":
+                    directionToggler.currentDir = "left";
+                    break;
             }
             directionToggler.canToggle = false;
         }
@@ -201,100 +224,100 @@ Mousetrap.bind('del', function () {
     }
 });
 
-Mousetrap.bind('up', function(){
-        // up key pressed
-        var selection = d3.select(".node.selected")[0][0];
-        if(selection){
-          var data = selection.__data__;
-          var dir = getDirection(data);
-          switch(dir){
+Mousetrap.bind('up', function () {
+    // up key pressed
+    var selection = d3.select(".node.selected")[0][0];
+    if (selection) {
+        var data = selection.__data__;
+        var dir = getDirection(data);
+        switch (dir) {
             case('root'):
-              break;
+                break;
             case('left'):
             case('right'):
-              var p = data.parent, nl = p.children || [], i=1;
-              if(p[dir]){
-                nl = p[dir];
-              }
-              l = nl.length;
-              for(; i<l; i++){
-                if(nl[i]._id === data._id){
-                  selectNode(nl[i-1]);
-                  break;
+                var p = data.parent, nl = p.children || [], i = 1;
+                if (p[dir]) {
+                    nl = p[dir];
                 }
-              }
-              break;
-          }
+                l = nl.length;
+                for (; i < l; i++) {
+                    if (nl[i]._id === data._id) {
+                        selectNode(nl[i - 1]);
+                        break;
+                    }
+                }
+                break;
         }
-        return false;
-      });
+    }
+    return false;
+});
 
 
-    Mousetrap.bind('down', function(){
-        // down key pressed
-        // up key pressed
-        var selection = d3.select(".node.selected")[0][0];
-        if(selection){
-          var data = selection.__data__;
-          var dir = getDirection(data);
-          switch(dir){
+Mousetrap.bind('down', function () {
+    // down key pressed
+    // up key pressed
+    var selection = d3.select(".node.selected")[0][0];
+    if (selection) {
+        var data = selection.__data__;
+        var dir = getDirection(data);
+        switch (dir) {
             case('root'):
-              break;
+                break;
             case('left'):
             case('right'):
-              var p = data.parent, nl = p.children || [], i=0;
-              if(p[dir]){
-                nl = p[dir];
-              }
-              l = nl.length;
-              for(; i<l-1; i++){
-                if(nl[i]._id === data._id){
-                  selectNode(nl[i+1]);
-                  break;
+                var p = data.parent, nl = p.children || [], i = 0;
+                if (p[dir]) {
+                    nl = p[dir];
                 }
-              }
-              break;
-          }
+                l = nl.length;
+                for (; i < l - 1; i++) {
+                    if (nl[i]._id === data._id) {
+                        selectNode(nl[i + 1]);
+                        break;
+                    }
+                }
+                break;
         }
-        return false;
-      });
+    }
+    return false;
+});
 
-     Mousetrap.bind('left', function(){
-       // left key pressed
-       var selection = d3.select(".node.selected")[0][0];
-       if(selection){
-         var data = selection.__data__;
-         var dir = getDirection(data);
-         switch(dir){
-           case('right'):
-           case('root'):
-             selectNode(data.parent || data.left[0]);
-             break;
-           case('left'):
-             selectNode((data.children||[])[0]);
-             break;
-           default:
-             break;
-         }
-       }
-     });
+Mousetrap.bind('left', function () {
+    // left key pressed
+    var selection = d3.select(".node.selected")[0][0];
+    if (selection) {
+        var data = selection.__data__;
+        var dir = getDirection(data);
+        switch (dir) {
+            case('right'):
+            case('root'):
+                selectNode(data.parent || data.left[0]);
+                break;
+            case('left'):
+                selectNode((data.children || [])[0]);
+                break;
+            default:
+                break;
+        }
+    }
+});
 
-     Mousetrap.bind('right', function(){
-       // right key pressed
-       var selection = d3.select(".node.selected")[0][0];
-       if(selection){
-         var data = selection.__data__;
-         var dir = getDirection(data);
-         switch(dir){
-           case('left'):
-           case('root'):
-             selectNode(data.parent || data.right[0]);
-             break;
-           case('right'):
-             selectNode((data.children||[])[0]);
-             break;
-           default:
-             break;
-         }
-       }
-     });
+Mousetrap.bind('right', function () {
+    // right key pressed
+    var selection = d3.select(".node.selected")[0][0];
+    if (selection) {
+        var data = selection.__data__;
+        var dir = getDirection(data);
+        switch (dir) {
+            case('left'):
+            case('root'):
+                selectNode(data.parent || data.right[0]);
+                break;
+            case('right'):
+                selectNode((data.children || [])[0]);
+                break;
+            default:
+                break;
+        }
+    }
+});
