@@ -43,7 +43,7 @@ MindMap = function () {
         getWidth = function (d) {
             var width = 80;
             if (d && d.name && typeof d.name == 'string')
-                width = d.name.length * 5 + 10;
+                width = d.name.length * 6 + 12;
             return width;
         },
         idx = 0,
