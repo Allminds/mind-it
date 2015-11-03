@@ -28,8 +28,21 @@ var select = function (node) {
     d3.select(".selected rect").remove();
     d3.select(".selected").classed("selected", false);
 
+    if (!this.position && directionToggler.canToggle) {
+        switch (directionToggler.currentDir) {
+            case "left" :
+                directionToggler.currentDir = "right";
+                break;
+            case "right":
+                directionToggler.currentDir = "left";
+                break;
+        }
+        directionToggler.canToggle = false;
+    }
     // Select current item
     d3.select(node).classed("selected", true);
+
+
 
     if (d3.select(node).select("ellipse")[0][0])
         return;
