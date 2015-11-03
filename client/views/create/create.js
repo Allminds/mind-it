@@ -28,19 +28,6 @@ var select = function (node) {
     d3.select(".selected rect").remove();
     d3.select(".selected").classed("selected", false);
 
-
-     if (!this.position && directionToggler.canToggle) {
-                switch (directionToggler.currentDir) {
-                    case "left" :
-                        directionToggler.currentDir = "right";
-                        break;
-                    case "right":
-                        directionToggler.currentDir = "left";
-                        break;
-                }
-                directionToggler.canToggle = false;
-            }
-
     // Select current item
     d3.select(node).classed("selected", true);
 
@@ -56,7 +43,6 @@ var select = function (node) {
     rect.setAttribute("width", bBox.width);
     rect.setAttribute("height", bBox.height);
     node.insertBefore(rect, text);
-
 
 };
 
@@ -78,14 +64,10 @@ var showEditor = function () {
 
     var parentElement = d3.select(this.children[0].parentNode),
         currentElement = parentElement.select('text');
-           currentElement = parentElement.select('text');
-          var position = currentElement.node().getBBox();
 
 
     var inp = parentElement.append("foreignObject")
-             .attr("x",position.x)
-             .attr("y",position.y)
-            .append("xhtml:form").append("input");
+        .append("xhtml:form").append("input");
 
     function resetEditor() {
         currentElement.attr("visibility", "");
@@ -193,6 +175,8 @@ Mousetrap.bind('enter', function () {
         };
 
         newNode._id = mindMapService.addNode(newNode);
+        
+        
 
         cl.push(newNode);
         chart.update();
@@ -201,7 +185,6 @@ Mousetrap.bind('enter', function () {
         })[0][0];
         showEditor.call(sel);
         return false;
-
 
     }
 });
@@ -342,4 +325,3 @@ Mousetrap.bind('right', function () {
         }
     }
 });
-
