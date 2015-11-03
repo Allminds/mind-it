@@ -28,6 +28,19 @@ var select = function (node) {
     d3.select(".selected rect").remove();
     d3.select(".selected").classed("selected", false);
 
+
+     if (!this.position && directionToggler.canToggle) {
+                switch (directionToggler.currentDir) {
+                    case "left" :
+                        directionToggler.currentDir = "right";
+                        break;
+                    case "right":
+                        directionToggler.currentDir = "left";
+                        break;
+                }
+                directionToggler.canToggle = false;
+            }
+
     // Select current item
     d3.select(node).classed("selected", true);
 
@@ -43,6 +56,7 @@ var select = function (node) {
     rect.setAttribute("width", bBox.width);
     rect.setAttribute("height", bBox.height);
     node.insertBefore(rect, text);
+
 
 };
 
@@ -64,10 +78,14 @@ var showEditor = function () {
 
     var parentElement = d3.select(this.children[0].parentNode),
         currentElement = parentElement.select('text');
+           currentElement = parentElement.select('text');
+          var position = currentElement.node().getBBox();
 
 
     var inp = parentElement.append("foreignObject")
-        .append("xhtml:form").append("input");
+             .attr("x",position.x)
+             .attr("y",position.y)
+            .append("xhtml:form").append("input");
 
     function resetEditor() {
         currentElement.attr("visibility", "");
@@ -92,8 +110,8 @@ var showEditor = function () {
         this.value = this.value;
         this.focus();
         this.select();
-    }).attr("style", "height:30px;")
-        .style("width", "auto")
+    }).attr("style", "height:25px;")
+      .style("width", "auto")
         .on("blur", updateNode)
         .on("keydown", function () {
             // IE fix
@@ -128,17 +146,6 @@ var chart = MindMap()
     })
     .click(function (d) {
         select(this);
-        if (!this.position && directionToggler.canToggle) {
-            switch (directionToggler.currentDir) {
-                case "left" :
-                    directionToggler.currentDir = "right";
-                    break;
-                case "right":
-                    directionToggler.currentDir = "left";
-                    break;
-            }
-            directionToggler.canToggle = false;
-        }
     })
     .dblClick(showEditor);
 
@@ -229,10 +236,12 @@ Mousetrap.bind('del', function () {
             return node.__data__._id == data.parent._id;
         });
         // Find previously selected, unselect
-        d3.select(".selected").classed("selected", false);
-        // Select current item
-        d3.select(rootNode).classed("selected", true);
+//        d3.select(".selected").classed("selected", false);
+//        // Select current item
+//        d3.select(rootNode).classed("selected", true);
 
+
+        select(rootNode);
     }
 });
 
