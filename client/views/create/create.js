@@ -6,8 +6,7 @@ var directionToggler = {
 
 
 Template.create.rendered = function rendered() {
-    rootNodeData = mindMapService.buildTree(this.data.id, this.data.data);
-    update(rootNodeData);
+    update(mindMapService.buildTree(this.data.id, this.data.data));
     var rootNode = d3.selectAll('.node')[0].find(function (node) {
         return !node.__data__.position;
     });
@@ -60,7 +59,6 @@ var selectNode = function (target) {
 };
 
 var showEditor = function () {
-console.log(this);
     var self = this,
         nodeData = this.__data__;
 
@@ -81,9 +79,9 @@ console.log(this);
         mindMapService.updateNode(nodeData._id, {name: nodeData.name});
         resetEditor();
         chart.update();
-        setTimeout(function(){
+        setTimeout(function () {
             selectNode(nodeData);
-        },10);
+        }, 10);
     };
 
     currentElement.attr("visibility", "hidden");
@@ -123,13 +121,12 @@ console.log(this);
 
 var dims = getDims();
 var chart = MindMap()
-    .width(dims.width)
+    .width(800)
     .height(dims.height - 10)
     .text(function (d) {
         return d.name || d.text;
     })
     .click(function (d) {
-        console.log(d._id);
         select(this);
         if (!this.position && directionToggler.canToggle) {
             switch (directionToggler.currentDir) {
@@ -150,6 +147,13 @@ var update = function (data) {
     d3.select('#mindmap svg')
         .datum(data)
         .call(chart);
+    chart.update();
+    var $mindMap = $('#mindmap'),
+        scrollWidth = $mindMap.scrollLeft(Number.MAX_VALUE).scrollLeft(),
+        scrollHeight = $mindMap.scrollTop(Number.MAX_VALUE).scrollTop();
+    $mindMap.scrollLeft(scrollWidth / 2);
+    $mindMap.scrollTop(scrollHeight / 2);
+
 };
 var getDirection = function (data) {
     if (!data) {
@@ -167,27 +171,29 @@ Mousetrap.bind('enter', function () {
         var data = selection.__data__;
         var dir = getDirection(data);
 
-   
-            if (dir === 'root') {
-                directionToggler.canToggle = true;
-                dir = directionToggler.currentDir;
-            }
-            var cl = data[dir] || data.children || data._children;
-            if (!cl) {
-                cl = data.children = [];
-            }
-            var newNode = {
-                name: "default", position: dir,
-                parent_ids: [].concat(data.parent_ids || []).concat([data._id])
-            };
 
-            newNode._id = mindMapService.addNode(newNode);
+        if (dir === 'root') {
+            directionToggler.canToggle = true;
+            dir = directionToggler.currentDir;
+        }
+        var cl = data[dir] || data.children || data._children;
+        if (!cl) {
+            cl = data.children = [];
+        }
+        var newNode = {
+            name: "default", position: dir,
+            parent_ids: [].concat(data.parent_ids || []).concat([data._id])
+        };
 
-            cl.push(newNode);
-            chart.update();
-            var sel = d3.selectAll('#mindmap svg .node').filter(function(d){return d._id== newNode._id})[0][0];
-            showEditor.call(sel);
-            return false;
+        newNode._id = mindMapService.addNode(newNode);
+
+        cl.push(newNode);
+        chart.update();
+        var sel = d3.selectAll('#mindmap svg .node').filter(function (d) {
+            return d._id == newNode._id
+        })[0][0];
+        showEditor.call(sel);
+        return false;
 
 
     }
@@ -327,3 +333,4 @@ Mousetrap.bind('right', function () {
         }
     }
 });
+

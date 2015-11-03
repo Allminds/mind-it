@@ -24,14 +24,6 @@ h1 {
     font-size: 400%;
 }
 
-#mindmap {
-    border: 1px solid silver;
-    overflow: scroll;
-    height: 700px;
-    background-color: white;
-    margin: .5em;
-}
-
 .button-0 {
     padding: 10px 40px;
     font-family: 'Helvetica', cursive;

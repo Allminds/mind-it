@@ -29,6 +29,7 @@ MindMap = function () {
     "use strict";
     var
         margin = {top: 20, left: 120, bottom: 20, right: 120},
+        defaultWidth = null,
         width = 960,
         height = 500,
         duration = 500,
@@ -116,8 +117,20 @@ MindMap = function () {
                 .size([h, w]);
 
             chart.update = function () {
+                updateWidth();
                 container.transition().duration(duration).call(chart);
             };
+            var maxDepth = function (node) {
+                return (node.children || []).reduce(function (depth, child) {
+                    var childDepth = maxDepth(child);
+                    return childDepth > depth ? childDepth : depth;
+                }, node.depth);
+            };
+            var updateWidth = function () {
+                var depth = maxDepth(container.select('.node.rootNode').data()[0]);
+                defaultWidth = defaultWidth == null ? width : defaultWidth;
+                chart.width(defaultWidth + depth * 150);
+            }
             // Ensure we have Left and Right node lists
             if (!(root.left || root.right)) {
                 var i = 0, l = (root.children || []).length;
