@@ -256,10 +256,6 @@ Mousetrap.bind('del', function () {
         var rootNode = d3.selectAll('.node')[0].find(function (node) {
             return node.__data__._id == data.parent._id;
         });
-        // Find previously selected, unselect
-//        d3.select(".selected").classed("selected", false);
-//        // Select current item
-//        d3.select(rootNode).classed("selected", true);
 
 
         select(rootNode);
@@ -363,3 +359,40 @@ Mousetrap.bind('right', function () {
         }
     }
 });
+
+
+function collapse(d) {
+       if (d.hasOwnProperty('children') && d.children) {
+            d._children = [];
+            d._children = d.children;
+            d._children.forEach(collapse);
+            d.children = null;
+    }
+}
+
+function expand(d) {
+    if (d.hasOwnProperty('_children') && d._children) {
+        d.children = d._children;
+        d.children.forEach(expand);
+        d._children = null;
+    }
+}
+
+Mousetrap.bind('shift', function (){
+    var selected = d3.select(".selected")[0][0].__data__;
+    var dir = getDirection(selected);
+    if(dir !== 'root'){
+     if (selected.hasOwnProperty('_children') && selected._children){
+        expand(selected);
+     }
+     else {
+        collapse(selected);
+     }
+    chart.update();
+    }
+});
+
+
+
+
+
