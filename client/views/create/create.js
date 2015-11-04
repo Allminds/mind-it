@@ -186,7 +186,7 @@ map.addNewNode = function (parent, newNodeName) {
         dir = directionToggler.currentDir;
     }
     var newNode = {
-        name: "default", position: dir,
+        name: "", position: dir,
         parent_ids: [].concat(parent.parent_ids || []).concat([parent._id])
     };
     newNode._id = mindMapService.addNode(newNode);
