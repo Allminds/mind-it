@@ -55,14 +55,32 @@ MindMap = function () {
             });
         },
         enterNode = function (node) {
+
+
+
             var rootNode = getRootNode(node);
             d3.select(rootNode).append("svg:ellipse")
                 .attr("rx", 1e-6)
                 .attr("ry", 1e-6)
             d3.select(rootNode).classed('rootNode', true);
+            console.log("printing text: ");
+
+
+
+            //if(node.data()[0].name === ""){console.log("Empty hu");}
+                node.append("svg:ellipse")
+                .attr("rx", 10)
+                .attr("ry", 10)
+                .style("fill","white")
+                .style("stroke-width",0)
+                .on("mouseover", function(){return d3.select(this).style("stroke-width", 1);})
+                .on("mouseout", function(){return d3.select(this).style("stroke-width", 0);});
+
 
             node.append("svg:text")
                 .text(text);
+
+
         },
         updateNode = function (node) {
             node.select("text")
@@ -335,10 +353,12 @@ MindMap.elbow = function (d) {
         "H" + (source.y + hy) +
         "V" + target.x + "H" + target.y;
 };
+
 MindMap.diagonal = d3.svg.diagonal()
     .projection(function (d) {
         return [d.y, d.x];
     });
+
 MindMap.loadFreeMind = function (fileName, callback) {
     d3.xml(fileName, 'application/xml', function (err, xml) {
         // Changes XML to JSON

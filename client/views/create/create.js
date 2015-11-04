@@ -25,6 +25,8 @@ getDims = function () {
 
 var select = function (node) {
     // Find previously selected, unselect
+
+
     d3.select(".selected rect").remove();
     d3.select(".selected").classed("selected", false);
 
@@ -43,8 +45,6 @@ var select = function (node) {
     d3.select(node).classed("selected", true);
 
 
-    if (d3.select(node).select("ellipse")[0][0])
-        return;
 
     var text = d3.select(node).select("text")[0][0],
         bBox = text.getBBox(),
