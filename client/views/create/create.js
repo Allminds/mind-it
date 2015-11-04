@@ -28,7 +28,7 @@ var select = function (node) {
     d3.select(".selected rect").remove();
     d3.select(".selected").classed("selected", false);
 
-    if (!this.position && directionToggler.canToggle) {
+    if (!node.__data__.position && directionToggler.canToggle) {
         switch (directionToggler.currentDir) {
             case "left" :
                 directionToggler.currentDir = "right";
@@ -41,7 +41,6 @@ var select = function (node) {
     }
     // Select current item
     d3.select(node).classed("selected", true);
-
 
 
     if (d3.select(node).select("ellipse")[0][0])
@@ -106,7 +105,7 @@ var showEditor = function () {
         this.focus();
         this.select();
     }).attr("style", "height:25px;")
-      .style("width", "auto")
+        .style("width", "auto")
         .on("blur", updateNode)
         .on("keydown", function () {
             // IE fix
@@ -167,39 +166,60 @@ var getDirection = function (data) {
     return getDirection(data.parent);
 };
 
-Mousetrap.bind('enter', function () {
-    var selection = d3.select(".node.selected")[0][0];
-    if (selection) {
-        var data = selection.__data__;
-        var dir = getDirection(data);
+var map = {};
+map.selectedNodeData = function () {
+    var selecedNode = d3.select(".node.selected")[0][0];
+    return selecedNode ? selecedNode.__data__ : null;
+};
 
+map.addNewNode = function (parent, newNodeName) {
 
-        if (dir === 'root') {
-            directionToggler.canToggle = true;
-            dir = directionToggler.currentDir;
-        }
-        var cl = data[dir] || data.children || data._children;
-        if (!cl) {
-            cl = data.children = [];
-        }
-        var newNode = {
-            name: "default", position: dir,
-            parent_ids: [].concat(data.parent_ids || []).concat([data._id])
-        };
+    var dir = getDirection(parent);
 
-        newNode._id = mindMapService.addNode(newNode);
-        
-        
-
-        cl.push(newNode);
-        chart.update();
-        var sel = d3.selectAll('#mindmap svg .node').filter(function (d) {
-            return d._id == newNode._id
-        })[0][0];
-        showEditor.call(sel);
-        return false;
-
+    if (dir === 'root') {
+        directionToggler.canToggle=true;
+        dir = directionToggler.currentDir;
     }
+    var newNode = {
+        name: "default", position: dir,
+        parent_ids: [].concat(parent.parent_ids || []).concat([parent._id])
+    };
+    newNode._id = mindMapService.addNode(newNode);
+    var children = parent[dir] || parent.children || parent._children;
+    if (!children) {
+        children = parent.children = [];
+    }
+    children.push(newNode);
+
+    chart.update();
+    return newNode;
+}
+map.makeEditable = function (nodeId) {
+    var node = map.getNodeData(nodeId);
+    if (node)
+        showEditor.call(node);
+};
+map.getNodeData = function (nodeId) {
+    return d3.selectAll('#mindmap svg .node').filter(function (d) {
+        return d._id == nodeId
+    })[0][0];
+};
+Mousetrap.bind('enter', function () {
+    var selectedNode = map.selectedNodeData();
+    if (!selectedNode) return false;
+    var parent = selectedNode.parent || selectedNode,
+        newNode = map.addNewNode(parent, 'default');
+
+    map.makeEditable(newNode._id);
+    return false;
+});
+Mousetrap.bind('tab', function () {
+    var selectedNode = map.selectedNodeData();
+    if (!selectedNode) return false;
+    var newNode = map.addNewNode(selectedNode, 'default');
+
+    map.makeEditable(newNode._id);
+    return false;
 });
 
 Mousetrap.bind('del', function () {

@@ -324,7 +324,6 @@ MindMap = function () {
         handleDblClick = _;
         return chart;
     }
-
     return chart;
 };
 
