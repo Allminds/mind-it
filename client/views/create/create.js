@@ -77,9 +77,14 @@ var showEditor = function () {
     var parentElement = d3.select(this.children[0].parentNode),
         currentElement = parentElement.select('text');
 
+    var position = currentElement.node().getBBox();
+
 
     var inp = parentElement.append("foreignObject")
-        .append("xhtml:form").append("input");
+        .attr("x", position.x - 25)
+        .attr("y", position.y - 10)
+        .append("xhtml:form")
+        .append("input");
 
     function resetEditor() {
         currentElement.attr("visibility", "");
