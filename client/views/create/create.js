@@ -103,7 +103,7 @@ var select = function (node) {
     d3.select(node).classed("selected", true);
 
 
-    if (dd3.select(node).selectAll("ellipse")[0].length == 2)
+    if (d3.select(node).selectAll("ellipse")[0].length == 2)
         return;
 
     var text = d3.select(node).select("text")[0][0],
