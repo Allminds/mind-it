@@ -104,6 +104,7 @@ var showEditor = function () {
     currentElement.attr("visibility", "hidden");
 
     inp.attr("value", function () {
+        previousText = nodeData.name;
         return nodeData.name;
     }).attr('', function () {
         this.value = this.value;
@@ -129,6 +130,7 @@ var showEditor = function () {
 
 
             if (e.keyCode == 27) {
+                inp.node().value = previousText;
                 resetEditor();
                 e.preventDefault();
             }
