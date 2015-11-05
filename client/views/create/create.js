@@ -4,14 +4,74 @@ var directionToggler = {
     canToggle: false
 };
 
+var tracker = {
+    added: function (id, fields) {
+        var newNode = map.getNodeData(id);
+        if (newNode)
+            return;
+
+        newNode = fields;
+        newNode._id = id;
+        var parent = map.getNodeData(newNode.parent_ids[newNode.parent_ids.length - 1]);
+        if (parent)
+            parent = parent.__data__;
+        map.addNodeToUI(parent, newNode);
+    },
+    changed: function (id, fields) {
+        var updatedNode = map.getNodeData(id);
+        if (!updatedNode) return;
+
+        var nodeBeingEdited = map.getEditingNode();
+
+        if (nodeBeingEdited && nodeBeingEdited._id === id)
+            return;
+
+        updatedNode = updatedNode.__data__;
+        updatedNode.name = fields.name;
+        chart.update();
+        var selectedNode = map.selectedNodeData();
+        // redraw gray box
+        if (selectedNode && selectedNode._id === id) {
+            setTimeout(function () {
+                selectNode(selectedNode);
+            }, 10);
+        }
+    },
+    just_deleted: null,
+    removed: function (id) {
+        var deletedNode = map.getNodeData(id);
+        if (!deletedNode) return;
+
+        deletedNode = deletedNode.__data__;
+
+        var alreadyRemoved = deletedNode.parent_ids.some(function (parent_id) {
+            return tracker.just_deleted == parent_id;
+        });
+        if (alreadyRemoved) return;
+
+        var children = deletedNode.parent[deletedNode.position] || deletedNode.parent.children;
+
+        var delNodeIndex = children.indexOf(deletedNode);
+        if (delNodeIndex >= 0) {
+            children.splice(delNodeIndex, 1);
+            chart.update();
+            selectNode(deletedNode.parent);
+            tracker.just_deleted = id;
+        }
+    }
+};
 
 Template.create.rendered = function rendered() {
-    update(mindMapService.buildTree(this.data.id, this.data.data));
+    console.log(this.data.data)
+    var tree = mindMapService.buildTree(this.data.id, this.data.data);
+    console.log(tree);
+    update(tree);
     var rootNode = d3.selectAll('.node')[0].find(function (node) {
         return !node.__data__.position;
     });
 
     select(rootNode);
+    Mindmaps.find().observeChanges(tracker);
 };
 
 var getDims;
@@ -66,8 +126,10 @@ var selectNode = function (target) {
         })[0][0];
         if (sel) {
             select(sel);
+            return true;
         }
     }
+    return false;
 };
 
 var showEditor = function () {
@@ -102,7 +164,7 @@ var showEditor = function () {
     };
 
     currentElement.attr("visibility", "hidden");
-
+    var escaped = false;
     inp.attr("value", function () {
         return nodeData.name;
     }).attr('', function () {
@@ -111,7 +173,11 @@ var showEditor = function () {
         this.select();
     }).attr("style", "height:25px;")
         .style("width", "auto")
-        .on("blur", updateNode)
+        .on("blur", function () {
+            if (escaped) return;
+            updateNode();
+            escaped = false;
+        })
         .on("keydown", function () {
             // IE fix
             if (!d3.event)
@@ -129,6 +195,7 @@ var showEditor = function () {
 
 
             if (e.keyCode == 27) {
+                escaped = true;
                 resetEditor();
                 e.preventDefault();
             }
@@ -176,13 +243,20 @@ map.selectedNodeData = function () {
     var selecedNode = d3.select(".node.selected")[0][0];
     return selecedNode ? selecedNode.__data__ : null;
 };
-
+map.addNodeToUI = function (parent, newNode) {
+    var children = parent[newNode.position] || parent.children || parent._children;
+    if (!children) {
+        children = parent.children = [];
+    }
+    children.push(newNode);
+    chart.update();
+}
 map.addNewNode = function (parent, newNodeName) {
 
     var dir = getDirection(parent);
 
     if (dir === 'root') {
-        directionToggler.canToggle=true;
+        directionToggler.canToggle = true;
         dir = directionToggler.currentDir;
     }
     var newNode = {
@@ -190,13 +264,7 @@ map.addNewNode = function (parent, newNodeName) {
         parent_ids: [].concat(parent.parent_ids || []).concat([parent._id])
     };
     newNode._id = mindMapService.addNode(newNode);
-    var children = parent[dir] || parent.children || parent._children;
-    if (!children) {
-        children = parent.children = [];
-    }
-    children.push(newNode);
-
-    chart.update();
+    // let the subscribers to update their mind map :)
     return newNode;
 }
 map.makeEditable = function (nodeId) {
@@ -208,6 +276,10 @@ map.getNodeData = function (nodeId) {
     return d3.selectAll('#mindmap svg .node').filter(function (d) {
         return d._id == nodeId
     })[0][0];
+};
+map.getEditingNode = function () {
+    var editingNode = d3.select(".node foreignobject")[0][0];
+    return editingNode ? editingNode.__data__ : null;
 };
 Mousetrap.bind('enter', function () {
     var selectedNode = map.selectedNodeData();
@@ -222,48 +294,27 @@ Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
     var newNode = map.addNewNode(selectedNode, 'default');
-
     map.makeEditable(newNode._id);
     return false;
 });
 
 Mousetrap.bind('del', function () {
-    var selection = d3.select(".node.selected")[0][0];
-    if (selection) {
-        var data = selection.__data__;
-        var dir = getDirection(data);
-        if (dir === 'root') {
-            alert('Can\'t delete root');
-            return;
-        }
-        var cl = data.parent[dir] || data.parent.children;
-        if (!cl) {
-            alert('Could not locate children');
-            return;
-        }
-        var i = 0, l = cl.length;
-        for (; i < l; i++) {
-            if (cl[i]._id === data._id) {
-                if (confirm('Sure you want to delete ' + data.name + '?') === true) {
-                    cl.splice(i, 1);
-                }
-                break;
-            }
-        }
-        Meteor.call('deleteNode', data._id);
-
-        chart.update();
-        var rootNode = d3.selectAll('.node')[0].find(function (node) {
-            return node.__data__._id == data.parent._id;
-        });
-        // Find previously selected, unselect
-//        d3.select(".selected").classed("selected", false);
-//        // Select current item
-//        d3.select(rootNode).classed("selected", true);
+    var selectedNode = map.selectedNodeData();
+    if (!selectedNode) return;
+    var dir = getDirection(selectedNode);
 
 
-        select(rootNode);
+    if (dir === 'root') {
+        alert('Can\'t delete root');
+        return;
     }
+    var children = selectedNode.parent[dir] || selectedNode.parent.children;
+    if (!children) {
+        alert('Could not locate children');
+        return;
+    }
+    Meteor.call('deleteNode', selectedNode._id);
+    selectNode(selectedNode.parent);
 });
 
 Mousetrap.bind('up', function () {
