@@ -429,9 +429,9 @@ function collapse(d) {
 
 function expand(d) {
         if (d.hasOwnProperty('_children') && d._children) {
-                d.children = d._children;
-                d.children.forEach(expand);
-                d._children = null;
+              d.children = d._children;
+              expand(d.children);
+              d._children = null;
         }
 }
 
