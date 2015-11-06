@@ -71,7 +71,7 @@ MindMap = function () {
                 node.append("svg:ellipse")
                 .attr("rx", 10)
                 .attr("ry", 10)
-                .style("fill","white")
+                .style("fill","transparent")
                 .style("stroke-width",0)
                 .on("mouseover", function(){return d3.select(this).style("stroke-width", 1);})
                 .on("mouseout", function(){return d3.select(this).style("stroke-width", 0);});
