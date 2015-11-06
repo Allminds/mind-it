@@ -57,24 +57,23 @@ MindMap = function () {
         enterNode = function (node) {
 
 
-
             var rootNode = getRootNode(node);
             d3.select(rootNode).append("svg:ellipse")
                 .attr("rx", 1e-6)
                 .attr("ry", 1e-6)
             d3.select(rootNode).classed('rootNode', true);
-            console.log("printing text: ");
 
-
-
-            //if(node.data()[0].name === ""){console.log("Empty hu");}
-                node.append("svg:ellipse")
+            node.append("svg:ellipse")
                 .attr("rx", 10)
                 .attr("ry", 10)
-                .style("fill","transparent")
-                .style("stroke-width",0)
-                .on("mouseover", function(){return d3.select(this).style("stroke-width", 1);})
-                .on("mouseout", function(){return d3.select(this).style("stroke-width", 0);});
+                .style("fill", "transparent")
+                .style("stroke-width", 0)
+                .on("mouseover", function () {
+                    return d3.select(this).style("stroke-width", 1);
+                })
+                .on("mouseout", function () {
+                    return d3.select(this).style("stroke-width", 0);
+                });
 
 
             node.append("svg:text")
@@ -167,30 +166,37 @@ MindMap = function () {
                 }
             }
 
-            // Compute the new tree layout.
-            var nodesLeft = tree
+             //Compute the new tree layout.
+            function right(d) {
+                return d.right ? d.right : d.children;
+            };
+            function left(d) {
+                return d.left ? d.left : d.children;
+            };
+            var first = root.left.length > 0 ? left : right,
+                second = root.right.length > 0 ? right : left;
+
+            var firstSet = tree
                 .size([h, (w / 2) - 20])
-                .children(function (d) {
-                    return d.left ? d.left : d.children;
-                })
+                .children(first)
                 .nodes(root)
                 .reverse();
-            var nodesRight = tree
+            var secondSet = tree
                 .size([h, w / 2])
-                .children(function (d) {
-                    return d.right ? d.right : d.children;
-                })
+                .children(second)
                 .nodes(root)
                 .reverse();
+
             root.children = root.left.concat(root.right);
+
             var nodes = window.nodes = (function (left, right) {
                 var root = right[right.length - 1];
                 left.pop();
                 left.forEach(function (node) {
-                    node.y = -node.y;
+                    node.y = (node.position == 'left' ? -1 : 1) *node.y;
                 });
                 return left.concat(right);
-            })(nodesLeft, nodesRight);
+            })(firstSet, secondSet);
 
             // Update the nodes…
             var node = vis.selectAll("g.node")
