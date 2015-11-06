@@ -62,9 +62,8 @@ var tracker = {
 };
 
 Template.create.rendered = function rendered() {
-    console.log(this.data.data)
+
     var tree = mindMapService.buildTree(this.data.id, this.data.data);
-    console.log(tree);
     update(tree);
     var rootNode = d3.selectAll('.node')[0].find(function (node) {
         return !node.__data__.position;
