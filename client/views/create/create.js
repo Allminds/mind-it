@@ -413,3 +413,39 @@ Mousetrap.bind('right', function () {
         }
     }
 });
+
+
+
+
+function collapse(d) {
+    if (d.hasOwnProperty('children') && d.children) {
+            d._children = [];
+            d._children = d.children;
+            d._children.forEach(collapse);
+            d.children = null;
+        }
+}
+
+
+function expand(d) {
+        if (d.hasOwnProperty('_children') && d._children) {
+              d.children = d._children;
+              expand(d.children);
+              d._children = null;
+        }
+}
+
+
+Mousetrap.bind('shift', function (){
+        var selected = d3.select(".selected")[0][0].__data__;
+        var dir = getDirection(selected);
+        if(dir !== 'root'){
+                if (selected.hasOwnProperty('_children') && selected._children){
+                expand(selected);
+        }
+        else {
+                collapse(selected);
+        }
+                chart.update();
+        }
+});
