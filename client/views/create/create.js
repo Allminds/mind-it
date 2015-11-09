@@ -139,7 +139,14 @@ var showEditor = function () {
         currentElement = parentElement.select('text');
 
     var position = currentElement.node().getBBox();
-
+    if (nodeData.name && nodeData.name.length >= 50) {
+        var updatedName = prompt('Name', nodeData.name);
+        if (updatedName) {
+            mindMapService.updateNode(nodeData._id, {name: updatedName});
+            chart.update();
+        }
+        return;
+    }
 
     var inp = parentElement.append("foreignObject")
         .attr("x", position.x - 25)
@@ -415,37 +422,35 @@ Mousetrap.bind('right', function () {
 });
 
 
-
-
 function collapse(d) {
     if (d.hasOwnProperty('children') && d.children) {
-            d._children = [];
-            d._children = d.children;
-            d._children.forEach(collapse);
-            d.children = null;
-        }
+        d._children = [];
+        d._children = d.children;
+        d._children.forEach(collapse);
+        d.children = null;
+    }
 }
 
 
 function expand(d) {
-        if (d.hasOwnProperty('_children') && d._children) {
-              d.children = d._children;
-              expand(d.children);
-              d._children = null;
-        }
+    if (d.hasOwnProperty('_children') && d._children) {
+        d.children = d._children;
+        expand(d.children);
+        d._children = null;
+    }
 }
 
 
-Mousetrap.bind('shift', function (){
-        var selected = d3.select(".selected")[0][0].__data__;
-        var dir = getDirection(selected);
-        if(dir !== 'root'){
-                if (selected.hasOwnProperty('_children') && selected._children){
-                expand(selected);
+Mousetrap.bind('shift', function () {
+    var selected = d3.select(".selected")[0][0].__data__;
+    var dir = getDirection(selected);
+    if (dir !== 'root') {
+        if (selected.hasOwnProperty('_children') && selected._children) {
+            expand(selected);
         }
         else {
-                collapse(selected);
+            collapse(selected);
         }
-                chart.update();
-        }
+        chart.update();
+    }
 });
