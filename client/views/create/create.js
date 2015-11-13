@@ -287,15 +287,43 @@ map.getEditingNode = function () {
     var editingNode = d3.select(".node foreignobject")[0][0];
     return editingNode ? editingNode.__data__ : null;
 };
+
+map.storeSourceNode=function(sourceNode){
+        map.sourceNode=sourceNode;
+};
+
+map.getSourceNode=function(){
+    return d3.select(".selected")[0][0].__data__;
+};
+
+Mousetrap.bind('command+c',function(){
+		sourceNode = map.getSourceNode();
+        map.storeSourceNode(sourceNode);
+});
+
+Mousetrap.bind('command+v',function(){
+	 targetNode = d3.select(".selected")[0][0].__data__;
+	 sourceNode = map.sourceNode;
+	 mindMapService.updateDB(targetNode,sourceNode);
+	 sourceNode = map.sourceNode;
+	 sourceNode.children.forEach.call(sourceNode.children, function(child) {
+        // Do something with `child`
+       // mindMapService.updateDB(targetNode,child);
+     Mindmaps.update({_id:child._id},{$set : {position:targetNode.position}});
+
+    });
+});
+
 Mousetrap.bind('enter', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
     var parent = selectedNode.parent || selectedNode,
-        newNode = map.addNewNode(parent, 'default');
-
+    newNode = map.addNewNode(parent, 'default');
     map.makeEditable(newNode._id);
     return false;
 });
+
+
 Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
@@ -421,7 +449,6 @@ Mousetrap.bind('right', function () {
     }
 });
 
-
 function collapse(d) {
     if (d.hasOwnProperty('children') && d.children) {
         d._children = [];
@@ -454,3 +481,4 @@ Mousetrap.bind('shift', function () {
         chart.update();
     }
 });
+
