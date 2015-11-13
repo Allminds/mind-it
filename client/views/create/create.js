@@ -322,8 +322,6 @@ Mousetrap.bind('enter', function () {
     map.makeEditable(newNode._id);
     return false;
 });
-
-
 Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
@@ -449,7 +447,11 @@ Mousetrap.bind('right', function () {
     }
 });
 
-function collapse(d) {
+
+function collapse(d,id) {
+    if(d._id === id) {
+            d.isCollapsed = true;
+        }
     if (d.hasOwnProperty('children') && d.children) {
         d._children = [];
         d._children = d.children;
@@ -459,10 +461,13 @@ function collapse(d) {
 }
 
 
-function expand(d) {
-    if (d.hasOwnProperty('_children') && d._children) {
+function expand(d,id) {
+    if(d._id === id) {
+        d.isCollapsed = false;
+    }
+    if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
         d.children = d._children;
-        expand(d.children);
+        d._children.forEach(expand);
         d._children = null;
     }
 }
@@ -473,12 +478,11 @@ Mousetrap.bind('shift', function () {
     var dir = getDirection(selected);
     if (dir !== 'root') {
         if (selected.hasOwnProperty('_children') && selected._children) {
-            expand(selected);
+            expand(selected,selected._id);
         }
         else {
-            collapse(selected);
+            collapse(selected,selected._id);
         }
         chart.update();
     }
 });
-
