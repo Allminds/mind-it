@@ -165,6 +165,7 @@ var showEditor = function () {
         resetEditor();
         chart.update();
         setTimeout(function () {
+            chart.update();
             selectNode(nodeData);
         }, 10);
     };

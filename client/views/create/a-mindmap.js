@@ -114,8 +114,8 @@ MindMap = function () {
 
             var container = d3.select(this);
             var vis = container
-                    .attr("width", width)
-                    .attr("height", height)
+                .attr("width", width)
+                .attr("height", height)
                 ;
             var graphRoot = vis.select('g');
             if (!graphRoot[0][0]) {
@@ -166,7 +166,7 @@ MindMap = function () {
                 }
             }
 
-             //Compute the new tree layout.
+            //Compute the new tree layout.
             function right(d) {
                 return d.right ? d.right : d.children;
             };
@@ -190,12 +190,15 @@ MindMap = function () {
             root.children = root.left.concat(root.right);
 
             var nodes = window.nodes = (function (left, right) {
-                var root = right[right.length - 1];
                 left.pop();
-                left.forEach(function (node) {
-                    node.y = (node.position == 'left' ? -1 : 1) *node.y;
+                var result = left.concat(right);
+                result.forEach(function (node) {
+                    var dir = node.position == 'left' ? -1 : 1;
+                    node.y = dir * node.y;
+
                 });
-                return left.concat(right);
+
+                return result;
             })(firstSet, secondSet);
 
             // Update the nodes…
@@ -205,11 +208,15 @@ MindMap = function () {
                 });
 
             // Enter any new nodes at the parent's previous position.
+            var translate = function (node) {
+                var parentNode = node.parent || root,
+                    x0 = parentNode.x0 || root.x0,
+                    y0 = parentNode.y0 || root.y0;
+                return "translate(" + y0 + "," + x0 + ")";
+            };
             var nodeEnter = node.enter().append("svg:g")
                 .attr("class", "node")
-                .attr("transform", function (d) {
-                    return "translate(" + root.y0 + "," + root.x0 + ")";
-                })
+                .attr("transform", translate)
                 .on("click", handleClick)
                 .on("dblclick", handleDblClick);
 
@@ -229,9 +236,7 @@ MindMap = function () {
             // Transition exiting nodes to the parent's new position.
             var nodeExit = node.exit().transition()
                 .duration(duration)
-                .attr("transform", function () {
-                    return "translate(" + root.y + "," + root.x + ")";
-                })
+                .attr("transform", translate)
                 .remove();
 
             exitNode(nodeExit);
@@ -245,8 +250,11 @@ MindMap = function () {
             // Enter any new links at the parent's previous position.
             link.enter().insert("svg:path", "g")
                 .attr("class", "link")
-                .attr("d", function () {
-                    var o = {x: root.x0, y: root.y0};
+                .attr("d", function (path) {
+                    var parentNode = path.source || root,
+                        x0 = parentNode.x0 || root.x0,
+                        y0 = parentNode.y0 || root.y0,
+                        o = {x: x0, y: y0};
                     return connector({source: o, target: o});
                 })
                 .transition()
@@ -261,8 +269,9 @@ MindMap = function () {
             // Transition exiting nodes to the parent's new position.
             link.exit().transition()
                 .duration(duration)
-                .attr("d", function () {
-                    var o = {x: root.x, y: root.y};
+                .attr("d", function (path) {
+                    var parentNode = path.source || root,
+                        o = {x: parentNode.x, y: parentNode.y};
                     return connector({source: o, target: o});
                 })
                 .remove();
@@ -350,7 +359,14 @@ MindMap = function () {
     }
     return chart;
 };
-
+var getTextWidth = function (id) {
+    if (!id) return 0;
+    var text = d3.selectAll('text')[0].filter(function (text) {
+        return text.__data__._id == id;
+    })[0];
+    if (!text) return 0;
+    return text.getBBox().width;
+};
 MindMap.elbow = function (d) {
     var source = d.source;
     var target = d.target;
@@ -359,11 +375,21 @@ MindMap.elbow = function (d) {
         "H" + (source.y + hy) +
         "V" + target.x + "H" + target.y;
 };
+MindMap.diagonal = function (d) {
+    var source = d.source,
+        target = d.target,
+        dir = target.position == 'right' ? 1 : -1,
+        sourceWidth = dir * getTextWidth(source._id) / 2,
+        targetWidth = dir * getTextWidth(target._id) / 2,
 
-MindMap.diagonal = d3.svg.diagonal()
-    .projection(function (d) {
-        return [d.y, d.x];
-    });
+        deltaY = source.y + (target.y - source.y) / 2,
+        path = 'M' + (source.y + sourceWidth) + ',' + source.x +
+            'C' + deltaY + ',' + target.x +
+            ' ' + deltaY + ',' + target.x +
+            ' ' + (target.y - targetWidth) + ',' + target.x +
+            'L' + (target.y + targetWidth) + ',' + target.x;
+    return path;
+};
 
 MindMap.loadFreeMind = function (fileName, callback) {
     d3.xml(fileName, 'application/xml', function (err, xml) {
