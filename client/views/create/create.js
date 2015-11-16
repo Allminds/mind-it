@@ -138,19 +138,24 @@ var showEditor = function () {
     var parentElement = d3.select(this.children[0].parentNode),
         currentElement = parentElement.select('text');
 
-    var position = currentElement.node().getBBox();
+    var position = currentElement.node().getBBox(),
+        inputWidth = position.width > 50 ? position.width : 50;
     if (nodeData.name && nodeData.name.length >= 50) {
         var updatedName = prompt('Name', nodeData.name);
         if (updatedName) {
             mindMapService.updateNode(nodeData._id, {name: updatedName});
             chart.update();
+            setTimeout(function () {
+                chart.update();
+                selectNode(nodeData);
+            }, 10);
         }
         return;
     }
 
     var inp = parentElement.append("foreignObject")
-        .attr("x", position.x - 25)
-        .attr("y", position.y - 10)
+        .attr("x", position.x - (nodeData.name.length == 0 ? 11 : 0))
+        .attr("y", position.y - (nodeData.name.length == 0 ? 18 : 0))
         .append("xhtml:form")
         .append("input");
 
@@ -178,8 +183,7 @@ var showEditor = function () {
         this.value = this.value;
         this.focus();
         this.select();
-    }).attr("style", "height:25px;")
-        .style("width", "auto")
+    }).attr("style", "height:25px;width:" + inputWidth + 'px')
         .on("blur", function () {
             if (escaped) return;
             updateNode();
@@ -289,28 +293,28 @@ map.getEditingNode = function () {
     return editingNode ? editingNode.__data__ : null;
 };
 
-map.storeSourceNode=function(sourceNode){
-        map.sourceNode=sourceNode;
+map.storeSourceNode = function (sourceNode) {
+    map.sourceNode = sourceNode;
 };
 
-map.getSourceNode=function(){
+map.getSourceNode = function () {
     return d3.select(".selected")[0][0].__data__;
 };
 
-Mousetrap.bind('command+c',function(){
-		sourceNode = map.getSourceNode();
-        map.storeSourceNode(sourceNode);
+Mousetrap.bind('command+c', function () {
+    sourceNode = map.getSourceNode();
+    map.storeSourceNode(sourceNode);
 });
 
-Mousetrap.bind('command+v',function(){
-	 targetNode = d3.select(".selected")[0][0].__data__;
-	 sourceNode = map.sourceNode;
-	 mindMapService.updateDB(targetNode,sourceNode);
-	 sourceNode = map.sourceNode;
-	 sourceNode.children.forEach.call(sourceNode.children, function(child) {
+Mousetrap.bind('command+v', function () {
+    targetNode = d3.select(".selected")[0][0].__data__;
+    sourceNode = map.sourceNode;
+    mindMapService.updateDB(targetNode, sourceNode);
+    sourceNode = map.sourceNode;
+    sourceNode.children.forEach.call(sourceNode.children, function (child) {
         // Do something with `child`
-       // mindMapService.updateDB(targetNode,child);
-     Mindmaps.update({_id:child._id},{$set : {position:targetNode.position}});
+        // mindMapService.updateDB(targetNode,child);
+        Mindmaps.update({_id: child._id}, {$set: {position: targetNode.position}});
 
     });
 });
@@ -319,7 +323,7 @@ Mousetrap.bind('enter', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
     var parent = selectedNode.parent || selectedNode,
-    newNode = map.addNewNode(parent, 'default');
+        newNode = map.addNewNode(parent, 'default');
     map.makeEditable(newNode._id);
     return false;
 });
@@ -449,10 +453,10 @@ Mousetrap.bind('right', function () {
 });
 
 
-function collapse(d,id) {
-    if(d._id === id) {
-            d.isCollapsed = true;
-        }
+function collapse(d, id) {
+    if (d._id === id) {
+        d.isCollapsed = true;
+    }
     if (d.hasOwnProperty('children') && d.children) {
         d._children = [];
         d._children = d.children;
@@ -462,8 +466,8 @@ function collapse(d,id) {
 }
 
 
-function expand(d,id) {
-    if(d._id === id) {
+function expand(d, id) {
+    if (d._id === id) {
         d.isCollapsed = false;
     }
     if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
@@ -479,10 +483,10 @@ Mousetrap.bind('shift', function () {
     var dir = getDirection(selected);
     if (dir !== 'root') {
         if (selected.hasOwnProperty('_children') && selected._children) {
-            expand(selected,selected._id);
+            expand(selected, selected._id);
         }
         else {
-            collapse(selected,selected._id);
+            collapse(selected, selected._id);
         }
         chart.update();
     }
