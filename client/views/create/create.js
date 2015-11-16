@@ -487,3 +487,69 @@ Mousetrap.bind('shift', function () {
         chart.update();
     }
 });
+
+
+
+Mousetrap.bind('alt', function JSONtoXML() {
+    console.log("alt");
+      var rootNode = d3.selectAll('.node')[0].find(function (node) {
+            return !node.__data__.position;
+        });
+    var rootNodeObject = rootNode.__data__;
+    console.log(rootNodeObject);
+
+    var XMLString = [];
+
+    XMLString = "<map version=\"1.0.1\">\n";
+
+    XMLString = JSONtoXMLRec(XMLString,rootNodeObject);
+    XMLString += "</map>";
+
+    window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+    window.requestFileSystem(window.TEMPORARY, 1024*1024, function(fs) {
+    fs.root.getFile('testmap1.mm', {create: true}, function(fileEntry) {
+
+     fileEntry.fullPath == 'Users/poorvagokhale/testmap1.mm'
+        fileEntry.createWriter(function(fileWriter) {
+            var blob = new Blob([XMLString]);
+
+            fileWriter.addEventListener("writeend", function() {
+                location.href = fileEntry.toURL();
+            }, false);
+              console.log("in ctrl")
+              console.log(blob);
+            fileWriter.write(blob);
+
+        }, function() {});
+    }, function() {});
+   }, function() {});
+
+});
+
+
+function JSONtoXMLRec(XMLString, nodeObject) {
+        console.log(nodeObject);
+        XMLString += "<node ";
+        XMLString += "ID = \"" + nodeObject._id + "\"";
+        XMLString += "TEXT = \"" + nodeObject.name + "\"";
+
+         if (nodeObject.hasOwnProperty('parent_ids') && nodeObject.parent_ids.length === 1)
+         {
+            XMLString += "POSITION = \"" + nodeObject.position + "\"" ;
+         }
+
+        XMLString += "> ";
+        if(nodeObject.hasOwnProperty('children') && nodeObject.children.length == 0) {
+             XMLString += "</node> ";
+            return XMLString;
+        }
+       if(nodeObject.hasOwnProperty('children')){
+            for (var i = 0 ; i < nodeObject.children.length ; i++) {
+                    XMLString = JSONtoXMLRec(XMLString, nodeObject.children[i]);
+            }
+       }
+       XMLString += "</node> ";
+       return XMLString;
+}
+
+
