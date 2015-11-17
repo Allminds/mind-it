@@ -540,10 +540,15 @@ function JSONtoXML(XMLString, nodeObject) {
 
         XMLString += ">\n";
 
-       if(nodeObject.hasOwnProperty('children')){
+       if(nodeObject.hasOwnProperty('children') && nodeObject.children !== null){
             for (var i = 0 ; i < nodeObject.children.length ; i++) {
                     XMLString = JSONtoXML(XMLString, nodeObject.children[i]);
             }
+       }
+       if(nodeObject.hasOwnProperty('_children') && nodeObject._children !== null){
+                   for (var i = 0 ; i < nodeObject._children.length ; i++) {
+                           XMLString = JSONtoXML(XMLString, nodeObject._children[i]);
+                   }
        }
        XMLString += "</node>\n";
        return XMLString;
