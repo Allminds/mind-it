@@ -331,6 +331,11 @@ Mousetrap.bind('enter', function () {
 Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
+    if(selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed)
+    {
+                       expand(selectedNode,selectedNode._id);
+                       chart.update();
+    }
     var newNode = map.addNewNode(selectedNode, "");
     map.makeEditable(newNode._id);
     return false;
