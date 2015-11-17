@@ -492,6 +492,7 @@ function expand(d, id) {
 
 
 Mousetrap.bind('space', function () {
+    event.preventDefault();
     var selected = d3.select(".selected")[0][0].__data__;
     var dir = getDirection(selected);
     if (dir !== 'root') {
