@@ -494,7 +494,7 @@ Mousetrap.bind('shift', function () {
 
 
 
-Mousetrap.bind('command+e', function JSONtoXML() {
+Mousetrap.bind('command+e', function createXmlFile() {
       var rootNode = d3.selectAll('.node')[0].find(function (node) {
             return !node.__data__.position;
         });
@@ -502,7 +502,7 @@ Mousetrap.bind('command+e', function JSONtoXML() {
     var XMLString = [];
     XMLString = "<map version=\"1.0.1\">\n";
 
-    XMLString = JSONtoXMLRec(XMLString,rootNodeObject);
+    XMLString = JSONtoXML(XMLString,rootNodeObject);
     XMLString += "</map>";
 
     window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
@@ -527,7 +527,7 @@ Mousetrap.bind('command+e', function JSONtoXML() {
 });
 
 
-function JSONtoXMLRec(XMLString, nodeObject) {
+function JSONtoXML(XMLString, nodeObject) {
         XMLString += "<node ";
         XMLString += "ID = \"" + nodeObject._id + "\"";
         XMLString += "TEXT = \"" + nodeObject.name + "\"";
@@ -538,13 +538,10 @@ function JSONtoXMLRec(XMLString, nodeObject) {
          }
 
         XMLString += "> ";
-        if(nodeObject.hasOwnProperty('children') && nodeObject.children.length == 0) {
-             XMLString += "</node>\n";
-            return XMLString;
-        }
+
        if(nodeObject.hasOwnProperty('children')){
             for (var i = 0 ; i < nodeObject.children.length ; i++) {
-                    XMLString = JSONtoXMLRec(XMLString, nodeObject.children[i]);
+                    XMLString = JSONtoXML(XMLString, nodeObject.children[i]);
             }
        }
        XMLString += "</node>\n";
