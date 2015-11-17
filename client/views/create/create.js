@@ -479,7 +479,7 @@ function expand(d, id) {
 }
 
 
-Mousetrap.bind('shift', function () {
+Mousetrap.bind('space', function () {
     var selected = d3.select(".selected")[0][0].__data__;
     var dir = getDirection(selected);
     if (dir !== 'root') {
@@ -538,7 +538,7 @@ function JSONtoXML(XMLString, nodeObject) {
             XMLString += "POSITION = \"" + nodeObject.position + "\"" ;
          }
 
-        XMLString += "> ";
+        XMLString += ">\n";
 
        if(nodeObject.hasOwnProperty('children')){
             for (var i = 0 ; i < nodeObject.children.length ; i++) {
