@@ -271,7 +271,7 @@ map.addNewNode = function (parent, newNodeName) {
         dir = directionToggler.currentDir;
     }
     var newNode = {
-        name: "", position: dir,
+        name: newNodeName, position: dir,
         parent_ids: [].concat(parent.parent_ids || []).concat([parent._id])
     };
     newNode._id = mindMapService.addNode(newNode);
@@ -301,36 +301,33 @@ map.getSourceNode = function () {
     return d3.select(".selected")[0][0].__data__;
 };
 
-Mousetrap.bind('command+c', function () {
+Mousetrap.bind('command+x', function () {
     sourceNode = map.getSourceNode();
     map.storeSourceNode(sourceNode);
+    Meteor.call('deleteNode', sourceNode._id);
 });
 
 Mousetrap.bind('command+v', function () {
     targetNode = d3.select(".selected")[0][0].__data__;
     sourceNode = map.sourceNode;
-    mindMapService.updateDB(targetNode, sourceNode);
-    sourceNode = map.sourceNode;
-    sourceNode.children.forEach.call(sourceNode.children, function (child) {
-        // Do something with `child`
-        // mindMapService.updateDB(targetNode,child);
-        Mindmaps.update({_id: child._id}, {$set: {position: targetNode.position}});
-
-    });
+    console.log(sourceNode.name);
+    var newNode= map.addNewNode(targetNode,sourceNode.name);
+    chart.update();
 });
+
 
 Mousetrap.bind('enter', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
     var parent = selectedNode.parent || selectedNode,
-        newNode = map.addNewNode(parent, 'default');
+        newNode = map.addNewNode(parent, "");
     map.makeEditable(newNode._id);
     return false;
 });
 Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
-    var newNode = map.addNewNode(selectedNode, 'default');
+    var newNode = map.addNewNode(selectedNode, "");
     map.makeEditable(newNode._id);
     return false;
 });
