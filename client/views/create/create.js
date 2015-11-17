@@ -425,7 +425,13 @@ Mousetrap.bind('left', function () {
                 selectNode(data.parent || data.left[0]);
                 break;
             case('left'):
-                selectNode((data.children || [])[0]);
+                if(data.hasOwnProperty('isCollapsed') && data.isCollapsed)
+                {
+                    expand(data,data._id);
+                    chart.update();
+                }
+                else
+                    selectNode((data.children || [])[0]);
                 break;
             default:
                 break;
@@ -445,7 +451,13 @@ Mousetrap.bind('right', function () {
                 selectNode(data.parent || data.right[0]);
                 break;
             case('right'):
-                selectNode((data.children || [])[0]);
+                if(data.hasOwnProperty('isCollapsed') && data.isCollapsed)
+                {
+                    expand(data,data._id);
+                    chart.update();
+                }
+                else
+                    selectNode((data.children || [])[0]);
                 break;
             default:
                 break;
