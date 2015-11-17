@@ -1,30 +1,3 @@
-/*
- Sample Usage:
-
- var myData = {
- "name": "Root",
- "children": [
- {
- "name": "Branch 1",
- "children": [
- {"name": "Leaf 3"},
- {"name": "Leaf 4"}
- ]
- },
- {"name": "Branch 2"}
- ]
- };
-
- var chart = MindMap()
- .width(900)
- .height(500)
- ;
-
- d3.select('#chart svg')
- .datum(myData)
- .call(chart)
- ;
- */
 MindMap = function () {
     "use strict";
     var

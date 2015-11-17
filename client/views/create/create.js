@@ -307,10 +307,14 @@ Mousetrap.bind('command+x', function () {
     Meteor.call('deleteNode', sourceNode._id);
 });
 
+Mousetrap.bind('command+c', function () {
+    sourceNode = map.getSourceNode();
+    map.storeSourceNode(sourceNode);
+});
+
 Mousetrap.bind('command+v', function () {
     targetNode = d3.select(".selected")[0][0].__data__;
     sourceNode = map.sourceNode;
-    console.log(sourceNode.name);
     var newNode= map.addNewNode(targetNode,sourceNode.name);
     chart.update();
 });
