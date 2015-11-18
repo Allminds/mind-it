@@ -119,7 +119,7 @@ MindMap = function () {
             var updateWidth = function () {
                 var depth = maxDepth(container.select('.node.rootNode').data()[0]);
                 defaultWidth = defaultWidth == null ? width : defaultWidth;
-                chart.width(defaultWidth + depth * 150);
+                chart.width(defaultWidth + depth * 250);
             }
             // Ensure we have Left and Right node lists
             if (!(root.left || root.right)) {
@@ -164,10 +164,11 @@ MindMap = function () {
 
             var nodes = window.nodes = (function (left, right) {
                 left.pop();
-                var result = left.concat(right);
+
+           var result = left.concat(right);
                 result.forEach(function (node) {
                     var dir = node.position == 'left' ? -1 : 1;
-                    node.y = dir * node.y;
+                    node.y = dir * node.depth * 150;
 
                 });
 
@@ -187,6 +188,7 @@ MindMap = function () {
                     y0 = parentNode.y0 || root.y0;
                 return "translate(" + y0 + "," + x0 + ")";
             };
+
             var nodeEnter = node.enter().append("svg:g")
                 .attr("class", "node")
                 .attr("transform", translate)
@@ -233,6 +235,7 @@ MindMap = function () {
                 .transition()
                 .duration(duration)
                 .attr("d", connector);
+
 
             // Transition links to their new position.
             link.transition()
