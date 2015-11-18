@@ -506,10 +506,7 @@ function expand(d, id) {
     }
 }
 
-
-Mousetrap.bind('space', function () {
-    event.preventDefault();
-    var selected = d3.select(".selected")[0][0].__data__;
+window.toggleCollapsedNode = function(selected) {
     var dir = getDirection(selected);
     if (dir !== 'root') {
         if (selected.hasOwnProperty('_children') && selected._children) {
@@ -520,6 +517,11 @@ Mousetrap.bind('space', function () {
         }
         chart.update();
     }
+}
+Mousetrap.bind('space', function () {
+    event.preventDefault();
+    var selected = d3.select(".selected")[0][0].__data__;
+    toggleCollapsedNode(selected);
 });
 
 

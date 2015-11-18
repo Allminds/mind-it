@@ -27,6 +27,53 @@ MindMap = function () {
                 return !n.__data__.position;
             });
         },
+        indicator = {
+            default: 4,
+            hovered: 10,
+            enter: function (node) {
+                node.filter(function (x) {
+                    return x.position;
+                }).append('svg:circle')
+                    .attr('class', 'indicator unfilled')
+                    .attr('r', indicator.default)
+                    .attr('cx', function (d) {
+                        var text = d3.select(this.parentNode).select("text")[0][0],
+                            bBox = text.getBBox();
+                        return (d.position == 'left' ? 1 : -1) * bBox.x;
+                    })
+                    .on('mouseover', function (d) {
+                        var hasChildren = (d.children || d._children || []).length > 0,
+                            r = hasChildren ? indicator.hovered : 0;
+                        return d3.select(this)
+                            .attr('r', r)
+                            .classed('unfilled', false)
+                            .classed('filled', hasChildren);
+                    })
+                    .on('mouseout', function (d) {
+                        var hasChildren = (d.children || d._children || []).length > 0,
+                            r = hasChildren ? (d.isCollapsed ? indicator.default : indicator.hovered) : 0;
+                        return d3.select(this)
+                            .attr('r', r)
+                            .classed('filled', d.isCollapsed)
+                            .classed('unfilled', !d.isCollapsed);
+
+                    })
+                    .on('click', function (node) {
+                        console.log(arguments);
+                        toggleCollapsedNode(node);
+                        return false;
+                    });
+            },
+            update: function (node) {
+                node.selectAll('circle').attr('r', function (d) {
+                    var hasChildren = (d.children || d._children || []).length > 0;
+                    d3.select(this)
+                        .classed('filled', d.isCollapsed)
+                        .classed('unfilled', !d.isCollapsed);
+                    return hasChildren ? (d.isCollapsed ? indicator.default : indicator.hovered) : 0;
+                });
+            }
+        },
         enterNode = function (node) {
 
 
@@ -52,7 +99,7 @@ MindMap = function () {
             node.append("svg:text")
                 .text(text);
 
-
+            indicator.enter(node);
         },
         updateNode = function (node) {
             node.select("text")
@@ -165,7 +212,7 @@ MindMap = function () {
             var nodes = window.nodes = (function (left, right) {
                 left.pop();
 
-           var result = left.concat(right);
+                var result = left.concat(right);
                 result.forEach(function (node) {
                     var dir = node.position == 'left' ? -1 : 1;
                     node.y = dir * node.depth * 150;
@@ -215,7 +262,7 @@ MindMap = function () {
                 .remove();
 
             exitNode(nodeExit);
-
+            indicator.update(nodeUpdate);
             // Update the links…
             var link = vis.selectAll("path.link")
                 .data(tree.links(nodes), function (d) {

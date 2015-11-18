@@ -77,5 +77,16 @@ path.link {
 .node.selected ellipse, .node.selected rect {
     fill: #ddd;
 }
+circle.indicator.filled {
+    fill: white;
+    stroke: #888;
+    stroke-width: 2px;
+}
+
+circle.indicator.unfilled {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 2px;
+}
 
 
