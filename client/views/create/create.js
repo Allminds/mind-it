@@ -251,8 +251,8 @@ var getDirection = function (data) {
 
 var map = {};
 map.selectedNodeData = function () {
-    var selecedNode = d3.select(".node.selected")[0][0];
-    return selecedNode ? selecedNode.__data__ : null;
+    var selectedNode = d3.select(".node.selected")[0][0];
+    return selectedNode ? selectedNode.__data__ : null;
 };
 map.addNodeToUI = function (parent, newNode) {
     var children = parent[newNode.position] || parent.children || parent._children;
@@ -313,12 +313,23 @@ Mousetrap.bind('command+c', function () {
 });
 
 Mousetrap.bind('command+v', function () {
-    targetNode = d3.select(".selected")[0][0].__data__;
+    targetNode = map.selectedNodeData();
     sourceNode = map.sourceNode;
-    var newNode= map.addNewNode(targetNode,sourceNode.name);
-    chart.update();
+    paste(sourceNode,targetNode);
 });
 
+function paste(sourceNode,targetNode){
+    //add
+    var newNode= map.addNewNode(targetNode,sourceNode.name);
+    if(sourceNode.hasOwnProperty('children') && sourceNode.children){
+          sourceNode.children.forEach(
+            function(d){
+                paste(d,newNode);
+            }
+          );
+
+    }
+}
 
 Mousetrap.bind('enter', function () {
     var selectedNode = map.selectedNodeData();
