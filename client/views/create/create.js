@@ -108,13 +108,19 @@ var select = function (node) {
     var text = d3.select(node).select("text")[0][0],
         bBox = text.getBBox(),
         rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-
-    rect.setAttribute("x", bBox.x);
-    rect.setAttribute("y", bBox.y);
-    rect.setAttribute("width", bBox.width);
-    rect.setAttribute("height", bBox.height);
+    var dim = {
+        x: bBox.x,
+        y: bBox.y == 0 ? -19 : bBox.y,
+        width: bBox.width == 0 ? 20 : bBox.width,
+        height: bBox.height == 0 ? 20 : bBox.height
+    };
+    rect.setAttribute("x", dim.x);
+    rect.setAttribute("y", dim.y);
+    rect.setAttribute("width", dim.width);
+    rect.setAttribute("height", dim.height);
     node.insertBefore(rect, text);
-
+    node.__data__ = text.__data__;
+    d3.select(text).on('dblClick',showEditor);
 };
 
 
@@ -132,8 +138,7 @@ var selectNode = function (target) {
 };
 
 var showEditor = function () {
-    var self = this,
-        nodeData = this.__data__;
+    var nodeData = this.__data__;
 
     var parentElement = d3.select(this.children[0].parentNode),
         currentElement = parentElement.select('text');
@@ -315,18 +320,18 @@ Mousetrap.bind('command+c', function () {
 Mousetrap.bind('command+v', function () {
     targetNode = map.selectedNodeData();
     sourceNode = map.sourceNode;
-    paste(sourceNode,targetNode);
+    paste(sourceNode, targetNode);
 });
 
-function paste(sourceNode,targetNode){
+function paste(sourceNode, targetNode) {
     //add
-    var newNode= map.addNewNode(targetNode,sourceNode.name);
-    if(sourceNode.hasOwnProperty('children') && sourceNode.children){
-          sourceNode.children.forEach(
-            function(d){
-                paste(d,newNode);
+    var newNode = map.addNewNode(targetNode, sourceNode.name);
+    if (sourceNode.hasOwnProperty('children') && sourceNode.children) {
+        sourceNode.children.forEach(
+            function (d) {
+                paste(d, newNode);
             }
-          );
+        );
 
     }
 }
@@ -342,10 +347,9 @@ Mousetrap.bind('enter', function () {
 Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
-    if(selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed)
-    {
-                       expand(selectedNode,selectedNode._id);
-                       chart.update();
+    if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
+        expand(selectedNode, selectedNode._id);
+        chart.update();
     }
     var newNode = map.addNewNode(selectedNode, "");
     map.makeEditable(newNode._id);
@@ -441,9 +445,8 @@ Mousetrap.bind('left', function () {
                 selectNode(data.parent || data.left[0]);
                 break;
             case('left'):
-                if(data.hasOwnProperty('isCollapsed') && data.isCollapsed)
-                {
-                    expand(data,data._id);
+                if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
+                    expand(data, data._id);
                     chart.update();
                 }
                 else
@@ -467,9 +470,8 @@ Mousetrap.bind('right', function () {
                 selectNode(data.parent || data.right[0]);
                 break;
             case('right'):
-                if(data.hasOwnProperty('isCollapsed') && data.isCollapsed)
-                {
-                    expand(data,data._id);
+                if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
+                    expand(data, data._id);
                     chart.update();
                 }
                 else
@@ -506,7 +508,7 @@ function expand(d, id) {
     }
 }
 
-window.toggleCollapsedNode = function(selected) {
+window.toggleCollapsedNode = function (selected) {
     var dir = getDirection(selected);
     if (dir !== 'root') {
         if (selected.hasOwnProperty('_children') && selected._children) {
@@ -525,64 +527,66 @@ Mousetrap.bind('space', function () {
 });
 
 
-
 Mousetrap.bind('command+e', function createXmlFile() {
-      var rootNode = d3.selectAll('.node')[0].find(function (node) {
-            return !node.__data__.position;
-        });
+    var rootNode = d3.selectAll('.node')[0].find(function (node) {
+        return !node.__data__.position;
+    });
     var rootNodeObject = rootNode.__data__;
     var XMLString = [];
     XMLString = "<map version=\"1.0.1\">\n";
 
-    XMLString = JSONtoXML(XMLString,rootNodeObject);
+    XMLString = JSONtoXML(XMLString, rootNodeObject);
     XMLString += "</map>";
 
     window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-    window.requestFileSystem(window.TEMPORARY, 1024*1024, function(fs) {
+    window.requestFileSystem(window.TEMPORARY, 1024 * 1024, function (fs) {
 
-   fs.root.getFile('testmap1.mm', {create: true}, function(fileEntry) {
+        fs.root.getFile('testmap1.mm', {create: true}, function (fileEntry) {
 
-        fileEntry.createWriter(function (fileWriter) {
-        fileWriter.truncate(0);
-        }, function(){});
+            fileEntry.createWriter(function (fileWriter) {
+                fileWriter.truncate(0);
+            }, function () {
+            });
 
-        fileEntry.createWriter(function (fileWriter) {
-        var blob = new Blob([XMLString]);
-        fileWriter.write(blob);
-        fileWriter.addEventListener("writeend", function() {
-        location.href = fileEntry.toURL();
-        }, false);
-        }, function(){});
-    }, function() {});
-   }, function() {});
+            fileEntry.createWriter(function (fileWriter) {
+                var blob = new Blob([XMLString]);
+                fileWriter.write(blob);
+                fileWriter.addEventListener("writeend", function () {
+                    location.href = fileEntry.toURL();
+                }, false);
+            }, function () {
+            });
+        }, function () {
+        });
+    }, function () {
+    });
 
 });
 
 
 function JSONtoXML(XMLString, nodeObject) {
-        XMLString += "<node ";
-        XMLString += "ID = \"" + nodeObject._id + "\"";
-        XMLString += "TEXT = \"" + nodeObject.name + "\"";
+    XMLString += "<node ";
+    XMLString += "ID = \"" + nodeObject._id + "\"";
+    XMLString += "TEXT = \"" + nodeObject.name + "\"";
 
-         if (nodeObject.hasOwnProperty('parent_ids') && nodeObject.parent_ids.length === 1)
-         {
-            XMLString += "POSITION = \"" + nodeObject.position + "\"" ;
-         }
+    if (nodeObject.hasOwnProperty('parent_ids') && nodeObject.parent_ids.length === 1) {
+        XMLString += "POSITION = \"" + nodeObject.position + "\"";
+    }
 
-        XMLString += ">\n";
+    XMLString += ">\n";
 
-       if(nodeObject.hasOwnProperty('children') && nodeObject.children !== null){
-            for (var i = 0 ; i < nodeObject.children.length ; i++) {
-                    XMLString = JSONtoXML(XMLString, nodeObject.children[i]);
-            }
-       }
-       if(nodeObject.hasOwnProperty('_children') && nodeObject._children !== null){
-                   for (var i = 0 ; i < nodeObject._children.length ; i++) {
-                           XMLString = JSONtoXML(XMLString, nodeObject._children[i]);
-                   }
-       }
-       XMLString += "</node>\n";
-       return XMLString;
+    if (nodeObject.hasOwnProperty('children') && nodeObject.children !== null) {
+        for (var i = 0; i < nodeObject.children.length; i++) {
+            XMLString = JSONtoXML(XMLString, nodeObject.children[i]);
+        }
+    }
+    if (nodeObject.hasOwnProperty('_children') && nodeObject._children !== null) {
+        for (var i = 0; i < nodeObject._children.length; i++) {
+            XMLString = JSONtoXML(XMLString, nodeObject._children[i]);
+        }
+    }
+    XMLString += "</node>\n";
+    return XMLString;
 }
 
 

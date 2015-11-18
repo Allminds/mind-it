@@ -38,8 +38,9 @@ MindMap = function () {
                     .attr('r', indicator.default)
                     .attr('cx', function (d) {
                         var text = d3.select(this.parentNode).select("text")[0][0],
-                            bBox = text.getBBox();
-                        return (d.position == 'left' ? 1 : -1) * bBox.x;
+                            bBox = text.getBBox(),
+                            x = bBox.width == 0 ? -5: bBox.x;
+                        return (d.position == 'left' ? 1 : -1) * x;
                     })
                     .on('mouseover', function (d) {
                         var hasChildren = (d.children || d._children || []).length > 0,
@@ -59,7 +60,6 @@ MindMap = function () {
 
                     })
                     .on('click', function (node) {
-                        console.log(arguments);
                         toggleCollapsedNode(node);
                         return false;
                     });
@@ -75,8 +75,6 @@ MindMap = function () {
             }
         },
         enterNode = function (node) {
-
-
             var rootNode = getRootNode(node);
             d3.select(rootNode).append("svg:ellipse")
                 .attr("rx", 1e-6)
@@ -404,14 +402,12 @@ MindMap.diagonal = function (d) {
         dir = target.position == 'right' ? 1 : -1,
         sourceWidth = dir * getTextWidth(source._id) / 2,
         targetWidth = dir * getTextWidth(target._id) / 2,
-
-        deltaY = source.y + (target.y - source.y) / 2,
-        path = 'M' + (source.y + sourceWidth) + ',' + source.x +
-            'C' + deltaY + ',' + target.x +
-            ' ' + deltaY + ',' + target.x +
-            ' ' + (target.y - targetWidth) + ',' + target.x +
-            'L' + (target.y + targetWidth) + ',' + target.x;
-    return path;
+        deltaY = source.y + (target.y - source.y) / 2;
+    return 'M' + (source.y + sourceWidth) + ',' + source.x +
+        'C' + deltaY + ',' + target.x +
+        ' ' + deltaY + ',' + target.x +
+        ' ' + (target.y - targetWidth) + ',' + target.x +
+        'L' + (target.y + targetWidth) + ',' + target.x;
 };
 
 MindMap.loadFreeMind = function (fileName, callback) {
