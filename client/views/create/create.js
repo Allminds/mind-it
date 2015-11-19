@@ -652,6 +652,52 @@ Mousetrap.bind('command+left', function () {
     }
 });
 
+Mousetrap.bind('command+right', function () {
+    // left key pressed
+    event.preventDefault();
+    var selection = d3.select(".node.selected")[0][0],
+    rootNode = d3.selectAll('.node')[0];
+    if (selection) {
+        var data = selection.__data__;
+        var dir = getDirection(data),
+            parent= data.parent;
+        switch (dir) {
+            case('left'):
+                cut();
+                if( getDirection(parent) === 'root') {
+                   paste(data,parent,"right");
+                }
+                else
+                {
+                   paste(data,parent.parent,"left");
+                }
+                break;
+            case('root'):
+                alert("Root cannot be added to a new parent");
+                break;
+            case('right'):
+                var nl = parent.children || [], i = 0;
+                    if (parent[dir]) {
+                        nl = parent[dir];
+                    }
+                    l = nl.length;
+                    for (; i < l; i++) {
+                        if (nl[i]._id === data._id && l != 1) {
+                            cut();
+                            if(i === 0)
+                                paste(data,nl[(i + 1)],"right");
+                            else
+                                paste(data,nl[(i - 1)],"right");
+                            break;
+                        }7
+                    }
+                break;
+            default:
+                break;
+        }
+    }
+});
+
 function JSONtoXML(XMLString, nodeObject) {
     XMLString += "<node ";
     XMLString += "ID = \"" + nodeObject._id + "\"";
