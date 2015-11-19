@@ -84,7 +84,7 @@ Template.create.rendered = function rendered() {
     var currentUrl = window.location.href;
 
     document.getElementById('share').innerHTML = "mindit.xyz/"+ rootNodeObject._id;
-    if (window.location.href === "http://localhost:3000" || window.location.href === "http://mindit.xyz") {
+    if (window.location.href === "http://localhost:3000/" || window.location.href === "http://mindit.xyz/") {
         var url = rootNodeObject._id;
         window.location.replace(url);
     }
