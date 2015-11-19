@@ -3,15 +3,15 @@ var directionToggler = {
     currentDir: "right",
     canToggle: false,
 
-    changeDirection : function(){
-           switch (directionToggler.currentDir) {
+    changeDirection: function () {
+        switch (directionToggler.currentDir) {
             case "left" :
                 directionToggler.currentDir = "right";
                 break;
             case "right":
                 directionToggler.currentDir = "left";
                 break;
-         }
+        }
     }
 };
 
@@ -276,9 +276,11 @@ map.addNodeToUI = function (parent, newNode) {
         children = parent.children = [];
     }
     if (newNode.previous) {
-        var previousNode = children.find(function(x){return x._id == newNode.previous}),
+        var previousNode = children.find(function (x) {
+                return x._id == newNode.previous
+            }),
             previousNodeIndex = children.indexOf(previousNode) + 1;
-        children.splice(previousNodeIndex,0,newNode);
+        children.splice(previousNodeIndex, 0, newNode);
     } else
         children.push(newNode);
     chart.update();
@@ -301,7 +303,7 @@ function calculateDirection(parent) {
     return dir;
 }
 
-map.addNewNode = function (parent, newNodeName,dir,previousSibling) {
+map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
 
     if (!previousSibling) {
         previousSibling = parent.children && parent.children.length > 0 ?
@@ -351,9 +353,9 @@ Mousetrap.bind('command+x', function () {
     cut();
 });
 
-function cut(){
+function cut() {
     sourceNode = map.getSourceNode();
-    if(getDirection(sourceNode)==='root'){
+    if (getDirection(sourceNode) === 'root') {
         alert("The root node cannot be cut!");
         return;
     }
@@ -370,24 +372,24 @@ Mousetrap.bind('command+v', function () {
     targetNode = map.selectedNodeData();
     sourceNode = map.sourceNode;
     var dir = calculateDirection(targetNode);
-    paste(sourceNode,targetNode,dir);
+    paste(sourceNode, targetNode, dir);
 
 });
 
-function paste(sourceNode,targetNode,dir){
-    var newNode = map.addNewNode(targetNode,sourceNode.name,dir)
-    ,childrenArray;
+function paste(sourceNode, targetNode, dir) {
+    var newNode = map.addNewNode(targetNode, sourceNode.name, dir)
+        , childrenArray;
     if (sourceNode.hasOwnProperty('children') && sourceNode.children)
         childrenArray = sourceNode.children;
     else if (sourceNode.hasOwnProperty('_children') && sourceNode._children)
         childrenArray = sourceNode._children;
 
-    if(childrenArray){
-          childrenArray.forEach(
-            function(d){
-                paste(d,newNode,dir);
+    if (childrenArray) {
+        childrenArray.forEach(
+            function (d) {
+                paste(d, newNode, dir);
             }
-          );
+        );
 
     }
 }
@@ -399,7 +401,7 @@ Mousetrap.bind('enter', function () {
     var parent = selectedNode.parent || selectedNode,
         sibling = selectedNode.position ? selectedNode : null,
         dir = calculateDirection(parent),
-        newNode = map.addNewNode(parent, "",dir, sibling);
+        newNode = map.addNewNode(parent, "", dir, sibling);
     map.makeEditable(newNode._id);
     return false;
 });
@@ -411,7 +413,7 @@ Mousetrap.bind('tab', function () {
         chart.update();
     }
     var dir = calculateDirection(selectedNode);
-    var newNode = map.addNewNode(selectedNode, "",dir);
+    var newNode = map.addNewNode(selectedNode, "", dir);
     map.makeEditable(newNode._id);
     return false;
 });
@@ -627,20 +629,19 @@ Mousetrap.bind('command+left', function () {
     // left key pressed
     event.preventDefault();
     var selection = d3.select(".node.selected")[0][0],
-    rootNode = d3.selectAll('.node')[0];
+        rootNode = d3.selectAll('.node')[0];
     if (selection) {
         var data = selection.__data__;
         var dir = getDirection(data),
-            parent= data.parent;
+            parent = data.parent;
         switch (dir) {
             case('right'):
                 cut();
-                if( getDirection(parent) === 'root') {
-                   paste(data,parent,"left");
+                if (getDirection(parent) === 'root') {
+                    paste(data, parent, "left");
                 }
-                else
-                {
-                   paste(data,parent.parent,"right");
+                else {
+                    paste(data, parent.parent, "right");
                 }
                 break;
             case('root'):
@@ -648,20 +649,21 @@ Mousetrap.bind('command+left', function () {
                 break;
             case('left'):
                 var nl = parent.children || [], i = 0;
-                    if (parent[dir]) {
-                        nl = parent[dir];
+                if (parent[dir]) {
+                    nl = parent[dir];
+                }
+                l = nl.length;
+                for (; i < l; i++) {
+                    if (nl[i]._id === data._id && l != 1) {
+                        cut();
+                        if (i === 0)
+                            paste(data, nl[(i + 1)], "left");
+                        else
+                            paste(data, nl[(i - 1)], "left");
+                        break;
                     }
-                    l = nl.length;
-                    for (; i < l; i++) {
-                        if (nl[i]._id === data._id && l != 1) {
-                            cut();
-                            if(i === 0)
-                                paste(data,nl[(i + 1)],"left");
-                            else
-                                paste(data,nl[(i - 1)],"left");
-                            break;
-                        }7
-                    }
+                    7
+                }
                 break;
             default:
                 break;
@@ -673,20 +675,19 @@ Mousetrap.bind('command+right', function () {
     // left key pressed
     event.preventDefault();
     var selection = d3.select(".node.selected")[0][0],
-    rootNode = d3.selectAll('.node')[0];
+        rootNode = d3.selectAll('.node')[0];
     if (selection) {
         var data = selection.__data__;
         var dir = getDirection(data),
-            parent= data.parent;
+            parent = data.parent;
         switch (dir) {
             case('left'):
                 cut();
-                if( getDirection(parent) === 'root') {
-                   paste(data,parent,"right");
+                if (getDirection(parent) === 'root') {
+                    paste(data, parent, "right");
                 }
-                else
-                {
-                   paste(data,parent.parent,"left");
+                else {
+                    paste(data, parent.parent, "left");
                 }
                 break;
             case('root'):
@@ -694,20 +695,21 @@ Mousetrap.bind('command+right', function () {
                 break;
             case('right'):
                 var nl = parent.children || [], i = 0;
-                    if (parent[dir]) {
-                        nl = parent[dir];
+                if (parent[dir]) {
+                    nl = parent[dir];
+                }
+                l = nl.length;
+                for (; i < l; i++) {
+                    if (nl[i]._id === data._id && l != 1) {
+                        cut();
+                        if (i === 0)
+                            paste(data, nl[(i + 1)], "right");
+                        else
+                            paste(data, nl[(i - 1)], "right");
+                        break;
                     }
-                    l = nl.length;
-                    for (; i < l; i++) {
-                        if (nl[i]._id === data._id && l != 1) {
-                            cut();
-                            if(i === 0)
-                                paste(data,nl[(i + 1)],"right");
-                            else
-                                paste(data,nl[(i - 1)],"right");
-                            break;
-                        }7
-                    }
+                    7
+                }
                 break;
             default:
                 break;
