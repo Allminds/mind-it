@@ -337,6 +337,10 @@ Mousetrap.bind('command+x', function () {
 
 function cut(){
     sourceNode = map.getSourceNode();
+    if(getDirection(sourceNode)==='root'){
+        alert("The root node cannot be cut!");
+        return;
+    }
     map.storeSourceNode(sourceNode);
     Meteor.call('deleteNode', sourceNode._id);
 }
