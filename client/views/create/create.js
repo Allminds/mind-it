@@ -69,6 +69,8 @@ Template.create.rendered = function rendered() {
         return !node.__data__.position;
     });
 
+    var rootNodeObject = rootNode.__data__;
+    document.getElementById('share').innerHTML = "mindit.xyz/create/"+ rootNodeObject._id;
     select(rootNode);
     Mindmaps.find().observeChanges(tracker);
 };
@@ -588,5 +590,3 @@ function JSONtoXML(XMLString, nodeObject) {
     XMLString += "</node>\n";
     return XMLString;
 }
-
-
