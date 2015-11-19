@@ -1,7 +1,18 @@
 var mindMapService = new MindMapService();
 var directionToggler = {
     currentDir: "right",
-    canToggle: false
+    canToggle: false,
+
+    changeDirection : function(){
+           switch (directionToggler.currentDir) {
+            case "left" :
+                directionToggler.currentDir = "right";
+                break;
+            case "right":
+                directionToggler.currentDir = "left";
+                break;
+         }
+    }
 };
 
 var tracker = {
@@ -96,14 +107,8 @@ var select = function (node) {
     d3.select(".selected").classed("selected", false);
 
     if (!node.__data__.position && directionToggler.canToggle) {
-        switch (directionToggler.currentDir) {
-            case "left" :
-                directionToggler.currentDir = "right";
-                break;
-            case "right":
-                directionToggler.currentDir = "left";
-                break;
-        }
+
+        directionToggler.changeDirection();
         directionToggler.canToggle = false;
     }
     // Select current item
@@ -275,7 +280,8 @@ map.addNodeToUI = function (parent, newNode) {
     children.push(newNode);
     chart.update();
 }
-map.addNewNode = function (parent, newNodeName) {
+
+function calculateDirection(parent) {
 
     var dir = getDirection(parent);
     var selectedNode= map.selectedNodeData();
@@ -288,7 +294,12 @@ map.addNewNode = function (parent, newNodeName) {
         else
             dir = selectedNode.position;
     }
-    console.log(dir);
+
+    return dir;
+}
+
+map.addNewNode = function (parent, newNodeName,dir) {
+
     var newNode = {
         name: newNodeName, position: dir,
         parent_ids: [].concat(parent.parent_ids || []).concat([parent._id])
@@ -321,40 +332,51 @@ map.getSourceNode = function () {
 };
 
 Mousetrap.bind('command+x', function () {
+    cut();
+});
+
+function cut(){
     sourceNode = map.getSourceNode();
     map.storeSourceNode(sourceNode);
     Meteor.call('deleteNode', sourceNode._id);
-});
+}
 
 Mousetrap.bind('command+c', function () {
     sourceNode = map.getSourceNode();
     map.storeSourceNode(sourceNode);
 });
 
+
+
+
 Mousetrap.bind('command+v', function () {
     targetNode = map.selectedNodeData();
     sourceNode = map.sourceNode;
-    paste(sourceNode, targetNode);
+    var dir = calculateDirection(targetNode);
+    paste(sourceNode,targetNode,dir);
 });
 
-function paste(sourceNode, targetNode) {
-    //add
-    var newNode = map.addNewNode(targetNode, sourceNode.name);
-    if (sourceNode.hasOwnProperty('children') && sourceNode.children) {
-        sourceNode.children.forEach(
-            function (d) {
-                paste(d, newNode);
+function paste(sourceNode,targetNode,dir){
+    //var dir;
+    //dir = calculateDirection(targetNode);
+    var newNode= map.addNewNode(targetNode,sourceNode.name,dir);
+    if(sourceNode.hasOwnProperty('children') && sourceNode.children){
+          sourceNode.children.forEach(
+            function(d){
+                paste(d,newNode,dir);
             }
-        );
+          );
 
     }
 }
 
+
 Mousetrap.bind('enter', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
-    var parent = selectedNode.parent || selectedNode,
-        newNode = map.addNewNode(parent, "");
+    var parent = selectedNode.parent || selectedNode;
+    var dir = calculateDirection(parent);
+    var newNode = map.addNewNode(parent, "",dir);
     map.makeEditable(newNode._id);
     return false;
 });
@@ -365,7 +387,8 @@ Mousetrap.bind('tab', function () {
         expand(selectedNode, selectedNode._id);
         chart.update();
     }
-    var newNode = map.addNewNode(selectedNode, "");
+    var dir = calculateDirection(selectedNode);
+    var newNode = map.addNewNode(selectedNode, "",dir);
     map.makeEditable(newNode._id);
     return false;
 });
@@ -577,6 +600,51 @@ Mousetrap.bind('command+e', function createXmlFile() {
 
 });
 
+Mousetrap.bind('command+left', function () {
+    // left key pressed
+    event.preventDefault();
+    var selection = d3.select(".node.selected")[0][0],
+    rootNode = d3.selectAll('.node')[0];
+    if (selection) {
+        var data = selection.__data__;
+        var dir = getDirection(data),
+            parent= data.parent;
+        switch (dir) {
+            case('right'):
+                cut();
+                if( getDirection(parent) === 'root') {
+                   paste(data,parent,"left");
+                }
+                else
+                {
+                   paste(data,parent.parent,"right");
+                }
+                break;
+            case('root'):
+                alert("Root cannot be added to a new parent");
+                break;
+            case('left'):
+                var nl = parent.children || [], i = 0;
+                    if (parent[dir]) {
+                        nl = parent[dir];
+                    }
+                    l = nl.length;
+                    for (; i < l; i++) {
+                        if (nl[i]._id === data._id && l != 1) {
+                            cut();
+                            if(i === 0)
+                                paste(data,nl[(i + 1)],"left");
+                            else
+                                paste(data,nl[(i - 1)],"left");
+                            break;
+                        }7
+                    }
+                break;
+            default:
+                break;
+        }
+    }
+});
 
 function JSONtoXML(XMLString, nodeObject) {
     XMLString += "<node ";
