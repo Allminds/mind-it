@@ -82,12 +82,6 @@ Template.create.rendered = function rendered() {
 
     var rootNodeObject = rootNode.__data__;
     var currentUrl = window.location.href;
-
-    document.getElementById('share').innerHTML = "mindit.xyz/"+ rootNodeObject._id;
-    if (window.location.href === "http://localhost:3000/" || window.location.href === "http://mindit.xyz/") {
-        var url = rootNodeObject._id;
-        window.location.replace(url);
-    }
     select(rootNode);
     Mindmaps.find().observeChanges(tracker);
 };

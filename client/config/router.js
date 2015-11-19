@@ -1,7 +1,7 @@
 /* global Router */
 Router.configure({layoutTemplate: 'main'});
 Router.route('/', {template: 'home'});
-Router.route('/:_id', {
+Router.route('/create/:_id', {
     name: "create",
     template: "create",
     waitOn: function () {
