@@ -350,22 +350,24 @@ Mousetrap.bind('command+c', function () {
     map.storeSourceNode(sourceNode);
 });
 
-
-
-
 Mousetrap.bind('command+v', function () {
     targetNode = map.selectedNodeData();
     sourceNode = map.sourceNode;
     var dir = calculateDirection(targetNode);
     paste(sourceNode,targetNode,dir);
+
 });
 
 function paste(sourceNode,targetNode,dir){
-    //var dir;
-    //dir = calculateDirection(targetNode);
-    var newNode= map.addNewNode(targetNode,sourceNode.name,dir);
-    if(sourceNode.hasOwnProperty('children') && sourceNode.children){
-          sourceNode.children.forEach(
+    var newNode = map.addNewNode(targetNode,sourceNode.name,dir)
+    ,childrenArray;
+    if (sourceNode.hasOwnProperty('children') && sourceNode.children)
+        childrenArray = sourceNode.children;
+    else if (sourceNode.hasOwnProperty('_children') && sourceNode._children)
+        childrenArray = sourceNode._children;
+
+    if(childrenArray){
+          childrenArray.forEach(
             function(d){
                 paste(d,newNode,dir);
             }
