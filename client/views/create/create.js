@@ -272,11 +272,17 @@ map.addNodeToUI = function (parent, newNode) {
 map.addNewNode = function (parent, newNodeName) {
 
     var dir = getDirection(parent);
+    var selectedNode= map.selectedNodeData();
 
     if (dir === 'root') {
-        directionToggler.canToggle = true;
-        dir = directionToggler.currentDir;
+        if(getDirection(selectedNode) === 'root') {
+             directionToggler.canToggle = true;
+             dir = directionToggler.currentDir;
+        }
+        else
+            dir = selectedNode.position;
     }
+    console.log(dir);
     var newNode = {
         name: newNodeName, position: dir,
         parent_ids: [].concat(parent.parent_ids || []).concat([parent._id])
