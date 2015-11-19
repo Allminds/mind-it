@@ -27,14 +27,19 @@ var tracker = {
             return;
 
         updatedNode = updatedNode.__data__;
-        updatedNode.name = fields.name;
-        chart.update();
-        var selectedNode = map.selectedNodeData();
-        // redraw gray box
-        if (selectedNode && selectedNode._id === id) {
-            setTimeout(function () {
-                selectNode(selectedNode);
-            }, 10);
+        updatedNode.previous = fields.previous ? fields.previous : updatedNode.previous;
+        updatedNode.next = fields.next ? fields.next : updatedNode.next;
+
+        if (fields.name) {
+            updatedNode.name = fields.name;
+            chart.update();
+            var selectedNode = map.selectedNodeData();
+            // redraw gray box
+            if (selectedNode && selectedNode._id === id) {
+                setTimeout(function () {
+                    selectNode(selectedNode);
+                }, 10);
+            }
         }
     },
     just_deleted: null,
@@ -70,7 +75,7 @@ Template.create.rendered = function rendered() {
     });
 
     var rootNodeObject = rootNode.__data__;
-    document.getElementById('share').innerHTML = "mindit.xyz/create/"+ rootNodeObject._id;
+    document.getElementById('share').innerHTML = "mindit.xyz/create/" + rootNodeObject._id;
     select(rootNode);
     Mindmaps.find().observeChanges(tracker);
 };
@@ -122,7 +127,7 @@ var select = function (node) {
     rect.setAttribute("height", dim.height);
     node.insertBefore(rect, text);
     node.__data__ = text.__data__;
-    d3.select(text).on('dblClick',showEditor);
+    d3.select(text).on('dblClick', showEditor);
 };
 
 
@@ -226,7 +231,7 @@ var chart = MindMap()
     .width(800)
     .height(dims.height - 10)
     .text(function (d) {
-        return d.name || d.text;
+        return d.name;
     })
     .click(function (d) {
         select(this);
@@ -266,29 +271,46 @@ map.addNodeToUI = function (parent, newNode) {
     if (!children) {
         children = parent.children = [];
     }
-    children.push(newNode);
+    if (newNode.previous) {
+        var previousNode = children.find(function(x){return x._id == newNode.previous}),
+            previousNodeIndex = children.indexOf(previousNode) + 1;
+        children.splice(previousNodeIndex,0,newNode);
+    } else
+        children.push(newNode);
     chart.update();
 }
-map.addNewNode = function (parent, newNodeName) {
+map.addNewNode = function (parent, newNodeName, previousSibling) {
 
     var dir = getDirection(parent);
-    var selectedNode= map.selectedNodeData();
+    var selectedNode = map.selectedNodeData();
 
     if (dir === 'root') {
-        if(getDirection(selectedNode) === 'root') {
-             directionToggler.canToggle = true;
-             dir = directionToggler.currentDir;
+        if (getDirection(selectedNode) === 'root') {
+            directionToggler.canToggle = true;
+            dir = directionToggler.currentDir;
         }
         else
             dir = selectedNode.position;
     }
-    console.log(dir);
+    if (!previousSibling) {
+        previousSibling = parent.children && parent.children.length > 0 ?
+            parent.children[parent.children.length - 1]
+            : {_id: null, next: null}
+    }
     var newNode = {
         name: newNodeName, position: dir,
-        parent_ids: [].concat(parent.parent_ids || []).concat([parent._id])
+        parent_ids: [].concat(parent.parent_ids || []).concat([parent._id]),
+        previous: previousSibling._id, next: previousSibling.next,
     };
     newNode._id = mindMapService.addNode(newNode);
+
+    if (previousSibling._id) {
+        mindMapService.updateNode(previousSibling._id, {next: newNode._id});
+        mindMapService.updateNode(newNode.next, {previous: newNode._id});
+    }
+
     // let the subscribers to update their mind map :)
+
     return newNode;
 }
 map.makeEditable = function (nodeId) {
@@ -348,7 +370,8 @@ Mousetrap.bind('enter', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
     var parent = selectedNode.parent || selectedNode,
-        newNode = map.addNewNode(parent, "");
+        sibling = selectedNode.position ? selectedNode : null,
+        newNode = map.addNewNode(parent, "", sibling);
     map.makeEditable(newNode._id);
     return false;
 });
