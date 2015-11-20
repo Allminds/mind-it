@@ -20,7 +20,6 @@ var tracker = {
         var newNode = map.getNodeData(id);
         if (newNode)
             return;
-
         newNode = fields;
         newNode._id = id;
         var parent = map.getNodeData(newNode.parent_ids[newNode.parent_ids.length - 1]);
