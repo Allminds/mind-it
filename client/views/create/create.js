@@ -157,8 +157,9 @@ var showEditor = function () {
         inputWidth = position.width > 50 ? position.width : 50;
     if (nodeData.name && nodeData.name.length >= 50) {
         var updatedName = prompt('Name', nodeData.name);
-        if (updatedName) {
-            mindMapService.updateNode(nodeData._id, {name: updatedName});
+        if (updatedName != nodeData.name) {
+            nodeData.name = updatedName;
+            mindMapService.updateNode(nodeData._id, {name: nodeData.name});
             chart.update();
             setTimeout(function () {
                 chart.update();
