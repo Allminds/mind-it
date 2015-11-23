@@ -465,6 +465,33 @@ Mousetrap.bind('up', function () {
     return false;
 });
 
+function findLastChild(node) {
+    if(!node.children)
+        return node;
+    while(node.children)
+    {
+        node = node.children[0];
+    }
+    return node;
+}
+
+function findLogicalDown(node){
+     var dir = getDirection(node);
+          if(dir === 'root') return;
+     var p = node.parent, nl = p.children || [], i = 0;
+     if (p[dir]) {
+         nl = p[dir];
+     }
+     l = nl.length;
+     for (; i < l - 1; i++) {
+         if (nl[i]._id === node._id) {
+              selectNode(findLastChild(nl[i + 1]));
+             //selectNode(nl[i + 1]);
+             return;
+         }
+     }
+     if(i == l-1) findLogicalDown(p);
+}
 
 Mousetrap.bind('down', function () {
     // down key pressed
@@ -478,17 +505,7 @@ Mousetrap.bind('down', function () {
                 break;
             case('left'):
             case('right'):
-                var p = data.parent, nl = p.children || [], i = 0;
-                if (p[dir]) {
-                    nl = p[dir];
-                }
-                l = nl.length;
-                for (; i < l - 1; i++) {
-                    if (nl[i]._id === data._id) {
-                        selectNode(nl[i + 1]);
-                        break;
-                    }
-                }
+                  findLogicalDown(data);
                 break;
         }
     }
