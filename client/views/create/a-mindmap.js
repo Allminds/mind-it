@@ -5,7 +5,6 @@ MindMap = function () {
         defaultWidth = null,
         width = 960,
         height = 500,
-        duration = 500,
         identity = '_id',
         handleClick = function () {
         },
@@ -153,7 +152,7 @@ MindMap = function () {
 
             chart.update = function () {
                 updateWidth();
-                container.transition().duration(duration).call(chart);
+                container.transition().call(chart);
             };
             var maxDepth = function (node) {
                 return (node.children || []).reduce(function (depth, child) {
@@ -245,7 +244,6 @@ MindMap = function () {
 
             // Transition nodes to their new position.
             var nodeUpdate = node.transition()
-                .duration(duration)
                 .attr("transform", function (d) {
                     return "translate(" + d.y + "," + d.x + ")";
                 });
@@ -255,7 +253,6 @@ MindMap = function () {
 
             // Transition exiting nodes to the parent's new position.
             var nodeExit = node.exit().transition()
-                .duration(duration)
                 .attr("transform", translate)
                 .remove();
 
@@ -273,23 +270,20 @@ MindMap = function () {
                 .attr("d", function (path) {
                     var parentNode = path.source || root,
                         x0 = parentNode.x0 || root.x0,
-                        y0 = parentNode.y0 || root.y0,
+                        y0 = parentNode.y0 || root.y0 ,
                         o = {x: x0, y: y0};
                     return connector({source: o, target: o});
                 })
                 .transition()
-                .duration(duration)
                 .attr("d", connector);
 
 
             // Transition links to their new position.
             link.transition()
-                .duration(duration)
                 .attr("d", connector);
 
             // Transition exiting nodes to the parent's new position.
             link.exit().transition()
-                .duration(duration)
                 .attr("d", function (path) {
                     var parentNode = path.source || root,
                         o = {x: parentNode.x, y: parentNode.y};
@@ -317,11 +311,7 @@ MindMap = function () {
         return chart;
     };
 
-    chart.duration = function (_) {
-        if (!arguments.length) return duration;
-        duration = _;
-        return chart;
-    };
+
 
     chart.connector = function (_) {
         if (!arguments.length) return connector;
