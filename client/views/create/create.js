@@ -459,10 +459,12 @@ function findLogicalUp(node){
      l = nl.length;
      for (; i < l; i++) {
          if (nl[i]._id === node._id) {
-             selectNode(nl[i - 1]);
+             selectNode(findSameLevelChild(nl[i - 1],nodeSelector.prevDepthVisited,0));
              break;
          }
      }
+     if(nl[0]._id === node._id)
+        findLogicalUp(p);
 }
 
 Mousetrap.bind('up', function () {
@@ -483,7 +485,10 @@ Mousetrap.bind('up', function () {
     return false;
 });
 
-function findSameLevelChild(node,depth) {
+function findSameLevelChild(node,depth,downwards) {
+    var index;
+    if(downwards)
+        index = 0;
     if(!node.children)
         return node;
     if (node.depth == depth)
@@ -492,7 +497,9 @@ function findSameLevelChild(node,depth) {
     }
     while(node.children)
     {
-        node = node.children[0];
+        if(!downwards)
+            index = node.children.length - 1;
+        node = node.children[index];
         if(node.depth == depth)
         {
             return node;
@@ -503,7 +510,7 @@ function findSameLevelChild(node,depth) {
 
 function findLogicalDown(node,depth){
      var dir = getDirection(node);
-          if(dir === 'root') return;
+     if(dir === 'root') return;
      var p = node.parent, nl = p.children || [], i = 0;
      if (p[dir]) {
          nl = p[dir];
@@ -511,7 +518,7 @@ function findLogicalDown(node,depth){
      l = nl.length;
      for (; i < l - 1; i++) {
          if (nl[i]._id === node._id) {
-             selectNode(findSameLevelChild(nl[i + 1],nodeSelector.prevDepthVisited));
+             selectNode(findSameLevelChild(nl[i + 1],nodeSelector.prevDepthVisited,1));
              //selectNode(nl[i + 1]);
              return;
          }
