@@ -484,6 +484,8 @@ Mousetrap.bind('up', function () {
 });
 
 function findSameLevelChild(node,depth) {
+    console.log(node);
+    console.log(depth);
     if(!node.children)
         return node;
     if (node.depth == depth)
@@ -515,7 +517,7 @@ function findLogicalDown(node,depth){
              return;
          }
      }
-     if(i == l-1) findLogicalDown(p);
+     if(i == l-1) findLogicalDown(p,depth);
 }
 
 Mousetrap.bind('down', function () {
