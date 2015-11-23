@@ -437,6 +437,23 @@ Mousetrap.bind('del', function () {
     selectNode(selectedNode.parent);
 });
 
+function findLogicalUp(node){
+     var dir = getDirection(node);
+     if(dir === 'root') return;
+
+     var p = node.parent, nl = p.children || [], i = 1;
+     if (p[dir]) {
+         nl = p[dir];
+     }
+     l = nl.length;
+     for (; i < l; i++) {
+         if (nl[i]._id === node._id) {
+             selectNode(nl[i - 1]);
+             break;
+         }
+     }
+}
+
 Mousetrap.bind('up', function () {
     // up key pressed
     var selection = d3.select(".node.selected")[0][0];
@@ -448,34 +465,42 @@ Mousetrap.bind('up', function () {
                 break;
             case('left'):
             case('right'):
-                var p = data.parent, nl = p.children || [], i = 1;
-                if (p[dir]) {
-                    nl = p[dir];
-                }
-                l = nl.length;
-                for (; i < l; i++) {
-                    if (nl[i]._id === data._id) {
-                        selectNode(nl[i - 1]);
-                        break;
-                    }
-                }
+//                var p = data.parent, nl = p.children || [], i = 1;
+//                if (p[dir]) {
+//                    nl = p[dir];
+//                }
+//                l = nl.length;
+//                for (; i < l; i++) {
+//                    if (nl[i]._id === data._id) {
+//                        selectNode(nl[i - 1]);
+//                        break;
+//                    }
+//                }
+                findLogicalUp(data);
                 break;
         }
     }
     return false;
 });
 
-function findLastChild(node) {
+function findSameLevelChild(node,depth) {
     if(!node.children)
+        return node;
+    if (node.depth == depth)
         return node;
     while(node.children)
     {
         node = node.children[0];
+        if(node.depth == depth)
+        {
+            console.log(node.depth);
+            return node;
+        }
     }
     return node;
 }
 
-function findLogicalDown(node){
+function findLogicalDown(node,depth){
      var dir = getDirection(node);
           if(dir === 'root') return;
      var p = node.parent, nl = p.children || [], i = 0;
@@ -485,7 +510,7 @@ function findLogicalDown(node){
      l = nl.length;
      for (; i < l - 1; i++) {
          if (nl[i]._id === node._id) {
-              selectNode(findLastChild(nl[i + 1]));
+             selectNode(findSameLevelChild(nl[i + 1],depth));
              //selectNode(nl[i + 1]);
              return;
          }
@@ -495,7 +520,6 @@ function findLogicalDown(node){
 
 Mousetrap.bind('down', function () {
     // down key pressed
-    // up key pressed
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
         var data = selection.__data__;
@@ -505,7 +529,7 @@ Mousetrap.bind('down', function () {
                 break;
             case('left'):
             case('right'):
-                  findLogicalDown(data);
+                  findLogicalDown(data,data.depth);
                 break;
         }
     }
