@@ -35,7 +35,6 @@ var tracker = {
             parent = parent.__data__;
         map.addNodeToUI(parent, newNode);
         nodeSelector.setPrevDepth(newNode.parent_ids.length);
-        console.log(nodeSelector.prevDepthVisited);
     },
     changed: function (id, fields) {
         var updatedNode = map.getNodeData(id);
@@ -508,7 +507,7 @@ function findSameLevelChild(node,depth,downwards) {
     return node;
 }
 
-function findLogicalDown(node,depth){
+function findLogicalDown(node){
      var dir = getDirection(node);
      if(dir === 'root') return;
      var p = node.parent, nl = p.children || [], i = 0;
@@ -523,7 +522,7 @@ function findLogicalDown(node,depth){
              return;
          }
      }
-     if(i == l-1) findLogicalDown(p,depth);
+     if(i == l-1) findLogicalDown(p);
 }
 
 Mousetrap.bind('down', function () {
@@ -537,7 +536,7 @@ Mousetrap.bind('down', function () {
                 break;
             case('left'):
             case('right'):
-                  findLogicalDown(data,data.depth);
+                  findLogicalDown(data);
                 break;
         }
     }
@@ -588,7 +587,6 @@ Mousetrap.bind('right', function () {
                 break;
             case('right'):
                 nodeSelector.setPrevDepth(data.depth);
-                console.log(nodeSelector.prevDepthVisited);
                 if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
                     expand(data, data._id);
                     chart.update();
