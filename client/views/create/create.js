@@ -447,7 +447,7 @@ Mousetrap.bind('del', function () {
             break
     }
 
-    if(parent.children[i+1]){
+    if(parent.children[i+1] && parent.children[i+1].position=== selectedNode.position){
         selectNode(selectedNode.parent.children[i+1]);
 
     }
