@@ -3,11 +3,15 @@
 	margin: 0;
 	padding: 0;
 }
+html{
+  height: 100%;
+}
+
 body {
   text-align: center;
   background-color: #e9ece5;
+  height: 100%;
  }
-
 .btn {
  	background-color: #3fb0ac;
  	border:none;
@@ -59,5 +63,14 @@ body {
    transform: translate(0px,5px);
    -webkit-transform: translate(0px,5px);
    /*border-bottom: 1px solid;*/
+}
+
+.home-bg{
+    background: url("home-bg.png");
+    max-height: 600px;
+    background-repeat: no-repeat;
+    height: 70%;
+    background-size: contain;
+    background-position: 50% 50%;
 }
 
