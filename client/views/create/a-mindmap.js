@@ -141,17 +141,17 @@ MindMap = function () {
                 vis = graphRoot;
             }
             vis = vis
-                .attr("transform", "translate(" + (w / 2 + margin.left) + "," + margin.top + ")")
+                .attr("transform", "translate(" + (w / 2 + margin.left) + "," + (margin.top + h/2)+ ")")
             ;
 
-            root.x0 = h / 2;
+           root.x0 = 0;
             root.y0 = 0;
 
             var tree = d3.layout.tree()
-                .size([h, w]);
+                .nodeSize([30, 200]);
 
             chart.update = function () {
-                updateWidth();
+//                updateWidth();
                 container.transition().call(chart);
             };
             var maxDepth = function (node) {
@@ -194,12 +194,12 @@ MindMap = function () {
                 second = root.right.length > 0 ? right : left;
 
             var firstSet = tree
-                .size([h, (w / 2) - 20])
+                //.size([h, (w / 2) - 20])
                 .children(first)
                 .nodes(root)
                 .reverse();
             var secondSet = tree
-                .size([h, w / 2])
+                //.size([h, w / 2])
                 .children(second)
                 .nodes(root)
                 .reverse();

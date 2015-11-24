@@ -240,8 +240,8 @@ var showEditor = function () {
 
 var dims = getDims();
 var chart = MindMap()
-    .width(800)
-    .height(dims.height - 10)
+    .width(3000)
+    .height(2000)
     .text(function (d) {
         return d.name;
     })
