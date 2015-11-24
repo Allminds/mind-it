@@ -79,7 +79,6 @@ var tracker = {
         if (delNodeIndex >= 0) {
             children.splice(delNodeIndex, 1);
             chart.update();
-            selectNode(deletedNode.parent);
             tracker.just_deleted = id;
         }
     }
@@ -432,7 +431,7 @@ Mousetrap.bind('del', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return;
     var dir = getDirection(selectedNode);
-
+    var parent= selectedNode.parent,i;
 
     if (dir === 'root') {
         alert('Can\'t delete root');
@@ -443,8 +442,27 @@ Mousetrap.bind('del', function () {
         alert('Could not locate children');
         return;
     }
-    Meteor.call('deleteNode', selectedNode._id);
-    selectNode(selectedNode.parent);
+    for(i=0;i<parent.children.length;i++){
+        if(parent.children[i]===selectedNode)
+            break
+    }
+
+    if(parent.children[i+1]){
+        selectNode(selectedNode.parent.children[i+1]);
+
+    }
+     else if(parent.children[i-1]){
+        selectNode(selectedNode.parent.children[i-1]);
+
+     }
+     else{
+        selectNode(selectedNode.parent);
+
+     }
+
+     Meteor.call('deleteNode', selectedNode._id);
+
+
 });
 
 function findLogicalUp(node){
