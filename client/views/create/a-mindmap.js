@@ -92,7 +92,6 @@ MindMap = function () {
                     return d3.select(this).style("stroke-width", 0);
                 });
 
-
             node.append("svg:text")
                 .text(text);
 
@@ -109,6 +108,7 @@ MindMap = function () {
             d3.select(rootNode).select("ellipse")
                 .attr("rx", getWidth)
                 .attr("ry", 20);
+
         },
         exitNode = function (node) {
             var rootNode = getRootNode(node);
@@ -145,7 +145,7 @@ MindMap = function () {
             ;
 
            root.x0 = 0;
-            root.y0 = 0;
+           root.y0 = 0;
 
             var tree = d3.layout.tree()
                 .nodeSize([30, 200]);

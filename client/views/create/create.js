@@ -313,7 +313,6 @@ function calculateDirection(parent) {
 }
 
 map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
-
     if (!previousSibling) {
         previousSibling = parent.children && parent.children.length > 0 ?
             parent.children[parent.children.length - 1]
@@ -369,6 +368,9 @@ function cut() {
         return;
     }
     map.storeSourceNode(sourceNode);
+    var parent = sourceNode.parent;
+    if(parent)
+        focusAfterDelete(parent,sourceNode);
     Meteor.call('deleteNode', sourceNode._id);
 }
 
@@ -414,6 +416,7 @@ Mousetrap.bind('enter', function () {
     map.makeEditable(newNode._id);
     return false;
 });
+
 Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
@@ -431,7 +434,7 @@ Mousetrap.bind('del', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return;
     var dir = getDirection(selectedNode);
-    var parent= selectedNode.parent,i;
+    var parent = selectedNode.parent;
 
     if (dir === 'root') {
         alert('Can\'t delete root');
@@ -442,28 +445,36 @@ Mousetrap.bind('del', function () {
         alert('Could not locate children');
         return;
     }
-    for(i=0;i<parent.children.length;i++){
-        if(parent.children[i]===selectedNode)
-            break
-    }
 
-    if(parent.children[i+1] && parent.children[i+1].position=== selectedNode.position){
-        selectNode(selectedNode.parent.children[i+1]);
-
-    }
-     else if(parent.children[i-1]){
-        selectNode(selectedNode.parent.children[i-1]);
-
-     }
-     else{
-        selectNode(selectedNode.parent);
-
-     }
+    if(parent)
+        focusAfterDelete(parent,selectedNode);
 
      Meteor.call('deleteNode', selectedNode._id);
 
 
 });
+
+function focusAfterDelete(parent,selectedNode){
+
+    for(var i=0;i<parent.children.length;i++){
+            if(parent.children[i] === selectedNode)
+                break
+        }
+
+        if(parent.children[i+1]){
+            selectNode(selectedNode.parent.children[i+1]);
+
+        }
+         else if(parent.children[i-1]){
+            selectNode(selectedNode.parent.children[i-1]);
+
+         }
+         else{
+            selectNode(selectedNode.parent);
+         }
+
+}
+
 
 function findLogicalUp(node){
      var dir = getDirection(node);
