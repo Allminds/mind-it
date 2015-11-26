@@ -159,7 +159,7 @@ MindMap = function () {
                 .nodeSize(nodeSize);
 
             chart.update = function () {
-                updateWidth();
+                //updateWidth();
                 container.transition().call(chart);
             };
             var maxDepth = function (node) {
