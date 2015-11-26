@@ -16,9 +16,9 @@ var directionToggler = {
 };
 
 var nodeSelector = {
-    prevDepthVisited : 0,
+    prevDepthVisited: 0,
 
-    setPrevDepth : function(depth){
+    setPrevDepth: function (depth) {
         nodeSelector.prevDepthVisited = depth;
     }
 };
@@ -313,6 +313,7 @@ function calculateDirection(parent) {
 }
 
 map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
+
     if (!previousSibling) {
         previousSibling = parent.children && parent.children.length > 0 ?
             parent.children[parent.children.length - 1]
@@ -476,22 +477,22 @@ function focusAfterDelete(parent,selectedNode){
 }
 
 
-function findLogicalUp(node){
-     var dir = getDirection(node);
-     if(dir === 'root') return;
+function findLogicalUp(node) {
+    var dir = getDirection(node);
+    if (dir === 'root') return;
 
-     var p = node.parent, nl = p.children || [], i = 1;
-     if (p[dir]) {
-         nl = p[dir];
-     }
-     l = nl.length;
-     for (; i < l; i++) {
-         if (nl[i]._id === node._id) {
-             selectNode(findSameLevelChild(nl[i - 1],nodeSelector.prevDepthVisited,0));
-             break;
-         }
-     }
-     if(nl[0]._id === node._id)
+    var p = node.parent, nl = p.children || [], i = 1;
+    if (p[dir]) {
+        nl = p[dir];
+    }
+    l = nl.length;
+    for (; i < l; i++) {
+        if (nl[i]._id === node._id) {
+            selectNode(findSameLevelChild(nl[i - 1], nodeSelector.prevDepthVisited, 0));
+            break;
+        }
+    }
+    if (nl[0]._id === node._id)
         findLogicalUp(p);
 }
 
@@ -513,45 +514,42 @@ Mousetrap.bind('up', function () {
     return false;
 });
 
-function findSameLevelChild(node,depth,downwards) {
+function findSameLevelChild(node, depth, downwards) {
     var index;
-    if(downwards)
+    if (downwards)
         index = 0;
-    if(!node.children)
+    if (!node.children)
         return node;
-    if (node.depth == depth)
-    {
+    if (node.depth == depth) {
         return node;
     }
-    while(node.children)
-    {
-        if(!downwards)
+    while (node.children) {
+        if (!downwards)
             index = node.children.length - 1;
         node = node.children[index];
-        if(node.depth == depth)
-        {
+        if (node.depth == depth) {
             return node;
         }
     }
     return node;
 }
 
-function findLogicalDown(node){
-     var dir = getDirection(node);
-     if(dir === 'root') return;
-     var p = node.parent, nl = p.children || [], i = 0;
-     if (p[dir]) {
-         nl = p[dir];
-     }
-     l = nl.length;
-     for (; i < l - 1; i++) {
-         if (nl[i]._id === node._id) {
-             selectNode(findSameLevelChild(nl[i + 1],nodeSelector.prevDepthVisited,1));
-             //selectNode(nl[i + 1]);
-             return;
-         }
-     }
-     if(i == l-1) findLogicalDown(p);
+function findLogicalDown(node) {
+    var dir = getDirection(node);
+    if (dir === 'root') return;
+    var p = node.parent, nl = p.children || [], i = 0;
+    if (p[dir]) {
+        nl = p[dir];
+    }
+    l = nl.length;
+    for (; i < l - 1; i++) {
+        if (nl[i]._id === node._id) {
+            selectNode(findSameLevelChild(nl[i + 1], nodeSelector.prevDepthVisited, 1));
+            //selectNode(nl[i + 1]);
+            return;
+        }
+    }
+    if (i == l - 1) findLogicalDown(p);
 }
 
 Mousetrap.bind('down', function () {
@@ -565,7 +563,7 @@ Mousetrap.bind('down', function () {
                 break;
             case('left'):
             case('right'):
-                  findLogicalDown(data);
+                findLogicalDown(data);
                 break;
         }
     }
@@ -588,13 +586,11 @@ Mousetrap.bind('left', function () {
                     expand(data, data._id);
                     chart.update();
                 }
-                else
-                {
+                else {
                     var node = (data.children || [])[0];
                     selectNode(node);
-                    if(node)
+                    if (node)
                         nodeSelector.setPrevDepth(node.depth);
-
                 }
                 break;
             default:
@@ -620,12 +616,11 @@ Mousetrap.bind('right', function () {
                     expand(data, data._id);
                     chart.update();
                 }
-                else
-                {
-                 var node = (data.children || [])[0];
-                 selectNode(node);
-                 if(node)
-                     nodeSelector.setPrevDepth(node.depth);
+                else {
+                    var node = (data.children || [])[0];
+                    selectNode(node);
+                    if (node)
+                        nodeSelector.setPrevDepth(node.depth);
                 }
                 break;
             default:
@@ -668,6 +663,7 @@ window.toggleCollapsedNode = function (selected) {
         else {
             collapse(selected, selected._id);
         }
+        chart.update();
         chart.update();
     }
 }

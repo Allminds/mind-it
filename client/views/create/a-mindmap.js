@@ -1,9 +1,10 @@
 MindMap = function () {
     "use strict";
     var
-        margin = {top: 20, left: 120, bottom: 20, right: 120},
-        defaultWidth = null,
+        margin = {top: 0, left: 0, bottom: 0, right: 0},
         width = 960,
+        width = 960,
+        defaultWidth = 0,
         height = 500,
         identity = '_id',
         handleClick = function () {
@@ -38,7 +39,7 @@ MindMap = function () {
                     .attr('cx', function (d) {
                         var text = d3.select(this.parentNode).select("text")[0][0],
                             bBox = text.getBBox(),
-                            x = bBox.width == 0 ? -5: bBox.x;
+                            x = bBox.width == 0 ? -5 : bBox.x;
                         return (d.position == 'left' ? 1 : -1) * x;
                     })
                     .on('mouseover', function (d) {
@@ -64,13 +65,20 @@ MindMap = function () {
                     });
             },
             update: function (node) {
-                node.selectAll('circle').attr('r', function (d) {
-                    var hasChildren = (d.children || d._children || []).length > 0;
-                    d3.select(this)
-                        .classed('filled', d.isCollapsed)
-                        .classed('unfilled', !d.isCollapsed);
-                    return hasChildren ? (d.isCollapsed ? indicator.default : indicator.hovered) : 0;
-                });
+                node.selectAll('circle')
+                    .attr('cx', function (d) {
+                        var text = d3.select(this.parentNode).select("text")[0][0],
+                            bBox = text.getBBox(),
+                            x = bBox.width == 0 ? -5 : bBox.x;
+                        return (d.position == 'left' ? 1 : -1) * x;
+                    })
+                    .attr('r', function (d) {
+                        var hasChildren = (d.children || d._children || []).length > 0;
+                        d3.select(this)
+                            .classed('filled', d.isCollapsed)
+                            .classed('unfilled', !d.isCollapsed);
+                        return hasChildren ? (d.isCollapsed ? indicator.default : indicator.hovered) : 0;
+                    });
             }
         },
         enterNode = function (node) {
@@ -92,6 +100,7 @@ MindMap = function () {
                     return d3.select(this).style("stroke-width", 0);
                 });
 
+
             node.append("svg:text")
                 .text(text);
 
@@ -108,7 +117,6 @@ MindMap = function () {
             d3.select(rootNode).select("ellipse")
                 .attr("rx", getWidth)
                 .attr("ry", 20);
-
         },
         exitNode = function (node) {
             var rootNode = getRootNode(node);
@@ -128,7 +136,7 @@ MindMap = function () {
         selection.each(function (root) {
             var w = width - margin.left - margin.right;
             var h = height - margin.top - margin.bottom;
-
+            var nodeSize = [30, 30]
             var container = d3.select(this);
             var vis = container
                 .attr("width", width)
@@ -141,17 +149,17 @@ MindMap = function () {
                 vis = graphRoot;
             }
             vis = vis
-                .attr("transform", "translate(" + (w / 2 + margin.left) + "," + (margin.top + h/2)+ ")")
+                .attr("transform", "translate(" + (w / 2 + margin.left) + "," + (margin.top + h / 2) + ")")
             ;
 
-           root.x0 = 0;
-           root.y0 = 0;
+            root.x0 = 0;
+            root.y0 = 0;
 
-            var tree = d3.layout.tree()
-                .nodeSize([30, 200]);
+            var tree = d3.layout.cluster()
+                .nodeSize(nodeSize);
 
             chart.update = function () {
-//                updateWidth();
+                updateWidth();
                 container.transition().call(chart);
             };
             var maxDepth = function (node) {
@@ -194,12 +202,10 @@ MindMap = function () {
                 second = root.right.length > 0 ? right : left;
 
             var firstSet = tree
-                //.size([h, (w / 2) - 20])
                 .children(first)
                 .nodes(root)
                 .reverse();
             var secondSet = tree
-                //.size([h, w / 2])
                 .children(second)
                 .nodes(root)
                 .reverse();
@@ -210,10 +216,22 @@ MindMap = function () {
                 left.pop();
 
                 var result = left.concat(right);
-                result.forEach(function (node) {
-                    var dir = node.position == 'left' ? -1 : 1;
-                    node.y = dir * node.depth * 150;
 
+                function getTotalWidth(node) {
+                    if (!node) return 0;
+                    var width = getTextWidth(node._id) / 2, parent = node.parent;
+                    while (parent) {
+                        width += getTextWidth(parent._id);
+                        parent = parent.parent;
+                    }
+
+                    return width;
+                }
+
+                result.forEach(function (node) {
+                    var dir = node.position ? (node.position == 'left' ? -1 : 1) : 0,
+                        textWidth = getTotalWidth(node);
+                    node.y = dir * (node.depth * nodeSize[1] + textWidth);
                 });
 
                 return result;
@@ -270,7 +288,7 @@ MindMap = function () {
                 .attr("d", function (path) {
                     var parentNode = path.source || root,
                         x0 = parentNode.x0 || root.x0,
-                        y0 = parentNode.y0 || root.y0 ,
+                        y0 = parentNode.y0 || root.y0,
                         o = {x: x0, y: y0};
                     return connector({source: o, target: o});
                 })
@@ -310,7 +328,6 @@ MindMap = function () {
         height = _;
         return chart;
     };
-
 
 
     chart.connector = function (_) {
@@ -386,19 +403,20 @@ MindMap.elbow = function (d) {
         "H" + (source.y + hy) +
         "V" + target.x + "H" + target.y;
 };
-MindMap.diagonal = function (d) {
-    var source = d.source,
-        target = d.target,
-        dir = target.position == 'right' ? 1 : -1,
-        sourceWidth = dir * getTextWidth(source._id) / 2,
-        targetWidth = dir * getTextWidth(target._id) / 2,
-        deltaY = source.y + (target.y - source.y) / 2;
-    return 'M' + (source.y + sourceWidth) + ',' + source.x +
-        'C' + deltaY + ',' + target.x +
-        ' ' + deltaY + ',' + target.x +
-        ' ' + (target.y - targetWidth) + ',' + target.x +
-        'L' + (target.y + targetWidth) + ',' + target.x;
-};
+MindMap.diagonal =
+    function diagonal(d) {
+        var source = d.source,
+            target = d.target,
+            dir = target.position == 'right' ? 1 : -1,
+            sourceWidth = dir * getTextWidth(source._id) / 2,
+            targetWidth = dir * getTextWidth(target._id) / 2,
+            deltaY = (source.y + sourceWidth) + ((target.y - targetWidth) - (source.y + sourceWidth)) / 2;
+        return 'M' + (source.y + sourceWidth) + ',' + source.x +
+            'C' + deltaY + ',' + target.x +
+            ' ' + deltaY + ',' + target.x +
+            ' ' + (target.y - targetWidth) + ',' + target.x +
+            'L' + (target.y + targetWidth) + ',' + target.x;
+    };
 
 MindMap.loadFreeMind = function (fileName, callback) {
     d3.xml(fileName, 'application/xml', function (err, xml) {
