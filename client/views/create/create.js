@@ -423,7 +423,6 @@ Mousetrap.bind('tab', function () {
     if (!selectedNode) return false;
     if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
         expand(selectedNode, selectedNode._id);
-        chart.update();
     }
     var dir = calculateDirection(selectedNode);
     var newNode = map.addNewNode(selectedNode, "", dir);
@@ -584,7 +583,6 @@ Mousetrap.bind('left', function () {
             case('left'):
                 if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
                     expand(data, data._id);
-                    chart.update();
                 }
                 else {
                     var node = (data.children || [])[0];
@@ -614,7 +612,6 @@ Mousetrap.bind('right', function () {
                 nodeSelector.setPrevDepth(data.depth);
                 if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
                     expand(data, data._id);
-                    chart.update();
                 }
                 else {
                     var node = (data.children || [])[0];
@@ -630,28 +627,37 @@ Mousetrap.bind('right', function () {
 });
 
 
-function collapse(d, id) {
+function collapseRec(d, id) {
     if (d._id === id) {
         d.isCollapsed = true;
     }
     if (d.hasOwnProperty('children') && d.children) {
         d._children = [];
         d._children = d.children;
-        d._children.forEach(collapse);
+        d._children.forEach(collapseRec);
         d.children = null;
     }
 }
+function collapse(d, id) {
+    collapseRec(d, id);
+    chart.update();
+}
 
-
-function expand(d, id) {
+function expandRec(d,id){
     if (d._id === id) {
         d.isCollapsed = false;
     }
     if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
         d.children = d._children;
-        d._children.forEach(expand);
+        d._children.forEach(expandRec);
         d._children = null;
     }
+}
+
+function expand(d, id) {
+    expandRec(d,id);
+    chart.update();
+    chart.update();
 }
 
 window.toggleCollapsedNode = function (selected) {
@@ -663,8 +669,6 @@ window.toggleCollapsedNode = function (selected) {
         else {
             collapse(selected, selected._id);
         }
-        chart.update();
-        chart.update();
     }
 }
 Mousetrap.bind('space', function () {
