@@ -389,7 +389,6 @@ Mousetrap.bind('command+v', function () {
 });
 
 function paste(sourceNode, targetNode, dir, previousSibling) {
-    console.log('pasting: ' + targetNode.name + ' --- ' + sourceNode.name);
     var newNode = map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
         childrenArray;
     if (sourceNode.hasOwnProperty('children') && sourceNode.children)

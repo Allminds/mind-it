@@ -3,7 +3,6 @@ MindMap = function () {
     var
         margin = {top: 0, left: 0, bottom: 0, right: 0},
         width = 960,
-        width = 960,
         defaultWidth = 0,
         height = 500,
         identity = '_id',
@@ -13,12 +12,6 @@ MindMap = function () {
         },
         text = function (d) {
             return d.name;
-        },
-        getWidth = function (d) {
-            var width = 80;
-            if (d && d.name && typeof d.name == 'string')
-                width = d.name.length * 6 + 12;
-            return width;
         },
         idx = 0,
         getRootNode = function (node) {
@@ -115,8 +108,12 @@ MindMap = function () {
 
             var rootNode = getRootNode(node);
             d3.select(rootNode).select("ellipse")
-                .attr("rx", getWidth)
-                .attr("ry", 20);
+                .attr("rx", function () {
+                    return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 2 + 15;
+                })
+                .attr("ry", function () {
+                    return 20 + d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 50;
+                });
         },
         exitNode = function (node) {
             var rootNode = getRootNode(node);
@@ -221,7 +218,7 @@ MindMap = function () {
                     if (!node) return 0;
                     var width = getTextWidth(node._id) / 2, parent = node.parent;
                     while (parent) {
-                        width += getTextWidth(parent._id);
+                        width += getTextWidth(parent._id) * (parent.position ? 1 : 0.5);
                         parent = parent.parent;
                     }
 
