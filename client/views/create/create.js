@@ -370,8 +370,8 @@ function cut() {
     }
     map.storeSourceNode(sourceNode);
     var parent = sourceNode.parent;
-    if(parent)
-        focusAfterDelete(parent,sourceNode);
+    if (parent)
+        focusAfterDelete(parent, sourceNode);
     Meteor.call('deleteNode', sourceNode._id);
 }
 
@@ -388,22 +388,24 @@ Mousetrap.bind('command+v', function () {
 
 });
 
-function paste(sourceNode, targetNode, dir) {
-    var newNode = map.addNewNode(targetNode, sourceNode.name, dir)
-        , childrenArray;
+function paste(sourceNode, targetNode, dir, previousSibling) {
+    console.log('pasting: ' + targetNode.name + ' --- ' + sourceNode.name);
+    var newNode = map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
+        childrenArray;
     if (sourceNode.hasOwnProperty('children') && sourceNode.children)
         childrenArray = sourceNode.children;
     else if (sourceNode.hasOwnProperty('_children') && sourceNode._children)
         childrenArray = sourceNode._children;
 
     if (childrenArray) {
+        var previous = null;
         childrenArray.forEach(
             function (d) {
-                paste(d, newNode, dir);
+                previous = paste(d, newNode, dir, previous);
             }
         );
-
     }
+    return newNode;
 }
 
 
@@ -446,32 +448,32 @@ Mousetrap.bind('del', function () {
         return;
     }
 
-    if(parent)
-        focusAfterDelete(parent,selectedNode);
+    if (parent)
+        focusAfterDelete(parent, selectedNode);
 
-     Meteor.call('deleteNode', selectedNode._id);
+    Meteor.call('deleteNode', selectedNode._id);
 
 
 });
 
-function focusAfterDelete(parent,selectedNode){
+function focusAfterDelete(parent, selectedNode) {
 
-    for(var i=0;i<parent.children.length;i++){
-            if(parent.children[i] === selectedNode)
-                break
-        }
+    for (var i = 0; i < parent.children.length; i++) {
+        if (parent.children[i] === selectedNode)
+            break
+    }
 
-        if(parent.children[i+1]){
-            selectNode(selectedNode.parent.children[i+1]);
+    if (parent.children[i + 1]) {
+        selectNode(selectedNode.parent.children[i + 1]);
 
-        }
-         else if(parent.children[i-1]){
-            selectNode(selectedNode.parent.children[i-1]);
+    }
+    else if (parent.children[i - 1]) {
+        selectNode(selectedNode.parent.children[i - 1]);
 
-         }
-         else{
-            selectNode(selectedNode.parent);
-         }
+    }
+    else {
+        selectNode(selectedNode.parent);
+    }
 
 }
 
@@ -643,7 +645,7 @@ function collapse(d, id) {
     chart.update();
 }
 
-function expandRec(d,id){
+function expandRec(d, id) {
     if (d._id === id) {
         d.isCollapsed = false;
     }
@@ -655,7 +657,7 @@ function expandRec(d,id){
 }
 
 function expand(d, id) {
-    expandRec(d,id);
+    expandRec(d, id);
     chart.update();
     chart.update();
 }
