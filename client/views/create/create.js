@@ -315,9 +315,11 @@ function calculateDirection(parent) {
 map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
 
     if (!previousSibling) {
-        previousSibling = parent.children && parent.children.length > 0 ?
-            parent.children[parent.children.length - 1]
-            : {_id: null, next: null}
+        var children = parent.position ? parent.children : parent[dir];
+
+        previousSibling = children && children.length > 0
+            ? children[children.length - 1]
+            : {_id: null, next: null};
     }
     var newNode = {
         name: newNodeName, position: dir,
@@ -388,26 +390,6 @@ Mousetrap.bind('command+v', function () {
 
 });
 
-function paste(sourceNode, targetNode, dir, previousSibling) {
-    var newNode = map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
-        childrenArray;
-    if (sourceNode.hasOwnProperty('children') && sourceNode.children)
-        childrenArray = sourceNode.children;
-    else if (sourceNode.hasOwnProperty('_children') && sourceNode._children)
-        childrenArray = sourceNode._children;
-
-    if (childrenArray) {
-        var previous = null;
-        childrenArray.forEach(
-            function (d) {
-                previous = paste(d, newNode, dir, previous);
-            }
-        );
-    }
-    return newNode;
-}
-
-
 Mousetrap.bind('enter', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return false;
@@ -418,6 +400,7 @@ Mousetrap.bind('enter', function () {
     map.makeEditable(newNode._id);
     return false;
 });
+
 
 Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
@@ -476,7 +459,6 @@ function focusAfterDelete(parent, selectedNode) {
 
 }
 
-
 function findLogicalUp(node) {
     var dir = getDirection(node);
     if (dir === 'root') return;
@@ -495,6 +477,7 @@ function findLogicalUp(node) {
     if (nl[0]._id === node._id)
         findLogicalUp(p);
 }
+
 
 Mousetrap.bind('up', function () {
     // up key pressed
@@ -569,6 +552,27 @@ Mousetrap.bind('down', function () {
     }
     return false;
 });
+
+function paste(sourceNode, targetNode, dir, previousSibling) {
+    var newNode = map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
+        childrenArray;
+    if (sourceNode.hasOwnProperty('children') && sourceNode.children) {
+        childrenArray = sourceNode.children;
+    }
+    else if (sourceNode.hasOwnProperty('_children') && sourceNode._children)
+        childrenArray = sourceNode._children;
+    console.log('pasting: ' + targetNode.name + ' --- ' + sourceNode.name + (previousSibling ? (' after ' + previousSibling.name) : ' as First'));
+
+    if (childrenArray) {
+        var previous = null;
+        childrenArray.forEach(
+            function (d) {
+                previous = paste(d, newNode, dir, previous);
+            }
+        );
+    }
+    return newNode;
+}
 
 Mousetrap.bind('left', function () {
     // left key pressed
