@@ -727,16 +727,18 @@ Mousetrap.bind('command+left', function () {
     if (selection) {
         var data = selection.__data__;
         var dir = getDirection(data),
-            parent = data.parent;
+            parent = data.parent,
+            selectedNode;
         switch (dir) {
             case('right'):
                 cut();
                 if (getDirection(parent) === 'root') {
-                    paste(data, parent, "left");
+                    selectedNode=paste(data, parent, "left");
                 }
                 else {
-                    paste(data, parent.parent, "right");
+                    selectedNode=paste(data, parent.parent, "right");
                 }
+                selectNode(selectedNode);
                 break;
             case('root'):
                 alert("Root cannot be added to a new parent");
@@ -751,13 +753,14 @@ Mousetrap.bind('command+left', function () {
                     if (nl[i]._id === data._id && l != 1) {
                         cut();
                         if (i === 0)
-                            paste(data, nl[(i + 1)], "left");
+                            selectedNode=paste(data, nl[(i + 1)], "left");
                         else
-                            paste(data, nl[(i - 1)], "left");
+                            selectedNode=paste(data, nl[(i - 1)], "left");
                         break;
                     }
-                    7
+
                 }
+                selectNode(selectedNode);
                 break;
             default:
                 break;
@@ -769,7 +772,8 @@ Mousetrap.bind('command+right', function () {
     // left key pressed
     event.preventDefault();
     var selection = d3.select(".node.selected")[0][0],
-        rootNode = d3.selectAll('.node')[0];
+        selectedNode;
+
     if (selection) {
         var data = selection.__data__;
         var dir = getDirection(data),
@@ -778,11 +782,12 @@ Mousetrap.bind('command+right', function () {
             case('left'):
                 cut();
                 if (getDirection(parent) === 'root') {
-                    paste(data, parent, "right");
+                    selectedNode=paste(data, parent, "right");
                 }
                 else {
-                    paste(data, parent.parent, "left");
+                    selectedNode=paste(data, parent.parent, "left");
                 }
+                selectNode(selectedNode);
                 break;
             case('root'):
                 alert("Root cannot be added to a new parent");
@@ -797,13 +802,14 @@ Mousetrap.bind('command+right', function () {
                     if (nl[i]._id === data._id && l != 1) {
                         cut();
                         if (i === 0)
-                            paste(data, nl[(i + 1)], "right");
+                            selectedNode=paste(data, nl[(i + 1)], "right");
                         else
-                            paste(data, nl[(i - 1)], "right");
+                            selectedNode=paste(data, nl[(i - 1)], "right");
                         break;
                     }
-                    7
+
                 }
+                selectNode(selectedNode); 
                 break;
             default:
                 break;
