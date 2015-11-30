@@ -64,6 +64,12 @@ path.link {
 
 .node text {
     font-size: 1em;
+    text-anchor: middle;
+    fill-opacity: 1;
+}
+
+.node.level-0 text {
+    font-size: 1.8em;
 }
 
 .node.level-1 text {
@@ -81,17 +87,10 @@ path.link {
     fill: maroon;
 }
 
-.rootNode text {
-    font-size: 1.8em;
-}
-.node text {
-    text-anchor: middle;
-    fill-opacity: 1;
-}
-
 .node.selected ellipse, .node.selected rect {
     fill: #ddd;
 }
+
 circle.indicator.filled {
     fill: white;
     stroke: #888;

@@ -98,7 +98,7 @@ MindMap = function () {
                 .text(text);
 
             node.attr('class', function (d) {
-                return d.depth == 0 ? 'node rootNode' : (d.depth > 0 && d.depth < 4 ? ('node level-' + d.depth) : 'node');
+                return d.depth < 4 ? ('node level-' + d.depth) : 'node';
             });
 
             indicator.enter(node);
@@ -107,7 +107,7 @@ MindMap = function () {
             node.select("text")
                 .text(text);
             node.select("text").attr("y", -2);
-            node.select(".rootNode text").attr("y", 9);
+            node.select(".level-0 text").attr("y", 9);
 
 
             var rootNode = getRootNode(node);
@@ -170,7 +170,7 @@ MindMap = function () {
                 }, node.depth);
             };
             var updateWidth = function () {
-                var depth = maxDepth(container.select('.node.rootNode').data()[0]);
+                var depth = maxDepth(container.select('.node.level-0').data()[0]);
                 defaultWidth = defaultWidth == null ? width : defaultWidth;
                 chart.width(defaultWidth + depth * 250);
             }
