@@ -97,13 +97,17 @@ MindMap = function () {
             node.append("svg:text")
                 .text(text);
 
+            node.attr('class', function (d) {
+                return d.depth == 0 ? 'node rootNode' : (d.depth > 0 && d.depth < 4 ? ('node level-' + d.depth) : 'node');
+            });
+
             indicator.enter(node);
         },
         updateNode = function (node) {
             node.select("text")
                 .text(text);
             node.select("text").attr("y", -2);
-            node.select(".rootNode text").attr("y", 6);
+            node.select(".rootNode text").attr("y", 9);
 
 
             var rootNode = getRootNode(node);
@@ -249,7 +253,6 @@ MindMap = function () {
             };
 
             var nodeEnter = node.enter().append("svg:g")
-                .attr("class", "node")
                 .attr("transform", translate)
                 .on("click", handleClick)
                 .on("dblclick", handleDblClick);

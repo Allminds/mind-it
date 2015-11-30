@@ -63,11 +63,26 @@ path.link {
 }
 
 .node text {
-    font-size: 1.1em;
+    font-size: 1em;
 }
 
-.rootNode text{
-    font-size: 1.3em;
+.node.level-1 text {
+    font-size: 1.6em;
+    fill: blue;
+}
+
+.node.level-2 text {
+    font-size: 1.4em;
+    fill: limegreen;
+}
+
+.node.level-3 text {
+    font-size: 1.2em;
+    fill: maroon;
+}
+
+.rootNode text {
+    font-size: 1.8em;
 }
 .node text {
     text-anchor: middle;
