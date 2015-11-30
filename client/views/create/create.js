@@ -190,26 +190,6 @@ var showEditor = function () {
 
 
 
-//        textArea = inp.append("xhtml:textArea")
-//                  .attr("editable","simple")
-//                  //.attr("contentEditable","true")
-//                  .attr("cols",400)
-//                  .attr("rows",4)
-//                      //.attr("focusable","true")
-//                      .attr("width",50)
-//                      .attr("height",20)
-//                      //.attr("pointer-events","boundingBox")
-//                      //.attr("visibility","visible")
-//                       .text(nodeData.name);
-
-
-        //.append("input");
-
-//        $hoverText = $('#hoverText');
-//        $('body').on('dblclick', '#hoverText', function () {
-//            $hoverText.show();
-//        });
-
     function resetEditor() {
         currentElement.attr("visibility", "");
         d3.select("foreignObject").remove();
