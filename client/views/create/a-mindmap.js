@@ -4,7 +4,7 @@ MindMap = function () {
         margin = {top: 0, left: 0, bottom: 0, right: 0},
         width = 960,
         defaultWidth = 0,
-        height = 500,
+        height = 6000,
         identity = '_id',
         handleClick = function () {
         },
@@ -95,7 +95,9 @@ MindMap = function () {
 
 
             node.append("svg:text")
-                .text(text);
+                .text(text)
+                .attr("cols",60)
+                .attr("rows",4);
 
             node.attr('class', function (d) {
                 return d.depth < 4 ? ('node level-' + d.depth) : 'node';
@@ -323,7 +325,7 @@ MindMap = function () {
     };
 
     chart.height = function (_) {
-        if (!arguments.length) return height;
+        if (!arguments.length) return 6000;
         height = _;
         return chart;
     };

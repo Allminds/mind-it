@@ -177,11 +177,38 @@ var showEditor = function () {
         return;
     }
 
+
+
     var inp = parentElement.append("foreignObject")
+    	.attr("id","hoverText")
         .attr("x", position.x - (nodeData.name.length == 0 ? 11 : 0))
         .attr("y", position.y - (nodeData.name.length == 0 ? 18 : 0))
         .append("xhtml:form")
-        .append("input");
+        var a = inp.append("input")
+                .attr("cols",40)
+                .attr("rows",4);
+
+
+
+//        textArea = inp.append("xhtml:textArea")
+//                  .attr("editable","simple")
+//                  //.attr("contentEditable","true")
+//                  .attr("cols",400)
+//                  .attr("rows",4)
+//                      //.attr("focusable","true")
+//                      .attr("width",50)
+//                      .attr("height",20)
+//                      //.attr("pointer-events","boundingBox")
+//                      //.attr("visibility","visible")
+//                       .text(nodeData.name);
+
+
+        //.append("input");
+
+//        $hoverText = $('#hoverText');
+//        $('body').on('dblclick', '#hoverText', function () {
+//            $hoverText.show();
+//        });
 
     function resetEditor() {
         currentElement.attr("visibility", "");
@@ -189,7 +216,7 @@ var showEditor = function () {
     }
 
     updateNode = function () {
-        nodeData.name = inp.node().value;
+        nodeData.name = a.node().value;
         mindMapService.updateNode(nodeData._id, {name: nodeData.name});
         resetEditor();
         chart.update();
@@ -201,13 +228,15 @@ var showEditor = function () {
 
     currentElement.attr("visibility", "hidden");
     var escaped = false;
-    inp.attr("value", function () {
+    a.attr("value", function () {
         return nodeData.name;
-    }).attr('', function () {
+    })
+
+    .attr('', function () {
         this.value = this.value;
         this.focus();
-        this.select();
-    }).attr("style", "height:25px;width:" + inputWidth + 'px')
+      //  this.select();
+    })//.attr("style", "height:25px;width:" + inputWidth + 'px')
         .on("blur", function () {
             if (escaped) return;
             updateNode();
