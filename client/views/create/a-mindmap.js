@@ -128,8 +128,7 @@ MindMap = function () {
 
             node.select("text")
                 .style("fill-opacity", 1e-6);
-        }
-        ;
+        };
 
     var connector = MindMap.diagonal;
 
@@ -160,7 +159,7 @@ MindMap = function () {
                 .nodeSize(nodeSize);
 
             chart.update = function () {
-                //updateWidth();
+                container.transition().call(chart);
                 container.transition().call(chart);
             };
             var maxDepth = function (node) {

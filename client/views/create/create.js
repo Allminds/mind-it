@@ -596,9 +596,9 @@ Mousetrap.bind('left', function () {
             default:
                 break;
         }
-     selectNode(node);
-     if (node)
-        nodeSelector.setPrevDepth(node.depth);
+        selectNode(node);
+        if (node)
+            nodeSelector.setPrevDepth(node.depth);
     }
 });
 
@@ -607,7 +607,7 @@ Mousetrap.bind('right', function () {
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
         var data = selection.__data__;
-        var dir = getDirection(data),node;
+        var dir = getDirection(data), node;
         switch (dir) {
             case('left'):
             case('root'):
@@ -624,8 +624,8 @@ Mousetrap.bind('right', function () {
             default:
                 break;
         }
-         selectNode(node);
-         if (node)
+        selectNode(node);
+        if (node)
             nodeSelector.setPrevDepth(node.depth);
     }
 });
@@ -660,7 +660,6 @@ function expandRec(d, id) {
 
 function expand(d, id) {
     expandRec(d, id);
-    chart.update();
     chart.update();
 }
 
@@ -732,10 +731,10 @@ Mousetrap.bind('command+left', function () {
             case('right'):
                 cut();
                 if (getDirection(parent) === 'root') {
-                    selectedNode=paste(data, parent, "left");
+                    selectedNode = paste(data, parent, "left");
                 }
                 else {
-                    selectedNode=paste(data, parent.parent, "right");
+                    selectedNode = paste(data, parent.parent, "right");
                 }
                 selectNode(selectedNode);
                 break;
@@ -752,9 +751,9 @@ Mousetrap.bind('command+left', function () {
                     if (nl[i]._id === data._id && l != 1) {
                         cut();
                         if (i === 0)
-                            selectedNode=paste(data, nl[(i + 1)], "left");
+                            selectedNode = paste(data, nl[(i + 1)], "left");
                         else
-                            selectedNode=paste(data, nl[(i - 1)], "left");
+                            selectedNode = paste(data, nl[(i - 1)], "left");
                         break;
                     }
 
@@ -781,10 +780,10 @@ Mousetrap.bind('command+right', function () {
             case('left'):
                 cut();
                 if (getDirection(parent) === 'root') {
-                    selectedNode=paste(data, parent, "right");
+                    selectedNode = paste(data, parent, "right");
                 }
                 else {
-                    selectedNode=paste(data, parent.parent, "left");
+                    selectedNode = paste(data, parent.parent, "left");
                 }
                 selectNode(selectedNode);
                 break;
@@ -801,14 +800,14 @@ Mousetrap.bind('command+right', function () {
                     if (nl[i]._id === data._id && l != 1) {
                         cut();
                         if (i === 0)
-                            selectedNode=paste(data, nl[(i + 1)], "right");
+                            selectedNode = paste(data, nl[(i + 1)], "right");
                         else
-                            selectedNode=paste(data, nl[(i - 1)], "right");
+                            selectedNode = paste(data, nl[(i - 1)], "right");
                         break;
                     }
 
                 }
-                selectNode(selectedNode); 
+                selectNode(selectedNode);
                 break;
             default:
                 break;
