@@ -579,11 +579,11 @@ Mousetrap.bind('left', function () {
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
         var data = selection.__data__;
-        var dir = getDirection(data);
+        var dir = getDirection(data), node;
         switch (dir) {
             case('right'):
             case('root'):
-                selectNode(data.parent || data.left[0]);
+                node = data.parent || data.left[0];
                 break;
             case('left'):
                 if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
@@ -591,14 +591,14 @@ Mousetrap.bind('left', function () {
                 }
                 else {
                     var node = (data.children || [])[0];
-                    selectNode(node);
-                    if (node)
-                        nodeSelector.setPrevDepth(node.depth);
                 }
                 break;
             default:
                 break;
         }
+     selectNode(node);
+     if (node)
+        nodeSelector.setPrevDepth(node.depth);
     }
 });
 
@@ -607,27 +607,26 @@ Mousetrap.bind('right', function () {
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
         var data = selection.__data__;
-        var dir = getDirection(data);
+        var dir = getDirection(data),node;
         switch (dir) {
             case('left'):
             case('root'):
-                selectNode(data.parent || data.right[0]);
+                node = data.parent || data.right[0];
                 break;
             case('right'):
-                nodeSelector.setPrevDepth(data.depth);
                 if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
                     expand(data, data._id);
                 }
                 else {
-                    var node = (data.children || [])[0];
-                    selectNode(node);
-                    if (node)
-                        nodeSelector.setPrevDepth(node.depth);
+                    node = (data.children || [])[0];
                 }
                 break;
             default:
                 break;
         }
+         selectNode(node);
+         if (node)
+            nodeSelector.setPrevDepth(node.depth);
     }
 });
 
