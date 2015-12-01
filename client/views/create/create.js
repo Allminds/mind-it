@@ -48,7 +48,7 @@ var tracker = {
         updatedNode = updatedNode.__data__;
         updatedNode.previous = fields.previous ? fields.previous : updatedNode.previous;
         updatedNode.next = fields.next ? fields.next : updatedNode.next;
-        chart.update();
+
         if (fields.name) {
             updatedNode.name = fields.name;
             chart.update();
@@ -917,30 +917,34 @@ Mousetrap.bind('command+down', function () {
                 if (parent[dir]) {
                     siblings = parent[dir];
                 }
-                l = siblings.length;
+                var l = siblings.length;
                 if (l == 1)
                     return;
 
                 for (; i < l; i++) {
                     if(siblings[i]._id === data._id)
                     {
-                        prevNode = i == 0 ? null : siblings[i-1];
-                        nextNode = i == l-1 ? null : siblings[i+1];
+                        nextNode = i == l-1 ? siblings[0] : siblings[i+1];
                         break;
                     }
                 }
-                var prev ;
-                if(prevNode){
-                    prev = prevNode.previous;
-                    mindMapService.updateNode(prevNode._id,{next:data.next});
-                }
-                    mindMapService.updateNode(data._id,{next:nextNode.next});
-                    mindMapService.updateNode(data._id,{previous:nextNode._id});
-                if(nextNode){
 
-                    mindMapService.updateNode(nextNode._id,{previous:data.previous});
-                    mindMapService.updateNode(nextNode._id,{next:data._id});
-                }
+                    if(i===l-1){
+                        mindMapService.updateNode(data.previous,{next:null});
+                        mindMapService.updateNode(data._id,{next:nextNode._id});
+                        mindMapService.updateNode(data._id,{previous:null});
+                        mindMapService.updateNode(nextNode._id,{previous:data._id});
+                     }
+                    else{
+                        mindMapService.updateNode(data.previous,{next:data.next});
+                        mindMapService.updateNode(data._id,{next:nextNode.next});
+                        mindMapService.updateNode(data._id,{previous:nextNode._id});
+                        mindMapService.updateNode(nextNode._id,{previous:data.previous});
+                        mindMapService.updateNode(nextNode._id,{next:data._id});
+                        if(nextNode.next)
+                            mindMapService.updateNode(nextNode.next,{previous:data._id});
+                    }
+
                 chart.update();
 
                 break;
