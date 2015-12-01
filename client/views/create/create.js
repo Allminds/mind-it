@@ -848,3 +848,7 @@ function JSONtoXML(XMLString, nodeObject) {
     XMLString += "</node>\n";
     return XMLString;
 }
+
+Mousetrap.bind("esc", function goToRootNode(){
+    select(d3.select('.node.level-0')[0][0]);
+});
