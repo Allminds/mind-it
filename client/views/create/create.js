@@ -48,7 +48,7 @@ var tracker = {
         updatedNode = updatedNode.__data__;
         updatedNode.previous = fields.previous ? fields.previous : updatedNode.previous;
         updatedNode.next = fields.next ? fields.next : updatedNode.next;
-
+        chart.update();
         if (fields.name) {
             updatedNode.name = fields.name;
             chart.update();
@@ -841,8 +841,6 @@ Mousetrap.bind('command+up', function () {
         var data = selection.__data__;
         var dir = getDirection(data),
             parent = data.parent;
-            //if parent is
-
         switch (dir) {
             case('root'):
                 break;
@@ -854,32 +852,43 @@ Mousetrap.bind('command+up', function () {
                 if (parent[dir]) {
                     siblings = parent[dir];
                 }
-                l = siblings.length;
+                var l = siblings.length;
                 if (l == 1)
                     return;
                 for (; i < l; i++) {
                     if(siblings[i]._id === data._id)
                     {
-                        prevNode = i == 0 ? null : siblings[i-1];
+                        prevNode = i == 0 ? siblings[l-1] : siblings[i-1];
                         break;
                     }
                 }
                 var prev ;
                 if(prevNode){
+
                     prev = prevNode.previous;
-                    mindMapService.updateNode(prevNode._id,{next:data.next});
-                    mindMapService.updateNode(prevNode._id,{previous:data._id});
-//                    prevNode.next=data.next;
-//                    prevNode.previous=data._id;
+                    if(i!=0){
+                        mindMapService.updateNode(prevNode.previous,{next:data._id});
+                        mindMapService.updateNode(prevNode._id,{next:data.next});
+                        mindMapService.updateNode(prevNode._id,{previous:data._id});
+                    }
+                    else{
+                         mindMapService.updateNode(prevNode._id,{next:data._id});
+
+                    }
 
                 }
+                if(i==0)
+                {
+                    mindMapService.updateNode(data.next,{previous:null});
+                    mindMapService.updateNode(data._id,{next:null});
+                }
+                else
                     mindMapService.updateNode(data._id,{next:prevNode._id});
-//                    data.next=prevNode._id;
-                    mindMapService.updateNode(data._id,{previous:prev});
-//                    data.previous=prev;
+
+                mindMapService.updateNode(data._id,{previous:prev});
                 if(prevNode.next){
                     mindMapService.updateNode(prevNode.next,{previous:prevNode._id});
-//                    prevNode.next.previous=prevNode._id;
+
                 }
 
                 break;
