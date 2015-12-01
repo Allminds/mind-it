@@ -833,6 +833,112 @@ Mousetrap.bind('command+right', function () {
     }
 });
 
+Mousetrap.bind('command+up', function () {
+    var selection = d3.select(".node.selected")[0][0],
+        selectedNode;
+
+    if (selection) {
+        var data = selection.__data__;
+        var dir = getDirection(data),
+            parent = data.parent;
+            //if parent is
+
+        switch (dir) {
+            case('root'):
+                break;
+            case('left'):
+            case('right'):
+                var siblings = parent.children || parent._children || [], i = 0,
+                prevNode,
+                nextNode;
+                if (parent[dir]) {
+                    siblings = parent[dir];
+                }
+                l = siblings.length;
+                if (l == 1)
+                    return;
+                for (; i < l; i++) {
+                    if(siblings[i]._id === data._id)
+                    {
+                        prevNode = i == 0 ? null : siblings[i-1];
+                        break;
+                    }
+                }
+                var prev ;
+                if(prevNode){
+                    prev = prevNode.previous;
+                    mindMapService.updateNode(prevNode._id,{next:data.next});
+                    mindMapService.updateNode(prevNode._id,{previous:data._id});
+//                    prevNode.next=data.next;
+//                    prevNode.previous=data._id;
+
+                }
+                    mindMapService.updateNode(data._id,{next:prevNode._id});
+//                    data.next=prevNode._id;
+                    mindMapService.updateNode(data._id,{previous:prev});
+//                    data.previous=prev;
+                if(prevNode.next){
+                    mindMapService.updateNode(prevNode.next,{previous:prevNode._id});
+//                    prevNode.next.previous=prevNode._id;
+                }
+
+                break;
+        }
+    }
+});
+
+Mousetrap.bind('command+down', function () {
+    var selection = d3.select(".node.selected")[0][0],
+        selectedNode;
+
+    if (selection) {
+        var data = selection.__data__;
+        var dir = getDirection(data),
+            parent = data.parent;
+            //if parent is
+
+        switch (dir) {
+            case('root'):
+                break;
+            case('left'):
+            case('right'):
+                var siblings = parent.children || parent._children || [], i = 0,
+                prevNode,
+                nextNode;
+                if (parent[dir]) {
+                    siblings = parent[dir];
+                }
+                l = siblings.length;
+                if (l == 1)
+                    return;
+
+                for (; i < l; i++) {
+                    if(siblings[i]._id === data._id)
+                    {
+                        prevNode = i == 0 ? null : siblings[i-1];
+                        nextNode = i == l-1 ? null : siblings[i+1];
+                        break;
+                    }
+                }
+                var prev ;
+                if(prevNode){
+                    prev = prevNode.previous;
+                    mindMapService.updateNode(prevNode._id,{next:data.next});
+                }
+                    mindMapService.updateNode(data._id,{next:nextNode.next});
+                    mindMapService.updateNode(data._id,{previous:nextNode._id});
+                if(nextNode){
+
+                    mindMapService.updateNode(nextNode._id,{previous:data.previous});
+                    mindMapService.updateNode(nextNode._id,{next:data._id});
+                }
+                chart.update();
+
+                break;
+        }
+    }
+});
+
 function JSONtoXML(XMLString, nodeObject) {
     XMLString += "<node ";
     XMLString += "ID = \"" + nodeObject._id + "\"";
