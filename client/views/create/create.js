@@ -406,6 +406,8 @@ Mousetrap.bind('command+v', function () {
     var targetNode = map.selectedNodeData();
     var sourceNode = map.sourceNode;
     var dir = calculateDirection(targetNode);
+    if(targetNode.isCollapsed)
+        expandRec(targetNode,targetNode._id);
     paste(sourceNode, targetNode, dir);
 
 });
@@ -828,125 +830,6 @@ Mousetrap.bind('command+right', function () {
                 selectNode(selectedNode);
                 break;
             default:
-                break;
-        }
-    }
-});
-
-Mousetrap.bind('command+up', function () {
-    var selection = d3.select(".node.selected")[0][0],
-        selectedNode;
-
-    if (selection) {
-        var data = selection.__data__;
-        var dir = getDirection(data),
-            parent = data.parent;
-        switch (dir) {
-            case('root'):
-                break;
-            case('left'):
-            case('right'):
-                var siblings = parent.children || parent._children || [], i = 0,
-                prevNode,
-                nextNode;
-                if (parent[dir]) {
-                    siblings = parent[dir];
-                }
-                var l = siblings.length;
-                if (l == 1)
-                    return;
-                for (; i < l; i++) {
-                    if(siblings[i]._id === data._id)
-                    {
-                        prevNode = i == 0 ? siblings[l-1] : siblings[i-1];
-                        break;
-                    }
-                }
-                var prev ;
-                if(prevNode){
-
-                    prev = prevNode.previous;
-                    if(i!=0){
-                        mindMapService.updateNode(prevNode.previous,{next:data._id});
-                        mindMapService.updateNode(prevNode._id,{next:data.next});
-                        mindMapService.updateNode(prevNode._id,{previous:data._id});
-                    }
-                    else{
-                         mindMapService.updateNode(prevNode._id,{next:data._id});
-
-                    }
-
-                }
-                if(i==0)
-                {
-                    mindMapService.updateNode(data.next,{previous:null});
-                    mindMapService.updateNode(data._id,{next:null});
-                }
-                else
-                    mindMapService.updateNode(data._id,{next:prevNode._id});
-
-                mindMapService.updateNode(data._id,{previous:prev});
-                if(prevNode.next){
-                    mindMapService.updateNode(prevNode.next,{previous:prevNode._id});
-
-                }
-
-                break;
-        }
-    }
-});
-
-Mousetrap.bind('command+down', function () {
-    var selection = d3.select(".node.selected")[0][0],
-        selectedNode;
-
-    if (selection) {
-        var data = selection.__data__;
-        var dir = getDirection(data),
-            parent = data.parent;
-            //if parent is
-
-        switch (dir) {
-            case('root'):
-                break;
-            case('left'):
-            case('right'):
-                var siblings = parent.children || parent._children || [], i = 0,
-                prevNode,
-                nextNode;
-                if (parent[dir]) {
-                    siblings = parent[dir];
-                }
-                var l = siblings.length;
-                if (l == 1)
-                    return;
-
-                for (; i < l; i++) {
-                    if(siblings[i]._id === data._id)
-                    {
-                        nextNode = i == l-1 ? siblings[0] : siblings[i+1];
-                        break;
-                    }
-                }
-
-                    if(i===l-1){
-                        mindMapService.updateNode(data.previous,{next:null});
-                        mindMapService.updateNode(data._id,{next:nextNode._id});
-                        mindMapService.updateNode(data._id,{previous:null});
-                        mindMapService.updateNode(nextNode._id,{previous:data._id});
-                     }
-                    else{
-                        mindMapService.updateNode(data.previous,{next:data.next});
-                        mindMapService.updateNode(data._id,{next:nextNode.next});
-                        mindMapService.updateNode(data._id,{previous:nextNode._id});
-                        mindMapService.updateNode(nextNode._id,{previous:data.previous});
-                        mindMapService.updateNode(nextNode._id,{next:data._id});
-                        if(nextNode.next)
-                            mindMapService.updateNode(nextNode.next,{previous:data._id});
-                    }
-
-                chart.update();
-
                 break;
         }
     }
