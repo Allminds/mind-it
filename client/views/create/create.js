@@ -754,7 +754,7 @@ Mousetrap.bind('command+left', function () {
                     selectedNode = paste(data, parent, "left");
                 }
                 else {
-                    selectedNode = paste(data, parent.parent, "right");
+                    selectedNode = paste(data, parent.parent, "right",parent);
                 }
                 selectNode(selectedNode);
                 break;
@@ -803,7 +803,7 @@ Mousetrap.bind('command+right', function () {
                     selectedNode = paste(data, parent, "right");
                 }
                 else {
-                    selectedNode = paste(data, parent.parent, "left");
+                    selectedNode = paste(data, parent.parent, "left",parent);
                 }
                 selectNode(selectedNode);
                 break;
