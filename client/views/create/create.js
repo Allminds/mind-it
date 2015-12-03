@@ -46,7 +46,7 @@ var tracker = {
             return;
 
         updatedNode = updatedNode.__data__;
-        updatedNode.previous =  fields.hasOwnProperty('previous') ? fields.previous : updatedNode.previous;
+        updatedNode.previous = fields.hasOwnProperty('previous') ? fields.previous : updatedNode.previous;
         updatedNode.next = fields.hasOwnProperty('next') ? fields.next : updatedNode.next;
 
         if (fields.hasOwnProperty('name')) {
@@ -176,7 +176,6 @@ var showEditor = function () {
     }
 
 
-
     var inp = parentElement.append("foreignObject")
         .attr("id", "hoverText")
         .attr("x", position.x - (nodeData.name.length == 0 ? 11 : 0))
@@ -206,8 +205,8 @@ var showEditor = function () {
     currentElement.attr("visibility", "hidden");
     var escaped = false;
     a.attr("value", function () {
-        return nodeData.name;
-    })
+            return nodeData.name;
+        })
 
         .attr('', function () {
             this.value = this.value;
@@ -295,6 +294,8 @@ map.addNodeToUI = function (parent, newNode) {
             }),
             previousNodeIndex = children.indexOf(previousNode) + 1;
         children.splice(previousNodeIndex, 0, newNode);
+    } else if (newNode.next) {
+        children.splice(0, 0, newNode);
     } else
         children.push(newNode);
     chart.update();
@@ -407,8 +408,8 @@ Mousetrap.bind('command+v', function () {
     var targetNode = map.selectedNodeData();
     var sourceNode = map.sourceNode;
     var dir = calculateDirection(targetNode);
-    if(targetNode.isCollapsed)
-        expandRec(targetNode,targetNode._id);
+    if (targetNode.isCollapsed)
+        expandRec(targetNode, targetNode._id);
     paste(sourceNode, targetNode, dir);
 
 });
@@ -755,7 +756,7 @@ Mousetrap.bind('command+left', function () {
                     selectedNode = paste(data, parent, "left");
                 }
                 else {
-                    selectedNode = paste(data, parent.parent, "right",parent);
+                    selectedNode = paste(data, parent.parent, "right", parent);
                 }
                 selectNode(selectedNode);
                 break;
@@ -804,7 +805,7 @@ Mousetrap.bind('command+right', function () {
                     selectedNode = paste(data, parent, "right");
                 }
                 else {
-                    selectedNode = paste(data, parent.parent, "left",parent);
+                    selectedNode = paste(data, parent.parent, "left", parent);
                 }
                 selectNode(selectedNode);
                 break;
@@ -840,12 +841,13 @@ Mousetrap.bind('command+right', function () {
 Mousetrap.bind('command+up', function () {
     var selection = d3.select(".node.selected")[0][0].__data__;
 
-    if (!selection)
+    if (!(selection && selection.parent))
         return;
 
     var previousSibling,
         siblings = selection.parent[selection.position] || selection.parent.children,
         parent = selection.parent;
+    if (siblings.length <= 1) return;
     if (selection.previous) {
 
         if (parent[selection.position]) {
@@ -881,6 +883,46 @@ Mousetrap.bind('command+up', function () {
         //debugger;
     }
     var selectedNode = paste(selection, selection.parent, selection.position, previousSibling);
+    selectNode(selectedNode);
+
+});
+
+Mousetrap.bind('command+down', function () {
+    var selection = d3.select(".node.selected")[0][0].__data__;
+
+    if (!(selection && selection.parent))
+        return;
+
+    var nextSibling,
+        siblings = selection.parent[selection.position] || selection.parent.children;
+    if (siblings.length <= 1) return;
+    if (selection.next) {
+        nextSibling = siblings.find(function (x) {
+            return x._id == selection.next;
+        });
+
+    }
+    else {
+        var newNode = {
+            name: selection.name, position: selection.position,
+            parent_ids: selection.parent_ids,
+            previous: null, next: siblings[0]._id,
+        };
+        cut();
+        var headId = siblings[0]._id;
+        newNode._id = mindMapService.addNode(newNode);
+
+        mindMapService.updateNode(headId, {previous: newNode._id});
+        var previous = null;
+        (selection.children || selection._children || []).forEach(function (child) {
+            previous = paste(child, newNode, child.position, previous);
+        });
+        selectNode(newNode);
+        return;
+    }
+
+    cut();
+    var selectedNode = paste(selection, selection.parent, selection.position, nextSibling);
     selectNode(selectedNode);
 
 });
