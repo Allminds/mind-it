@@ -161,8 +161,12 @@ MindMap = function () {
                 .nodeSize(nodeSize);
 
             chart.update = function () {
-                container.transition().call(chart);
-                container.transition().call(chart);
+                container
+                //.transition()
+                .call(chart);
+                container
+                //.transition()
+                .call(chart);
             };
             var maxDepth = function (node) {
                 return (node.children || []).reduce(function (depth, child) {
@@ -262,7 +266,8 @@ MindMap = function () {
             enterNode(nodeEnter);
 
             // Transition nodes to their new position.
-            var nodeUpdate = node.transition()
+            var nodeUpdate = node
+                //.transition()
                 .attr("transform", function (d) {
                     return "translate(" + d.y + "," + d.x + ")";
                 });
@@ -271,7 +276,9 @@ MindMap = function () {
             updateNode(nodeUpdate);
 
             // Transition exiting nodes to the parent's new position.
-            var nodeExit = node.exit().transition()
+            var nodeExit = node
+                .exit()
+                //.transition()
                 .attr("transform", translate)
                 .remove();
 
@@ -293,16 +300,19 @@ MindMap = function () {
                         o = {x: x0, y: y0};
                     return connector({source: o, target: o});
                 })
-                .transition()
+                //.transition()
                 .attr("d", connector);
 
 
             // Transition links to their new position.
-            link.transition()
+            link
+                //.transition()
                 .attr("d", connector);
 
             // Transition exiting nodes to the parent's new position.
-            link.exit().transition()
+            link
+                .exit()
+                //.transition()
                 .attr("d", function (path) {
                     var parentNode = path.source || root,
                         o = {x: parentNode.x, y: parentNode.y};
