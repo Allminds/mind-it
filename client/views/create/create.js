@@ -46,10 +46,10 @@ var tracker = {
             return;
 
         updatedNode = updatedNode.__data__;
-        updatedNode.previous = fields.previous ? fields.previous : updatedNode.previous;
-        updatedNode.next = fields.next ? fields.next : updatedNode.next;
+        updatedNode.previous =  fields.hasOwnProperty('previous') ? fields.previous : updatedNode.previous;
+        updatedNode.next = fields.hasOwnProperty('next') ? fields.next : updatedNode.next;
 
-        if (fields.name) {
+        if (fields.hasOwnProperty('name')) {
             updatedNode.name = fields.name;
             chart.update();
             var selectedNode = map.selectedNodeData();
@@ -176,6 +176,7 @@ var showEditor = function () {
     }
 
 
+
     var inp = parentElement.append("foreignObject")
         .attr("id", "hoverText")
         .attr("x", position.x - (nodeData.name.length == 0 ? 11 : 0))
@@ -205,8 +206,8 @@ var showEditor = function () {
     currentElement.attr("visibility", "hidden");
     var escaped = false;
     a.attr("value", function () {
-            return nodeData.name;
-        })
+        return nodeData.name;
+    })
 
         .attr('', function () {
             this.value = this.value;
@@ -327,8 +328,8 @@ map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
     }
     var newNode = {
         name: newNodeName, position: dir,
-        parent_ids: (parent.parent_ids || []).concat([parent._id]),
-        previous: previousSibling._id, next: previousSibling.next
+        parent_ids: [].concat(parent.parent_ids || []).concat([parent._id]),
+        previous: previousSibling._id, next: previousSibling.next,
     };
     newNode._id = mindMapService.addNode(newNode);
 
@@ -834,6 +835,56 @@ Mousetrap.bind('command+right', function () {
         }
     }
 });
+
+
+Mousetrap.bind('command+up', function () {
+    var selection = d3.select(".node.selected")[0][0].__data__;
+
+    if (!selection)
+        return;
+
+    var previousSibling,
+        siblings = selection.parent[selection.position] || selection.parent.children,
+        parent = selection.parent;
+    if (selection.previous) {
+
+        if (parent[selection.position]) {
+            siblings = parent[selection.position];
+        }
+        var l = siblings.length;
+        if (l == 1)
+            return;
+        for (var i = 0; i < l; i++) {
+            if (siblings[i]._id === selection._id) {
+                previousSibling = siblings[i - 1];
+                break;
+            }
+        }
+        if (previousSibling.previous) {
+            previousSibling = siblings.find(function (x) {
+                return x._id == previousSibling.previous
+            });
+        }
+        else {
+            selectNode(previousSibling);
+            cut();
+            paste(previousSibling, selection.parent, selection.position, selection);
+            selectNode(selection);
+            return;
+        }
+    } else {
+
+        previousSibling = siblings[siblings.length - 1];
+    }
+    cut();
+    if (!previousSibling) {
+        //debugger;
+    }
+    var selectedNode = paste(selection, selection.parent, selection.position, previousSibling);
+    selectNode(selectedNode);
+
+});
+
 
 function JSONtoXML(XMLString, nodeObject) {
     XMLString += "<node ";
