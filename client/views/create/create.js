@@ -121,9 +121,14 @@ getDims = function () {
     return {width: x, height: y};
 };
 
+var deselectNode = function() {
+    d3.select(".selected").classed("selected", false);
+};
+
+
 var select = function (node) {
     // Find previously selected, unselect
-    d3.select(".selected").classed("selected", false);
+    deselectNode();
 
     if (!node.__data__.position && directionToggler.canToggle) {
 
@@ -132,6 +137,27 @@ var select = function (node) {
     }
     // Select current item
     d3.select(node).classed("selected", true);
+
+
+    if (d3.select(node).selectAll("ellipse")[0].length == 2)
+        return;
+
+    var text = d3.select(node).select("text")[0][0],
+        bBox = text.getBBox(),
+        rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    var dim = {
+        x: bBox.x,
+        y: bBox.y == 0 ? -19 : bBox.y,
+        width: bBox.width == 0 ? 20 : bBox.width,
+        height: bBox.height == 0 ? 20 : bBox.height
+    };
+    rect.setAttribute("x", dim.x);
+    rect.setAttribute("y", dim.y);
+    rect.setAttribute("width", dim.width);
+    rect.setAttribute("height", dim.height);
+    node.insertBefore(rect, text);
+    node.__data__ = text.__data__;
+    //d3.select(text).on('dblClick', newF);
 };
 
 
@@ -148,12 +174,40 @@ var selectNode = function (target) {
     return false;
 };
 
-showEditor = function () {
-    var nodeData = this.__data__,
-        parentElement = d3.select(this),
-        currentElement = parentElement.select('text');
+var createEditor = function() {
+    var svgWidth = d3.select("svg").attr("width");
+    var svgHeight = d3.select("svg").attr("height");
 
-    var position = currentElement.node().getBBox();
+    var rootEllipse = d3.select(this).select(".root-ellipse");
+    var rx = rootEllipse.attr("rx");
+    var ry = rootEllipse.attr("ry");
+
+    var textboxX = svgWidth/2 - rx;
+    var textboxY = svgHeight/2 - ry;
+    var textboxWidth = rx * 2;
+
+    var editBox = d3.select("#mindmap")
+        .append("input")
+        .attr("class", "edit-box")
+        .attr("type", "text")
+        .style("position", "absolute")
+        .style("left", textboxX + "px")
+        .style("top", textboxY + "px")
+        .style("width", textboxWidth + "px")
+        .style("height", ry + "px");
+
+    return editBox;
+};
+
+var showEditor = function () {
+    var nodeData = this.__data__;
+
+    var parentElement = d3.select(this.children[0].parentNode),
+        currentText = parentElement.select('text');
+
+    var editBox = createEditor();
+
+    var position = currentText.node().getBBox();
     if (nodeData.name && nodeData.name.length >= 50) {
         var updatedName = prompt('Name', nodeData.name);
         if (updatedName != nodeData.name) {
@@ -168,24 +222,13 @@ showEditor = function () {
         return;
     }
 
+    var resetEditor = function() {
+        currentText.attr("visibility", "");
+        d3.select(".edit-box").remove();
+    };
 
-    var inp = parentElement.append("foreignObject")
-        .attr("id", "hoverText")
-        .attr("x", position.x - (nodeData.name.length == 0 ? 11 : 0))
-        .attr("y", position.y - (nodeData.name.length == 0 ? 18 : 0))
-        .append("xhtml:form")
-    var a = inp.append("input")
-        .attr("cols", 40)
-        .attr("rows", 4);
-
-
-    function resetEditor() {
-        currentElement.attr("visibility", "");
-        d3.select("foreignObject").remove();
-    }
-
-    updateNode = function () {
-        nodeData.name = a.node().value;
+    var updateNode = function () {
+        nodeData.name = editBox[0][0].value;
         mindMapService.updateNode(nodeData._id, {name: nodeData.name});
         resetEditor();
         chart.update();
@@ -195,14 +238,13 @@ showEditor = function () {
         }, 10);
     };
 
-    currentElement.attr("visibility", "hidden");
+    currentText.attr("visibility", "hidden");
     var escaped = false;
-    a.attr("value", function () {
-            return nodeData.name;
-        })
 
+    editBox.attr("value", nodeData.name)
         .attr('', function () {
-            this.value = this.value;
+            //this.value = this.value;
+            this.select();
             this.focus();
         })
         .on("blur", function () {

@@ -79,6 +79,8 @@ MindMap = function () {
             d3.select(rootNode).append("svg:ellipse")
                 .attr("rx", 1e-6)
                 .attr("ry", 1e-6)
+                .attr("class", "root-ellipse");
+
             d3.select(rootNode).classed('rootNode', true);
             node.append('svg:rect');
             node.append("svg:text")
