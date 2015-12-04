@@ -84,6 +84,20 @@ var tracker = {
     }
 };
 
+function retainCollapsed() {
+    for (var i = 0; i < localStorage.length; i++) {
+        try {
+            var node = JSON.parse(localStorage.getItem(localStorage.key(i)));
+            if (node.isCollapsed != undefined && node.isCollapsed) {
+                var nodeId = localStorage.key(i);
+                var nodeData = map.getNodeData(nodeId).__data__;
+                collapse(nodeData, nodeId);
+            }
+        }
+        catch(e) {}
+    }
+
+}
 Template.create.rendered = function rendered() {
 
     var tree = mindMapService.buildTree(this.data.id, this.data.data);
@@ -94,6 +108,8 @@ Template.create.rendered = function rendered() {
 
     select(rootNode);
     Mindmaps.find().observeChanges(tracker);
+
+    retainCollapsed();
 };
 
 var getDims;
@@ -654,9 +670,19 @@ Mousetrap.bind('right', function () {
 });
 
 
+function storeLocally(d) {
+    var state = {isCollapsed : d.isCollapsed};
+    localStorage.setItem(d._id, JSON.stringify(state));
+}
+
+function removeLocally(d) {
+    localStorage.removeItem(d._id);
+}
+
 function collapseRec(d, id) {
     if (d._id === id) {
         d.isCollapsed = true;
+        storeLocally(d);
     }
     if (d.hasOwnProperty('children') && d.children) {
         d._children = [];
@@ -664,6 +690,7 @@ function collapseRec(d, id) {
         d._children.forEach(collapseRec);
         d.children = null;
     }
+
 }
 function collapse(d, id) {
     collapseRec(d, id);
@@ -673,6 +700,7 @@ function collapse(d, id) {
 function expandRec(d, id) {
     if (d._id === id) {
         d.isCollapsed = false;
+        removeLocally(d);
     }
     if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
         d.children = d._children;
