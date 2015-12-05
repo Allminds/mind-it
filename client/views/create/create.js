@@ -87,8 +87,7 @@ var tracker = {
 function retainCollapsed() {
     for (var i = 0; i < localStorage.length; i++) {
         try {
-            var node = JSON.parse(localStorage.getItem(localStorage.key(i)));
-            if (node.isCollapsed != undefined && node.isCollapsed) {
+            if (isLocallyCollapsed(localStorage.key(i))) {
                 var nodeId = localStorage.key(i);
                 var nodeData = map.getNodeData(nodeId).__data__;
                 collapse(nodeData, nodeId);
@@ -679,6 +678,14 @@ function removeLocally(d) {
     localStorage.removeItem(d._id);
 }
 
+function isLocallyCollapsed(id) {
+    try {
+        var locallyCollapsed = JSON.parse(localStorage.getItem(id)).isCollapsed;
+    }
+    catch (e) {}
+    return locallyCollapsed ? true : false;
+}
+
 function collapseRec(d, id) {
     if (d._id === id) {
         d.isCollapsed = true;
@@ -702,6 +709,9 @@ function expandRec(d, id) {
         d.isCollapsed = false;
         removeLocally(d);
     }
+    // On refresh - If child node is collapsed do not expand it
+    if (isLocallyCollapsed(d._id) == true)
+        d.isCollapsed = true;
     if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
         d.children = d._children;
         d._children.forEach(expandRec);
