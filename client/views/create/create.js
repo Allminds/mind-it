@@ -389,8 +389,17 @@ var clone = function (node) {
     return clonedNode;
 };
 
+function cloneObject(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
 map.storeSourceNode = function (sourceNode) {
-    map.sourceNode = clone(sourceNode);
+    map.sourceNode = cloneObject(sourceNode);
 };
 
 map.getSourceNode = function () {
@@ -423,10 +432,10 @@ Mousetrap.bind('command+v', function () {
     var targetNode = map.selectedNodeData();
     var sourceNode = map.sourceNode;
     var dir = calculateDirection(targetNode);
-    if (targetNode.isCollapsed)
-        expandRec(targetNode, targetNode._id);
+    if(targetNode.isCollapsed)
+        expandRecursive(targetNode,targetNode._id);
     paste(sourceNode, targetNode, dir);
-
+    retainCollapsed();
 });
 
 Mousetrap.bind('enter', function () {
@@ -599,8 +608,13 @@ function paste(sourceNode, targetNode, dir, previousSibling) {
         childrenArray = sourceNode.children;
     }
     else if (sourceNode.hasOwnProperty('_children') && sourceNode._children)
+    {
         childrenArray = sourceNode._children;
-
+    }
+    if(sourceNode.hasOwnProperty('isCollapsed') && sourceNode.isCollapsed) {
+        newNode.isCollapsed = sourceNode.isCollapsed;
+        storeLocally(newNode);
+    }
     if (childrenArray) {
         var previous = null;
         childrenArray.forEach(
@@ -686,7 +700,7 @@ function isLocallyCollapsed(id) {
     return locallyCollapsed ? true : false;
 }
 
-function collapseRec(d, id) {
+function collapseRecursive(d, id) {
     if (d._id === id) {
         d.isCollapsed = true;
         storeLocally(d);
@@ -694,17 +708,17 @@ function collapseRec(d, id) {
     if (d.hasOwnProperty('children') && d.children) {
         d._children = [];
         d._children = d.children;
-        d._children.forEach(collapseRec);
+        d._children.forEach(collapseRecursive);
         d.children = null;
     }
 
 }
 function collapse(d, id) {
-    collapseRec(d, id);
+    collapseRecursive(d, id);
     chart.update();
 }
 
-function expandRec(d, id) {
+function expandRecursive(d, id) {
     if (d._id === id) {
         d.isCollapsed = false;
         removeLocally(d);
@@ -714,13 +728,13 @@ function expandRec(d, id) {
         d.isCollapsed = true;
     if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
         d.children = d._children;
-        d._children.forEach(expandRec);
+        d._children.forEach(expandRecursive);
         d._children = null;
     }
 }
 
 function expand(d, id) {
-    expandRec(d, id);
+    expandRecursive(d, id);
     chart.update();
 }
 
