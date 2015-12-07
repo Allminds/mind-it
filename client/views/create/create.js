@@ -157,7 +157,7 @@ var select = function (node) {
     rect.setAttribute("height", dim.height);
     node.insertBefore(rect, text);
     node.__data__ = text.__data__;
-    //d3.select(text).on('dblClick', newF);
+    d3.select(text).on('dblClick', showEditor);
 };
 
 
@@ -173,6 +173,11 @@ var selectNode = function (target) {
     }
     return false;
 };
+
+var isRootNode = function(node) {
+    return node.attr("class").split(" ").indexOf("level-0") > -1;
+};
+
 Editor = function Editor() {
 };
 
@@ -180,30 +185,56 @@ Editor.prototype.editBox = null;
 Editor.prototype.nodeData = null;
 Editor.prototype.currentTextElement = null;
 
-Editor.prototype.createEditBox = function() {
+Editor.prototype.createEditBoxFor = function(elementToEdit) {
+
     var svgWidth = d3.select("svg").attr("width");
     var svgHeight = d3.select("svg").attr("height");
 
-    var rootEllipse = d3.select(".root-ellipse");
-    var rx = rootEllipse.attr("rx");
-    var ry = rootEllipse.attr("ry");
-
-    var textboxX = svgWidth/2 - rx;
-    var textboxY = svgHeight/2 - ry;
-    var textboxWidth = rx * 2;
+    var textboxAttributes = isRootNode(elementToEdit)?rootNodeTextBoxAttribute(svgWidth, svgHeight):
+        childNodeTextBoxAttribute(svgWidth, svgHeight, elementToEdit);
 
     var editBox = d3.select("#mindmap")
         .append("input")
         .attr("class", "edit-box")
         .attr("type", "text")
         .style("position", "absolute")
-        .style("left", textboxX + "px")
-        .style("top", textboxY + "px")
-        .style("width", textboxWidth + "px")
-        .style("height", ry + "px");
+        .style("left", textboxAttributes.textboxX + "px")
+        .style("top", textboxAttributes.textboxY + "px")
+        .style("width", textboxAttributes.textboxWidth + "px")
+        .style("height", textboxAttributes.textboxHeight + "px");
 
     return editBox;
 };
+
+var rootNodeTextBoxAttribute = function(svgWidth, svgHeight) {
+    var rootEllipse = d3.select(".root-ellipse");
+    var rx = rootEllipse.attr("rx");
+    var ry = rootEllipse.attr("ry");
+
+    return {
+        textboxX: svgWidth / 2 - rx,
+        textboxY: svgHeight / 2 - ry,
+        textboxWidth: rx * 2,
+        textboxHeight: ry
+    };
+};
+
+var childNodeTextBoxAttribute = function(svgWidth, svgHeight, elementToEdit) {
+    var rectWidth = d3.select("rect").attr("width");
+    var rectHeight = d3.select("rect").attr("height");
+
+    var transformation = elementToEdit.attr("transform").split(",");
+    var xTranslation = transformation[0].split("(")[1];
+    var yTranslation = transformation[1].split(")")[0];
+
+    return {
+        textboxX: svgWidth / 2 + parseInt(xTranslation) - rectWidth/2,
+        textboxY: svgHeight / 2 + parseInt(yTranslation) - rectHeight,
+        textboxWidth: rectWidth,
+        textboxHeight: rectHeight
+    };
+};
+
 
 Editor.prototype.showPrompt = function(nodeData) {
     var updatedName = prompt('Name', nodeData.name);
@@ -298,9 +329,9 @@ var showEditor = function () {
         return;
     }
 
-    var editBox = editor.createEditBox();
+    var editBox = editor.createEditBoxFor(parentElement);
     editor.setupEditor(editor, editBox, nodeData, currentTextElement);
-    editor.setupAttributes(editor, editBox, nodeData, currentTextElement)
+    editor.setupAttributes()
 };
 
 var dims = getDims();
