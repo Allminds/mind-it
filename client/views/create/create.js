@@ -122,7 +122,6 @@ getDims = function () {
 };
 
 var deselectNode = function() {
-    d3.select(".selected rect").remove();
     d3.select(".selected").classed("selected", false);
 };
 
@@ -137,27 +136,6 @@ var select = function (node) {
     }
     // Select current item
     d3.select(node).classed("selected", true);
-
-
-    if (d3.select(node).selectAll("ellipse")[0].length == 2)
-        return;
-
-    var text = d3.select(node).select("text")[0][0],
-        bBox = text.getBBox(),
-        rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    var dim = {
-        x: bBox.x,
-        y: bBox.y == 0 ? -19 : bBox.y,
-        width: bBox.width == 0 ? 20 : bBox.width,
-        height: bBox.height == 0 ? 20 : bBox.height
-    };
-    rect.setAttribute("x", dim.x);
-    rect.setAttribute("y", dim.y);
-    rect.setAttribute("width", dim.width);
-    rect.setAttribute("height", dim.height);
-    node.insertBefore(rect, text);
-    node.__data__ = text.__data__;
-    d3.select(text).on('dblClick', showEditor);
 };
 
 
@@ -542,6 +520,7 @@ Mousetrap.bind('tab', function () {
         expand(selectedNode, selectedNode._id);
     }
     var dir = calculateDirection(selectedNode);
+    deselectNode();
     var newNode = map.addNewNode(selectedNode, "", dir);
     map.makeEditable(newNode._id);
     return false;
