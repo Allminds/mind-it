@@ -199,7 +199,7 @@ var rootNodeTextBoxAttribute = function(svgWidth, svgHeight) {
 
 var childNodeTextBoxAttribute = function(svgWidth, svgHeight, elementToEdit) {
 
-    var rect = d3.select("rect");
+    var rect = d3.select(".selected rect");
     var rectHeight = 29;
     var rectWidth = 50;
     if(rect[0][0] != null) {
