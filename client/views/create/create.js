@@ -122,9 +122,9 @@ getDims = function () {
 };
 
 var deselectNode = function() {
+    d3.select(".selected rect").remove();
     d3.select(".selected").classed("selected", false);
 };
-
 
 var select = function (node) {
     // Find previously selected, unselect
@@ -220,8 +220,14 @@ var rootNodeTextBoxAttribute = function(svgWidth, svgHeight) {
 };
 
 var childNodeTextBoxAttribute = function(svgWidth, svgHeight, elementToEdit) {
-    var rectWidth = d3.select("rect").attr("width");
-    var rectHeight = d3.select("rect").attr("height");
+
+    var rect = d3.select("rect");
+    var rectHeight = 29;
+    var rectWidth = 50;
+    if(rect[0][0] != null) {
+        rectWidth = rect.attr("width");
+        rectHeight = rect.attr("height");
+    }
 
     var transformation = elementToEdit.attr("transform").split(",");
     var xTranslation = transformation[0].split("(")[1];
@@ -520,8 +526,10 @@ Mousetrap.bind('enter', function () {
     if (!selectedNode) return false;
     var parent = selectedNode.parent || selectedNode,
         sibling = selectedNode.position ? selectedNode : null,
-        dir = calculateDirection(parent),
-        newNode = map.addNewNode(parent, "", dir, sibling);
+        dir = calculateDirection(parent);
+
+    deselectNode();
+    var newNode = map.addNewNode(parent, "", dir, sibling);
     map.makeEditable(newNode._id);
     return false;
 });
