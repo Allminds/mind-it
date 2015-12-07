@@ -7,6 +7,7 @@
 body {
     text-align: center;
     background-color: #e9ece5;
+    font-family: SansSerif, sans-serif;
 }
 
 .btn {
@@ -50,14 +51,14 @@ h1 {
 
 path.link {
     fill: none;
-    stroke: #ccc;
+    stroke: #aaa;
     stroke-width: 1.5px;
 }
 
 .node ellipse {
     cursor: pointer;
     fill: #fff;
-    stroke: #ccc;
+    stroke: #aaa;
     stroke-width: 1.5px;
     fill-opacity: 1;
 }
@@ -74,33 +75,43 @@ path.link {
 
 .node.level-1 text {
     font-size: 1.6em;
-    fill: blue;
+    fill: #0033ff;
 }
 
 .node.level-2 text {
     font-size: 1.4em;
-    fill: limegreen;
+    fill: #00b439;
 }
 
 .node.level-3 text {
     font-size: 1.2em;
-    fill: maroon;
+    fill: #990000;
+}
+
+.node rect {
+    fill: transparent;
+
 }
 
 .node.selected ellipse, .node.selected rect {
     fill: #ddd;
 }
 
+.node.selected rect {
+    stroke: #ddd;
+    stroke-width: 2px;
+}
+
 circle.indicator.filled {
     fill: white;
     stroke: #888;
-    stroke-width: 2px;
+    stroke-width: 1.5px;
 }
 
 circle.indicator.unfilled {
     fill: transparent;
     stroke: transparent;
-    stroke-width: 2px;
+    stroke-width: 1.5px;
 }
 
 

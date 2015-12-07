@@ -22,7 +22,7 @@ MindMap = function () {
         },
         indicator = {
             default: 4,
-            hovered: 10,
+            hovered: 7,
             enter: function (node) {
                 node.filter(function (x) {
                     return x.position;
@@ -80,28 +80,16 @@ MindMap = function () {
                 .attr("rx", 1e-6)
                 .attr("ry", 1e-6)
             d3.select(rootNode).classed('rootNode', true);
-
-            node.append("svg:ellipse")
-                .attr("rx", 10)
-                .attr("ry", 10)
-                .style("fill", "transparent")
-                .style("stroke-width", 0)
-                .on("mouseover", function () {
-                    return d3.select(this).style("stroke-width", 1);
-                })
-                .on("mouseout", function () {
-                    return d3.select(this).style("stroke-width", 0);
-                });
-
-
+            node.append('svg:rect');
             node.append("svg:text")
                 .text(text)
-                .attr("cols",60)
-                .attr("rows",4);
+                .attr("cols", 60)
+                .attr("rows", 4);
 
             node.attr('class', function (d) {
                 return d.depth < 4 ? ('node level-' + d.depth) : 'node';
             });
+
 
             indicator.enter(node);
         },
@@ -110,7 +98,25 @@ MindMap = function () {
                 .text(text);
             node.select("text").attr("y", -2);
             node.select(".level-0 text").attr("y", 9);
-
+            node.select('rect')
+                .attr('x', function () {
+                    var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
+                    return rect.x - (rect.width == 0 ? minTextSize / 2 : 0);
+                })
+                .attr('y', function () {
+                    var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
+                    return rect.y == 0 ? -19 : rect.y;
+                })
+                .attr('width', function (d) {
+                    if (d.depth == 0) return 0;
+                    var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
+                    return rect.width == 0 ? minTextSize : rect.width;
+                })
+                .attr('height', function (d) {
+                    if (d.depth == 0) return 0;
+                    var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
+                    return rect.height == 0 ? 16 : (rect.height - 5);
+                });
 
             var rootNode = getRootNode(node);
             d3.select(rootNode).select("ellipse")
@@ -122,12 +128,6 @@ MindMap = function () {
                 });
         },
         exitNode = function (node) {
-            var rootNode = getRootNode(node);
-            if (rootNode)
-                d3.select(rootNode).select("ellipse")
-                    .attr("rx", 1e-6)
-                    .attr("ry", 1e-6);
-
             node.select("text")
                 .style("fill-opacity", 1e-6);
         };
@@ -138,7 +138,7 @@ MindMap = function () {
         selection.each(function (root) {
             var w = width - margin.left - margin.right;
             var h = height - margin.top - margin.bottom;
-            var nodeSize = [30, 30]
+            var nodeSize = [30, 30];
             var container = d3.select(this);
             var vis = container
                 .attr("width", width)
@@ -162,11 +162,9 @@ MindMap = function () {
 
             chart.update = function () {
                 container
-                //.transition()
-                .call(chart);
+                    .call(chart);
                 container
-                //.transition()
-                .call(chart);
+                    .call(chart);
             };
             var maxDepth = function (node) {
                 return (node.children || []).reduce(function (depth, child) {
@@ -267,7 +265,6 @@ MindMap = function () {
 
             // Transition nodes to their new position.
             var nodeUpdate = node
-                //.transition()
                 .attr("transform", function (d) {
                     return "translate(" + d.y + "," + d.x + ")";
                 });
@@ -306,7 +303,6 @@ MindMap = function () {
 
             // Transition links to their new position.
             link
-                //.transition()
                 .attr("d", connector);
 
             // Transition exiting nodes to the parent's new position.
@@ -398,14 +394,17 @@ MindMap = function () {
     }
     return chart;
 };
-var getTextWidth = function (id) {
-    if (!id) return 0;
-    var text = d3.selectAll('text')[0].filter(function (text) {
-        return text.__data__._id == id;
-    })[0];
-    if (!text) return 0;
-    return text.getBBox().width;
-};
+var minTextSize = 20,
+    getTextWidth = function (id) {
+        if (!id) return 0;
+        var text = d3.selectAll('text')[0].filter(function (text) {
+            return text.__data__._id == id;
+        })[0];
+        if (!text) return 0;
+
+        var textWidth = text.getBBox().width;
+        return textWidth == 0 ? minTextSize : textWidth;
+    };
 MindMap.elbow = function (d) {
     var source = d.source;
     var target = d.target;

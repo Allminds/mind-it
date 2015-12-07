@@ -93,7 +93,8 @@ function retainCollapsed() {
                 collapse(nodeData, nodeId);
             }
         }
-        catch(e) {}
+        catch (e) {
+        }
     }
 
 }
@@ -122,7 +123,6 @@ getDims = function () {
 
 var select = function (node) {
     // Find previously selected, unselect
-    d3.select(".selected rect").remove();
     d3.select(".selected").classed("selected", false);
 
     if (!node.__data__.position && directionToggler.canToggle) {
@@ -132,27 +132,6 @@ var select = function (node) {
     }
     // Select current item
     d3.select(node).classed("selected", true);
-
-
-    if (d3.select(node).selectAll("ellipse")[0].length == 2)
-        return;
-
-    var text = d3.select(node).select("text")[0][0],
-        bBox = text.getBBox(),
-        rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    var dim = {
-        x: bBox.x,
-        y: bBox.y == 0 ? -19 : bBox.y,
-        width: bBox.width == 0 ? 20 : bBox.width,
-        height: bBox.height == 0 ? 20 : bBox.height
-    };
-    rect.setAttribute("x", dim.x);
-    rect.setAttribute("y", dim.y);
-    rect.setAttribute("width", dim.width);
-    rect.setAttribute("height", dim.height);
-    node.insertBefore(rect, text);
-    node.__data__ = text.__data__;
-    d3.select(text).on('dblClick', showEditor);
 };
 
 
@@ -169,10 +148,9 @@ var selectNode = function (target) {
     return false;
 };
 
-var showEditor = function () {
-    var nodeData = this.__data__;
-
-    var parentElement = d3.select(this.children[0].parentNode),
+showEditor = function () {
+    var nodeData = this.__data__,
+        parentElement = d3.select(this),
         currentElement = parentElement.select('text');
 
     var position = currentElement.node().getBBox();
@@ -684,7 +662,7 @@ Mousetrap.bind('right', function () {
 
 
 function storeLocally(d) {
-    var state = {isCollapsed : d.isCollapsed};
+    var state = {isCollapsed: d.isCollapsed};
     localStorage.setItem(d._id, JSON.stringify(state));
 }
 
@@ -696,7 +674,8 @@ function isLocallyCollapsed(id) {
     try {
         var locallyCollapsed = JSON.parse(localStorage.getItem(id)).isCollapsed;
     }
-    catch (e) {}
+    catch (e) {
+    }
     return locallyCollapsed ? true : false;
 }
 
