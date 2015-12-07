@@ -173,12 +173,18 @@ var selectNode = function (target) {
     }
     return false;
 };
+Editor = function Editor() {
+};
 
-var createEditor = function() {
+Editor.prototype.editBox = null;
+Editor.prototype.nodeData = null;
+Editor.prototype.currentTextElement = null;
+
+Editor.prototype.createEditBox = function() {
     var svgWidth = d3.select("svg").attr("width");
     var svgHeight = d3.select("svg").attr("height");
 
-    var rootEllipse = d3.select(this).select(".root-ellipse");
+    var rootEllipse = d3.select(".root-ellipse");
     var rx = rootEllipse.attr("rx");
     var ry = rootEllipse.attr("ry");
 
@@ -199,57 +205,48 @@ var createEditor = function() {
     return editBox;
 };
 
-var showEditor = function () {
-    var nodeData = this.__data__;
-
-    var parentElement = d3.select(this.children[0].parentNode),
-        currentText = parentElement.select('text');
-
-    var editBox = createEditor();
-
-    var position = currentText.node().getBBox();
-    if (nodeData.name && nodeData.name.length >= 50) {
-        var updatedName = prompt('Name', nodeData.name);
-        if (updatedName != nodeData.name) {
-            nodeData.name = updatedName;
-            mindMapService.updateNode(nodeData._id, {name: nodeData.name});
-            chart.update();
-            setTimeout(function () {
-                chart.update();
-                selectNode(nodeData);
-            }, 10);
-        }
-        return;
-    }
-
-    var resetEditor = function() {
-        currentText.attr("visibility", "");
-        d3.select(".edit-box").remove();
-    };
-
-    var updateNode = function () {
-        nodeData.name = editBox[0][0].value;
+Editor.prototype.showPrompt = function(nodeData) {
+    var updatedName = prompt('Name', nodeData.name);
+    if (updatedName != nodeData.name) {
+        nodeData.name = updatedName;
         mindMapService.updateNode(nodeData._id, {name: nodeData.name});
-        resetEditor();
         chart.update();
         setTimeout(function () {
             chart.update();
             selectNode(nodeData);
         }, 10);
-    };
+    }
+};
 
-    currentText.attr("visibility", "hidden");
+Editor.prototype.setupEditor = function(editor, editBox, nodeData, currentTextElement) {
+    this.editBox = editBox;
+    this.nodeData = nodeData;
+    this.currentTextElement = currentTextElement;
+};
+
+
+Editor.prototype.resetEditor = function() {
+    this.currentTextElement.attr("visibility", "");
+    d3.select(".edit-box").remove();
+};
+
+Editor.prototype.setupAttributes = function() {
     var escaped = false;
 
+    var currentTextElement = this.currentTextElement;
+    var editBox = this.editBox;
+    var nodeData = this.nodeData;
+    var editor = this;
+
+    currentTextElement.attr("visibility", "hidden");
     editBox.attr("value", nodeData.name)
         .attr('', function () {
-            //this.value = this.value;
             this.select();
             this.focus();
         })
         .on("blur", function () {
             if (escaped) return;
-            updateNode();
+            updateNode(editor, editBox, nodeData, currentTextElement);
             escaped = false;
         })
         .on("keydown", function () {
@@ -264,17 +261,46 @@ var showEditor = function () {
                 if (e.stopPropagation)
                     e.stopPropagation();
                 e.preventDefault();
-                updateNode();
+                updateNode(editor, editBox, nodeData, currentTextElement);
             }
 
 
             if (e.keyCode == 27) {
                 escaped = true;
-                resetEditor();
+                editor.resetEditor();
                 e.preventDefault();
             }
         });
 
+};
+
+var updateNode = function (editor, editBox, nodeData, currentTextElement) {
+    nodeData.name = editBox[0][0].value;
+    mindMapService.updateNode(nodeData._id, {name: nodeData.name});
+    editor.resetEditor(currentTextElement);
+    chart.update();
+    setTimeout(function () {
+        chart.update();
+        selectNode(nodeData);
+    }, 10);
+};
+
+
+var showEditor = function () {
+    var nodeData = this.__data__;
+
+    var parentElement = d3.select(this.children[0].parentNode),
+        currentTextElement = parentElement.select('text');
+
+    var editor = new Editor();
+    if (nodeData.name && nodeData.name.length >= 50) {
+        editor.showPrompt(nodeData);
+        return;
+    }
+
+    var editBox = editor.createEditBox();
+    editor.setupEditor(editor, editBox, nodeData, currentTextElement);
+    editor.setupAttributes(editor, editBox, nodeData, currentTextElement)
 };
 
 var dims = getDims();
