@@ -389,8 +389,8 @@ MindMap = function () {
     };
     return chart;
 };
-var minTextSize = 50,
-    minTextHeight = 25,
+var minTextSize = 30,
+    minTextHeight = 16,
     getTextWidth = function (id) {
         if (!id) return 0;
         var text = d3.selectAll('text')[0].filter(function (text) {
