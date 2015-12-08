@@ -676,6 +676,7 @@ function paste(sourceNode, targetNode, dir, previousSibling) {
             }
         );
     }
+  ;
     return newNode;
 }
 
@@ -977,6 +978,7 @@ Mousetrap.bind('command+up', function () {
             selectNode(previousSibling);
             cut();
             paste(previousSibling, selection.parent, selection.position, selection);
+            retainCollapsed();
             selectNode(selection);
             return;
         }
@@ -985,10 +987,8 @@ Mousetrap.bind('command+up', function () {
         previousSibling = siblings[siblings.length - 1];
     }
     cut();
-    if (!previousSibling) {
-        //debugger;
-    }
     var selectedNode = paste(selection, selection.parent, selection.position, previousSibling);
+    retainCollapsed();
     selectNode(selectedNode);
 
 });
@@ -1017,18 +1017,25 @@ Mousetrap.bind('command+down', function () {
         cut();
         var headId = siblings[0]._id;
         newNode._id = mindMapService.addNode(newNode);
+        if(selection.hasOwnProperty('isCollapsed') && selection.isCollapsed) {
+            newNode.isCollapsed = selection.isCollapsed;
+            storeLocally(newNode);
+        };
 
         mindMapService.updateNode(headId, {previous: newNode._id});
         var previous = null;
         (selection.children || selection._children || []).forEach(function (child) {
             previous = paste(child, newNode, child.position, previous);
         });
+
+        retainCollapsed();
         selectNode(newNode);
         return;
     }
 
     cut();
     var selectedNode = paste(selection, selection.parent, selection.position, nextSibling);
+    retainCollapsed();
     selectNode(selectedNode);
 
 });
