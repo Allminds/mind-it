@@ -293,8 +293,8 @@ var showEditor = function () {
 
 var dims = getDims();
 var chart = MindMap()
-    .width(dims.width)
-    .height(dims.height)
+    .width(20*dims.width)
+    .height(20*dims.height)
     .text(function (d) {
         return d.name;
     })
@@ -310,7 +310,7 @@ var update = function (data) {
         .datum(data)
         .call(chart);
     chart.update();
-    var $mindMap = $('#mindmap'),
+    var $mindMap = $('body'),
         scrollWidth = $mindMap.scrollLeft(Number.MAX_VALUE).scrollLeft(),
         scrollHeight = $mindMap.scrollTop(Number.MAX_VALUE).scrollTop();
     $mindMap.scrollLeft(scrollWidth / 2);
