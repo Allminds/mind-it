@@ -121,12 +121,12 @@ getDims = function () {
     return {width: x, height: y};
 };
 
-var deselectNode = function() {
+var deselectNode = function () {
     d3.select(".selected").classed("selected", false);
 };
 
 var select = function (node) {
-    // Find previously selected, unselect
+    // Find previously selected and deselect
     deselectNode();
 
     if (!node.__data__.position && directionToggler.canToggle) {
@@ -152,7 +152,7 @@ var selectNode = function (target) {
     return false;
 };
 
-var isRootNode = function(node) {
+var isRootNode = function (node) {
     return node.attr("class").split(" ").indexOf("level-0") > -1;
 };
 
@@ -169,10 +169,10 @@ Editor.prototype.createEditBox = function() {
     var svgHeight = d3.select("svg").attr("height");
     var elementToEdit = d3.select(this.elementToEdit);
 
-    var textboxAttributes = isRootNode(elementToEdit)?rootNodeTextBoxAttribute(svgWidth, svgHeight):
+    var textboxAttributes = isRootNode(elementToEdit) ? rootNodeTextBoxAttribute(svgWidth, svgHeight) :
         childNodeTextBoxAttribute(svgWidth, svgHeight, elementToEdit);
 
-    var editBox = d3.select("#mindmap")
+    return d3.select("#mindmap")
         .append("input")
         .attr("class", "edit-box")
         .attr("type", "text")
@@ -181,11 +181,9 @@ Editor.prototype.createEditBox = function() {
         .style("top", textboxAttributes.textboxY + "px")
         .style("width", textboxAttributes.textboxWidth + "px")
         .style("height", textboxAttributes.textboxHeight + "px");
-
-    return editBox;
 };
 
-var rootNodeTextBoxAttribute = function(svgWidth, svgHeight) {
+var rootNodeTextBoxAttribute = function (svgWidth, svgHeight) {
     var rootEllipse = d3.select(".root-ellipse");
     var rx = rootEllipse.attr("rx");
     var ry = rootEllipse.attr("ry");
@@ -198,7 +196,7 @@ var rootNodeTextBoxAttribute = function(svgWidth, svgHeight) {
     };
 };
 
-var childNodeTextBoxAttribute = function(svgWidth, svgHeight, elementToEdit) {
+var childNodeTextBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
 
     var rect = elementToEdit.select("rect");
     var rectWidth = rect.attr("width");
@@ -209,7 +207,7 @@ var childNodeTextBoxAttribute = function(svgWidth, svgHeight, elementToEdit) {
     var yTranslation = transformation[1].split(")")[0];
 
     return {
-        textboxX: svgWidth / 2 + parseInt(xTranslation) - rectWidth/2,
+        textboxX: svgWidth / 2 + parseInt(xTranslation) - rectWidth / 2,
         textboxY: svgHeight / 2 + parseInt(yTranslation) - rectHeight,
         textboxWidth: rectWidth,
         textboxHeight: rectHeight
@@ -240,7 +238,7 @@ Editor.prototype.resetEditor = function() {
     d3.select(".edit-box").remove();
 };
 
-Editor.prototype.setupAttributes = function() {
+Editor.prototype.setupAttributes = function () {
     var escaped = false;
 
     var currentTextElement = this.currentTextElement;
@@ -398,7 +396,7 @@ map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
     var newNode = {
         name: newNodeName, position: dir,
         parent_ids: [].concat(parent.parent_ids || []).concat([parent._id]),
-        previous: previousSibling._id, next: previousSibling.next,
+        previous: previousSibling._id, next: previousSibling.next
     };
     newNode._id = mindMapService.addNode(newNode);
 
@@ -485,8 +483,8 @@ Mousetrap.bind('command+v', function () {
     var targetNode = map.selectedNodeData();
     var sourceNode = map.sourceNode;
     var dir = calculateDirection(targetNode);
-    if(targetNode.isCollapsed)
-        expandRecursive(targetNode,targetNode._id);
+    if (targetNode.isCollapsed)
+        expandRecursive(targetNode, targetNode._id);
     paste(sourceNode, targetNode, dir);
     retainCollapsed();
 });
@@ -663,11 +661,10 @@ function paste(sourceNode, targetNode, dir, previousSibling) {
     if (sourceNode.hasOwnProperty('children') && sourceNode.children) {
         childrenArray = sourceNode.children;
     }
-    else if (sourceNode.hasOwnProperty('_children') && sourceNode._children)
-    {
+    else if (sourceNode.hasOwnProperty('_children') && sourceNode._children) {
         childrenArray = sourceNode._children;
     }
-    if(sourceNode.hasOwnProperty('isCollapsed') && sourceNode.isCollapsed) {
+    if (sourceNode.hasOwnProperty('isCollapsed') && sourceNode.isCollapsed) {
         newNode.isCollapsed = sourceNode.isCollapsed;
         storeLocally(newNode);
     }
@@ -1015,7 +1012,7 @@ Mousetrap.bind('command+down', function () {
         var newNode = {
             name: selection.name, position: selection.position,
             parent_ids: selection.parent_ids,
-            previous: null, next: siblings[0]._id,
+            previous: null, next: siblings[0]._id
         };
         cut();
         var headId = siblings[0]._id;
@@ -1048,16 +1045,10 @@ function JSONtoXML(XMLString, nodeObject) {
 
     XMLString += ">\n";
 
-    if (nodeObject.hasOwnProperty('children') && nodeObject.children !== null) {
-        for (var i = 0; i < nodeObject.children.length; i++) {
-            XMLString = JSONtoXML(XMLString, nodeObject.children[i]);
-        }
-    }
-    if (nodeObject.hasOwnProperty('_children') && nodeObject._children !== null) {
-        for (var i = 0; i < nodeObject._children.length; i++) {
-            XMLString = JSONtoXML(XMLString, nodeObject._children[i]);
-        }
-    }
+    (nodeObject.children || nodeObject._children || []).forEach(function (child) {
+        XMLString = JSONtoXML(XMLString, child)
+    });
+
     XMLString += "</node>\n";
     return XMLString;
 }

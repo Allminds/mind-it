@@ -16,9 +16,6 @@ MindMap = function () {
         idx = 0,
         getRootNode = function (node) {
             return node[0][node[0].length - 1];
-            return node[0].find(function (n) {
-                return !n.__data__.position;
-            });
         },
         indicator = {
             default: 4,
@@ -174,12 +171,6 @@ MindMap = function () {
                     return childDepth > depth ? childDepth : depth;
                 }, node.depth);
             };
-            var updateWidth = function () {
-                var depth = maxDepth(container.select('.node.level-0').data()[0]);
-                defaultWidth = defaultWidth == null ? width : defaultWidth;
-                chart.width(defaultWidth + depth * 250);
-            }
-            // Ensure we have Left and Right node lists
             if (!(root.left || root.right)) {
                 var i = 0, l = (root.children || []).length;
                 root.left = [];
@@ -200,10 +191,12 @@ MindMap = function () {
             //Compute the new tree layout.
             function right(d) {
                 return d.right ? d.right : d.children;
-            };
+            }
+
             function left(d) {
                 return d.left ? d.left : d.children;
-            };
+            }
+
             var first = root.left.length > 0 ? left : right,
                 second = root.right.length > 0 ? right : left;
 
@@ -393,7 +386,7 @@ MindMap = function () {
         if (!arguments.length) return handleDblClick;
         handleDblClick = _;
         return chart;
-    }
+    };
     return chart;
 };
 var minTextSize = 50,
