@@ -117,7 +117,7 @@ MindMap = function () {
                 .attr('height', function (d) {
                     if (d.depth == 0) return 0;
                     var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
-                    return rect.height == 0 ? 16 : (rect.height - 5);
+                    return rect.height == 0 ? minTextHeight : (rect.height - 5);
                 });
 
             var rootNode = getRootNode(node);
@@ -396,7 +396,8 @@ MindMap = function () {
     }
     return chart;
 };
-var minTextSize = 20,
+var minTextSize = 50,
+    minTextHeight = 25,
     getTextWidth = function (id) {
         if (!id) return 0;
         var text = d3.selectAll('text')[0].filter(function (text) {

@@ -200,13 +200,9 @@ var rootNodeTextBoxAttribute = function(svgWidth, svgHeight) {
 
 var childNodeTextBoxAttribute = function(svgWidth, svgHeight, elementToEdit) {
 
-    var rect = d3.select(".selected rect");
-    var rectHeight = 29;
-    var rectWidth = 50;
-    if(rect[0][0] != null) {
-        rectWidth = rect.attr("width");
-        rectHeight = rect.attr("height");
-    }
+    var rect = elementToEdit.select("rect");
+    var rectWidth = rect.attr("width");
+    var rectHeight = rect.attr("height");
 
     var transformation = elementToEdit.attr("transform").split(",");
     var xTranslation = transformation[0].split("(")[1];
