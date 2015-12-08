@@ -293,8 +293,8 @@ var showEditor = function () {
 
 var dims = getDims();
 var chart = MindMap()
-    .width(20*dims.width)
-    .height(20*dims.height)
+    .width(20 * dims.width)
+    .height(20 * dims.height)
     .text(function (d) {
         return d.name;
     })
@@ -310,11 +310,11 @@ var update = function (data) {
         .datum(data)
         .call(chart);
     chart.update();
-    var $mindMap = $('body'),
-        scrollWidth = $mindMap.scrollLeft(Number.MAX_VALUE).scrollLeft(),
-        scrollHeight = $mindMap.scrollTop(Number.MAX_VALUE).scrollTop();
-    $mindMap.scrollLeft(scrollWidth / 2);
-    $mindMap.scrollTop(scrollHeight / 2);
+    var body = $('body')[0],
+        scrollWidth = body.scrollWidth - body.clientWidth,
+        scrollHeight = body.scrollHeight - body.clientHeight;
+    $(window).scrollLeft(scrollWidth / 2);
+    $(window).scrollTop(scrollHeight / 2);
 
 };
 var getDirection = function (data) {
@@ -658,8 +658,7 @@ function paste(sourceNode, targetNode, dir, previousSibling) {
                 previous = paste(d, newNode, dir, previous);
             }
         );
-    }
-  ;
+    };
     return newNode;
 }
 
@@ -1000,10 +999,10 @@ Mousetrap.bind('command+down', function () {
         cut();
         var headId = siblings[0]._id;
         newNode._id = mindMapService.addNode(newNode);
-        if(selection.hasOwnProperty('isCollapsed') && selection.isCollapsed) {
+        if (selection.hasOwnProperty('isCollapsed') && selection.isCollapsed) {
             newNode.isCollapsed = selection.isCollapsed;
             storeLocally(newNode);
-        };
+        }
 
         mindMapService.updateNode(headId, {previous: newNode._id});
         var previous = null;
