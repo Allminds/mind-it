@@ -107,12 +107,10 @@ MindMap = function () {
                     return rect.y == 0 ? -19 : rect.y;
                 })
                 .attr('width', function (d) {
-                    if (d.depth == 0) return 0;
                     var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
                     return rect.width == 0 ? minTextSize : rect.width;
                 })
                 .attr('height', function (d) {
-                    if (d.depth == 0) return 0;
                     var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
                     return rect.height == 0 ? minTextHeight : (rect.height - 5);
                 });

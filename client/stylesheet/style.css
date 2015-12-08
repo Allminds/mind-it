@@ -63,34 +63,36 @@ path.link {
     fill-opacity: 1;
 }
 
-.node text {
-    font-size: 1em;
+.node text, input {
+    font-size: 18px; /* 100 */
     text-anchor: middle;
     fill-opacity: 1;
 }
 
-.node.level-0 text {
-    font-size: 1.8em;
+.node.level-0 text, input.level-0 {
+    font-size: 30px; /* 166 */
 }
 
-.node.level-1 text {
-    font-size: 1.6em;
+.node.level-1 text, input.level-1 {
+    font-size: 28px; /* 150 */
     fill: #0033ff;
+    color: #0033ff;
 }
 
-.node.level-2 text {
-    font-size: 1.4em;
+.node.level-2 text, input.level-2 {
+    font-size: 24px; /* 133 */
     fill: #00b439;
+    color: #00b439;
 }
 
-.node.level-3 text {
-    font-size: 1.2em;
+.node.level-3 text, input.level-3 {
+    font-size: 21px; /* 116 */
     fill: #990000;
+    color: #990000;
 }
 
 .node rect {
     fill: transparent;
-
 }
 
 .node.selected ellipse, .node.selected rect {
@@ -100,6 +102,13 @@ path.link {
 .node.selected rect {
     stroke: #ddd;
     stroke-width: 2px;
+}
+.edit-box{
+    position: absolute;
+}
+.node.selected.level-0 rect {
+    fill: transparent;
+    stroke: transparent;
 }
 
 circle.indicator.filled {

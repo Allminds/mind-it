@@ -164,38 +164,22 @@ Editor = function Editor(elementToEdit) {
 };
 
 
-Editor.prototype.createEditBox = function() {
+Editor.prototype.createEditBox = function () {
     var svgWidth = d3.select("svg").attr("width");
     var svgHeight = d3.select("svg").attr("height");
     var elementToEdit = d3.select(this.elementToEdit);
 
-    var textboxAttributes = isRootNode(elementToEdit) ? rootNodeTextBoxAttribute(svgWidth, svgHeight) :
+    var textboxAttributes = //isRootNode(elementToEdit) ? rootNodeTextBoxAttribute(svgWidth, svgHeight) :
         childNodeTextBoxAttribute(svgWidth, svgHeight, elementToEdit);
 
     return d3.select("#mindmap")
         .append("input")
-        .attr("class", "edit-box")
+        .attr("class", "edit-box" + " level-" + this.nodeData.depth)
         .attr("type", "text")
-        .style("position", "absolute")
         .style("left", textboxAttributes.textboxX + "px")
-        .style("top", textboxAttributes.textboxY + "px")
+        .style("top", (textboxAttributes.textboxY + (this.nodeData.depth == 0 ? 10 : -2)) + "px")
         .style("width", textboxAttributes.textboxWidth + "px")
-        .style("height", textboxAttributes.textboxHeight + "px");
 };
-
-var rootNodeTextBoxAttribute = function (svgWidth, svgHeight) {
-    var rootEllipse = d3.select(".root-ellipse");
-    var rx = rootEllipse.attr("rx");
-    var ry = rootEllipse.attr("ry");
-
-    return {
-        textboxX: svgWidth / 2 - rx,
-        textboxY: svgHeight / 2 - ry,
-        textboxWidth: rx * 2,
-        textboxHeight: ry
-    };
-};
-
 var childNodeTextBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
 
     var rect = elementToEdit.select("rect");
@@ -209,13 +193,12 @@ var childNodeTextBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
     return {
         textboxX: svgWidth / 2 + parseInt(xTranslation) - rectWidth / 2,
         textboxY: svgHeight / 2 + parseInt(yTranslation) - rectHeight,
-        textboxWidth: rectWidth,
-        textboxHeight: rectHeight
+        textboxWidth: rectWidth
     };
 };
 
 
-var showPrompt = function(nodeData) {
+var showPrompt = function (nodeData) {
     var updatedName = prompt('Name', nodeData.name);
     if (updatedName != nodeData.name) {
         nodeData.name = updatedName;
@@ -228,12 +211,12 @@ var showPrompt = function(nodeData) {
     }
 };
 
-Editor.prototype.setupEditBox = function(editBox) {
+Editor.prototype.setupEditBox = function (editBox) {
     this.editBox = editBox;
 };
 
 
-Editor.prototype.resetEditor = function() {
+Editor.prototype.resetEditor = function () {
     this.currentTextElement.attr("visibility", "");
     d3.select(".edit-box").remove();
 };
