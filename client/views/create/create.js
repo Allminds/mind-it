@@ -156,17 +156,18 @@ var isRootNode = function(node) {
     return node.attr("class").split(" ").indexOf("level-0") > -1;
 };
 
-Editor = function Editor() {
+Editor = function Editor(elementToEdit) {
+    this.editBox = null;
+    this.elementToEdit = elementToEdit;
+    this.nodeData = elementToEdit.__data__;
+    this.currentTextElement = d3.select(elementToEdit).select('text');
 };
 
-Editor.prototype.editBox = null;
-Editor.prototype.nodeData = null;
-Editor.prototype.currentTextElement = null;
 
-Editor.prototype.createEditBoxFor = function(elementToEdit) {
-
+Editor.prototype.createEditBox = function() {
     var svgWidth = d3.select("svg").attr("width");
     var svgHeight = d3.select("svg").attr("height");
+    var elementToEdit = d3.select(this.elementToEdit);
 
     var textboxAttributes = isRootNode(elementToEdit)?rootNodeTextBoxAttribute(svgWidth, svgHeight):
         childNodeTextBoxAttribute(svgWidth, svgHeight, elementToEdit);
@@ -220,7 +221,7 @@ var childNodeTextBoxAttribute = function(svgWidth, svgHeight, elementToEdit) {
 };
 
 
-Editor.prototype.showPrompt = function(nodeData) {
+var showPrompt = function(nodeData) {
     var updatedName = prompt('Name', nodeData.name);
     if (updatedName != nodeData.name) {
         nodeData.name = updatedName;
@@ -233,10 +234,8 @@ Editor.prototype.showPrompt = function(nodeData) {
     }
 };
 
-Editor.prototype.setupEditor = function(editor, editBox, nodeData, currentTextElement) {
+Editor.prototype.setupEditBox = function(editBox) {
     this.editBox = editBox;
-    this.nodeData = nodeData;
-    this.currentTextElement = currentTextElement;
 };
 
 
@@ -304,18 +303,15 @@ var updateNode = function (editor, editBox, nodeData, currentTextElement) {
 var showEditor = function () {
     var nodeData = this.__data__;
 
-    var parentElement = d3.select(this.children[0].parentNode),
-        currentTextElement = parentElement.select('text');
-
-    var editor = new Editor();
     if (nodeData.name && nodeData.name.length >= 50) {
-        editor.showPrompt(nodeData);
+        showPrompt(nodeData);
         return;
     }
 
-    var editBox = editor.createEditBoxFor(parentElement);
-    editor.setupEditor(editor, editBox, nodeData, currentTextElement);
-    editor.setupAttributes()
+    var editor = new Editor(this);
+    var editBox = editor.createEditBox();
+    editor.setupEditBox(editBox);
+    editor.setupAttributes();
 };
 
 var dims = getDims();
