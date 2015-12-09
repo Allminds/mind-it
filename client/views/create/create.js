@@ -580,6 +580,9 @@ function findLogicalUp(node) {
 
 Mousetrap.bind('up', function () {
     // up key pressed
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
         var data = selection.__data__;
@@ -636,6 +639,9 @@ function findLogicalDown(node) {
 
 Mousetrap.bind('down', function () {
     // down key pressed
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
         var data = selection.__data__;
@@ -672,11 +678,15 @@ function paste(sourceNode, targetNode, dir, previousSibling) {
                 previous = paste(d, newNode, dir, previous);
             }
         );
-    };
+    }
+    ;
     return newNode;
 }
 
 Mousetrap.bind('left', function () {
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     // left key pressed
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
@@ -705,6 +715,9 @@ Mousetrap.bind('left', function () {
 });
 
 Mousetrap.bind('right', function () {
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     // right key pressed
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
@@ -801,7 +814,9 @@ window.toggleCollapsedNode = function (selected) {
     }
 };
 Mousetrap.bind('space', function () {
-    event.preventDefault();
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     var selected = d3.select(".selected")[0][0].__data__;
     toggleCollapsedNode(selected);
 });
@@ -845,7 +860,9 @@ Mousetrap.bind('command+e', function createXmlFile() {
 
 Mousetrap.bind('command+left', function () {
     // left key pressed
-    event.preventDefault();
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
         var data = selection.__data__;
@@ -893,7 +910,9 @@ Mousetrap.bind('command+left', function () {
 
 Mousetrap.bind('command+right', function () {
     // left key pressed
-    event.preventDefault();
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     var selection = d3.select(".node.selected")[0][0],
         selectedNode;
 
@@ -942,6 +961,9 @@ Mousetrap.bind('command+right', function () {
 
 
 Mousetrap.bind('command+up', function () {
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     var selection = d3.select(".node.selected")[0][0].__data__;
 
     if (!(selection && selection.parent))
@@ -990,6 +1012,9 @@ Mousetrap.bind('command+up', function () {
 });
 
 Mousetrap.bind('command+down', function () {
+    var event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
     var selection = d3.select(".node.selected")[0][0].__data__;
 
     if (!(selection && selection.parent))
