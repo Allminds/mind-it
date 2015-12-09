@@ -197,18 +197,32 @@ var childNodeTextBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
     };
 };
 
+var updateDbWithPromptInput = function(nodeData) {
+    $('#myModalHorizontal').modal('hide');
+    var updatedText = $("#modal-text").val();
+        if (updatedText != nodeData.name) {
+            nodeData.name = updatedText;
+            mindMapService.updateNode(nodeData._id, {name: nodeData.name});
+            chart.update();
+            setTimeout(function () {
+                chart.update();
+                selectNode(nodeData);
+            }, 10);
+        }
+};
+
 
 var showPrompt = function (nodeData) {
-    var updatedName = prompt('Name', nodeData.name);
-    if (updatedName != nodeData.name) {
-        nodeData.name = updatedName;
-        mindMapService.updateNode(nodeData._id, {name: nodeData.name});
-        chart.update();
-        setTimeout(function () {
-            chart.update();
-            selectNode(nodeData);
-        }, 10);
-    }
+    $("#modal-text").val(nodeData.name);
+    $('#myModalHorizontal').modal('show');
+
+    $("#modal-save").click(function() { updateDbWithPromptInput(nodeData) });
+    $("#modal-text").keypress(function(e) {
+        if(e.keyCode == 13) {
+            updateDbWithPromptInput(nodeData);
+            e.stopPropagation();
+        }
+    });
 };
 
 Editor.prototype.setupEditBox = function (editBox) {
