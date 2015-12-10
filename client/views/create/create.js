@@ -225,7 +225,7 @@ Editor.prototype.setupEditBox = function (editBox) {
 
 Editor.prototype.resetEditor = function () {
     this.currentTextElement.attr("visibility", "");
-     d3.select(".edit-box").remove();
+    d3.select(".edit-box").remove();
 };
 
 Editor.prototype.setupAttributes = function () {
@@ -320,7 +320,7 @@ var update = function (data) {
     getChartInFocus();
 };
 
-var getChartInFocus = function() {
+var getChartInFocus = function () {
     var body = $('body')[0],
         scrollWidth = body.scrollWidth - body.clientWidth,
         scrollHeight = body.scrollHeight - body.clientHeight;
@@ -504,6 +504,15 @@ Mousetrap.bind('enter', function () {
     return false;
 });
 
+$(window).keyup(function (event) {
+    if (event.keyCode == 113) { // F2
+        (event.preventDefault || event.stop || event.stopPropagation || function () {
+        }).call(event);
+        var selectedNode = d3.select(".node.selected")[0][0];
+        if (!selectedNode) return;
+        showEditor.call(selectedNode);
+    }
+});
 
 Mousetrap.bind('tab', function () {
     var selectedNode = map.selectedNodeData();
@@ -889,8 +898,8 @@ Mousetrap.bind('mod+left', function () {
 
                 }
                 else {
-                      target = parent.parent;
-                      direction = "right";
+                    target = parent.parent;
+                    direction = "right";
                 }
                 break;
             case('root'):
@@ -990,7 +999,7 @@ Mousetrap.bind('mod+right', function () {
             removeLocally(target._id);
         }
         if (direction == "left")
-            selectedNode = paste(data, target, direction,parent);
+            selectedNode = paste(data, target, direction, parent);
         else
             selectedNode = paste(data, target, direction);
         retainCollapsed();
