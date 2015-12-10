@@ -880,7 +880,10 @@ Mousetrap.bind('command+left', function () {
             case('right'):
                 cut();
                 if (getDirection(parent) === 'root') {
+                    if(data.hasOwnProperty('isCollapsed') && data.isCollapsed)
+                        removeLocally(data._id);
                     selectedNode = paste(data, parent, "left");
+                    retainCollapsed();
                     selectNode(selectedNode);
                     return;
 
@@ -915,12 +918,16 @@ Mousetrap.bind('command+left', function () {
             default:
                 break;
         }
-         if (target.isCollapsed)
+         if (target.isCollapsed){
             expandRecursive(target, target._id);
+            removeLocally(target._id);
+         }
          if(direction == "right")
             selectedNode = paste(data, target, direction,parent);
          else
             selectedNode = paste(data, target, direction);
+        retainCollapsed();
+        selectNode(selectedNode);
     }
 });
 
@@ -941,7 +948,10 @@ Mousetrap.bind('command+right', function () {
             case('left'):
                 cut();
                 if (getDirection(parent) === 'root') {
+                    if(data.hasOwnProperty('isCollapsed') && data.isCollapsed)
+                        removeLocally(data._id);
                     selectedNode = paste(data, parent, "right");
+                    retainCollapsed();
                     selectNode(selectedNode);
                     return;
                 }
@@ -975,12 +985,15 @@ Mousetrap.bind('command+right', function () {
             default:
                 break;
         }
-        if (target.isCollapsed)
+        if (target.isCollapsed){
             expandRecursive(target, target._id);
+            removeLocally(target._id);
+        }
         if (direction == "left")
             selectedNode = paste(data, target, direction,parent);
         else
             selectedNode = paste(data, target, direction);
+        retainCollapsed();
         selectNode(selectedNode);
     }
 });
