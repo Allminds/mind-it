@@ -9,5 +9,6 @@ Template.MyButton.events({
 			link = '/create/' + mindMapId;
 		// 2. Go to canvas root note
 		Router.go(link);
+		localStorage.clear();
 	}
 });
