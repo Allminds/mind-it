@@ -159,15 +159,17 @@ Editor.prototype.createEditBox = function () {
     var svgHeight = d3.select("svg").attr("height");
     var elementToEdit = d3.select(this.elementToEdit);
 
-    var textboxAttributes = //isRootNode(elementToEdit) ? rootNodeTextBoxAttribute(svgWidth, svgHeight) :
-        childNodeTextBoxAttribute(svgWidth, svgHeight, elementToEdit);
+    var textboxAttributes = childNodeTextBoxAttribute(svgWidth, svgHeight, elementToEdit),
+        adjmnt = [20, 10, 10, 15, 15],
+        depth = this.nodeData.depth;
+    depth = depth < adjmnt.length ? depth : 4;
 
     return d3.select("#mindmap")
         .append("input")
-        .attr("class", "edit-box" + " level-" + this.nodeData.depth)
+        .attr("class", "edit-box" + " level-" + depth)
         .attr("type", "text")
         .style("left", textboxAttributes.textboxX + "px")
-        .style("top", (textboxAttributes.textboxY + (this.nodeData.depth == 0 ? 10 : -2)) + "px")
+        .style("top", (textboxAttributes.textboxY + adjmnt[depth]) + "px")
         .style("width", textboxAttributes.textboxWidth + "px")
 };
 var childNodeTextBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
@@ -206,11 +208,11 @@ var showPrompt = function (nodeData) {
     $("#modal-text").val(nodeData.name);
     $('#myModalHorizontal').modal('show');
 
-    $('#myModalHorizontal').on('shown.bs.modal', function() {
+    $('#myModalHorizontal').on('shown.bs.modal', function () {
         $("#modal-text").focus();
         $("#modal-text").select();
     });
-    $("#modal-save").click(function() {
+    $("#modal-save").click(function () {
         updateDbWithPromptInput(nodeData)
         $('#modal-save').off('click');
     });
@@ -223,7 +225,7 @@ Editor.prototype.setupEditBox = function (editBox) {
 
 Editor.prototype.resetEditor = function () {
     this.currentTextElement.attr("visibility", "");
-    d3.select(".edit-box").remove();
+     d3.select(".edit-box").remove();
 };
 
 Editor.prototype.setupAttributes = function () {
