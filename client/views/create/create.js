@@ -873,17 +873,22 @@ Mousetrap.bind('command+left', function () {
         var data = selection.__data__;
         var dir = getDirection(data),
             parent = data.parent,
-            selectedNode;
+            selectedNode,
+            target,
+            direction;
         switch (dir) {
             case('right'):
                 cut();
                 if (getDirection(parent) === 'root') {
                     selectedNode = paste(data, parent, "left");
+                    selectNode(selectedNode);
+                    return;
+
                 }
                 else {
-                    selectedNode = paste(data, parent.parent, "right", parent);
+                      target = parent.parent;
+                      direction = "right";
                 }
-                selectNode(selectedNode);
                 break;
             case('root'):
                 alert("Root cannot be added to a new parent");
@@ -898,28 +903,35 @@ Mousetrap.bind('command+left', function () {
                     if (nl[i]._id === data._id && l != 1) {
                         cut();
                         if (i === 0)
-                            selectedNode = paste(data, nl[(i + 1)], "left");
+                            target = nl[(i + 1)];
                         else
-                            selectedNode = paste(data, nl[(i - 1)], "left");
+                            target = nl[(i - 1)];
+                        direction = "left";
                         break;
                     }
 
                 }
-                selectNode(selectedNode);
                 break;
             default:
                 break;
         }
+         if (target.isCollapsed)
+            expandRecursive(target, target._id);
+         if(direction == "right")
+            selectedNode = paste(data, target, direction,parent);
+         else
+            selectedNode = paste(data, target, direction);
     }
 });
 
 Mousetrap.bind('command+right', function () {
-    // left key pressed
     var event = arguments[0];
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
     var selection = d3.select(".node.selected")[0][0],
-        selectedNode;
+        selectedNode,
+        target,
+        direction;
 
     if (selection) {
         var data = selection.__data__;
@@ -930,11 +942,13 @@ Mousetrap.bind('command+right', function () {
                 cut();
                 if (getDirection(parent) === 'root') {
                     selectedNode = paste(data, parent, "right");
+                    selectNode(selectedNode);
+                    return;
                 }
                 else {
-                    selectedNode = paste(data, parent.parent, "left", parent);
+                    target = parent.parent;
+                    direction = "left";
                 }
-                selectNode(selectedNode);
                 break;
             case('root'):
                 alert("Root cannot be added to a new parent");
@@ -949,18 +963,25 @@ Mousetrap.bind('command+right', function () {
                     if (nl[i]._id === data._id && l != 1) {
                         cut();
                         if (i === 0)
-                            selectedNode = paste(data, nl[(i + 1)], "right");
+                            target = nl[(i + 1)];
                         else
-                            selectedNode = paste(data, nl[(i - 1)], "right");
+                            target = nl[(i - 1)];
+                        direction = "right";
                         break;
                     }
 
                 }
-                selectNode(selectedNode);
                 break;
             default:
                 break;
         }
+        if (target.isCollapsed)
+            expandRecursive(target, target._id);
+        if (direction == "left")
+            selectedNode = paste(data, target, direction,parent);
+        else
+            selectedNode = paste(data, target, direction);
+        selectNode(selectedNode);
     }
 });
 
