@@ -317,13 +317,17 @@ var update = function (data) {
         .datum(data)
         .call(chart);
     chart.update();
+    getChartInFocus();
+};
+
+var getChartInFocus = function() {
     var body = $('body')[0],
         scrollWidth = body.scrollWidth - body.clientWidth,
         scrollHeight = body.scrollHeight - body.clientHeight;
     $(window).scrollLeft(scrollWidth / 2);
     $(window).scrollTop(scrollHeight / 2);
-
 };
+
 var getDirection = function (data) {
     if (!data) {
         return 'root';
@@ -1084,4 +1088,5 @@ function JSONtoXML(XMLString, nodeObject) {
 
 Mousetrap.bind("esc", function goToRootNode() {
     select(d3.select('.node.level-0')[0][0]);
+    getChartInFocus();
 });
