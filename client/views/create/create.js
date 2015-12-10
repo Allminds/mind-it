@@ -160,7 +160,7 @@ Editor.prototype.createEditBox = function () {
     var elementToEdit = d3.select(this.elementToEdit);
 
     var textboxAttributes = childNodeTextBoxAttribute(svgWidth, svgHeight, elementToEdit),
-        adjmnt = [20, 10, 10, 15, 15],
+        adjmnt = [20, 10, 10, 10, 15],
         depth = this.nodeData.depth;
     depth = depth < adjmnt.length ? depth : 4;
 
