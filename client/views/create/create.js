@@ -31,8 +31,6 @@ var tracker = {
         newNode = fields;
         newNode._id = id;
         var parent = map.getNodeData(newNode.parent_ids[newNode.parent_ids.length - 1]);
-        if (parent)
-            parent = parent.__data__;
         map.addNodeToUI(parent, newNode);
         nodeSelector.setPrevDepth(newNode.parent_ids.length);
     },
@@ -40,12 +38,6 @@ var tracker = {
         var updatedNode = map.getNodeData(id);
         if (!updatedNode) return;
 
-        var nodeBeingEdited = map.getEditingNode();
-
-        if (nodeBeingEdited && nodeBeingEdited._id === id)
-            return;
-
-        updatedNode = updatedNode.__data__;
         updatedNode.previous = fields.hasOwnProperty('previous') ? fields.previous : updatedNode.previous;
         updatedNode.next = fields.hasOwnProperty('next') ? fields.next : updatedNode.next;
 
@@ -65,8 +57,6 @@ var tracker = {
     removed: function (id) {
         var deletedNode = map.getNodeData(id);
         if (!deletedNode) return;
-
-        deletedNode = deletedNode.__data__;
 
         var alreadyRemoved = deletedNode.parent_ids.some(function (parent_id) {
             return tracker.just_deleted == parent_id;
@@ -89,7 +79,7 @@ function retainCollapsed() {
         try {
             if (isLocallyCollapsed(localStorage.key(i))) {
                 var nodeId = localStorage.key(i);
-                var nodeData = map.getNodeData(nodeId).__data__;
+                var nodeData = map.getNodeData(nodeId);
                 collapse(nodeData, nodeId);
             }
         }
@@ -197,18 +187,18 @@ var childNodeTextBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
     };
 };
 
-var updateDbWithPromptInput = function(nodeData) {
+var updateDbWithPromptInput = function (nodeData) {
     $('#myModalHorizontal').modal('hide');
     var updatedText = $("#modal-text").val();
-        if (updatedText != nodeData.name) {
-            nodeData.name = updatedText;
-            mindMapService.updateNode(nodeData._id, {name: nodeData.name});
+    if (updatedText != nodeData.name) {
+        nodeData.name = updatedText;
+        mindMapService.updateNode(nodeData._id, {name: nodeData.name});
+        chart.update();
+        setTimeout(function () {
             chart.update();
-            setTimeout(function () {
-                chart.update();
-                selectNode(nodeData);
-            }, 10);
-        }
+            selectNode(nodeData);
+        }, 10);
+    }
 };
 
 
@@ -342,7 +332,7 @@ var getDirection = function (data) {
     return getDirection(data.parent);
 };
 
-var map = {};
+map = {};
 map.selectedNodeData = function () {
     var selectedNode = d3.select(".node.selected")[0][0];
     return selectedNode ? selectedNode.__data__ : null;
@@ -408,18 +398,26 @@ map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
     return newNode;
 };
 map.makeEditable = function (nodeId) {
-    var node = map.getNodeData(nodeId);
+    var node = d3.selectAll('#mindmap svg .node').filter(function (d) {
+        return d._id == nodeId
+    })[0][0];
     if (node)
         showEditor.call(node);
 };
-map.getNodeData = function (nodeId) {
-    return d3.selectAll('#mindmap svg .node').filter(function (d) {
-        return d._id == nodeId
-    })[0][0];
+map.findOne = function (node, fun) {
+
+    if (fun(node)) return node;
+    var children = (node.children || node._children || []),
+        res = children.reduce(function (result, child) {
+            return result || map.findOne(child, fun);
+        }, null);
+    return res;
 };
-map.getEditingNode = function () {
-    var editingNode = d3.select(".node foreignobject")[0][0];
-    return editingNode ? editingNode.__data__ : null;
+map.getNodeData = function (nodeId) {
+    var rootNodeData = d3.selectAll('#mindmap svg .node.level-0')[0][0].__data__;
+    return map.findOne(rootNodeData, function (x) {
+        return x._id == nodeId
+    });
 };
 
 var clone = function (node) {
