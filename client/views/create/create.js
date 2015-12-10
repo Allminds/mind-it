@@ -459,7 +459,7 @@ map.getSourceNode = function () {
     return d3.select(".selected")[0][0].__data__;
 };
 
-Mousetrap.bind('command+x', function () {
+Mousetrap.bind('mod+x', function () {
     cut();
 });
 
@@ -476,12 +476,12 @@ function cut() {
     Meteor.call('deleteNode', sourceNode._id);
 }
 
-Mousetrap.bind('command+c', function () {
+Mousetrap.bind('mod+c', function () {
     var sourceNode = map.getSourceNode();
     map.storeSourceNode(sourceNode);
 });
 
-Mousetrap.bind('command+v', function () {
+Mousetrap.bind('mod+v', function () {
     var targetNode = map.selectedNodeData();
     var sourceNode = map.sourceNode;
     var dir = calculateDirection(targetNode);
@@ -827,7 +827,7 @@ Mousetrap.bind('space', function () {
 });
 
 
-Mousetrap.bind('command+e', function createXmlFile() {
+Mousetrap.bind('mod+e', function createXmlFile() {
     var rootNode = d3.selectAll('.node')[0].find(function (node) {
         return !node.__data__.position;
     });
@@ -863,7 +863,7 @@ Mousetrap.bind('command+e', function createXmlFile() {
 
 });
 
-Mousetrap.bind('command+left', function () {
+Mousetrap.bind('mod+left', function () {
     // left key pressed
     var event = arguments[0];
     (event.preventDefault || event.stop || event.stopPropagation || function () {
@@ -931,7 +931,7 @@ Mousetrap.bind('command+left', function () {
     }
 });
 
-Mousetrap.bind('command+right', function () {
+Mousetrap.bind('mod+right', function () {
     var event = arguments[0];
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
@@ -999,7 +999,7 @@ Mousetrap.bind('command+right', function () {
 });
 
 
-Mousetrap.bind('command+up', function () {
+Mousetrap.bind('mod+up', function () {
     var event = arguments[0];
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
@@ -1050,7 +1050,7 @@ Mousetrap.bind('command+up', function () {
 
 });
 
-Mousetrap.bind('command+down', function () {
+Mousetrap.bind('mod+down', function () {
     var event = arguments[0];
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
