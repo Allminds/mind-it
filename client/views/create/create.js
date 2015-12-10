@@ -216,12 +216,13 @@ var showPrompt = function (nodeData) {
     $("#modal-text").val(nodeData.name);
     $('#myModalHorizontal').modal('show');
 
-    $("#modal-save").click(function() { updateDbWithPromptInput(nodeData) });
-    $("#modal-text").keypress(function(e) {
-        if(e.keyCode == 13) {
-            updateDbWithPromptInput(nodeData);
-            e.stopPropagation();
-        }
+    $('#myModalHorizontal').on('shown.bs.modal', function() {
+        $("#modal-text").focus();
+        $("#modal-text").select();
+    });
+    $("#modal-save").click(function() {
+        updateDbWithPromptInput(nodeData)
+        $('#modal-save').off('click');
     });
 };
 
