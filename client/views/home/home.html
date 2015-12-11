@@ -2,15 +2,25 @@
 <template name="MyButton">
     <button id="clickme" class="button-0">Create MindMap</button>
 </template>
+<template name="MinditImage">
+    <img src="Minditlogo.png" width="20%" height="20%">
+</template>
+<template name="HomeMindMapExample">
+    <img src="home-bg.png" name="slide">
+</template>
 
 <!--Home template -->
 <template name='home'>
-
     <div class="header">
-        <h1>Mind It !!</h1>
+        {{> MinditImage}}
     </div>
-    <div class="home-bg"></div>
+
+    <div class="home-bg">
+        {{> HomeMindMapExample}}
+    </div>
+
     <center>
         {{> MyButton}}
     </center>
+
 </template>

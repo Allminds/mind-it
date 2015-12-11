@@ -26,11 +26,6 @@ body {
     border: none;
 }
 
-h1 {
-    text-shadow: 1px 1px #ffffff;
-    font-size: 400%;
-}
-
 .button-0 {
     padding: 10px 40px;
     font-family: 'Helvetica', cursive;
@@ -54,11 +49,15 @@ h1 {
 }
 
 .home-bg {
-    background: url("home-bg.png");
     max-height: 600px;
     background-repeat: no-repeat;
-    height: 70%;
+    height:550px;
     background-size: contain;
     background-position: 50% 50%;
+}
+
+.home-bg img {
+	width: 90%;
+	max-height: 500px;
 }
 
