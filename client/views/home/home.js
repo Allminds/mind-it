@@ -23,7 +23,6 @@ Template.home.onRendered(function(){
   });
 
   $("#about-us").click(function() {
-		//$('html, body').animate({scrollTop: $("#aboutUs-modal").offset().top}, "slow");
 		 $('#aboutUs-modal').modal('show');
 	});
 
