@@ -103,7 +103,7 @@ Template.create.rendered = function rendered() {
     d3.select("#help-link").on('click', enableHelpLink);
 };
 
-var enableHelpLink = function() {
+var enableHelpLink = function () {
     $('#help-modal').modal('show');
 };
 
@@ -477,11 +477,11 @@ function cut(asyncCallBack) {
         return;
     }
     map.storeSourceNode(sourceNode);
-    var parent = sourceNode.parent;
+    var selectedNodeIndex = (sourceNode.parent.children || []).indexOf(sourceNode);
     Meteor.call('deleteNode', sourceNode._id, function (err, data) {
-        if (parent)
-            focusAfterDelete(parent, sourceNode);
-        asyncCallBack(err, data);
+        focusAfterDelete(sourceNode, selectedNodeIndex);
+        if (asyncCallBack)
+            asyncCallBack(err, data);
     });
 }
 
@@ -540,7 +540,6 @@ Mousetrap.bind('del', function () {
     var selectedNode = map.selectedNodeData();
     if (!selectedNode) return;
     var dir = getDirection(selectedNode);
-    var parent = selectedNode.parent;
 
     if (dir === 'root') {
         alert('Can\'t delete root');
@@ -551,35 +550,20 @@ Mousetrap.bind('del', function () {
         alert('Could not locate children');
         return;
     }
-
-    if (parent)
-        focusAfterDelete(parent, selectedNode);
-
-    Meteor.call('deleteNode', selectedNode._id);
+    var selectedNodeIndex = children.indexOf(selectedNode);
+    Meteor.call('deleteNode', selectedNode._id, function () {
+        focusAfterDelete(selectedNode, selectedNodeIndex);
+    });
 
 
 });
 
-function focusAfterDelete(parent, selectedNode) {
-
-    var children = parent.children || [];
-    for (var i = 0; i < children.length; i++) {
-        if (children[i] === selectedNode)
-            break
-    }
-
-    if (children[i + 1]) {
-        selectNode(selectedNode.children[i + 1]);
-
-    }
-    else if (children[i - 1]) {
-        selectNode(selectedNode.parent.children[i - 1]);
-
-    }
-    else {
-        selectNode(selectedNode.parent);
-    }
-
+function focusAfterDelete(selectedNode, removedNodeIndex) {
+    var parent = selectedNode.parent,
+        children = parent[selectedNode.position] || parent.children || [],
+        nextNode = children[removedNodeIndex],
+        previousNode = children[removedNodeIndex - 1];
+    selectNode(nextNode || previousNode || parent);
 }
 
 function findLogicalUp(node) {
