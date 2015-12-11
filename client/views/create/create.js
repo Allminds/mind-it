@@ -1157,3 +1157,7 @@ Mousetrap.bind("esc", function goToRootNode() {
     select(d3.select('.node.level-0')[0][0]);
     getChartInFocus();
 });
+
+Mousetrap.bind('?', function showHelp() {
+    $('#help-modal').modal('show');
+});
