@@ -142,10 +142,6 @@ var selectNode = function (target) {
     return false;
 };
 
-var isRootNode = function (node) {
-    return node.attr("class").split(" ").indexOf("level-0") > -1;
-};
-
 Editor = function Editor(elementToEdit) {
     this.editBox = null;
     this.elementToEdit = elementToEdit;
@@ -159,7 +155,7 @@ Editor.prototype.createEditBox = function () {
     var svgHeight = d3.select("svg").attr("height");
     var elementToEdit = d3.select(this.elementToEdit);
 
-    var textboxAttributes = childNodeTextBoxAttribute(svgWidth, svgHeight, elementToEdit),
+    var textboxAttributes = textBoxAttribute(svgWidth, svgHeight, elementToEdit),
         adjmnt = [20, 10, 10, 10, 15],
         depth = this.nodeData.depth;
     depth = depth < adjmnt.length ? depth : 4;
@@ -170,9 +166,9 @@ Editor.prototype.createEditBox = function () {
         .attr("type", "text")
         .style("left", textboxAttributes.textboxX + "px")
         .style("top", (textboxAttributes.textboxY + adjmnt[depth]) + "px")
-        .style("width", textboxAttributes.textboxWidth + "px")
+        .style("width", textboxAttributes.textboxWidth + "px");
 };
-var childNodeTextBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
+var textBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
 
     var rect = elementToEdit.select("rect");
     var rectWidth = rect.attr("width");
@@ -267,6 +263,12 @@ Editor.prototype.setupAttributes = function () {
                 escaped = true;
                 editor.resetEditor();
                 e.preventDefault();
+            }
+
+            if(e.keyCode == 9) {
+                e.stopPropagation();
+                e.preventDefault();
+                updateNode(editor, editBox, nodeData, currentTextElement);
             }
         });
 
