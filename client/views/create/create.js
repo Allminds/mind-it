@@ -100,6 +100,11 @@ Template.create.rendered = function rendered() {
     Mindmaps.find().observeChanges(tracker);
 
     retainCollapsed();
+    d3.select("#help-link").on('click', enableHelpLink);
+};
+
+var enableHelpLink = function() {
+    $('#help-modal').modal('show');
 };
 
 var getDims;
