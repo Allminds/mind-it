@@ -387,7 +387,7 @@ MindMap = function () {
     };
     return chart;
 };
-var minTextSize = 30,
+var minTextSize = 150,
     minTextHeight = 16,
     getTextWidth = function (id) {
         if (!id) return 0;
