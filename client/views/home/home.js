@@ -22,8 +22,9 @@ Template.home.onRendered(function(){
   	slidesToShow: 1
   });
 
-  $(".aboutus").click(function() {
-		$('html, body').animate({scrollTop: $("#aboutus").offset().top}, "slow");
+  $("#about-us").click(function() {
+		//$('html, body').animate({scrollTop: $("#aboutUs-modal").offset().top}, "slow");
+		 $('#aboutUs-modal').modal('show');
 	});
 
 });

@@ -101,6 +101,7 @@ Template.create.rendered = function rendered() {
 
     retainCollapsed();
     d3.select("#help-link").on('click', enableHelpLink);
+
 };
 
 var enableHelpLink = function () {
