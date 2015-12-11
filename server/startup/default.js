@@ -4,6 +4,7 @@ Meteor.publish('mindmap', function (id) {
 });
 Meteor.methods({
 	deleteNode: function(id){
+		//Meteor._sleepForMs(500);
 		mindMapService.deleteNode(id);
 	}
 });

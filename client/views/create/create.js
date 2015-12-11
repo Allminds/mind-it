@@ -465,7 +465,7 @@ Mousetrap.bind('mod+x', function () {
     cut();
 });
 
-function cut() {
+function cut(asyncCallBack) {
     var sourceNode = map.getSourceNode();
     if (getDirection(sourceNode) === 'root') {
         alert("The root node cannot be cut!");
@@ -473,9 +473,11 @@ function cut() {
     }
     map.storeSourceNode(sourceNode);
     var parent = sourceNode.parent;
-    if (parent)
-        focusAfterDelete(parent, sourceNode);
-    Meteor.call('deleteNode', sourceNode._id);
+    Meteor.call('deleteNode', sourceNode._id, function (err, data) {
+        if (parent)
+            focusAfterDelete(parent, sourceNode);
+        asyncCallBack(err, data);
+    });
 }
 
 Mousetrap.bind('mod+c', function () {
@@ -555,16 +557,17 @@ Mousetrap.bind('del', function () {
 
 function focusAfterDelete(parent, selectedNode) {
 
-    for (var i = 0; i < parent.children.length; i++) {
-        if (parent.children[i] === selectedNode)
+    var children = parent.children || [];
+    for (var i = 0; i < children.length; i++) {
+        if (children[i] === selectedNode)
             break
     }
 
-    if (parent.children[i + 1]) {
-        selectNode(selectedNode.parent.children[i + 1]);
+    if (children[i + 1]) {
+        selectNode(selectedNode.children[i + 1]);
 
     }
-    else if (parent.children[i - 1]) {
+    else if (children[i - 1]) {
         selectNode(selectedNode.parent.children[i - 1]);
 
     }
@@ -887,22 +890,39 @@ Mousetrap.bind('mod+left', function () {
             selectedNode,
             target,
             direction;
+
+        function pasteAfterCut() {
+            if (target.isCollapsed) {
+                expandRecursive(target, target._id);
+                removeLocally(target._id);
+            }
+            if (direction == "right")
+                selectedNode = paste(data, target, direction, parent);
+            else
+                selectedNode = paste(data, target, direction);
+            retainCollapsed();
+            selectNode(selectedNode);
+        }
+
         switch (dir) {
             case('right'):
-                cut();
-                if (getDirection(parent) === 'root') {
-                    if(data.hasOwnProperty('isCollapsed') && data.isCollapsed)
-                        removeLocally(data._id);
-                    selectedNode = paste(data, parent, "left");
-                    retainCollapsed();
-                    selectNode(selectedNode);
-                    return;
+                cut(function () {
+                    if (getDirection(parent) === 'root') {
+                        if (data.hasOwnProperty('isCollapsed') && data.isCollapsed)
+                            removeLocally(data._id);
+                        selectedNode = paste(data, parent, "left");
+                        retainCollapsed();
+                        selectNode(selectedNode);
+                        return;
 
-                }
-                else {
-                    target = parent.parent;
-                    direction = "right";
-                }
+                    }
+                    else {
+                        target = parent.parent;
+                        direction = "right";
+                        pasteAfterCut();
+                    }
+                });
+
                 break;
             case('root'):
                 alert("Root cannot be added to a new parent");
@@ -915,12 +935,12 @@ Mousetrap.bind('mod+left', function () {
                 var l = nl.length;
                 for (; i < l; i++) {
                     if (nl[i]._id === data._id && l != 1) {
-                        cut();
                         if (i === 0)
                             target = nl[(i + 1)];
                         else
                             target = nl[(i - 1)];
                         direction = "left";
+                        cut(pasteAfterCut);
                         break;
                     }
 
@@ -929,16 +949,6 @@ Mousetrap.bind('mod+left', function () {
             default:
                 break;
         }
-         if (target.isCollapsed){
-            expandRecursive(target, target._id);
-            removeLocally(target._id);
-         }
-         if(direction == "right")
-            selectedNode = paste(data, target, direction,parent);
-         else
-            selectedNode = paste(data, target, direction);
-        retainCollapsed();
-        selectNode(selectedNode);
     }
 });
 
@@ -951,25 +961,43 @@ Mousetrap.bind('mod+right', function () {
         target,
         direction;
 
+
     if (selection) {
         var data = selection.__data__;
         var dir = getDirection(data),
             parent = data.parent;
+
+        function pasteAfterCut() {
+            if (target.isCollapsed) {
+                expandRecursive(target, target._id);
+                removeLocally(target._id);
+            }
+            if (direction == "left")
+                selectedNode = paste(data, target, direction, parent);
+            else
+                selectedNode = paste(data, target, direction);
+            retainCollapsed();
+            selectNode(selectedNode);
+        }
+
         switch (dir) {
             case('left'):
-                cut();
-                if (getDirection(parent) === 'root') {
-                    if(data.hasOwnProperty('isCollapsed') && data.isCollapsed)
-                        removeLocally(data._id);
-                    selectedNode = paste(data, parent, "right");
-                    retainCollapsed();
-                    selectNode(selectedNode);
-                    return;
-                }
-                else {
-                    target = parent.parent;
-                    direction = "left";
-                }
+                cut(function () {
+                    if (getDirection(parent) === 'root') {
+                        if (data.hasOwnProperty('isCollapsed') && data.isCollapsed)
+                            removeLocally(data._id);
+                        selectedNode = paste(data, parent, "right");
+                        retainCollapsed();
+                        selectNode(selectedNode);
+                        return;
+                    }
+                    else {
+                        target = parent.parent;
+                        direction = "left";
+                        pasteAfterCut();
+                    }
+                });
+
                 break;
             case('root'):
                 alert("Root cannot be added to a new parent");
@@ -982,30 +1010,20 @@ Mousetrap.bind('mod+right', function () {
                 var l = nl.length;
                 for (; i < l; i++) {
                     if (nl[i]._id === data._id && l != 1) {
-                        cut();
                         if (i === 0)
                             target = nl[(i + 1)];
                         else
                             target = nl[(i - 1)];
                         direction = "right";
+                        cut(pasteAfterCut);
                         break;
                     }
-
                 }
                 break;
             default:
                 break;
         }
-        if (target.isCollapsed){
-            expandRecursive(target, target._id);
-            removeLocally(target._id);
-        }
-        if (direction == "left")
-            selectedNode = paste(data, target, direction, parent);
-        else
-            selectedNode = paste(data, target, direction);
-        retainCollapsed();
-        selectNode(selectedNode);
+
     }
 });
 
@@ -1044,20 +1062,23 @@ Mousetrap.bind('mod+up', function () {
         }
         else {
             selectNode(previousSibling);
-            cut();
-            paste(previousSibling, selection.parent, selection.position, selection);
-            retainCollapsed();
-            selectNode(selection);
+            cut(function (err, data) {
+                paste(previousSibling, selection.parent, selection.position, selection);
+                retainCollapsed();
+                selectNode(selection);
+            });
             return;
         }
     } else {
 
         previousSibling = siblings[siblings.length - 1];
     }
-    cut();
-    var selectedNode = paste(selection, selection.parent, selection.position, previousSibling);
-    retainCollapsed();
-    selectNode(selectedNode);
+    cut(function (err, data) {
+        var selectedNode = paste(selection, selection.parent, selection.position, previousSibling);
+        retainCollapsed();
+        selectNode(selectedNode);
+    });
+
 
 });
 
@@ -1085,30 +1106,31 @@ Mousetrap.bind('mod+down', function () {
             parent_ids: selection.parent_ids,
             previous: null, next: siblings[0]._id
         };
-        cut();
-        var headId = siblings[0]._id;
-        newNode._id = mindMapService.addNode(newNode);
-        if (selection.hasOwnProperty('isCollapsed') && selection.isCollapsed) {
-            newNode.isCollapsed = selection.isCollapsed;
-            storeLocally(newNode);
-        }
+        cut(function () {
+            var headId = siblings[0]._id;
+            newNode._id = mindMapService.addNode(newNode);
+            if (selection.hasOwnProperty('isCollapsed') && selection.isCollapsed) {
+                newNode.isCollapsed = selection.isCollapsed;
+                storeLocally(newNode);
+            }
 
-        mindMapService.updateNode(headId, {previous: newNode._id});
-        var previous = null;
-        (selection.children || selection._children || []).forEach(function (child) {
-            previous = paste(child, newNode, child.position, previous);
+            mindMapService.updateNode(headId, {previous: newNode._id});
+            var previous = null;
+            (selection.children || selection._children || []).forEach(function (child) {
+                previous = paste(child, newNode, child.position, previous);
+            });
+
+            retainCollapsed();
+            selectNode(newNode);
         });
-
-        retainCollapsed();
-        selectNode(newNode);
         return;
     }
 
-    cut();
-    var selectedNode = paste(selection, selection.parent, selection.position, nextSibling);
-    retainCollapsed();
-    selectNode(selectedNode);
-
+    cut(function () {
+        var selectedNode = paste(selection, selection.parent, selection.position, nextSibling);
+        retainCollapsed();
+        selectNode(selectedNode);
+    });
 });
 
 
