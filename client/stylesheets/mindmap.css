@@ -48,16 +48,4 @@ body {
     -webkit-transform: translate(0px, 5px);
 }
 
-.home-bg {
-    max-height: 600px;
-    background-repeat: no-repeat;
-    height:550px;
-    background-size: contain;
-    background-position: 50% 50%;
-}
-
-.home-bg img {
-	width: 90%;
-	max-height: 500px;
-}
 

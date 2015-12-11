@@ -3,10 +3,12 @@
     <button id="clickme" class="button-0">Create MindMap</button>
 </template>
 <template name="MinditImage">
-    <img src="Minditlogo.png" width="20%" height="20%">
+    <img src="/Minditlogo.png" width="20%" height="20%">
 </template>
 <template name="HomeMindMapExample">
-    <img src="home-bg.png" name="slide">
+    <div><img src="SliderImage3-MovieDialogues.png"></div>
+    <div><img src="/SliderImage1-Schedule.png"></div>
+    <div><img src="/SliderImage2-Pune.png"></div>
 </template>
 
 <!--Home template -->
@@ -15,12 +17,14 @@
         {{> MinditImage}}
     </div>
 
-    <div class="home-bg">
-        {{> HomeMindMapExample}}
+    <div class="home-bg-container">
+        <div class="home-bg">
+            {{> HomeMindMapExample}}
+        </div>
     </div>
 
-    <center>
+    <div class="create-mindmap">
         {{> MyButton}}
-    </center>
+    </div>
 
 </template>

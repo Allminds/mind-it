@@ -13,27 +13,17 @@ Template.MyButton.events({
 	}
 });
 
-var i = 0;
-var path = new Array();
 
-// LIST OF IMAGES
-path[0] = "SliderImage1-Schedule.png";
-path[1] = "SliderImage2-Pune.png";
-path[2] = "SliderImage3-MovieDialogues.png";
+Template.home.onRendered(function(){
+	$('.home-bg').slick({
+		dots: true,
+  	infinite: true,
+  	speed: 300,
+  	slidesToShow: 1
+  });
 
-function swapImage()
-{
+  $(".aboutus").click(function() {
+		$('html, body').animate({scrollTop: $("#aboutus").offset().top}, "slow");
+	});
 
-   setInterval(function() {
-	   var img = document.querySelector(".home-bg img");
-	   if(img)
-		img.src = path[i];
-	   if(i < path.length - 1) i++; else i = 0;
-   }, 2000)
-}
-swapImage();
-
-
-$(".aboutus").click(function() {
-	$('html, body').animate({scrollTop: $("#aboutus").offset().top}, "slow");
-})
+});

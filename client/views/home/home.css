@@ -1,0 +1,32 @@
+.home-bg {
+  max-height: 600px;
+  background-size: contain;
+  background: no-repeat 50% 50%;
+  width: 90%;
+  margin: auto;
+}
+
+.home-bg img {
+  width: 90%;
+  max-height: 500px;
+}
+
+.home-bg  .slick-next:before, .slick-prev:before{
+  color: rgb(111, 60, 60)
+}
+
+.home-bg .slick-slide {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+
+.home-bg .slick-dots li button:before {
+  font-size: 12px;
+}
+
+.create-mindmap {
+  margin-top: 50px;
+}
+
+
