@@ -276,12 +276,12 @@ MindMap = function () {
             exitNode(nodeExit);
             indicator.update(nodeUpdate);
             // Update the links…
-            var link = vis.selectAll("path.link")
+            var link = vis.selectAll("path.thick-link")
                 .data(tree.links(nodes), function (d) {
                     return d.target[identity];
                 });
 
-            var myLineLink = vis.selectAll("path.underline")
+            var myLineLink = vis.selectAll("path.link")
                  .data(tree.links(nodes), function (d) {
                     return d.target[identity];
                 });
@@ -289,7 +289,11 @@ MindMap = function () {
 
             // Enter any new links at the parent's previous position.
             link.enter().insert("svg:path", "g")
-                .attr("class", "link")
+                .attr("class", function(path) {
+                    if(path.source == root)
+                        return "thick-link";
+                    return "link";
+                })
                 .attr("d", function (path) {
 
                     var parentNode = path.source || root,
@@ -303,7 +307,7 @@ MindMap = function () {
                   link.attr("d", connector);
 
                  myLineLink.enter().insert("svg:path", "g")
-                                .attr("class", "underline")
+                                .attr("class", "link")
                                 .attr("d", function (path) {
                                     var parentNode = path.source || root,
                                         x0 = parentNode.x0 || root.x0,
