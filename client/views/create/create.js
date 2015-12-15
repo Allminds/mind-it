@@ -60,7 +60,7 @@ var tracker = {
 
         var alreadyRemoved = deletedNode.parent_ids.some(function (parent_id) {
             return tracker.just_deleted == parent_id;
-        });
+        }); 
         if (alreadyRemoved) return;
 
         var children = deletedNode.parent[deletedNode.position] || deletedNode.parent.children;

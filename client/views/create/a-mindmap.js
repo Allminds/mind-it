@@ -118,10 +118,10 @@ MindMap = function () {
             var rootNode = getRootNode(node);
             d3.select(rootNode).select("ellipse")
                 .attr("rx", function () {
-                    return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 2 + 15;
+                    return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 2 + 30;
                 })
                 .attr("ry", function () {
-                    return 20 + d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 50;
+                    return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 50 + 25;
                 });
         },
         exitNode = function (node) {
@@ -130,6 +130,7 @@ MindMap = function () {
         };
 
     var connector = MindMap.diagonal;
+    var connectLine = MindMap.diagonalLine;
 
     var chart = function (selection) {
         selection.each(function (root) {
@@ -280,34 +281,59 @@ MindMap = function () {
                     return d.target[identity];
                 });
 
+            var myLineLink = vis.selectAll("path.underline")
+                 .data(tree.links(nodes), function (d) {
+                    return d.target[identity];
+                });
+
+
             // Enter any new links at the parent's previous position.
             link.enter().insert("svg:path", "g")
                 .attr("class", "link")
                 .attr("d", function (path) {
+
                     var parentNode = path.source || root,
                         x0 = parentNode.x0 || root.x0,
                         y0 = parentNode.y0 || root.y0,
                         o = {x: x0, y: y0};
-                    return connector({source: o, target: o});
+                    var a = connector({source: o, target: o});
+                                                             return a;
                 })
-                //.transition()
-                .attr("d", connector);
+
+                  link.attr("d", connector);
+
+                 myLineLink.enter().insert("svg:path", "g")
+                                .attr("class", "underline")
+                                .attr("d", function (path) {
+                                    var parentNode = path.source || root,
+                                        x0 = parentNode.x0 || root.x0,
+                                        y0 = parentNode.y0 || root.y0,
+                                        o = {x: x0, y: y0};
+                                   var a = connectLine({source: o, target: o});
+                                         return a;
+                                })
+                myLineLink.attr("d", connectLine);
 
 
             // Transition links to their new position.
-            link
-                .attr("d", connector);
 
             // Transition exiting nodes to the parent's new position.
-            link
-                .exit()
-                //.transition()
+            link.exit()
                 .attr("d", function (path) {
                     var parentNode = path.source || root,
                         o = {x: parentNode.x, y: parentNode.y};
                     return connector({source: o, target: o});
                 })
                 .remove();
+
+              myLineLink
+              .exit()
+             .attr("d", function (path) {
+                 var parentNode = path.source || root,
+                     o = {x: parentNode.x, y: parentNode.y};
+                 return connectLine({source: o, target: o});
+             })
+             .remove();
 
             // Stash the old positions for transition.
             nodes.forEach(function (d) {
@@ -335,6 +361,12 @@ MindMap = function () {
         connector = _;
         return chart;
     };
+
+     chart.connectLine = function (_) {
+            if (!arguments.length) return connectLine;
+            connectLine = _;
+            return chart;
+     };
 
     chart.click = function (_) {
         if (!arguments.length) return handleClick;
@@ -409,6 +441,8 @@ MindMap.elbow = function (d) {
 };
 MindMap.diagonal =
     function diagonal(d) {
+//      console.log("previous diagonal:");
+//      console.log(d);
         var source = d.source,
             target = d.target,
             dir = target.position == 'right' ? 1 : -1,
@@ -418,9 +452,37 @@ MindMap.diagonal =
         return 'M' + (source.y + sourceWidth) + ',' + source.x +
             'C' + deltaY + ',' + target.x +
             ' ' + deltaY + ',' + target.x +
-            ' ' + (target.y - targetWidth) + ',' + target.x +
-            'L' + (target.y + targetWidth) + ',' + target.x;
+            ' ' + (target.y - targetWidth) + ',' + target.x;// +
+        //    diagonalLine(target, targetWidth);
+           // 'L' + (target.y + targetWidth) + ',' + target.x;
     };
+
+
+MindMap.diagonalLine =
+    function diagonalLine(d) {
+//      console.log("after diagonal:");
+//          console.log(d);
+        var source = d.source,
+            target = d.target,
+            dir = target.position == 'right' ? 1 : -1,
+            sourceWidth = dir * getTextWidth(source._id) / 2,
+            targetWidth = dir * getTextWidth(target._id) / 2,
+            deltaY = (source.y + sourceWidth) + ((target.y - targetWidth) - (source.y + sourceWidth)) / 2;
+
+
+
+             return 'M' + (source.y + sourceWidth) + ',' + source.x +
+                        'C' + deltaY + ',' + target.x +
+                        ' ' + deltaY + ',' + target.x +
+                        ' ' + (target.y - targetWidth) + ',' + target.x +
+                       'L' + (target.y + targetWidth) + ',' + target.x;
+
+//        var s =  'L' + (target.y + targetWidth) + ',' + target.x;
+////        console.log("diagonalLine:"+ s+"   ++++");
+////        console.log(d)
+//        return s;
+    };
+
 
 MindMap.loadFreeMind = function (fileName, callback) {
     d3.xml(fileName, 'application/xml', function (err, xml) {

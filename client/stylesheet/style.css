@@ -52,7 +52,14 @@ h1 {
 path.link {
     fill: none;
     stroke: #aaa;
+    stroke-width: 8px;
+}
+
+path.underline {
+ fill: none;
+    stroke: #aaa;
     stroke-width: 1.5px;
+
 }
 
 .node ellipse {
