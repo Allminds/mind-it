@@ -2,3 +2,5 @@
 typings
 local
 .idea/**
+node_modules/**
+*.log
