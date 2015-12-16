@@ -445,8 +445,6 @@ MindMap.elbow = function (d) {
 };
 MindMap.diagonal =
     function diagonal(d) {
-//      console.log("previous diagonal:");
-//      console.log(d);
         var source = d.source,
             target = d.target,
             dir = target.position == 'right' ? 1 : -1,
@@ -456,16 +454,12 @@ MindMap.diagonal =
         return 'M' + (source.y + sourceWidth) + ',' + source.x +
             'C' + deltaY + ',' + target.x +
             ' ' + deltaY + ',' + target.x +
-            ' ' + (target.y - targetWidth) + ',' + target.x;// +
-        //    diagonalLine(target, targetWidth);
-           // 'L' + (target.y + targetWidth) + ',' + target.x;
+            ' ' + (target.y - targetWidth) + ',' + target.x;
     };
 
 
 MindMap.diagonalLine =
     function diagonalLine(d) {
-//      console.log("after diagonal:");
-//          console.log(d);
         var source = d.source,
             target = d.target,
             dir = target.position == 'right' ? 1 : -1,
@@ -473,18 +467,12 @@ MindMap.diagonalLine =
             targetWidth = dir * getTextWidth(target._id) / 2,
             deltaY = (source.y + sourceWidth) + ((target.y - targetWidth) - (source.y + sourceWidth)) / 2;
 
-
-
              return 'M' + (source.y + sourceWidth) + ',' + source.x +
                         'C' + deltaY + ',' + target.x +
                         ' ' + deltaY + ',' + target.x +
                         ' ' + (target.y - targetWidth) + ',' + target.x +
                        'L' + (target.y + targetWidth) + ',' + target.x;
 
-//        var s =  'L' + (target.y + targetWidth) + ',' + target.x;
-////        console.log("diagonalLine:"+ s+"   ++++");
-////        console.log(d)
-//        return s;
     };
 
 

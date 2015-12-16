@@ -47,12 +47,13 @@ h1 {
     -webkit-transform: translate(0px, 5px);
 }
 
-/* Spike */
+
 
 path.thick-link {
     fill: none;
     stroke: #aaa;
-    stroke-width: 8px;
+    stroke-width: 3px;
+    stroke-linecap : round;
 }
 
 path.link {
