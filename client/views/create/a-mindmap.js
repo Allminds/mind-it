@@ -15,7 +15,7 @@ MindMap = function () {
         },
         idx = 0,
         getRootNode = function (node) {
-            return node[0][node[0].length - 1];
+            return node[0][0];
         },
         indicator = {
             default: 4,
@@ -81,10 +81,9 @@ MindMap = function () {
             d3.select(rootNode).classed('rootNode', true);
             node.append('svg:rect');
             node.append("svg:text")
-                .text(text)
                 .attr("cols", 60)
-                .attr("rows", 4);
-
+                .attr("rows", 4)
+                .call(text);
             node.attr('class', function (d) {
                 return d.depth < 4 ? ('node level-' + d.depth) : 'node';
             });
@@ -94,7 +93,7 @@ MindMap = function () {
         },
         updateNode = function (node) {
             node.select("text")
-                .text(text);
+                .call(text);
             node.select("text").attr("y", -2);
             node.select(".level-0 text").attr("y", 9);
             node.select('rect')
@@ -131,17 +130,43 @@ MindMap = function () {
 
     var connector = MindMap.diagonal;
     var connectLine = MindMap.diagonalLine;
+    var getNodeHeight = function (node, defualtHeight) {
+        var textHeight = getTextHeight(node._id),
+            subTreeHeight = (node.children || []).reduce(function (height, child) {
+                height += getNodeHeight(child, defualtHeight);
+                return height;
+            }, 0);
+        subTreeHeight += (node.children || []).length > 0 ? (2 * defualtHeight) : 0;
+        return Math.max(defualtHeight, textHeight, subTreeHeight);
+    };
+    var getX = function (node, defualtHeight) {
+        if (!node.parent) return 0;
+        var siblings = node.parent[node.position] || node.parent.children || [],
+            siblingHeights = siblings.map(function (sibling) {
+                return getNodeHeight(sibling, defualtHeight);
+            }),
+            sum = function (acc, cur) {
+                return acc + cur;
+            },
+            siblingsAboveNode = function (sib, index) {
+                return index < nodeIndex;
+            },
 
+            totalHeight = siblingHeights.reduce(sum, 0), firstSiblingX = -(totalHeight / 2),
+            nodeIndex = siblings.indexOf(node),
+            heightOfSiblingAboveIt = siblingHeights.filter(siblingsAboveNode).reduce(sum, 0);
+
+        return firstSiblingX + heightOfSiblingAboveIt + (siblingHeights[nodeIndex] / 2);
+    };
     var chart = function (selection) {
         selection.each(function (root) {
             var w = width - margin.left - margin.right;
             var h = height - margin.top - margin.bottom;
-            var nodeSize = [30, 30];
+            var nodeSize = [20, 30];
             var container = d3.select(this);
             var vis = container
-                .attr("width", width)
-                .attr("height", height)
-                ;
+                    .attr("width", width)
+                    .attr("height", height);
             var graphRoot = vis.select('g');
             if (!graphRoot[0][0]) {
                 vis = vis.append('svg:g');
@@ -159,10 +184,8 @@ MindMap = function () {
                 .nodeSize(nodeSize);
 
             chart.update = function () {
-                container
-                    .call(chart);
-                container
-                    .call(chart);
+                container.call(chart);
+                container.call(chart);
             };
             var maxDepth = function (node) {
                 return (node.children || []).reduce(function (depth, child) {
@@ -226,12 +249,15 @@ MindMap = function () {
                     return width;
                 }
 
-                result.forEach(function (node) {
+                result.sort(function (a, b) {
+                    return a.depth - b.depth;
+                }).forEach(function (node) {
                     var dir = node.position ? (node.position == 'left' ? -1 : 1) : 0,
                         textWidth = getTotalWidth(node);
                     node.y = dir * (node.depth * nodeSize[1] + textWidth);
+                    node.x = getX(node, nodeSize[0]);
+                    node.x += (node.parent ? node.parent.x : 0);
                 });
-
                 return result;
             })(firstSet, secondSet);
 
@@ -434,6 +460,16 @@ var minTextSize = 150,
 
         var textWidth = text.getBBox().width;
         return textWidth == 0 ? minTextSize : textWidth;
+    },
+    getTextHeight = function (id) {
+        if (!id) return minTextHeight;
+        var text = d3.selectAll('text')[0].filter(function (text) {
+            return text.__data__._id == id;
+        })[0];
+        if (!text) return minTextHeight;
+
+        var textHeight = text.getBBox().height;
+        return textHeight < minTextHeight ? minTextHeight : textHeight;
     };
 MindMap.elbow = function (d) {
     var source = d.source;

@@ -201,8 +201,21 @@ var dims = getDims();
 var chart = MindMap()
     .width(20 * dims.width)
     .height(20 * dims.height)
-    .text(function (d) {
-        return d.name;
+    .text(function (textSelector) {
+        var texts = textSelector[0];
+        texts.forEach(function (text) {
+            var currentTextSelector = d3.select(text);
+            currentTextSelector.selectAll('tspan').remove();
+            var node = currentTextSelector.node();
+            if (node) {
+                var lines = node.__data__.name.wrapString(60);
+                lines.forEach(function (line,index) {
+                    var dy = index == 0 ? 0 : 40;
+                    currentTextSelector.append('svg:tspan').attr('x', 0).attr('dy', dy).text(line);
+                });
+            }
+        });
+
     })
     .click(function () {
         nodeSelector.setPrevDepth(this.__data__.depth);

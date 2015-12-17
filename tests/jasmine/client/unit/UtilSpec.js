@@ -1,4 +1,4 @@
-describe('util.splitString', function () {
+describe('util.wrapString', function () {
     it("should be able to split 'Hi there' with maxChar as 2 with arraylength of 2", function () {
         var result = "Hi there".wrapString(2);
         expect(result.length).toBe(3);
