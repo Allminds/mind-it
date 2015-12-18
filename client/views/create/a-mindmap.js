@@ -463,13 +463,13 @@ var minTextSize = 150,
     },
     getTextHeight = function (id) {
         if (!id) return minTextHeight;
-        var text = d3.selectAll('text')[0].filter(function (text) {
+        var text = d3.selectAll('text')[0].find(function (text) {
             return text.__data__._id == id;
-        })[0];
+        });
         if (!text) return minTextHeight;
 
         var textHeight = text.getBBox().height;
-        return textHeight < minTextHeight ? minTextHeight : textHeight;
+        return Math.max(textHeight, minTextHeight)
     };
 MindMap.elbow = function (d) {
     var source = d.source;
