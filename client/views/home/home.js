@@ -13,8 +13,8 @@ Template.MyButton.events({
 	}
 });
 
-
 Template.home.onRendered(function(){
+
 	$('.home-bg').slick({
 		dots: true,
   	infinite: true,
@@ -26,4 +26,26 @@ Template.home.onRendered(function(){
 		 $('#aboutUs-modal').modal('show');
 	});
 
+});
+
+Template.home.helpers({
+	sessionCurrentUser: function () {
+		return Session.get("currentUserId");
+	}
+});
+
+Template.GoogleSignIn.events({
+	'click #login': function () {
+		Meteor.loginWithGoogle(function(){
+			Session.set("currentUserId", Meteor.userId());
+		});
+	}
+});
+
+Template.GoogleSignOut.events({
+	'click #logout': function () {
+		Meteor.logout(function(){
+			Session.set("currentUserId", null);
+		});
+	}
 });

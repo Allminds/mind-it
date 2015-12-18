@@ -2,6 +2,19 @@
 <template name="MyButton">
     <button id="clickme" class="button-0">Create MindMap</button>
 </template>
+
+<template name="GoogleSignIn">
+    <button id="login" class="btn-social btn-google btn-lg">
+        <span class="fa fa-google" ></span>
+        Sign In</button>
+</template>
+
+<template name="GoogleSignOut">
+    <button id="logout" class="btn-social btn-google btn-lg">
+        <i class="fa fa-google"></i>
+        Sign Out</button>
+</template>
+
 <template name="MinditImage">
     <img src="/MinditLogo.png" width="20%" height="20%">
 </template>
@@ -18,7 +31,12 @@
             <div class="collapse navbar-collapse">
                 <img src="/Minditlogo.png" width="10%" height="10%"  style="float: left">
                 <ul class="nav navbar-nav" style="float: right">
-                    <li><a href="#" class="navbar-nav navbar-brand" id="about-us">About Us</a></li>
+                    <li><a href="#" class="navbar-nav navbar-brand" id="about-us" style="font-size:150%;padding-top: 35px">About Us</a></li>
+                    {{#if sessionCurrentUser}}
+                        <li><div style="padding-top: 20px">{{> GoogleSignOut}}</div></li>
+                    {{else}}
+                        <li><div style="padding-top: 20px">{{> GoogleSignIn}}</div></li>
+                    {{/if}}
                 </ul>
             </div>
         </div>
