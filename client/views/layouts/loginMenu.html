@@ -1,0 +1,17 @@
+<template name="LoginMenu">
+    {{#if currentUser}}
+        <a href="" class="navbar-nav navbar-brand" style="font-size:150%"  data-action="logout">
+            Logout
+        </a>
+    {{else}}
+        {{#if loggingIn}}
+            <a href="" class="navbar-nav navbar-brand" style="font-size:150%" >
+                Logging In..
+            </a>
+        {{else}}
+            <a href="" class="navbar-nav navbar-brand" style="font-size:150%" data-action="login">
+                Log In
+            </a>
+        {{/if}}
+    {{/if}}
+</template>

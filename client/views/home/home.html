@@ -3,18 +3,6 @@
     <button id="clickme" class="button-0">Create MindMap</button>
 </template>
 
-<template name="GoogleSignIn">
-    <button id="login" class="btn-social btn-google btn-lg">
-        <span class="fa fa-google" ></span>
-        Sign In</button>
-</template>
-
-<template name="GoogleSignOut">
-    <button id="logout" class="btn-social btn-google btn-lg">
-        <i class="fa fa-google"></i>
-        Sign Out</button>
-</template>
-
 <template name="MinditImage">
     <img src="/MinditLogo.png" width="20%" height="20%">
 </template>
@@ -25,18 +13,16 @@
 </template>
 
 <!--Home template -->
-<template name='home'><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<template name='home'>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 
         <div class="container-fluid">
             <div class="collapse navbar-collapse">
-                <img src="/Minditlogo.png" width="10%" height="10%"  style="float: left">
+                <img src="/Minditlogo.png" width="10%" height="10%" style="float: left">
                 <ul class="nav navbar-nav" style="float: right">
-                    <li><a href="#" class="navbar-nav navbar-brand" id="about-us" style="font-size:150%;padding-top: 35px">About Us</a></li>
-                    {{#if sessionCurrentUser}}
-                        <li><div style="padding-top: 20px">{{> GoogleSignOut}}</div></li>
-                    {{else}}
-                        <li><div style="padding-top: 20px">{{> GoogleSignIn}}</div></li>
-                    {{/if}}
+                    <li><a href="#" class="navbar-nav navbar-brand" id="about-us"
+                           style="font-size:150%;padding-top: 35px">About Us</a></li>
+                    <li style="padding-top: 20px">{{> LoginMenu}}</li>
                 </ul>
             </div>
         </div>

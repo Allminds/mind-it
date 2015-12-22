@@ -1,6 +1,6 @@
 describe('Home page localstorage', function () {
     it("should clear mindmap related data", function () {
-        Template.home.clearNodeCollapsedState();
+        clearNodeCollapsedState();
         var id="";
         for (var key in localStorage){
             if(key.indexOf("Meteor") == -1 && key.indexOf("amplify") == -1) {
