@@ -9,3 +9,9 @@ Template.LoginMenu.events({
         Meteor.logout();
     }
 });
+
+Template.UserNameInfo.helpers({
+    name: function() {
+      return  Meteor.user().services.google.name;
+    }
+})

@@ -1,17 +1,27 @@
 <template name="LoginMenu">
     {{#if currentUser}}
-        <a href="" class="navbar-nav navbar-brand" style="font-size:150%"  data-action="logout">
+        <a href="" class="navbar-nav navbar-brand" style="font-size:150%; padding-top: 35px"  data-action="logout">
             Logout
         </a>
     {{else}}
         {{#if loggingIn}}
-            <a href="" class="navbar-nav navbar-brand" style="font-size:150%" >
+            <a href="" class="navbar-nav navbar-brand" style="font-size:150%; padding-top: 35px" >
                 Logging In..
             </a>
         {{else}}
-            <a href="" class="navbar-nav navbar-brand" style="font-size:150%" data-action="login">
+            <a href="" class="navbar-nav navbar-brand" style="font-size:150%; padding-top: 35px" data-action="login">
                 Log In
             </a>
         {{/if}}
     {{/if}}
 </template>
+
+
+<template name="UserNameInfo">
+    {{#if currentUser}}
+        <a href="" class="navbar-nav navbar-brand" style="font-size:150%; padding-top: 35px" >
+          Hi, {{ name}}
+        </a>
+    {{/if}}
+</template>
+
