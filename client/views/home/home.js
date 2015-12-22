@@ -9,7 +9,7 @@ Template.MyButton.events({
 			link = '/create/' + mindMapId;
 		// 2. Go to canvas root note
 		Router.go(link);
-		localStorage.clear();
+		Template.home.clearNodeCollapsedState();
 	}
 });
 
@@ -47,5 +47,17 @@ Template.GoogleSignOut.events({
 		Meteor.logout(function(){
 			Session.set("currentUserId", null);
 		});
+	}
+});
+
+Template.home.helpers({
+	clearNodeCollapsedState: function() {
+		var collapsedNodeId;
+		for (var key in localStorage){
+			if(key.indexOf("Meteor") == -1 && key.indexOf("amplify") == -1) {
+				collapsedNodeId = key;
+				localStorage.removeItem(collapsedNodeId);
+			}
+		}
 	}
 });
