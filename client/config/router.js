@@ -3,7 +3,7 @@ Router.configure({layoutTemplate: 'main'});
 Router.route('/', {
     template: 'home',
     waitOn: function () {
-        return Meteor.subscribe("userdata");
+        return Meteor.subscribe("userdata", Meteor.userId());
     }
 });
 Router.route('/create/:_id', {
