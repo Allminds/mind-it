@@ -12,6 +12,6 @@ Template.LoginMenu.events({
 
 Template.UserNameInfo.helpers({
     name: function() {
-      return  Meteor.user().services.google.name;
+      return  Meteor.user().services.google.given_name;
     }
 })
