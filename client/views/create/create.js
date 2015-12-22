@@ -1,4 +1,5 @@
 var mindMapService = new MindMapService();
+
 var directionToggler = {
     currentDir: "right",
     canToggle: false,
@@ -88,6 +89,7 @@ function retainCollapsed() {
     }
 
 }
+
 Template.create.rendered = function rendered() {
 
     var tree = mindMapService.buildTree(this.data.id, this.data.data);
@@ -123,6 +125,9 @@ var deselectNode = function () {
 
 var select = function (node) {
     // Find previously selected and deselect
+    if(node === d3.select(".selected")[0][0]){
+        return;
+    }
     deselectNode();
 
     if (!node.__data__.position && directionToggler.canToggle) {
@@ -133,7 +138,6 @@ var select = function (node) {
     // Select current item
     d3.select(node).classed("selected", true);
 };
-
 
 var selectNode = function (target) {
     if (target) {
@@ -186,7 +190,7 @@ var updateNode = function (nodeData) {
 var showEditor = function () {
     var nodeData = this.__data__;
 
-    if (nodeData.name && nodeData.name.length >= 50) {
+    if (nodeData && nodeData.name && nodeData.name.length >= 50) {
         showPrompt(nodeData);
         return;
     }
@@ -198,6 +202,9 @@ var showEditor = function () {
 };
 
 var dims = getDims();
+
+var lastClick = 0;
+
 var chart = MindMap()
     .width(20 * dims.width)
     .height(20 * dims.height)
@@ -218,8 +225,15 @@ var chart = MindMap()
 
     })
     .click(function () {
-        nodeSelector.setPrevDepth(this.__data__.depth);
-        select(this);
+        if(this.__data__){
+            var newClickTime = new Date().getTime();
+            if(newClickTime - lastClick < 300){
+                showEditor().call(this.__data__);
+            }
+            nodeSelector.setPrevDepth(this.__data__.depth);
+            select(this);
+            lastClick = newClickTime;
+        }
     })
     .dblClick(showEditor);
 
@@ -315,6 +329,7 @@ map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
 
     return newNode;
 };
+
 map.makeEditable = function (nodeId) {
     var node = d3.selectAll('#mindmap svg .node').filter(function (d) {
         return d._id == nodeId
@@ -322,6 +337,7 @@ map.makeEditable = function (nodeId) {
     if (node)
         showEditor.call(node);
 };
+
 map.findOne = function (node, fun) {
 
     if (fun(node)) return node;
@@ -338,7 +354,7 @@ map.getNodeData = function (nodeId) {
     });
 };
 
-var clone = function (node) {
+clone = function (node) {
     var clonedNode = {name: node.name, position: node.position};
     clonedNode.children = (node.children || node._children || []).map(function (currentElem) {
         return clone(currentElem);
@@ -375,6 +391,26 @@ Mousetrap.bind('mod+x', function () {
     cut();
 });
 
+function checkOverlapRect(rect1){
+    var rectList = d3.select('svg').select('g').selectAll('g');
+    for(var i=0; i<rectList[0].length; i++){
+    var rectPoint =  d3.select(rectList[0][i]).attr('transform').replace('translate(','').replace(')','').split(',');
+
+        var currHeight = (d3.select(rectList[0][i]).select('rect').attr('height') * 1), currWidth = (d3.select(rectList[0][i]).select('rect').attr('width') * 1),
+        currX = rectPoint[0] *1 - (currWidth/2), currY = rectPoint[1] * 1 + (currHeight / 2),
+        leftTop = { x: currX, y: currY},
+        rightTop = { x: (currX + currWidth), y: currY},
+        leftBottom = { x: currX, y: currY + currHeight},
+        rightBottom = { x: currX + currWidth, y: currY + currHeight};
+
+        if( rect1[0]*1 >= currX && rect1[0]*1 <= currX + currWidth && rect1[1]*1 <= currY && rect1[1]*1 >= currY - currHeight){
+            return rectList[0][i];
+        }
+    }
+}
+
+checkOverlap = checkOverlapRect;
+
 function cut(asyncCallBack) {
     var sourceNode = map.getSourceNode();
     if (getDirection(sourceNode) === 'root') {
@@ -389,6 +425,8 @@ function cut(asyncCallBack) {
             asyncCallBack(err, data);
     });
 }
+
+cutNode = cut;
 
 Mousetrap.bind('mod+c', function () {
     var sourceNode = map.getSourceNode();
@@ -595,6 +633,8 @@ function paste(sourceNode, targetNode, dir, previousSibling) {
     ;
     return newNode;
 }
+
+pasteNode = paste;
 
 Mousetrap.bind('left', function () {
     var event = arguments[0];
@@ -1044,3 +1084,5 @@ Mousetrap.bind("esc", function goToRootNode() {
 Mousetrap.bind('?', function showHelp() {
     $('#help-modal').modal('show');
 });
+
+calculateDirectionGlobal = calculateDirection;
