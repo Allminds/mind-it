@@ -1,3 +1,5 @@
+mapsCount = 0;
+
 MindMap = function () {
     "use strict";
     var
@@ -127,6 +129,10 @@ MindMap = function () {
             node.select("text")
                 .style("fill-opacity", 1e-6);
         };
+
+    Meteor.call('countMaps', function(error, count){
+        mapsCount = count;
+    });
 
     var connector = MindMap.diagonal;
     var connectLine = MindMap.diagonalLine;

@@ -9,5 +9,10 @@ Meteor.methods({
 	deleteNode: function(id){
 		//Meteor._sleepForMs(500);
 		mindMapService.deleteNode(id);
+	},
+
+	countMaps: function(){
+		var count = Mindmaps.find({position: null}).count();
+		return count;
 	}
 });
