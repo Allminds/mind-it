@@ -1,21 +1,5 @@
 var mindMapService = new MindMapService();
 
-var directionToggler = {
-    currentDir: "right",
-    canToggle: false,
-
-    changeDirection: function () {
-        switch (directionToggler.currentDir) {
-            case "left" :
-                directionToggler.currentDir = "right";
-                break;
-            case "right":
-                directionToggler.currentDir = "left";
-                break;
-        }
-    }
-};
-
 var nodeSelector = {
     prevDepthVisited: 0,
 
@@ -130,10 +114,10 @@ var select = function (node) {
     }
     deselectNode();
 
-    if (!node.__data__.position && directionToggler.canToggle) {
+    if (!node.__data__.position && application.directionToggler.canToggle) {
 
-        directionToggler.changeDirection();
-        directionToggler.canToggle = false;
+        application.directionToggler.changeDirection();
+        application.directionToggler.canToggle = false;
     }
     // Select current item
     d3.select(node).classed("selected", true);
@@ -294,8 +278,8 @@ function calculateDirection(parent) {
 
     if (dir === 'root') {
         if (getDirection(selectedNode) === 'root') {
-            directionToggler.canToggle = true;
-            dir = directionToggler.currentDir;
+            application.directionToggler.canToggle = true;
+            dir = application.directionToggler.currentDir;
         }
         else
             dir = selectedNode.position;
