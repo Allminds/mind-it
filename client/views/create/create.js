@@ -88,6 +88,7 @@ Template.create.rendered = function rendered() {
     retainCollapsed();
     d3.select("#help-link").on('click', enableHelpLink);
 
+    application.setMapsCount();
 };
 
 var enableHelpLink = function () {
