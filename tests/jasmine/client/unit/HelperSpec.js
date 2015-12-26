@@ -1,8 +1,9 @@
-describe('application.directionToggler', function () {
+describe('App.DirectionToggler', function () {
   it("should change current direction ", function () {
-    application.directionToggler.changeDirection();
-    expect(application.directionToggler.currentDir).toBe("left");
-    application.directionToggler.changeDirection();
-    expect(application.directionToggler.currentDir).toBe("right");
+    App.DirectionToggler.changeDirection();
+    expect(App.DirectionToggler.currentDir).toBe("left");
+
+    App.DirectionToggler.changeDirection();
+    expect(App.DirectionToggler.currentDir).toBe("right");
   });
 });
