@@ -1,134 +1,134 @@
 /* CSS declarations go here */
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    text-align: center;
-    background-color: #e9ece5;
-    font-family: SansSerif, sans-serif;
+  text-align: center;
+  background-color: #e9ece5;
+  font-family: SansSerif, sans-serif;
 }
 
 .btn {
-    background-color: #3fb0ac;
-    border: none;
+  background-color: #3fb0ac;
+  border: none;
 }
 
 .btn:hover {
-    background-color: #173e43;
-    border: none;
+  background-color: #173e43;
+  border: none;
 }
 
 h1 {
-    text-shadow: 1px 1px #ffffff;
-    font-size: 400%;
+  text-shadow: 1px 1px #ffffff;
+  font-size: 400%;
 }
 
 .button-0 {
-    padding: 10px 40px;
-    font-family: 'Helvetica', cursive;
-    font-size: 25px;
-    color: #FFF;
-    background-color: #3fb0ac;
-    text-shadow: 0px -2px #2980B9;
-    transition: all 0.1s;
-    -webkit-transition: all 0.1s;
+  padding: 10px 40px;
+  font-family: 'Helvetica', cursive;
+  font-size: 25px;
+  color: #FFF;
+  background-color: #3fb0ac;
+  text-shadow: 0px -2px #2980B9;
+  transition: all 0.1s;
+  -webkit-transition: all 0.1s;
 }
 
 .button-0:hover,
 .button-0:focus {
-    text-decoration: none;
-    color: #fff;
+  text-decoration: none;
+  color: #fff;
 }
 
 .button-0:active {
-    transform: translate(0px, 5px);
-    -webkit-transform: translate(0px, 5px);
+  transform: translate(0px, 5px);
+  -webkit-transform: translate(0px, 5px);
 }
 
-
-
 path.thick-link {
-    fill: none;
-    stroke: #aaa;
-    stroke-width: 3px;
-    stroke-linecap : round;
+  fill: none;
+  stroke: #aaa;
+  stroke-width: 3px;
+  stroke-linecap: round;
 }
 
 path.link {
- fill: none;
-    stroke: #aaa;
-    stroke-width: 1.5px;
+  fill: none;
+  stroke: #aaa;
+  stroke-width: 1.5px;
 
 }
 
 .node ellipse {
-    cursor: pointer;
-    fill: #fff;
-    stroke: #aaa;
-    stroke-width: 1.5px;
-    fill-opacity: 1;
+  cursor: pointer;
+  fill: #fff;
+  stroke: #aaa;
+  stroke-width: 1.5px;
+  fill-opacity: 1;
 }
 
 .node text, input {
-    font-size: 18px; /* 100 */
-    text-anchor: middle;
-    fill-opacity: 1;
+  font-size: 18px; /* 100 */
+  text-anchor: middle;
+  fill-opacity: 1;
 }
 
 .node.level-0 text, input.level-0 {
-    font-size: 30px; /* 166 */
+  font-size: 30px; /* 166 */
 }
 
 .node.level-1 text, input.level-1 {
-    font-size: 28px; /* 150 */
-    fill: #0033ff;
-    color: #0033ff;
+  font-size: 28px; /* 150 */
+  fill: #0033ff;
+  color: #0033ff;
 }
 
 .node.level-2 text, input.level-2 {
-    font-size: 24px; /* 133 */
-    fill: #00b439;
-    color: #00b439;
+  font-size: 24px; /* 133 */
+  fill: #00b439;
+  color: #00b439;
 }
 
 .node.level-3 text, input.level-3 {
-    font-size: 21px; /* 116 */
-    fill: #990000;
-    color: #990000;
+  font-size: 21px; /* 116 */
+  fill: #990000;
+  color: #990000;
 }
 
 .node rect {
-    fill: transparent;
+  fill: transparent;
 }
 
 .node.selected ellipse, .node.selected rect {
-    fill: #ddd;
+  fill: #ddd;
 }
 
 .node.selected rect {
-    stroke: #ddd;
-    stroke-width: 2px;
+  stroke: #ddd;
+  stroke-width: 2px;
 }
-.edit-box{
-    position: absolute;
+
+.edit-box {
+  position: absolute;
 }
+
 .node.selected.level-0 rect {
-    fill: transparent;
-    stroke: transparent;
+  fill: transparent;
+  stroke: transparent;
 }
 
 circle.indicator.filled {
-    fill: white;
-    stroke: #888;
-    stroke-width: 1.5px;
+  fill: white;
+  stroke: #888;
+  stroke-width: 1.5px;
 }
 
 circle.indicator.unfilled {
-    fill: transparent;
-    stroke: transparent;
-    stroke-width: 1.5px;
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1.5px;
 }
 
 

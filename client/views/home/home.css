@@ -11,7 +11,7 @@
   max-height: 500px;
 }
 
-.home-bg  .slick-next:before, .slick-prev:before{
+.home-bg .slick-next:before, .slick-prev:before {
   color: rgb(111, 60, 60)
 }
 
