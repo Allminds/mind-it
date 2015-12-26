@@ -1,6 +1,6 @@
-application.mapsCount = 0;
-application.setMapsCount = function () {
+App.mapsCount = 0;
+App.setMapsCount = function () {
   Meteor.call('countMaps', function (error, count) {
-    application.mapsCount = count;
+    App.mapsCount = count;
   });
 };

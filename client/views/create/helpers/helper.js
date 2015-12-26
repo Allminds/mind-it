@@ -1,15 +1,9 @@
-application.directionToggler = {
+// TODO: Use singleton pattern (make currentDir and canToggle - private)
+App.DirectionToggler = {
   currentDir: "right",
   canToggle: false,
 
   changeDirection: function () {
-    switch (application.directionToggler.currentDir) {
-      case "left" :
-        application.directionToggler.currentDir = "right";
-        break;
-      case "right":
-        application.directionToggler.currentDir = "left";
-        break;
-    }
+    this.currentDir = (this.currentDir== "right") ? "left" : "right";
   }
 };

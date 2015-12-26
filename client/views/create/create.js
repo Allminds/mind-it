@@ -4,7 +4,7 @@ var nodeSelector = {
   prevDepthVisited: 0,
 
   setPrevDepth: function (depth) {
-    nodeSelector.prevDepthVisited = depth;
+    this.prevDepthVisited = depth;
   }
 };
 
@@ -88,7 +88,7 @@ Template.create.rendered = function rendered() {
   retainCollapsed();
   d3.select("#help-link").on('click', enableHelpLink);
 
-  application.setMapsCount();
+  App.setMapsCount();
 };
 
 var enableHelpLink = function () {
@@ -115,10 +115,10 @@ var select = function (node) {
   }
   deselectNode();
 
-  if (!node.__data__.position && application.directionToggler.canToggle) {
+  if (!node.__data__.position && App.DirectionToggler.canToggle) {
 
-    application.directionToggler.changeDirection();
-    application.directionToggler.canToggle = false;
+    App.DirectionToggler.changeDirection();
+    App.DirectionToggler.canToggle = false;
   }
   // Select current item
   d3.select(node).classed("selected", true);
@@ -279,8 +279,8 @@ function calculateDirection(parent) {
 
   if (dir === 'root') {
     if (getDirection(selectedNode) === 'root') {
-      application.directionToggler.canToggle = true;
-      dir = application.directionToggler.currentDir;
+      App.DirectionToggler.canToggle = true;
+      dir = App.DirectionToggler.currentDir;
     }
     else
       dir = selectedNode.position;
