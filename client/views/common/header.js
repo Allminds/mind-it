@@ -1,5 +1,5 @@
 Template.TopBar.helpers({
-    topbarTagID: function(id) {
-        return id;
-    }
+  topbarTagID: function (id) {
+    return id;
+  }
 });

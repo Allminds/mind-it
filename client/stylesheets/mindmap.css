@@ -1,51 +1,51 @@
 /* CSS declarations go here */
 * {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 
 }
 
 html {
-    height: 100%;
+	height: 100%;
 }
 
 body {
-    text-align: center;
-    height: 100%;
-    width: 100%;
-    background-color: white;
+	text-align: center;
+	height: 100%;
+	width: 100%;
+	background-color: white;
 }
 
 .btn {
-    background-color: #3fb0ac;
-    border: none;
+	background-color: #3fb0ac;
+	border: none;
 }
 
 .btn:hover {
-    background-color: #173e43;
-    border: none;
+	background-color: #173e43;
+	border: none;
 }
 
 .button-0 {
-    padding: 10px 40px;
-    font-family: 'Helvetica', cursive;
-    font-size: 25px;
-    color: #FFF;
-    background-color: #3fb0ac;
-    text-shadow: 0px -2px #2980B9;
-    transition: all 0.1s;
-    -webkit-transition: all 0.1s;
+	padding: 10px 40px;
+	font-family: 'Helvetica', cursive;
+	font-size: 25px;
+	color: #FFF;
+	background-color: #3fb0ac;
+	text-shadow: 0px -2px #2980B9;
+	transition: all 0.1s;
+	-webkit-transition: all 0.1s;
 }
 
 .button-0:hover,
 .button-0:focus {
-    text-decoration: none;
-    color: #fff;
+	text-decoration: none;
+	color: #fff;
 }
 
 .button-0:active {
-    transform: translate(0px, 5px);
-    -webkit-transform: translate(0px, 5px);
+	transform: translate(0px, 5px);
+	-webkit-transform: translate(0px, 5px);
 }
 
 

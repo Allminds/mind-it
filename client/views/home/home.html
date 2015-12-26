@@ -1,33 +1,34 @@
 <!-- Button template -->
 <template name="MyButton">
-    <button id="clickme" class="button-0">Create MindMap</button>
+  <button id="clickme" class="button-0">Create MindMap</button>
 </template>
 
 <template name="MinditImage">
-    <img src="/MinditLogo.png" width="20%" height="20%">
+  <img src="/MinditLogo.png" width="20%" height="20%">
 </template>
+
 <template name="HomeMindMapExample">
-    <div><img src="SliderImage3-MovieDialogues.png"></div>
-    <div><img src="/SliderImage1-Schedule.png"></div>
-    <div><img src="/SliderImage2-Pune.png"></div>
+  <div><img src="/SliderImage3-MovieDialogues.png"></div>
+  <div><img src="/SliderImage1-Schedule.png"></div>
+  <div><img src="/SliderImage2-Pune.png"></div>
 </template>
 
 <!--Home template -->
 <template name='home'>
-    {{> TopBar topbarText="About Us" linkId="about-us"}}
+  {{> TopBar topbarText="About Us" linkId="about-us"}}
 
-    <div>
-        {{> ModalPopUp modalHeaderText="About Us" modalId="aboutUs-modal" path="/About_us_mind_it.png"}}
-    </div>
+  <div>
+    {{> ModalPopUp modalHeaderText="About Us" modalId="aboutUs-modal" path="/About_us_mind_it.png"}}
+  </div>
 
-    <div class="home-bg-container" style="margin-top: 100px">
-        <div class="home-bg">
-            {{> HomeMindMapExample}}
-        </div>
+  <div class="home-bg-container" style="margin-top: 100px">
+    <div class="home-bg">
+      {{> HomeMindMapExample}}
     </div>
+  </div>
 
-    <div class="create-mindmap">
-        {{> MyButton}}
-    </div>
+  <div class="create-mindmap">
+    {{> MyButton}}
+  </div>
 
 </template>
