@@ -300,8 +300,6 @@ MindMap = function MindMap() {
         checkDrag = false;
 
       function dragstart() {
-        console.log("drag start");
-        console.log(this);
         handleClick.call(this);
         var currentNodeRect = d3.select(this).select('rect');
         var currentNodeText = d3.select(this).select('text');

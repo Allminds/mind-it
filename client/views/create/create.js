@@ -63,13 +63,29 @@ function retainCollapsed() {
     catch (e) {
     }
   }
-
 }
+
+var getChartInFocus = function () {
+  var body = $('body')[0],
+    scrollWidth = body.scrollWidth - body.clientWidth,
+    scrollHeight = body.scrollHeight - body.clientHeight;
+  $(window).scrollLeft(scrollWidth / 2);
+  $(window).scrollTop(scrollHeight / 2);
+};
+
+var update = function (data) {
+  window.data = data;
+  d3.select('#mindmap svg')
+    .datum(data)
+    .call(App.chart);
+  App.chart.update();
+  getChartInFocus();
+};
 
 Template.create.rendered = function rendered() {
 
   var tree = mindMapService.buildTree(this.data.id, this.data.data);
-  App.update(tree);
+  update(tree);
   var rootNode = d3.selectAll('.node')[0].find(function (node) {
     return !node.__data__.position;
   });
@@ -911,7 +927,7 @@ function JSONtoXML(XMLString, nodeObject) {
 
 Mousetrap.bind("esc", function goToRootNode() {
   App.select(d3.select('.node.level-0')[0][0]);
-  App.getChartInFocus();
+  getChartInFocus();
 });
 
 Mousetrap.bind('?', function showHelp() {
