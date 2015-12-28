@@ -1,8 +1,22 @@
 mindMapService = new MindMapService();
 
+
 var XMLtoJSON = function(XMLcontent) {
 
-}
+},
+getJSONnodeFromXML = function(XMLdom) {
+    console.log(XMLdom);
+    parser = new DOMParser();
+    xmlDoc = parser.parseFromString(XMLdom,"text/xml");
+    var txt = '';
+    // documentElement always represents the root node
+    x = xmlDoc.documentElement.childNodes;
+    for (i = 0; i < x.length ;i++) {
+        txt += x[i].nodeName;// + ": " + x[i].childNodes[0].nodeValue + "<br>";
+    }
+
+    console.log(txt);
+};
 
 Template.MyButton.events({
   'click #clickme': function () {
@@ -42,8 +56,10 @@ Template.home.onRendered(function () {
     var file = files[0];
     var reader = new FileReader();
     reader.onload = function() {
+        //var mindMapId = mindMapService.createRootNode('New Mindmap'),
+        //link = '/create/' + mindMapId;
+        getJSONnodeFromXML(this.result);
 
-        console.log(this.result);
     }
 
     reader.readAsText(file);
