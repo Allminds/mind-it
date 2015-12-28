@@ -1,5 +1,9 @@
 mindMapService = new MindMapService();
 
+var XMLtoJSON = function(XMLcontent) {
+
+}
+
 Template.MyButton.events({
   'click #clickme': function () {
     // 1. cretate root node with defualt title
@@ -10,6 +14,8 @@ Template.MyButton.events({
     clearNodeCollapsedState();
   }
 });
+
+
 
 Template.home.onRendered(function () {
 
@@ -22,6 +28,28 @@ Template.home.onRendered(function () {
 
   $("#about-us").click(function () {
     $('#aboutUs-modal').modal('show');
+  });
+
+  $('#fileID').change(function(evt){
+    var fileName = this.value;
+
+    if(!fileName.endsWith('.mm')) {
+        alert('Not a valid File');
+        return;
+    }
+
+    var files = evt.target.files;
+    var file = files[0];
+    var reader = new FileReader();
+    reader.onload = function() {
+
+        console.log(this.result);
+    }
+
+    reader.readAsText(file);
+
+
+
   });
 
 });
