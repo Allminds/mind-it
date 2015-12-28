@@ -1,6 +1,6 @@
 mapsCount = 0;
 
-MindMap = function () {
+MindMap = function MindMap() {
   "use strict";
   var
     margin = {top: 0, left: 0, bottom: 0, right: 0},
@@ -291,7 +291,8 @@ MindMap = function () {
         .on("drag", drag)
         .on("dragend", dragend);
 
-      nodeEnter.call(dragBehaviour);
+      //TODO : text box for editing does not appear when you uncomment the below line.
+      //nodeEnter.call(dragBehaviour);
 
 //TODO : handling double click, parent is same as dropped on then don't cut
       var targetNode = nodeEnter,
@@ -299,14 +300,16 @@ MindMap = function () {
         checkDrag = false;
 
       function dragstart() {
+        console.log("drag start");
+        console.log(this);
         handleClick.call(this);
         var currentNodeRect = d3.select(this).select('rect');
         var currentNodeText = d3.select(this).select('text');
         draggedNode = d3.select(this).node().__data__;
         targetNode = d3.select('svg').select('g').append('svg:g')
           .attr("transform", d3.select(this).attr("transform"))
-          .attr('position', 'absolute').
-          attr('class', d3.select(this).attr('class'));
+          .attr('position', 'absolute')
+          .attr('class', d3.select(this).attr('class'));
 
         targetNode.append("svg:rect")
           .attr('x', currentNodeRect.attr('x'))

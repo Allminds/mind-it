@@ -1,13 +1,5 @@
 var mindMapService = new MindMapService();
 
-var nodeSelector = {
-  prevDepthVisited: 0,
-
-  setPrevDepth: function (depth) {
-    this.prevDepthVisited = depth;
-  }
-};
-
 var tracker = {
   added: function (id, fields) {
     var newNode = map.getNodeData(id);
@@ -17,7 +9,7 @@ var tracker = {
     newNode._id = id;
     var parent = map.getNodeData(newNode.parent_ids[newNode.parent_ids.length - 1]);
     map.addNodeToUI(parent, newNode);
-    nodeSelector.setPrevDepth(newNode.parent_ids.length);
+    App.nodeSelector.setPrevDepth(newNode.parent_ids.length);
   },
   changed: function (id, fields) {
     var updatedNode = map.getNodeData(id);
@@ -28,12 +20,12 @@ var tracker = {
 
     if (fields.hasOwnProperty('name')) {
       updatedNode.name = fields.name;
-      chart.update();
+      App.chart.update();
       var selectedNode = map.selectedNodeData();
       // redraw gray box
       if (selectedNode && selectedNode._id === id) {
         setTimeout(function () {
-          selectNode(selectedNode);
+          App.selectNode(selectedNode);
         }, 10);
       }
     }
@@ -53,7 +45,7 @@ var tracker = {
     var delNodeIndex = children.indexOf(deletedNode);
     if (delNodeIndex >= 0) {
       children.splice(delNodeIndex, 1);
-      chart.update();
+      App.chart.update();
       tracker.just_deleted = id;
     }
   }
@@ -77,12 +69,12 @@ function retainCollapsed() {
 Template.create.rendered = function rendered() {
 
   var tree = mindMapService.buildTree(this.data.id, this.data.data);
-  update(tree);
+  App.update(tree);
   var rootNode = d3.selectAll('.node')[0].find(function (node) {
     return !node.__data__.position;
   });
 
-  select(rootNode);
+  App.select(rootNode);
   Mindmaps.find().observeChanges(tracker);
 
   retainCollapsed();
@@ -93,150 +85,6 @@ Template.create.rendered = function rendered() {
 
 var enableHelpLink = function () {
   $('#help-modal').modal('show');
-};
-
-var getDims;
-getDims = function () {
-  var w = window, d = document, e = d.documentElement,
-    g = d.getElementsByTagName('body')[0],
-    x = w.innerWidth || e.clientWidth || g.clientWidth,
-    y = w.innerHeight || e.clientHeight || g.clientHeight;
-  return {width: x, height: y};
-};
-
-var deselectNode = function () {
-  d3.select(".selected").classed("selected", false);
-};
-
-var select = function (node) {
-  // Find previously selected and deselect
-  if (node === d3.select(".selected")[0][0]) {
-    return;
-  }
-  deselectNode();
-
-  if (!node.__data__.position && App.DirectionToggler.canToggle) {
-
-    App.DirectionToggler.changeDirection();
-    App.DirectionToggler.canToggle = false;
-  }
-  // Select current item
-  d3.select(node).classed("selected", true);
-};
-
-var selectNode = function (target) {
-  if (target) {
-    var sel = d3.selectAll('#mindmap svg .node').filter(function (d) {
-      return d._id == target._id
-    })[0][0];
-    if (sel) {
-      select(sel);
-      return true;
-    }
-  }
-  return false;
-};
-
-var updateDbWithPromptInput = function (nodeData) {
-  $('#myModalHorizontal').modal('hide');
-  var updatedText = $("#modal-text").val();
-  if (updatedText != nodeData.name) {
-    nodeData.name = updatedText;
-    mindMapService.updateNode(nodeData._id, {name: nodeData.name});
-    chart.update();
-    setTimeout(function () {
-      chart.update();
-      selectNode(nodeData);
-    }, 10);
-  }
-};
-
-var showPrompt = function (nodeData) {
-  $("#modal-text").val(nodeData.name);
-  $('#myModalHorizontal').modal('show');
-
-  $('#myModalHorizontal').on('shown.bs.modal', function () {
-    $("#modal-text").focus();
-    $("#modal-text").select();
-  });
-  $("#modal-save").click(function () {
-    updateDbWithPromptInput(nodeData)
-    $('#modal-save').off('click');
-  });
-};
-
-var updateNode = function (nodeData) {
-  mindMapService.updateNode(nodeData._id, {name: nodeData.name});
-  setTimeout(function () {
-    selectNode(nodeData);
-  }, 10);
-};
-
-var showEditor = function () {
-  var nodeData = this.__data__;
-
-  if (nodeData && nodeData.name && nodeData.name.length >= 50) {
-    showPrompt(nodeData);
-    return;
-  }
-
-  var editor = new Editor(this, updateNode);
-  var editBox = editor.createEditBox();
-  editor.setupEditBox(editBox);
-  editor.setupAttributes();
-};
-
-var dims = getDims();
-
-var lastClick = 0;
-
-var chart = MindMap()
-  .width(20 * dims.width)
-  .height(20 * dims.height)
-  .text(function (textSelector) {
-    var texts = textSelector[0];
-    texts.forEach(function (text) {
-      var currentTextSelector = d3.select(text);
-      currentTextSelector.selectAll('tspan').remove();
-      var node = currentTextSelector.node();
-      if (node) {
-        var lines = node.__data__.name.wrapString(60);
-        lines.forEach(function (line, index) {
-          var dy = index == 0 ? 0 : 40;
-          currentTextSelector.append('svg:tspan').attr('x', 0).attr('dy', dy).text(line);
-        });
-      }
-    });
-
-  })
-  .click(function () {
-    if (this.__data__) {
-      var newClickTime = new Date().getTime();
-      if (newClickTime - lastClick < 300) {
-        showEditor().call(this.__data__);
-      }
-      nodeSelector.setPrevDepth(this.__data__.depth);
-      select(this);
-      lastClick = newClickTime;
-    }
-  })
-  .dblClick(showEditor);
-
-var update = function (data) {
-  window.data = data;
-  d3.select('#mindmap svg')
-    .datum(data)
-    .call(chart);
-  chart.update();
-  getChartInFocus();
-};
-
-var getChartInFocus = function () {
-  var body = $('body')[0],
-    scrollWidth = body.scrollWidth - body.clientWidth,
-    scrollHeight = body.scrollHeight - body.clientHeight;
-  $(window).scrollLeft(scrollWidth / 2);
-  $(window).scrollTop(scrollHeight / 2);
 };
 
 var getDirection = function (data) {
@@ -269,7 +117,7 @@ map.addNodeToUI = function (parent, newNode) {
     children.splice(0, 0, newNode);
   } else
     children.push(newNode);
-  chart.update();
+  App.chart.update();
 };
 
 function calculateDirection(parent) {
@@ -320,7 +168,7 @@ map.makeEditable = function (nodeId) {
     return d._id == nodeId
   })[0][0];
   if (node)
-    showEditor.call(node);
+    App.showEditor(node);
 };
 
 map.findOne = function (node, fun) {
@@ -435,7 +283,7 @@ Mousetrap.bind('enter', function () {
     sibling = selectedNode.position ? selectedNode : null,
     dir = calculateDirection(parent);
 
-  deselectNode();
+  App.deselectNode();
   var newNode = map.addNewNode(parent, "", dir, sibling);
   map.makeEditable(newNode._id);
   return false;
@@ -447,7 +295,7 @@ $(window).keyup(function (event) {
     }).call(event);
     var selectedNode = d3.select(".node.selected")[0][0];
     if (!selectedNode) return;
-    showEditor.call(selectedNode);
+    App.showEditor.call(selectedNode);
   }
 });
 
@@ -458,7 +306,7 @@ Mousetrap.bind('tab', function () {
     expand(selectedNode, selectedNode._id);
   }
   var dir = calculateDirection(selectedNode);
-  deselectNode();
+  App.deselectNode();
   var newNode = map.addNewNode(selectedNode, "", dir);
   map.makeEditable(newNode._id);
   return false;
@@ -491,7 +339,7 @@ function focusAfterDelete(selectedNode, removedNodeIndex) {
     children = parent[selectedNode.position] || parent.children || [],
     nextNode = children[removedNodeIndex],
     previousNode = children[removedNodeIndex - 1];
-  selectNode(nextNode || previousNode || parent);
+  App.selectNode(nextNode || previousNode || parent);
 }
 
 function findLogicalUp(node) {
@@ -505,7 +353,7 @@ function findLogicalUp(node) {
   var l = nl.length;
   for (; i < l; i++) {
     if (nl[i]._id === node._id) {
-      selectNode(findSameLevelChild(nl[i - 1], nodeSelector.prevDepthVisited, 0));
+      App.selectNode(findSameLevelChild(nl[i - 1], App.nodeSelector.prevDepthVisited, 0));
       break;
     }
   }
@@ -565,7 +413,7 @@ function findLogicalDown(node) {
   var l = nl.length;
   for (; i < l - 1; i++) {
     if (nl[i]._id === node._id) {
-      selectNode(findSameLevelChild(nl[i + 1], nodeSelector.prevDepthVisited, 1));
+      App.selectNode(findSameLevelChild(nl[i + 1], App.nodeSelector.prevDepthVisited, 1));
       //selectNode(nl[i + 1]);
       return;
     }
@@ -646,9 +494,9 @@ Mousetrap.bind('left', function () {
       default:
         break;
     }
-    selectNode(node);
+    App.selectNode(node);
     if (node)
-      nodeSelector.setPrevDepth(node.depth);
+      App.nodeSelector.setPrevDepth(node.depth);
   }
 });
 
@@ -677,9 +525,9 @@ Mousetrap.bind('right', function () {
       default:
         break;
     }
-    selectNode(node);
+    App.selectNode(node);
     if (node)
-      nodeSelector.setPrevDepth(node.depth);
+      App.nodeSelector.setPrevDepth(node.depth);
   }
 });
 
@@ -717,7 +565,7 @@ function collapseRecursive(d, id) {
 }
 function collapse(d, id) {
   collapseRecursive(d, id);
-  chart.update();
+  App.chart.update();
 }
 
 function expandRecursive(d, id) {
@@ -737,7 +585,7 @@ function expandRecursive(d, id) {
 
 function expand(d, id) {
   expandRecursive(d, id);
-  chart.update();
+  App.chart.update();
 }
 
 window.toggleCollapsedNode = function (selected) {
@@ -817,7 +665,7 @@ Mousetrap.bind('mod+left', debounce(250, true,
         else
           selectedNode = paste(data, target, direction);
         retainCollapsed();
-        selectNode(selectedNode);
+        App.selectNode(selectedNode);
       }
 
       switch (dir) {
@@ -828,7 +676,7 @@ Mousetrap.bind('mod+left', debounce(250, true,
                 removeLocally(data._id);
               selectedNode = paste(data, parent, "left");
               retainCollapsed();
-              selectNode(selectedNode);
+              App.selectNode(selectedNode);
               return;
 
             }
@@ -891,7 +739,7 @@ Mousetrap.bind('mod+right', debounce(250, true,
         else
           selectedNode = paste(data, target, direction);
         retainCollapsed();
-        selectNode(selectedNode);
+        App.selectNode(selectedNode);
       }
 
       switch (dir) {
@@ -902,7 +750,7 @@ Mousetrap.bind('mod+right', debounce(250, true,
                 removeLocally(data._id);
               selectedNode = paste(data, parent, "right");
               retainCollapsed();
-              selectNode(selectedNode);
+              App.selectNode(selectedNode);
               return;
             }
             else {
@@ -973,11 +821,11 @@ Mousetrap.bind('mod+up', debounce(250, true,
         });
       }
       else {
-        selectNode(previousSibling);
+        App.selectNode(previousSibling);
         cut(function (err, data) {
           paste(previousSibling, selection.parent, selection.position, selection);
           retainCollapsed();
-          selectNode(selection);
+          App.selectNode(selection);
         });
         return;
       }
@@ -988,7 +836,7 @@ Mousetrap.bind('mod+up', debounce(250, true,
     cut(function (err, data) {
       var selectedNode = paste(selection, selection.parent, selection.position, previousSibling);
       retainCollapsed();
-      selectNode(selectedNode);
+      App.selectNode(selectedNode);
     });
   }));
 
@@ -1029,7 +877,7 @@ Mousetrap.bind('mod+down', debounce(250, true,
         });
 
         retainCollapsed();
-        selectNode(newNode);
+        App.selectNode(newNode);
       });
       return;
     }
@@ -1037,7 +885,7 @@ Mousetrap.bind('mod+down', debounce(250, true,
     cut(function () {
       var selectedNode = paste(selection, selection.parent, selection.position, nextSibling);
       retainCollapsed();
-      selectNode(selectedNode);
+      App.selectNode(selectedNode);
     });
   }));
 
@@ -1062,8 +910,8 @@ function JSONtoXML(XMLString, nodeObject) {
 }
 
 Mousetrap.bind("esc", function goToRootNode() {
-  select(d3.select('.node.level-0')[0][0]);
-  getChartInFocus();
+  App.select(d3.select('.node.level-0')[0][0]);
+  App.getChartInFocus();
 });
 
 Mousetrap.bind('?', function showHelp() {
