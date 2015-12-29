@@ -152,3 +152,85 @@ App.calculateDirection = function (parent) {
   }
   return dir;
 };
+
+App.isLocallyCollapsed = function (id) {
+  try {
+    var locallyCollapsed = store.get(id).isCollapsed;
+  }
+  catch (e) {
+  }
+  return locallyCollapsed ? true : false;
+};
+
+App.retainCollapsed = function  () {
+  store.forEach(function (key) {
+    try {
+      if (App.isLocallyCollapsed(key)) {
+        var nodeData = App.map.getNodeData(key);
+        App.collapse(nodeData, key);
+      }
+    }
+    catch (e) {
+    }
+  });
+};
+
+App.storeLocally = function (d) {
+  var state = {isCollapsed: d.isCollapsed};
+  store.set(d._id, state);
+};
+
+App.removeLocally = function (d) {
+  store.remove(d._id);
+};
+
+var collapseRecursive = function (d, id) {
+  if (d._id === id) {
+    d.isCollapsed = true;
+    App.storeLocally(d);
+  }
+  if (d.hasOwnProperty('children') && d.children) {
+    d._children = [];
+    d._children = d.children;
+    d._children.forEach(collapseRecursive);
+    d.children = null;
+  }
+
+};
+
+App.collapse = function (d, id) {
+  collapseRecursive(d, id);
+  App.chart.update();
+};
+
+App.expandRecursive = function (d, id) {
+  if (d._id === id) {
+    d.isCollapsed = false;
+    App.removeLocally(d);
+  }
+  // On refresh - If child node is collapsed do not expand it
+  if (App.isLocallyCollapsed(d._id) == true)
+    d.isCollapsed = true;
+  if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
+    d.children = d._children;
+    d._children.forEach(App.expandRecursive);
+    d._children = null;
+  }
+};
+
+App.expand = function (d, id) {
+  App.expandRecursive(d, id);
+  App.chart.update();
+};
+
+App.toggleCollapsedNode = function (selected) {
+  var dir = App.getDirection(selected);
+  if (dir !== 'root') {
+    if (selected.hasOwnProperty('_children') && selected._children) {
+      App.expand(selected, selected._id);
+    }
+    else {
+      App.collapse(selected, selected._id);
+    }
+  }
+};

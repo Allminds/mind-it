@@ -1,18 +1,21 @@
 var mindMapService = new MindMapService();
 
-function retainCollapsed() {
-  for (var i = 0; i < localStorage.length; i++) {
-    try {
-      if (isLocallyCollapsed(localStorage.key(i))) {
-        var nodeId = localStorage.key(i);
-        var nodeData = App.map.getNodeData(nodeId);
-        collapse(nodeData, nodeId);
-      }
-    }
-    catch (e) {
-    }
-  }
-}
+Template.create.rendered = function rendered() {
+
+  var tree = mindMapService.buildTree(this.data.id, this.data.data);
+  update(tree);
+  var rootNode = d3.selectAll('.node')[0].find(function (node) {
+    return !node.__data__.position;
+  });
+
+  App.select(rootNode);
+  Mindmaps.find().observeChanges(App.tracker);
+
+  App.retainCollapsed();
+  d3.select("#help-link").on('click', enableHelpLink);
+
+  App.setMapsCount();
+};
 
 var getChartInFocus = function () {
   var body = $('body')[0],
@@ -31,23 +34,6 @@ var update = function (data) {
   getChartInFocus();
 };
 
-Template.create.rendered = function rendered() {
-
-  var tree = mindMapService.buildTree(this.data.id, this.data.data);
-  update(tree);
-  var rootNode = d3.selectAll('.node')[0].find(function (node) {
-    return !node.__data__.position;
-  });
-
-  App.select(rootNode);
-  Mindmaps.find().observeChanges(App.tracker);
-
-  retainCollapsed();
-  d3.select("#help-link").on('click', enableHelpLink);
-
-  App.setMapsCount();
-};
-
 var enableHelpLink = function () {
   $('#help-modal').modal('show');
 };
@@ -62,11 +48,7 @@ function checkOverlapRect(rect1) {
     var rectPoint = d3.select(rectList[0][i]).attr('transform').replace('translate(', '').replace(')', '').split(',');
 
     var currHeight = (d3.select(rectList[0][i]).select('rect').attr('height') * 1), currWidth = (d3.select(rectList[0][i]).select('rect').attr('width') * 1),
-      currX = rectPoint[0] * 1 - (currWidth / 2), currY = rectPoint[1] * 1 + (currHeight / 2),
-      leftTop = {x: currX, y: currY},
-      rightTop = {x: (currX + currWidth), y: currY},
-      leftBottom = {x: currX, y: currY + currHeight},
-      rightBottom = {x: currX + currWidth, y: currY + currHeight};
+      currX = rectPoint[0] * 1 - (currWidth / 2), currY = rectPoint[1] * 1 + (currHeight / 2);
 
     if (rect1[0] * 1 >= currX && rect1[0] * 1 <= currX + currWidth && rect1[1] * 1 <= currY && rect1[1] * 1 >= currY - currHeight) {
       return rectList[0][i];
@@ -103,9 +85,9 @@ Mousetrap.bind('mod+v', function () {
   var sourceNode = App.map.sourceNode;
   var dir = App.calculateDirection(targetNode);
   if (targetNode.isCollapsed)
-    expandRecursive(targetNode, targetNode._id);
+    App.expandRecursive(targetNode, targetNode._id);
   paste(sourceNode, targetNode, dir);
-  retainCollapsed();
+  App.retainCollapsed();
 });
 
 Mousetrap.bind('enter', function () {
@@ -135,7 +117,7 @@ Mousetrap.bind('tab', function () {
   var selectedNode = App.map.selectedNodeData();
   if (!selectedNode) return false;
   if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
-    expand(selectedNode, selectedNode._id);
+    App.expand(selectedNode, selectedNode._id);
   }
   var dir = App.calculateDirection(selectedNode);
   App.deselectNode();
@@ -285,7 +267,7 @@ function paste(sourceNode, targetNode, dir, previousSibling) {
   }
   if (sourceNode.hasOwnProperty('isCollapsed') && sourceNode.isCollapsed) {
     newNode.isCollapsed = sourceNode.isCollapsed;
-    storeLocally(newNode);
+    App.storeLocally(newNode);
   }
   if (childrenArray) {
     var previous = null;
@@ -317,7 +299,7 @@ Mousetrap.bind('left', function () {
         break;
       case('left'):
         if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
-          expand(data, data._id);
+          App.expand(data, data._id);
         }
         else {
           node = (data.children || [])[0];
@@ -348,7 +330,7 @@ Mousetrap.bind('right', function () {
         break;
       case('right'):
         if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
-          expand(data, data._id);
+          App.expand(data, data._id);
         }
         else {
           node = (data.children || [])[0];
@@ -363,80 +345,12 @@ Mousetrap.bind('right', function () {
   }
 });
 
-
-function storeLocally(d) {
-  var state = {isCollapsed: d.isCollapsed};
-  localStorage.setItem(d._id, JSON.stringify(state));
-}
-
-function removeLocally(d) {
-  localStorage.removeItem(d._id);
-}
-
-function isLocallyCollapsed(id) {
-  try {
-    var locallyCollapsed = JSON.parse(localStorage.getItem(id)).isCollapsed;
-  }
-  catch (e) {
-  }
-  return locallyCollapsed ? true : false;
-}
-
-function collapseRecursive(d, id) {
-  if (d._id === id) {
-    d.isCollapsed = true;
-    storeLocally(d);
-  }
-  if (d.hasOwnProperty('children') && d.children) {
-    d._children = [];
-    d._children = d.children;
-    d._children.forEach(collapseRecursive);
-    d.children = null;
-  }
-
-}
-function collapse(d, id) {
-  collapseRecursive(d, id);
-  App.chart.update();
-}
-
-function expandRecursive(d, id) {
-  if (d._id === id) {
-    d.isCollapsed = false;
-    removeLocally(d);
-  }
-  // On refresh - If child node is collapsed do not expand it
-  if (isLocallyCollapsed(d._id) == true)
-    d.isCollapsed = true;
-  if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
-    d.children = d._children;
-    d._children.forEach(expandRecursive);
-    d._children = null;
-  }
-}
-
-function expand(d, id) {
-  expandRecursive(d, id);
-  App.chart.update();
-}
-
-window.toggleCollapsedNode = function (selected) {
-  var dir = App.getDirection(selected);
-  if (dir !== 'root') {
-    if (selected.hasOwnProperty('_children') && selected._children) {
-      expand(selected, selected._id);
-    }
-    else {
-      collapse(selected, selected._id);
-    }
-  }
-};
 Mousetrap.bind('space', function () {
   var event = arguments[0];
   (event.preventDefault || event.stop || event.stopPropagation || function () {
   }).call(event);
   var selected = d3.select(".selected")[0][0].__data__;
-  toggleCollapsedNode(selected);
+  App.toggleCollapsedNode(selected);
 });
 
 
@@ -489,14 +403,14 @@ Mousetrap.bind('mod+left', debounce(250, true,
 
       function pasteAfterCut() {
         if (target.isCollapsed) {
-          expandRecursive(target, target._id);
-          removeLocally(target._id);
+          App.expandRecursive(target, target._id);
+          App.removeLocally(target._id);
         }
         if (direction == "right")
           selectedNode = paste(data, target, direction, parent);
         else
           selectedNode = paste(data, target, direction);
-        retainCollapsed();
+        App.retainCollapsed();
         App.selectNode(selectedNode);
       }
 
@@ -505,9 +419,9 @@ Mousetrap.bind('mod+left', debounce(250, true,
           cut(function () {
             if (App.getDirection(parent) === 'root') {
               if (data.hasOwnProperty('isCollapsed') && data.isCollapsed)
-                removeLocally(data._id);
+                App.removeLocally(data._id);
               selectedNode = paste(data, parent, "left");
-              retainCollapsed();
+              App.retainCollapsed();
               App.selectNode(selectedNode);
               return;
 
@@ -563,14 +477,14 @@ Mousetrap.bind('mod+right', debounce(250, true,
 
       function pasteAfterCut() {
         if (target.isCollapsed) {
-          expandRecursive(target, target._id);
-          removeLocally(target._id);
+          App.expandRecursive(target, target._id);
+          App.removeLocally(target._id);
         }
         if (direction == "left")
           selectedNode = paste(data, target, direction, parent);
         else
           selectedNode = paste(data, target, direction);
-        retainCollapsed();
+        App.retainCollapsed();
         App.selectNode(selectedNode);
       }
 
@@ -579,9 +493,9 @@ Mousetrap.bind('mod+right', debounce(250, true,
           cut(function () {
             if (App.getDirection(parent) === 'root') {
               if (data.hasOwnProperty('isCollapsed') && data.isCollapsed)
-                removeLocally(data._id);
+                App.removeLocally(data._id);
               selectedNode = paste(data, parent, "right");
-              retainCollapsed();
+              App.retainCollapsed();
               App.selectNode(selectedNode);
               return;
             }
@@ -656,7 +570,7 @@ Mousetrap.bind('mod+up', debounce(250, true,
         App.selectNode(previousSibling);
         cut(function (err, data) {
           paste(previousSibling, selection.parent, selection.position, selection);
-          retainCollapsed();
+          App.retainCollapsed();
           App.selectNode(selection);
         });
         return;
@@ -667,7 +581,7 @@ Mousetrap.bind('mod+up', debounce(250, true,
     }
     cut(function (err, data) {
       var selectedNode = paste(selection, selection.parent, selection.position, previousSibling);
-      retainCollapsed();
+      App.retainCollapsed();
       App.selectNode(selectedNode);
     });
   }));
@@ -699,7 +613,7 @@ Mousetrap.bind('mod+down', debounce(250, true,
         newNode._id = mindMapService.addNode(newNode);
         if (selection.hasOwnProperty('isCollapsed') && selection.isCollapsed) {
           newNode.isCollapsed = selection.isCollapsed;
-          storeLocally(newNode);
+          App.storeLocally(newNode);
         }
 
         mindMapService.updateNode(headId, {previous: newNode._id});
@@ -708,7 +622,7 @@ Mousetrap.bind('mod+down', debounce(250, true,
           previous = paste(child, newNode, child.position, previous);
         });
 
-        retainCollapsed();
+        App.retainCollapsed();
         App.selectNode(newNode);
       });
       return;
@@ -716,7 +630,7 @@ Mousetrap.bind('mod+down', debounce(250, true,
 
     cut(function () {
       var selectedNode = paste(selection, selection.parent, selection.position, nextSibling);
-      retainCollapsed();
+      App.retainCollapsed();
       App.selectNode(selectedNode);
     });
   }));
