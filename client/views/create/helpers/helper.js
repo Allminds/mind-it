@@ -1,12 +1,41 @@
-// TODO: Use singleton pattern (make currentDir and canToggle - private)
-App.DirectionToggler = {
-  currentDir: "right",
-  canToggle: false,
+App.DirectionToggler = (function () {
+  var instance;
 
-  changeDirection: function () {
-    this.currentDir = (this.currentDir== "right") ? "left" : "right";
-  }
-};
+  var currentDir = "right";
+  var canToggle = false;
+
+  var init = function () {
+    return {
+      getCurrentDirection: function () {
+        return currentDir;
+      },
+      getCanToggle: function () {
+        return canToggle;
+      },
+      setCanToggle: function (toggle) {
+        canToggle = toggle;
+      },
+      changeDirection: function () {
+        currentDir = (currentDir== "right") ? "left" : "right";
+      }
+    }
+  };
+
+  var createInstance = function () {
+    var object = new init();
+    return object;
+  };
+
+  return {
+    getInstance: function () {
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    }
+  };
+
+})();
 
 App.nodeSelector = {
   prevDepthVisited: 0,
@@ -23,9 +52,10 @@ App.select = function (node) {
   }
   App.deselectNode();
 
-  if (!node.__data__.position && App.DirectionToggler.canToggle) {
-    App.DirectionToggler.changeDirection();
-    App.DirectionToggler.canToggle = false;
+  var directionToggler = App.DirectionToggler.getInstance();
+  if (!node.__data__.position && directionToggler.getCanToggle()) {
+    directionToggler.changeDirection();
+    directionToggler.setCanToggle(false);
   }
   // Select current item
   d3.select(node).classed("selected", true);
@@ -109,13 +139,13 @@ App.getDirection = function (data) {
 };
 
 App.calculateDirection = function (parent) {
-
   var dir = App.getDirection(parent);
   var selectedNode = App.map.selectedNodeData();
   if (dir === 'root') {
     if (App.getDirection(selectedNode) === 'root') {
-      App.DirectionToggler.canToggle = true;
-      dir = App.DirectionToggler.currentDir;
+      var directionToggler = App.DirectionToggler.getInstance();
+      directionToggler.setCanToggle(true);
+      dir = directionToggler.getCurrentDirection();
     }
     else
       dir = selectedNode.position;
