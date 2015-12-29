@@ -341,13 +341,12 @@ MindMap = function MindMap() {
         }
 
         if (checkDrag === true) {
-          var droppedOnElement = checkOverlap(point);
+          var droppedOnElement = App.checkOverlap(point);
           var droppedOnData = d3.select(droppedOnElement).node() ? d3.select(droppedOnElement).node().__data__ : null;
           if (droppedOnElement && ($.inArray(draggedNode._id, droppedOnData.parent_ids) < 0) && (draggedNode._id != droppedOnData._id)) {
-            cutNode();
-            pasteNode(draggedNode, droppedOnData, calculateDirectionGlobal(droppedOnData));
+            App.cutNode();
+            App.pasteNode(draggedNode, droppedOnData, App.calculateDirection(droppedOnData));
           }
-          ;
           checkDrag = false;
         }
       }

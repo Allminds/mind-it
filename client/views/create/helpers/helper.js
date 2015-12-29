@@ -234,3 +234,41 @@ App.toggleCollapsedNode = function (selected) {
     }
   }
 };
+
+
+App.checkOverlap = function (rect1) {
+  var rectList = d3.select('svg').select('g').selectAll('g');
+  for (var i = 0; i < rectList[0].length; i++) {
+    var rectPoint = d3.select(rectList[0][i]).attr('transform').replace('translate(', '').replace(')', '').split(',');
+
+    var currHeight = (d3.select(rectList[0][i]).select('rect').attr('height') * 1), currWidth = (d3.select(rectList[0][i]).select('rect').attr('width') * 1),
+      currX = rectPoint[0] * 1 - (currWidth / 2), currY = rectPoint[1] * 1 + (currHeight / 2);
+
+    if (rect1[0] * 1 >= currX && rect1[0] * 1 <= currX + currWidth && rect1[1] * 1 <= currY && rect1[1] * 1 >= currY - currHeight) {
+      return rectList[0][i];
+    }
+  }
+};
+
+App.JSONtoXML = function (XMLString, nodeObject) {
+  XMLString += "<node ";
+  XMLString += "ID = \"" + nodeObject._id + "\"";
+  XMLString += "TEXT = \"" + nodeObject.name + "\"";
+  if (nodeObject.hasOwnProperty('parent_ids') && nodeObject.parent_ids.length === 1) {
+    XMLString += "POSITION = \"" + nodeObject.position + "\"";
+  }
+  XMLString += ">\n";
+  (nodeObject.children || nodeObject._children || []).forEach(function (child) {
+    XMLString = App.JSONtoXML(XMLString, child)
+  });
+  XMLString += "</node>\n";
+  return XMLString;
+};
+
+App.getChartInFocus = function () {
+  var body = $('body')[0],
+    scrollWidth = body.scrollWidth - body.clientWidth,
+    scrollHeight = body.scrollHeight - body.clientHeight;
+  $(window).scrollLeft(scrollWidth / 2);
+  $(window).scrollTop(scrollHeight / 2);
+};
