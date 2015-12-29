@@ -1,23 +1,6 @@
 mindMapService = new MindMapService();
 
 
-var XMLtoJSON = function(XMLcontent) {
-
-},
-getJSONnodeFromXML = function(XMLdom) {
-    console.log(XMLdom);
-    parser = new DOMParser();
-    xmlDoc = parser.parseFromString(XMLdom,"text/xml");
-    var txt = '';
-    // documentElement always represents the root node
-    x = xmlDoc.documentElement.childNodes;
-    for (i = 0; i < x.length ;i++) {
-        txt += x[i].nodeName;// + ": " + x[i].childNodes[0].nodeValue + "<br>";
-    }
-
-    console.log(txt);
-};
-
 Template.MyButton.events({
   'click #clickme': function () {
     // 1. cretate root node with defualt title
@@ -58,14 +41,19 @@ Template.home.onRendered(function () {
     reader.onload = function() {
         //var mindMapId = mindMapService.createRootNode('New Mindmap'),
         //link = '/create/' + mindMapId;
-        getJSONnodeFromXML(this.result);
-
+        //.replace(new RegExp('["]', 'g'), '\"')
+        var xmltext = this.result.replace(new RegExp('[\n]', 'g'), '');
+        var importParser = App.ImportParser.getInstance();
+        var mindMapId = importParser.createMindmapFromXML(xmltext, mindMapService),
+        link = '/create/' + mindMapId;
+        if(mindMapId) {
+            Router.go(link);
+        } else {
+            alert(importParser.errorMessage);
+        }
     }
 
     reader.readAsText(file);
-
-
-
   });
 
 });
