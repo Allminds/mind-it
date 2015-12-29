@@ -305,7 +305,7 @@ MindMap = function () {
         draggedNode = d3.select(this).node().__data__;
         if(d3.select(this).node().__data__.position === null){
                           return;
-                      }
+        }
 
         targetNode = d3.select('svg').select('g').append('svg:g')
           .attr("transform", d3.select(this).attr("transform"))
@@ -325,7 +325,7 @@ MindMap = function () {
 
       function drag() {
         if(d3.select(this).node().__data__.position === null){
-                  return;
+            return;
         }
         checkDrag = true;
         var nodeToBeDragged = d3.select(targetNode[0][0]);
@@ -339,6 +339,9 @@ MindMap = function () {
       function dragend() {
         if (checkDrag === false) {
           handleClick.call(d3.select(targetNode[0][0]));
+          if(targetNode[0][0]){
+             d3.select(targetNode[0][0]).remove();
+          }
           return;
         }
         var point = d3.select(targetNode[0][0]).attr('transform').replace('translate(', '').replace(')', '').split(',');
