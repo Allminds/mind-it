@@ -49,7 +49,10 @@ Editor.prototype.setupEditBox = function (editBox) {
 
 Editor.prototype.resetEditor = function () {
   this.currentTextElement.attr("visibility", "");
-  d3.select(".edit-box").remove();
+  var editBox = d3.select(".edit-box");
+  if (editBox) {
+    editBox.remove();
+  }
 };
 
 var propagateChanges = function (editor) {

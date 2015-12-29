@@ -87,7 +87,6 @@ App.showEditor = function (node) {
   var selectedNode = node || d3.select('.selected')[0][0];
   var nodeData = selectedNode.__data__;
 
-
   if (nodeData && nodeData.name && nodeData.name.length >= 50) {
     showPrompt(nodeData);
     return;
@@ -97,4 +96,29 @@ App.showEditor = function (node) {
   var editBox = editor.createEditBox();
   editor.setupEditBox(editBox);
   editor.setupAttributes();
+};
+
+App.getDirection = function (data) {
+  if (!data) {
+    return 'root';
+  }
+  if (data.position) {
+    return data.position;
+  }
+  return App.getDirection(data.parent);
+};
+
+App.calculateDirection = function (parent) {
+
+  var dir = App.getDirection(parent);
+  var selectedNode = App.map.selectedNodeData();
+  if (dir === 'root') {
+    if (App.getDirection(selectedNode) === 'root') {
+      App.DirectionToggler.canToggle = true;
+      dir = App.DirectionToggler.currentDir;
+    }
+    else
+      dir = selectedNode.position;
+  }
+  return dir;
 };

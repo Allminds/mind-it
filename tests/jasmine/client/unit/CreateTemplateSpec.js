@@ -1,4 +1,4 @@
-describe('map.findOne', function () {
+describe('App.map.findOne', function () {
 
   var data = {
     name: 'root',
@@ -21,28 +21,28 @@ describe('map.findOne', function () {
     ]
   };
   it('Should find out node level 1', function () {
-    var result = map.findOne(data, function (x) {
+    var result = App.map.findOne(data, function (x) {
       return x.name == '2'
     });
     expect(result.name).toBe('2');
   });
 
   it('Should find out node level 2', function () {
-    var result = map.findOne(data, function (x) {
+    var result = App.map.findOne(data, function (x) {
       return x.name == '2.2'
     });
     expect(result.name).toBe('2.2');
   });
 
   it('Should find out node level 3', function () {
-    var result = map.findOne(data, function (x) {
+    var result = App.map.findOne(data, function (x) {
       return x.name == '2.2.1'
     });
     expect(result.name).toBe('2.2.1');
   });
 
   it('Should return null if not found', function () {
-    var result = map.findOne(data, function (x) {
+    var result = App.map.findOne(data, function (x) {
       return x.name == '2.2.1asd'
     });
     expect(result).toBe(null);

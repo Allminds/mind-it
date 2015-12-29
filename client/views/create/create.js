@@ -2,17 +2,17 @@ var mindMapService = new MindMapService();
 
 var tracker = {
   added: function (id, fields) {
-    var newNode = map.getNodeData(id);
+    var newNode = App.map.getNodeData(id);
     if (newNode)
       return;
     newNode = fields;
     newNode._id = id;
-    var parent = map.getNodeData(newNode.parent_ids[newNode.parent_ids.length - 1]);
-    map.addNodeToUI(parent, newNode);
+    var parent = App.map.getNodeData(newNode.parent_ids[newNode.parent_ids.length - 1]);
+    App.map.addNodeToUI(parent, newNode);
     App.nodeSelector.setPrevDepth(newNode.parent_ids.length);
   },
   changed: function (id, fields) {
-    var updatedNode = map.getNodeData(id);
+    var updatedNode = App.map.getNodeData(id);
     if (!updatedNode) return;
 
     updatedNode.previous = fields.hasOwnProperty('previous') ? fields.previous : updatedNode.previous;
@@ -21,7 +21,7 @@ var tracker = {
     if (fields.hasOwnProperty('name')) {
       updatedNode.name = fields.name;
       App.chart.update();
-      var selectedNode = map.selectedNodeData();
+      var selectedNode = App.map.selectedNodeData();
       // redraw gray box
       if (selectedNode && selectedNode._id === id) {
         setTimeout(function () {
@@ -32,7 +32,7 @@ var tracker = {
   },
   just_deleted: null,
   removed: function (id) {
-    var deletedNode = map.getNodeData(id);
+    var deletedNode = App.map.getNodeData(id);
     if (!deletedNode) return;
 
     var alreadyRemoved = deletedNode.parent_ids.some(function (parent_id) {
@@ -56,7 +56,7 @@ function retainCollapsed() {
     try {
       if (isLocallyCollapsed(localStorage.key(i))) {
         var nodeId = localStorage.key(i);
-        var nodeData = map.getNodeData(nodeId);
+        var nodeData = App.map.getNodeData(nodeId);
         collapse(nodeData, nodeId);
       }
     }
@@ -103,139 +103,6 @@ var enableHelpLink = function () {
   $('#help-modal').modal('show');
 };
 
-var getDirection = function (data) {
-  if (!data) {
-    return 'root';
-  }
-  if (data.position) {
-    return data.position;
-  }
-  return getDirection(data.parent);
-};
-
-map = {};
-map.selectedNodeData = function () {
-  var selectedNode = d3.select(".node.selected")[0][0];
-  return selectedNode ? selectedNode.__data__ : null;
-};
-map.addNodeToUI = function (parent, newNode) {
-  var children = parent[newNode.position] || parent.children || parent._children;
-  if (!children) {
-    children = parent.children = [];
-  }
-  if (newNode.previous) {
-    var previousNode = children.find(function (x) {
-        return x._id == newNode.previous
-      }),
-      previousNodeIndex = children.indexOf(previousNode) + 1;
-    children.splice(previousNodeIndex, 0, newNode);
-  } else if (newNode.next) {
-    children.splice(0, 0, newNode);
-  } else
-    children.push(newNode);
-  App.chart.update();
-};
-
-function calculateDirection(parent) {
-
-  var dir = getDirection(parent);
-  var selectedNode = map.selectedNodeData();
-
-  if (dir === 'root') {
-    if (getDirection(selectedNode) === 'root') {
-      App.DirectionToggler.canToggle = true;
-      dir = App.DirectionToggler.currentDir;
-    }
-    else
-      dir = selectedNode.position;
-  }
-
-  return dir;
-}
-
-map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
-
-  if (!previousSibling) {
-    var children = parent.position ? parent.children : parent[dir];
-
-    previousSibling = children && children.length > 0
-      ? children[children.length - 1]
-      : {_id: null, next: null};
-  }
-  var newNode = {
-    name: newNodeName, position: dir,
-    parent_ids: [].concat(parent.parent_ids || []).concat([parent._id]),
-    previous: previousSibling._id, next: previousSibling.next
-  };
-  newNode._id = mindMapService.addNode(newNode);
-
-  if (previousSibling._id) {
-    mindMapService.updateNode(previousSibling._id, {next: newNode._id});
-    mindMapService.updateNode(newNode.next, {previous: newNode._id});
-  }
-
-  // let the subscribers to update their mind map :)
-
-  return newNode;
-};
-
-map.makeEditable = function (nodeId) {
-  var node = d3.selectAll('#mindmap svg .node').filter(function (d) {
-    return d._id == nodeId
-  })[0][0];
-  if (node)
-    App.showEditor(node);
-};
-
-map.findOne = function (node, fun) {
-
-  if (fun(node)) return node;
-  var children = (node.children || node._children || []),
-    res = children.reduce(function (result, child) {
-      return result || map.findOne(child, fun);
-    }, null);
-  return res;
-};
-map.getNodeData = function (nodeId) {
-  var rootNodeData = d3.selectAll('#mindmap svg .node.level-0')[0][0].__data__;
-  return map.findOne(rootNodeData, function (x) {
-    return x._id == nodeId
-  });
-};
-
-clone = function (node) {
-  var clonedNode = {name: node.name, position: node.position};
-  clonedNode.children = (node.children || node._children || []).map(function (currentElem) {
-    return clone(currentElem);
-  });
-  if (node.depth == 0) {
-    clonedNode.left = clonedNode.children.filter(function (x) {
-      return x.position == 'left'
-    });
-    clonedNode.right = clonedNode.children.filter(function (x) {
-      return x.position == 'right'
-    });
-  }
-  return clonedNode;
-};
-
-function cloneObject(obj) {
-  if (null == obj || "object" != typeof obj) return obj;
-  var copy = obj.constructor();
-  for (var attr in obj) {
-    if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-  }
-  return copy;
-}
-
-map.storeSourceNode = function (sourceNode) {
-  map.sourceNode = cloneObject(sourceNode);
-};
-
-map.getSourceNode = function () {
-  return d3.select(".selected")[0][0].__data__;
-};
-
 Mousetrap.bind('mod+x', function () {
   cut();
 });
@@ -261,12 +128,12 @@ function checkOverlapRect(rect1) {
 checkOverlap = checkOverlapRect;
 
 function cut(asyncCallBack) {
-  var sourceNode = map.getSourceNode();
-  if (getDirection(sourceNode) === 'root') {
+  var sourceNode = App.map.getSourceNode();
+  if (App.getDirection(sourceNode) === 'root') {
     alert("The root node cannot be cut!");
     return;
   }
-  map.storeSourceNode(sourceNode);
+  App.map.storeSourceNode(sourceNode);
   var selectedNodeIndex = (sourceNode.parent.children || []).indexOf(sourceNode);
   Meteor.call('deleteNode', sourceNode._id, function (err, data) {
     focusAfterDelete(sourceNode, selectedNodeIndex);
@@ -278,14 +145,14 @@ function cut(asyncCallBack) {
 cutNode = cut;
 
 Mousetrap.bind('mod+c', function () {
-  var sourceNode = map.getSourceNode();
-  map.storeSourceNode(sourceNode);
+  var sourceNode = App.map.getSourceNode();
+  App.map.storeSourceNode(sourceNode);
 });
 
 Mousetrap.bind('mod+v', function () {
-  var targetNode = map.selectedNodeData();
-  var sourceNode = map.sourceNode;
-  var dir = calculateDirection(targetNode);
+  var targetNode = App.map.selectedNodeData();
+  var sourceNode = App.map.sourceNode;
+  var dir = App.calculateDirection(targetNode);
   if (targetNode.isCollapsed)
     expandRecursive(targetNode, targetNode._id);
   paste(sourceNode, targetNode, dir);
@@ -293,15 +160,15 @@ Mousetrap.bind('mod+v', function () {
 });
 
 Mousetrap.bind('enter', function () {
-  var selectedNode = map.selectedNodeData();
+  var selectedNode = App.map.selectedNodeData();
   if (!selectedNode) return false;
   var parent = selectedNode.parent || selectedNode,
     sibling = selectedNode.position ? selectedNode : null,
-    dir = calculateDirection(parent);
+    dir = App.calculateDirection(parent);
 
   App.deselectNode();
-  var newNode = map.addNewNode(parent, "", dir, sibling);
-  map.makeEditable(newNode._id);
+  var newNode = App.map.addNewNode(parent, "", dir, sibling);
+  App.map.makeEditable(newNode._id);
   return false;
 });
 
@@ -316,22 +183,22 @@ $(window).keyup(function (event) {
 });
 
 Mousetrap.bind('tab', function () {
-  var selectedNode = map.selectedNodeData();
+  var selectedNode = App.map.selectedNodeData();
   if (!selectedNode) return false;
   if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
     expand(selectedNode, selectedNode._id);
   }
-  var dir = calculateDirection(selectedNode);
+  var dir = App.calculateDirection(selectedNode);
   App.deselectNode();
-  var newNode = map.addNewNode(selectedNode, "", dir);
-  map.makeEditable(newNode._id);
+  var newNode = App.map.addNewNode(selectedNode, "", dir);
+  App.map.makeEditable(newNode._id);
   return false;
 });
 
 Mousetrap.bind('del', function () {
-  var selectedNode = map.selectedNodeData();
+  var selectedNode = App.map.selectedNodeData();
   if (!selectedNode) return;
-  var dir = getDirection(selectedNode);
+  var dir = App.getDirection(selectedNode);
 
   if (dir === 'root') {
     alert('Can\'t delete root');
@@ -359,7 +226,7 @@ function focusAfterDelete(selectedNode, removedNodeIndex) {
 }
 
 function findLogicalUp(node) {
-  var dir = getDirection(node);
+  var dir = App.getDirection(node);
   if (dir === 'root') return;
 
   var p = node.parent, nl = p.children || [], i = 1;
@@ -386,7 +253,7 @@ Mousetrap.bind('up', function () {
   var selection = d3.select(".node.selected")[0][0];
   if (selection) {
     var data = selection.__data__;
-    var dir = getDirection(data);
+    var dir = App.getDirection(data);
     switch (dir) {
       case('root'):
         break;
@@ -420,7 +287,7 @@ function findSameLevelChild(node, depth, downwards) {
 }
 
 function findLogicalDown(node) {
-  var dir = getDirection(node);
+  var dir = App.getDirection(node);
   if (dir === 'root') return;
   var p = node.parent, nl = p.children || [], i = 0;
   if (p[dir]) {
@@ -445,7 +312,7 @@ Mousetrap.bind('down', function () {
   var selection = d3.select(".node.selected")[0][0];
   if (selection) {
     var data = selection.__data__;
-    var dir = getDirection(data);
+    var dir = App.getDirection(data);
     switch (dir) {
       case('root'):
         break;
@@ -459,7 +326,7 @@ Mousetrap.bind('down', function () {
 });
 
 function paste(sourceNode, targetNode, dir, previousSibling) {
-  var newNode = map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
+  var newNode = App.map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
     childrenArray;
   if (sourceNode.hasOwnProperty('children') && sourceNode.children) {
     childrenArray = sourceNode.children;
@@ -493,7 +360,7 @@ Mousetrap.bind('left', function () {
   var selection = d3.select(".node.selected")[0][0];
   if (selection) {
     var data = selection.__data__;
-    var dir = getDirection(data), node;
+    var dir = App.getDirection(data), node;
     switch (dir) {
       case('right'):
       case('root'):
@@ -524,7 +391,7 @@ Mousetrap.bind('right', function () {
   var selection = d3.select(".node.selected")[0][0];
   if (selection) {
     var data = selection.__data__;
-    var dir = getDirection(data), node;
+    var dir = App.getDirection(data), node;
     switch (dir) {
       case('left'):
       case('root'):
@@ -605,7 +472,7 @@ function expand(d, id) {
 }
 
 window.toggleCollapsedNode = function (selected) {
-  var dir = getDirection(selected);
+  var dir = App.getDirection(selected);
   if (dir !== 'root') {
     if (selected.hasOwnProperty('_children') && selected._children) {
       expand(selected, selected._id);
@@ -665,7 +532,7 @@ Mousetrap.bind('mod+left', debounce(250, true,
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
       var data = selection.__data__;
-      var dir = getDirection(data),
+      var dir = App.getDirection(data),
         parent = data.parent,
         selectedNode,
         target,
@@ -687,7 +554,7 @@ Mousetrap.bind('mod+left', debounce(250, true,
       switch (dir) {
         case('right'):
           cut(function () {
-            if (getDirection(parent) === 'root') {
+            if (App.getDirection(parent) === 'root') {
               if (data.hasOwnProperty('isCollapsed') && data.isCollapsed)
                 removeLocally(data._id);
               selectedNode = paste(data, parent, "left");
@@ -742,7 +609,7 @@ Mousetrap.bind('mod+right', debounce(250, true,
 
     if (selection) {
       var data = selection.__data__;
-      var dir = getDirection(data),
+      var dir = App.getDirection(data),
         parent = data.parent;
 
       function pasteAfterCut() {
@@ -761,7 +628,7 @@ Mousetrap.bind('mod+right', debounce(250, true,
       switch (dir) {
         case('left'):
           cut(function () {
-            if (getDirection(parent) === 'root') {
+            if (App.getDirection(parent) === 'root') {
               if (data.hasOwnProperty('isCollapsed') && data.isCollapsed)
                 removeLocally(data._id);
               selectedNode = paste(data, parent, "right");
@@ -934,4 +801,4 @@ Mousetrap.bind('?', function showHelp() {
   $('#help-modal').modal('show');
 });
 
-calculateDirectionGlobal = calculateDirection;
+calculateDirectionGlobal = App.calculateDirection;
