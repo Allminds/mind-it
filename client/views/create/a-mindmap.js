@@ -304,7 +304,7 @@ MindMap = function () {
         var currentNodeText = d3.select(this).select('text');
         draggedNode = d3.select(this).node().__data__;
         if(d3.select(this).node().__data__.position === null){
-                          return;
+            return;
         }
 
         targetNode = d3.select('svg').select('g').append('svg:g')
@@ -334,12 +334,12 @@ MindMap = function () {
         nodeToBeDragged.attr("transform", function () {
           return "translate(" + d3.event.x + "," + d3.event.y + ")";
         });
-      }
+      };
 
       function dragend() {
         if (checkDrag === false) {
           handleClick.call(d3.select(targetNode[0][0]));
-          if(targetNode[0][0]){
+          if(d3.select(targetNode[0][0]).attr('class').indexOf('level-0') == -1){
              d3.select(targetNode[0][0]).remove();
           }
           return;
@@ -351,12 +351,14 @@ MindMap = function () {
           var droppedOnElement = checkOverlap(point);
           var droppedOnData = d3.select(droppedOnElement).node() ? d3.select(droppedOnElement).node().__data__ : null;
           if (droppedOnElement && ($.inArray(draggedNode._id, droppedOnData.parent_ids) < 0) && (draggedNode._id != droppedOnData._id)) {
-            cutNode();
-            pasteNode(draggedNode, droppedOnData, calculateDirectionGlobal(droppedOnData));
+            cutNode(function(){
+                pasteNode(draggedNode, droppedOnData, calculateDirectionGlobal(droppedOnData));
+                App.select(droppedOnElement);
+            });
           };
           checkDrag = false;
         }
-      }
+      };
 
       enterNode(nodeEnter);
 

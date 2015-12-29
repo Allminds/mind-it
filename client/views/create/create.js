@@ -82,7 +82,7 @@ Template.create.rendered = function rendered() {
     return !node.__data__.position;
   });
 
-  select(rootNode);
+  App.select(rootNode);
   Mindmaps.find().observeChanges(tracker);
 
   retainCollapsed();
@@ -108,7 +108,7 @@ var deselectNode = function () {
   d3.selectAll(".selected").classed("selected", false);
 };
 
-var select = function (node) {
+App.select = function (node) {
   // Find previously selected and deselect
   if (node === d3.select(".selected")[0][0]) {
     return;
@@ -124,13 +124,13 @@ var select = function (node) {
   d3.select(node).classed("selected", true);
 };
 
-var selectNode = function (target) {
+App.selectNode = function (target) {
   if (target) {
     var sel = d3.selectAll('#mindmap svg .node').filter(function (d) {
       return d._id == target._id
     })[0][0];
     if (sel) {
-      select(sel);
+      App.select(sel);
       return true;
     }
   }
@@ -146,7 +146,7 @@ var updateDbWithPromptInput = function (nodeData) {
     chart.update();
     setTimeout(function () {
       chart.update();
-      selectNode(nodeData);
+      App.selectNode(nodeData);
     }, 10);
   }
 };
@@ -168,7 +168,7 @@ var showPrompt = function (nodeData) {
 var updateNode = function (nodeData) {
   mindMapService.updateNode(nodeData._id, {name: nodeData.name});
   setTimeout(function () {
-    selectNode(nodeData);
+    App.selectNode(nodeData);
   }, 10);
 };
 
@@ -216,11 +216,12 @@ var chart = MindMap()
         showEditor().call(this.__data__);
       }
       nodeSelector.setPrevDepth(this.__data__.depth);
-      select(this);
+      App.select(this);
       lastClick = newClickTime;
     }
   })
   .dblClick(showEditor);
+
 
 var update = function (data) {
   window.data = data;
@@ -470,7 +471,7 @@ escapeOnNewNode = function(newNode, parentNode){
     $(window).unbind().on("keyup", (function(e) {
           if (e.keyCode === 27) {
                 Meteor.call('deleteNode', newNode._id, function () {
-                selectNode(parentNode);
+                App.selectNode(parentNode);
              });
           }
       }));
@@ -503,7 +504,7 @@ function focusAfterDelete(selectedNode, removedNodeIndex) {
     children = parent[selectedNode.position] || parent.children || [],
     nextNode = children[removedNodeIndex],
     previousNode = children[removedNodeIndex - 1];
-  selectNode(nextNode || previousNode || parent);
+  App.selectNode(nextNode || previousNode || parent);
 }
 
 function findLogicalUp(node) {
@@ -517,7 +518,7 @@ function findLogicalUp(node) {
   var l = nl.length;
   for (; i < l; i++) {
     if (nl[i]._id === node._id) {
-      selectNode(findSameLevelChild(nl[i - 1], nodeSelector.prevDepthVisited, 0));
+      App.selectNode(findSameLevelChild(nl[i - 1], nodeSelector.prevDepthVisited, 0));
       break;
     }
   }
@@ -577,8 +578,7 @@ function findLogicalDown(node) {
   var l = nl.length;
   for (; i < l - 1; i++) {
     if (nl[i]._id === node._id) {
-      selectNode(findSameLevelChild(nl[i + 1], nodeSelector.prevDepthVisited, 1));
-      //selectNode(nl[i + 1]);
+      App.selectNode(findSameLevelChild(nl[i + 1], nodeSelector.prevDepthVisited, 1));
       return;
     }
   }
@@ -626,8 +626,7 @@ function paste(sourceNode, targetNode, dir, previousSibling) {
         previous = paste(d, newNode, dir, previous);
       }
     );
-  }
-  ;
+  };
   return newNode;
 }
 
@@ -658,7 +657,7 @@ Mousetrap.bind('left', function () {
       default:
         break;
     }
-    selectNode(node);
+    App.selectNode(node);
     if (node)
       nodeSelector.setPrevDepth(node.depth);
   }
@@ -689,7 +688,7 @@ Mousetrap.bind('right', function () {
       default:
         break;
     }
-    selectNode(node);
+    App.selectNode(node);
     if (node)
       nodeSelector.setPrevDepth(node.depth);
   }
@@ -829,7 +828,7 @@ Mousetrap.bind('mod+left', debounce(250, true,
         else
           selectedNode = paste(data, target, direction);
         retainCollapsed();
-        selectNode(selectedNode);
+        App.selectNode(selectedNode);
       }
 
       switch (dir) {
@@ -840,7 +839,7 @@ Mousetrap.bind('mod+left', debounce(250, true,
                 removeLocally(data._id);
               selectedNode = paste(data, parent, "left");
               retainCollapsed();
-              selectNode(selectedNode);
+              App.selectNode(selectedNode);
               return;
 
             }
@@ -903,7 +902,7 @@ Mousetrap.bind('mod+right', debounce(250, true,
         else
           selectedNode = paste(data, target, direction);
         retainCollapsed();
-        selectNode(selectedNode);
+        App.selectNode(selectedNode);
       }
 
       switch (dir) {
@@ -914,7 +913,7 @@ Mousetrap.bind('mod+right', debounce(250, true,
                 removeLocally(data._id);
               selectedNode = paste(data, parent, "right");
               retainCollapsed();
-              selectNode(selectedNode);
+              App.selectNode(selectedNode);
               return;
             }
             else {
@@ -985,11 +984,11 @@ Mousetrap.bind('mod+up', debounce(250, true,
         });
       }
       else {
-        selectNode(previousSibling);
+        App.selectNode(previousSibling);
         cut(function (err, data) {
           paste(previousSibling, selection.parent, selection.position, selection);
           retainCollapsed();
-          selectNode(selection);
+          App.selectNode(selection);
         });
         return;
       }
@@ -1000,7 +999,7 @@ Mousetrap.bind('mod+up', debounce(250, true,
     cut(function (err, data) {
       var selectedNode = paste(selection, selection.parent, selection.position, previousSibling);
       retainCollapsed();
-      selectNode(selectedNode);
+      App.selectNode(selectedNode);
     });
   }));
 
@@ -1041,7 +1040,7 @@ Mousetrap.bind('mod+down', debounce(250, true,
         });
 
         retainCollapsed();
-        selectNode(newNode);
+        App.selectNode(newNode);
       });
       return;
     }
@@ -1049,7 +1048,7 @@ Mousetrap.bind('mod+down', debounce(250, true,
     cut(function () {
       var selectedNode = paste(selection, selection.parent, selection.position, nextSibling);
       retainCollapsed();
-      selectNode(selectedNode);
+      App.selectNode(selectedNode);
     });
   }));
 
@@ -1074,7 +1073,7 @@ function JSONtoXML(XMLString, nodeObject) {
 }
 
 Mousetrap.bind("esc", function goToRootNode() {
-  select(d3.select('.node.level-0')[0][0]);
+  App.select(d3.select('.node.level-0')[0][0]);
   getChartInFocus();
 });
 
