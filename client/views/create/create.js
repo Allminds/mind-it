@@ -105,7 +105,7 @@ getDims = function () {
 };
 
 var deselectNode = function () {
-  d3.select(".selected").classed("selected", false);
+  d3.selectAll(".selected").classed("selected", false);
 };
 
 var select = function (node) {
