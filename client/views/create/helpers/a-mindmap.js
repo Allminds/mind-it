@@ -52,7 +52,7 @@ MindMap = function MindMap() {
 
           })
           .on('click', function (node) {
-            toggleCollapsedNode(node);
+            App.toggleCollapsedNode(node);
             return false;
           });
       },
