@@ -90,6 +90,15 @@ describe('App.ImportParser', function () {
     expect(id).not.toBeNull();
   });
 
+  it("Parser should not set errorMessage, and should not return null, if nodes do not contain TEXT attribute ", function () {
+    var xmlString = "<map><node><node ID=\"kzqFndthdwXF7bY8f\" POSITION=\"left\"></node><node ID=\"kzqFndthdwXF7bY8f\" POSITION=\"left\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"eight\"></node></node></node></map>";
+    spyOn(mindmapService, "createRootNode");
+    spyOn(mindmapService, "addNode");
+    var id = importParser.createMindmapFromXML(xmlString, mindmapService);
+    expect(importParser.errorMessage).toBe("");
+    expect(id).not.toBeNull();
+  });
+
   it("Parser should not set errorMessage and should return not null for a valid mindmap", function () {
     var xmlString = "<map><node ID=\"moFEj3x3nWGmd4mop\" TEXT=\"TempMM\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"six\" POSITION=\"left\"></node><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"seven\" POSITION=\"left\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"eight\"></node></node></node></map>";
     spyOn(mindmapService, "createRootNode");

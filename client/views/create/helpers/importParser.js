@@ -109,7 +109,7 @@ App.ImportParser = (function () {
                     }
                 }
 
-                var rootNodeText = (rootNode.getAttribute("TEXT") === undefined) ? "tempText" : rootNode.getAttribute("TEXT");
+                var rootNodeText = (rootNode.getAttribute("TEXT") === undefined) ? "" : rootNode.getAttribute("TEXT");
                 var mindMapId = "";
 
                 if(mindmapService) {
