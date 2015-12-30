@@ -7,8 +7,8 @@ App.ImportParser = (function () {
             if(retValue == false) {
                 return false;
             }
-                
-            
+
+
             for(i = 0; i < xmlNodes.length ;i++) {
                 var nodeName = xmlNodes[i].getAttribute("TEXT") ? xmlNodes[i].getAttribute("TEXT") : "";
                 var direction = xmlNodes[i].getAttribute("POSITION") ? xmlNodes[i].getAttribute("POSITION") : parentJSONNode["position"];
@@ -40,7 +40,7 @@ App.ImportParser = (function () {
             }
 
             return true;
-        }, 
+        },
 
         createNode = function (parent, newNodeName, dir, previousSibling) {
             var newNode = {
@@ -51,7 +51,7 @@ App.ImportParser = (function () {
 
             return newNode;
         },
-        
+
         createRootNode = function(rootId, rootName) {
             var rootNode = {
                 name: rootName, position: null,
@@ -92,14 +92,14 @@ App.ImportParser = (function () {
                 }else if( rootNode.length > 1) {
                     this.errorMessage = "Not a mindmap: Multiple root nodes found";
                     return null;
-                } 
+                }
 
                 rootNode = rootNode[0];
                 if( rootNode.nodeName != "node") {
                     this.errorMessage = "Not a mindmap: Non 'node' element found";
                     return null;
                 }
-                
+
                 var rootChildNodes = rootNode.childNodes;
 
                 for (i = 0; i < rootChildNodes.length ;i++) {
