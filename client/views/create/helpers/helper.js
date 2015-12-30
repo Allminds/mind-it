@@ -140,7 +140,7 @@ App.getDirection = function (data) {
 
 App.calculateDirection = function (parent) {
   var dir = App.getDirection(parent);
-  var selectedNode = App.map.selectedNodeData();
+  var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
   if (dir === 'root') {
     if (App.getDirection(selectedNode) === 'root') {
       var directionToggler = App.DirectionToggler.getInstance();
@@ -166,7 +166,7 @@ App.retainCollapsed = function  () {
   store.forEach(function (key) {
     try {
       if (App.isLocallyCollapsed(key)) {
-        var nodeData = App.map.getNodeData(key);
+        var nodeData = App.map.getNodeDataWithNodeId(key);
         App.collapse(nodeData, key);
       }
     }

@@ -1,16 +1,16 @@
 App.tracker = {
   added: function (id, fields) {
-    var newNode = App.map.getNodeData(id);
+    var newNode = App.map.getNodeDataWithNodeId(id);
     if (newNode)
       return;
     newNode = fields;
     newNode._id = id;
-    var parent = App.map.getNodeData(newNode.parent_ids[newNode.parent_ids.length - 1]);
+    var parent = App.map.getNodeDataWithNodeId(newNode.parent_ids[newNode.parent_ids.length - 1]);
     App.map.addNodeToUI(parent, newNode);
     App.nodeSelector.setPrevDepth(newNode.parent_ids.length);
   },
   changed: function (id, fields) {
-    var updatedNode = App.map.getNodeData(id);
+    var updatedNode = App.map.getNodeDataWithNodeId(id);
     if (!updatedNode) return;
 
     updatedNode.previous = fields.hasOwnProperty('previous') ? fields.previous : updatedNode.previous;
@@ -19,7 +19,7 @@ App.tracker = {
     if (fields.hasOwnProperty('name')) {
       updatedNode.name = fields.name;
       App.chart.update();
-      var selectedNode = App.map.selectedNodeData();
+      var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
       // redraw gray box
       if (selectedNode && selectedNode._id === id) {
         setTimeout(function () {
@@ -30,7 +30,7 @@ App.tracker = {
   },
   just_deleted: null,
   removed: function (id) {
-    var deletedNode = App.map.getNodeData(id);
+    var deletedNode = App.map.getNodeDataWithNodeId(id);
     if (!deletedNode) return;
 
     var alreadyRemoved = deletedNode.parent_ids.some(function (parent_id) {

@@ -125,7 +125,7 @@ Mousetrap.bind('mod+c', function () {
 });
 
 Mousetrap.bind('mod+v', function () {
-  var targetNode = App.map.selectedNodeData();
+  var targetNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
   var sourceNode = App.map.sourceNode;
   var dir = App.calculateDirection(targetNode);
   if (targetNode.isCollapsed)
@@ -145,7 +145,7 @@ var escapeOnNewNode = function(newNode, parentNode){
   };
 
 Mousetrap.bind('enter', function () {
-  var selectedNode = App.map.selectedNodeData();
+  var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
   if (!selectedNode) return false;
   var parent = selectedNode.parent || selectedNode,
     sibling = selectedNode.position ? selectedNode : null,
@@ -159,7 +159,7 @@ Mousetrap.bind('enter', function () {
 });
 
 Mousetrap.bind('tab', function () {
-  var selectedNode = App.map.selectedNodeData();
+  var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
   if (!selectedNode) return false;
   if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
     App.expand(selectedNode, selectedNode._id);
@@ -173,7 +173,7 @@ Mousetrap.bind('tab', function () {
 });
 
 Mousetrap.bind('del', function () {
-  var selectedNode = App.map.selectedNodeData();
+  var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
   if (!selectedNode) return;
   var dir = App.getDirection(selectedNode);
 
