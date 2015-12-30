@@ -115,7 +115,7 @@ describe('App.ImportParser', function () {
     expect(mindmapService.createRootNode.calls.count()).toEqual(1);
   });
 
-  it("mindmapService.addNode method should be called exactly 3 times on valid mindmap file", function () {
+  it("mindmapService.addNode method should be called exactly 3 times the valid mindmap file", function () {
     var xmlString = "<map><node ID=\"moFEj3x3nWGmd4mop\" TEXT=\"TempMM\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"six\" POSITION=\"left\"></node><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"seven\" POSITION=\"left\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"eight\"></node></node></node></map>";
     spyOn(mindmapService, "createRootNode");
     spyOn(mindmapService, "addNode");
