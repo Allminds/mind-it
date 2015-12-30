@@ -62,7 +62,7 @@ App.select = function (node) {
 };
 
 App.deselectNode = function () {
-  d3.select(".selected").classed("selected", false);
+  d3.selectAll(".selected").classed("selected", false);
 };
 
 App.selectNode = function (target) {

@@ -1,5 +1,13 @@
 var mindMapService = new MindMapService();
 
+var nodeSelector = {
+  prevDepthVisited: 0,
+
+  setPrevDepth: function (depth) {
+    this.prevDepthVisited = depth;
+  }
+};
+
 var update = function (data) {
   window.data = data;
   d3.select('#mindmap svg')

@@ -134,6 +134,16 @@ Mousetrap.bind('mod+v', function () {
   App.retainCollapsed();
 });
 
+var escapeOnNewNode = function(newNode, parentNode){
+    $(window).unbind().on("keyup", (function(e) {
+      if (e.keyCode === 27) {
+        Meteor.call('deleteNode', newNode._id, function () {
+          App.selectNode(parentNode);
+        });
+      }
+    }));
+  };
+
 Mousetrap.bind('enter', function () {
   var selectedNode = App.map.selectedNodeData();
   if (!selectedNode) return false;
@@ -144,6 +154,7 @@ Mousetrap.bind('enter', function () {
   App.deselectNode();
   var newNode = App.map.addNewNode(parent, "", dir, sibling);
   App.map.makeEditable(newNode._id);
+  escapeOnNewNode(newNode, selectedNode);
   return false;
 });
 
@@ -157,6 +168,7 @@ Mousetrap.bind('tab', function () {
   App.deselectNode();
   var newNode = App.map.addNewNode(selectedNode, "", dir);
   App.map.makeEditable(newNode._id);
+  escapeOnNewNode(newNode, selectedNode);
   return false;
 });
 
