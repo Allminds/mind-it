@@ -41,33 +41,22 @@ describe('create.helpers.map.js', function () {
     expect(newNode.parent_ids).toEqual([parent._id]);
   });
 
-  //it("should show an editor on making a node editable", function() {
-  //  var fixture = '<div id="mindmap"> ' +
-  //    '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
-  //    '<g transform="translate(14400,4650)"><g transform="translate(0,0)" class="node level-0 selected">' +
-  //    '<ellipse rx="125.859375" ry="28.834375" class="root-ellipse"></ellipse>' +
-  //    '<rect x="-95.859375" y="-18.5" width="191.71875" height="29.5"></rect>' +
-  //    '<text cols="60" rows="4" y="9">' +
-  //    '<tspan x="0" dy="0">New Mindmap</tspan>' +
-  //    '</text></g></g></svg> ' +
-  //    '</div>';
-  //  setFixtures(fixture);
-  //  $(".node.level-0")[0].__data__ = {};
-  //  $(".node.level-0")[0].__data__.id = "123";
-  //  App.showEditor = jasmine.createSpy().and.callFake(function() {
-  //    return false;
-  //  });
-  //  //var showEditor = jasmine.createSpy().and.callFake(function() {
-  //  //  return false;
-  //  //});
-  //
-  //  App.map.makeEditable = function() {
-  //    return $controller('MyCtrl', {
-  //      '$scope': scope,
-  //      App.showEditor : App.showEditor
-  //    });
-  //  };
-  //  App.map.makeEditable("123");
-  //  expect(App.showEditor).toHaveBeenCalled();
-  //})
+  it("should show an editor on making a node editable", function() {
+    var fixture = '<div id="mindmap"> ' +
+      '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
+      '<g transform="translate(14400,4650)"><g transform="translate(0,0)" class="node level-0 selected">' +
+      '<ellipse rx="125.859375" ry="28.834375" class="root-ellipse"></ellipse>' +
+      '<rect x="-95.859375" y="-18.5" width="191.71875" height="29.5"></rect>' +
+      '<text cols="60" rows="4" y="9">' +
+      '<tspan x="0" dy="0">New Mindmap</tspan>' +
+      '</text></g></g></svg> ' +
+      '</div>';
+    setFixtures(fixture);
+    $(".node.level-0")[0].__data__ = {};
+    $(".node.level-0")[0].__data__._id = 123;
+
+    spyOn(App, 'showEditor');
+    App.map.makeEditable(123);
+    expect(App.showEditor).toHaveBeenCalled();
+  })
 });
