@@ -1,8 +1,8 @@
 App.map = {};
 
 App.map.getDataOfNodeWithClassNamesString = function (classNames) {
-  var selectedNode = d3.select(classNames)[0][0];
-  return selectedNode ? selectedNode.__data__ : null;
+  var node = d3.select(classNames)[0][0];
+  return node ? node.__data__ : null;
 };
 
 App.map.addNodeToUI = function (parent, newNode) {
@@ -72,35 +72,6 @@ App.map.getNodeDataWithNodeId = function (nodeId) {
   return null;
 };
 
-clone = function (node) {
-  var clonedNode = {name: node.name, position: node.position};
-  clonedNode.children = (node.children || node._children || []).App.map(function (currentElem) {
-    return clone(currentElem);
-  });
-  if (node.depth == 0) {
-    clonedNode.left = clonedNode.children.filter(function (x) {
-      return x.position == 'left'
-    });
-    clonedNode.right = clonedNode.children.filter(function (x) {
-      return x.position == 'right'
-    });
-  }
-  return clonedNode;
-};
-
-function cloneObject(obj) {
-  if (null == obj || "object" != typeof obj) return obj;
-  var copy = obj.constructor();
-  for (var attr in obj) {
-    if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-  }
-  return copy;
-}
-
 App.map.storeSourceNode = function (sourceNode) {
-  App.map.sourceNode = cloneObject(sourceNode);
-};
-
-App.map.getSourceNode = function () {
-  return d3.select(".selected")[0][0].__data__;
+  App.map.sourceNode = App.cloneObject(sourceNode);
 };

@@ -58,5 +58,12 @@ describe('create.helpers.map.js', function () {
     spyOn(App, 'showEditor');
     App.map.makeEditable(123);
     expect(App.showEditor).toHaveBeenCalled();
-  })
+  });
+
+  it("should call cloneObject in storeSourceNode function call", function() {
+    spyOn(App, 'cloneObject');
+    App.map.storeSourceNode(null);
+
+    expect(App.cloneObject).toHaveBeenCalled();
+  });
 });
