@@ -7,7 +7,7 @@ var focusAfterDelete = function (selectedNode, removedNodeIndex) {
 };
 
 App.cutNode = function (asyncCallBack) {
-  var sourceNode = App.map.getSourceNode();
+  var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");
   if (App.getDirection(sourceNode) === 'root') {
     alert("The root node cannot be cut!");
     return;
@@ -120,7 +120,7 @@ Mousetrap.bind('mod+x', function () {
 });
 
 Mousetrap.bind('mod+c', function () {
-  var sourceNode = App.map.getSourceNode();
+  var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");
   App.map.storeSourceNode(sourceNode);
 });
 

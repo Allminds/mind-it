@@ -272,3 +272,29 @@ App.getChartInFocus = function () {
   $(window).scrollLeft(scrollWidth / 2);
   $(window).scrollTop(scrollHeight / 2);
 };
+
+App.clone = function (node) {
+  var clonedNode = {name: node.name, position: node.position};
+  clonedNode.children = (node.children || node._children || []).App.map(function (currentElem) {
+    return clone(currentElem);
+  });
+  if (node.depth == 0) {
+    clonedNode.left = clonedNode.children.filter(function (x) {
+      return x.position == 'left'
+    });
+    clonedNode.right = clonedNode.children.filter(function (x) {
+      return x.position == 'right'
+    });
+  }
+  return clonedNode;
+};
+
+
+App.cloneObject = function (obj) {
+  if (null == obj || "object" != typeof obj) return obj;
+  var copy = obj.constructor();
+  for (var attr in obj) {
+    if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+  }
+  return copy;
+};
