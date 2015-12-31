@@ -1,6 +1,8 @@
-var focusAfterDelete = function (selectedNode, removedNodeIndex) {
-  var parent = selectedNode.parent,
-    children = parent[selectedNode.position] || parent.children || [],
+App.eventBinding = {};
+
+App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
+  var parent = removedNode.parent,
+    children = parent[removedNode.position] || parent.children || [],
     nextNode = children[removedNodeIndex],
     previousNode = children[removedNodeIndex - 1];
   App.selectNode(nextNode || previousNode || parent);
@@ -15,7 +17,7 @@ App.cutNode = function (asyncCallBack) {
   App.map.storeSourceNode(sourceNode);
   var selectedNodeIndex = (sourceNode.parent.children || []).indexOf(sourceNode);
   Meteor.call('deleteNode', sourceNode._id, function (err, data) {
-    focusAfterDelete(sourceNode, selectedNodeIndex);
+    App.eventBinding.focusAfterDelete(sourceNode, selectedNodeIndex);
     if (asyncCallBack)
       asyncCallBack(err, data);
   });
@@ -45,7 +47,7 @@ App.pasteNode = function (sourceNode, targetNode, dir, previousSibling) {
   return newNode;
 };
 
-var findSameLevelChild = function (node, depth, downwards) {
+App.eventBinding.findSameLevelChild = function (node, depth, downwards) {
   var index;
   if (downwards)
     index = 0;
@@ -65,8 +67,8 @@ var findSameLevelChild = function (node, depth, downwards) {
   return node;
 };
 
-var isParentChildMatchesThisNode = function (siblings, position, node) {
-  return siblings[position]._id === node._id
+var isParentChildMatchesThisNode = function (siblings, index, node) {
+  return siblings[index]._id === node._id
 };
 
 var isGoingUpFromTopMostNode = function (siblings, node, downwards) {
@@ -77,7 +79,7 @@ var isGoingDownFromBottomLastNode = function (iterator, numberOfSiblings, downwa
   return downwards && iterator == numberOfSiblings;
 };
 
-var findLogicalVerticalMovement = function(node, downwards) {
+App.eventBinding.performLogicalVerticalMovement = function(node, downwards) {
   var direction = App.getDirection(node);
   if (direction === 'root') return;
 
@@ -94,15 +96,15 @@ var findLogicalVerticalMovement = function(node, downwards) {
   while(iterator < numberOfSiblings) {
     if (isParentChildMatchesThisNode(siblings, iterator, node)) {
       var iteratorDiff = downwards ? 1:-1;
-      App.selectNode(findSameLevelChild(siblings[iterator + iteratorDiff], App.nodeSelector.prevDepthVisited, downwards));
+      App.selectNode(App.eventBinding.findSameLevelChild(siblings[iterator + iteratorDiff], App.nodeSelector.prevDepthVisited, downwards));
       break;
     }
     iterator++;
   }
   if (isGoingDownFromBottomLastNode(iterator, numberOfSiblings, downwards))
-    findLogicalVerticalMovement(parent, downwards);
+    App.eventBinding.performLogicalVerticalMovement(parent, downwards);
   if(isGoingUpFromTopMostNode(siblings, node, downwards))
-    findLogicalVerticalMovement(parent, downwards);
+    App.eventBinding.performLogicalVerticalMovement(parent, downwards);
 };
 
 $(window).keyup(function (event) {
@@ -188,7 +190,7 @@ Mousetrap.bind('del', function () {
   }
   var selectedNodeIndex = children.indexOf(selectedNode);
   Meteor.call('deleteNode', selectedNode._id, function () {
-    focusAfterDelete(selectedNode, selectedNodeIndex);
+    App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
   });
 });
 
@@ -226,7 +228,7 @@ var bindEventAction = function (event, downwards, right) {
 };
 
 var caseRightLeftForUpDownEvent = function (data, downwards) {
-  findLogicalVerticalMovement(data, downwards);
+  App.eventBinding.performLogicalVerticalMovement(data, downwards);
 };
 
 Mousetrap.bind('up', function () {
