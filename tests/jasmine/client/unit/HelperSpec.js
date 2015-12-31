@@ -22,15 +22,60 @@ describe('helper.js tests', function() {
     });
 
     it("shoud return parent's position for a child of a non root node [App.getDirection]", function() {
-      var data = {parent: {
-        position:'left'
-      }
-                 };
+      var data = {
+        parent: {
+          position:'left'
+        }
+      };
+      
       var direction = App.getDirection(data);
       expect(direction).toBe(data.parent.position);
-    });    
-    
+    });
+
+    it("App.calculateDirection should toggle direction for root node [App.calculateDirection]", function() {
+
+      var parent = {_id:"parent"},
+          node = {_id:"node", position:"right", parent:parent};
+      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(parent);
+      var firstCallDirection = App.calculateDirection(parent);
+      var secondCallDirection = App.calculateDirection(parent);
+      expect(App.map.getDataOfNodeWithClassNamesString.calls.mostRecent().args[0]).toBe(".node.selected");
+      expect(firstCallDirection).not.toBe(secondCallDirection);
+    });
+
+    it("App.calculateDirection should return the direction of the calling node for non root node [App.calculateDirection]", function() {
+
+      var parent = {_id:"parent"},
+          node = {_id:"node", position:"right", parent:parent};
+      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+      var direction = App.calculateDirection(node);
+      expect(App.map.getDataOfNodeWithClassNamesString.calls.mostRecent().args[0]).toBe(".node.selected");
+      expect(direction).toBe(node.position);
+    });
+
+    it("App.calculateDirection should not toggle the direction  for non root node [App.calculateDirection]", function() {
+
+      var parent = {_id:"parent"},
+          node = {_id:"node", position:"right", parent:parent};
+      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+      var direction = App.calculateDirection(node);
+      var secondDirection = App.calculateDirection(node);
+      expect(App.map.getDataOfNodeWithClassNamesString.calls.mostRecent().args[0]).toBe(".node.selected");
+      expect(direction).toBe(secondDirection);
+    });
+
+    it("App.calculateDirection should return the direction of parent node for a child node call on calculateDirection [App.calculateDirection]", function() {
+
+      var root = {_id:"root"},
+          parent = {_id:"parent", position:"right", parent:root},
+          node = {_id:"node", parent:parent};
+      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+      var direction = App.calculateDirection(node.parent);
+      expect(App.map.getDataOfNodeWithClassNamesString.calls.mostRecent().args[0]).toBe(".node.selected");
+      expect(direction).toBe(parent.position);
+    }); 
   });
+  
   
   describe('App.deselectNode', function () {
     it("should deselect a previously selected node", function() {
@@ -82,7 +127,4 @@ describe('helper.js tests', function() {
       expect(node).toEqual(expectedNode); 
     });
   });
-
-  
-  
 });

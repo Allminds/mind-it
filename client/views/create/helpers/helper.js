@@ -52,12 +52,13 @@ App.select = function (node) {
   }
   App.deselectNode();
 
-  var directionToggler = App.DirectionToggler.getInstance();
-  if (!node.__data__.position && directionToggler.getCanToggle()) {
-    directionToggler.changeDirection();
-    directionToggler.setCanToggle(false);
-  }
+  // var directionToggler = App.DirectionToggler.getInstance(); 
+  // if (!node.__data__.position && directionToggler.getCanToggle()) {
+  //   directionToggler.changeDirection();
+  //   directionToggler.setCanToggle(false);
+  // }
   // Select current item
+  
   d3.select(node).classed("selected", true);
 };
 
@@ -145,6 +146,8 @@ App.calculateDirection = function (parent) {
     if (App.getDirection(selectedNode) === 'root') {
       var directionToggler = App.DirectionToggler.getInstance();
       directionToggler.setCanToggle(true);
+      directionToggler.changeDirection();
+      directionToggler.setCanToggle(false);
       dir = directionToggler.getCurrentDirection();
     }
     else
