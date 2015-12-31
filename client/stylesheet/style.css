@@ -25,6 +25,13 @@ h1 {
   font-size: 400%;
 }
 
+.btn-text{
+    font-family: 'Helvetica', cursive;
+    font-size: 25px;
+    padding: 10px 40px;
+    margin: 10px 10px 10px 10px;
+}
+
 .button-0 {
   padding: 10px 40px;
   font-family: 'Helvetica', cursive;
