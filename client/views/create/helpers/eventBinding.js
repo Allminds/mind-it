@@ -136,7 +136,7 @@ Mousetrap.bind('mod+v', function () {
   App.retainCollapsed();
 });
 
-var escapeOnNewNode = function(newNode, parentNode){
+App.eventBinding.escapeOnNewNode = function(newNode, parentNode){
     $(window).unbind().on("keyup", (function(e) {
       if (e.keyCode === 27) {
         Meteor.call('deleteNode', newNode._id, function () {
@@ -146,32 +146,42 @@ var escapeOnNewNode = function(newNode, parentNode){
     }));
   };
 
-Mousetrap.bind('enter', function () {
+App.eventBinding.afterNewNodeAddition = function (newNode, selectedNode) {
+  App.deselectNode();
+  App.map.makeEditable(newNode._id);
+  App.eventBinding.escapeOnNewNode(newNode, selectedNode);
+};
+
+App.eventBinding.newNodeAddAction = function (action) {
   var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
-  if (!selectedNode) return false;
+  if (selectedNode) {
+    var newNode = action(selectedNode);
+    App.eventBinding.afterNewNodeAddition(newNode, selectedNode);
+  }
+};
+
+App.eventBinding.enterAction = function (selectedNode) {
   var parent = selectedNode.parent || selectedNode,
     sibling = selectedNode.position ? selectedNode : null,
     dir = App.calculateDirection(parent);
 
-  App.deselectNode();
-  var newNode = App.map.addNewNode(parent, "", dir, sibling);
-  App.map.makeEditable(newNode._id);
-  escapeOnNewNode(newNode, selectedNode);
-  return false;
+  return App.map.addNewNode(parent, "", dir, sibling);
+};
+
+Mousetrap.bind('enter', function () {
+  App.eventBinding.newNodeAddAction(App.eventBinding.newNodeAddAction);
 });
 
-Mousetrap.bind('tab', function () {
-  var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
-  if (!selectedNode) return false;
+App.eventBinding.tabAction = function (selectedNode) {
   if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
     App.expand(selectedNode, selectedNode._id);
   }
   var dir = App.calculateDirection(selectedNode);
-  App.deselectNode();
-  var newNode = App.map.addNewNode(selectedNode, "", dir);
-  App.map.makeEditable(newNode._id);
-  escapeOnNewNode(newNode, selectedNode);
-  return false;
+  return App.map.addNewNode(selectedNode, "", dir);
+};
+
+Mousetrap.bind('tab', function () {
+  App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
 });
 
 Mousetrap.bind('del', function () {
@@ -194,7 +204,7 @@ Mousetrap.bind('del', function () {
   });
 });
 
-var beforeBindEventAction = function (event) {
+App.eventBinding.beforeBindEventAction = function (event) {
   (event.preventDefault || event.stop || event.stopPropagation || function () {
   }).call(event);
   return d3.select(".node.selected")[0][0];
@@ -219,7 +229,7 @@ var caseAction = function (downwards, data, right) {
 };
 
 var bindEventAction = function (event, downwards, right) {
-  var selection = beforeBindEventAction(event);
+  var selection = App.eventBinding.beforeBindEventAction(event);
   if (selection) {
     var data = selection.__data__;
     caseAction(downwards, data, right);
@@ -242,7 +252,7 @@ Mousetrap.bind('down', function () {
 
 Mousetrap.bind('left', function () {
   var event = arguments[0];
-  var selection = beforeBindEventAction(event);
+  var selection = App.eventBinding.beforeBindEventAction(event);
   if (selection) {
     var data = selection.__data__;
     var dir = App.getDirection(data), node;
