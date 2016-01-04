@@ -350,7 +350,15 @@ MindMap = function MindMap() {
 
         if (checkDrag === true) {
           var droppedOnElement = App.checkOverlap(point);
+
           var droppedOnData = d3.select(droppedOnElement).node() ? d3.select(droppedOnElement).node().__data__ : null;
+          var droppedOnId = droppedOnData ? droppedOnData._id : null;
+          var draggedElementsImediateParent = draggedNode.parent_ids[draggedNode.parent_ids.length -1];
+          if(droppedOnId === draggedElementsImediateParent) {
+            checkDrag = false;
+            return;
+          }
+
           if (droppedOnElement && ($.inArray(draggedNode._id, droppedOnData.parent_ids) < 0) && (draggedNode._id != droppedOnData._id)) {
             App.cutNode(function(){
               App.pasteNode(draggedNode, droppedOnData, App.calculateDirection(droppedOnData));
