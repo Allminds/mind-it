@@ -94,158 +94,7 @@ describe('create.helpers.eventBinding.js', function () {
       expect(App.selectNode).toHaveBeenCalledWith(first);
     });
   });
-
-  describe("New Node creation", function() {
-    var event, node, newNode, parent;
-    beforeEach(function() {
-      var fixture = '<div id="mindmap"> ' +
-        '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
-        '<g transform="translate(14400,4650)"><g transform="translate(0,0)" class="node level-0 selected">' +
-        '<ellipse rx="125.859375" ry="28.834375" class="root-ellipse"></ellipse>' +
-        '<rect x="-95.859375" y="-18.5" width="191.71875" height="29.5"></rect>' +
-        '<text cols="60" rows="4" y="9">' +
-        '<tspan x="0" dy="0">New Mindmap</tspan>' +
-        '</text></g></g></svg> ' +
-        '</div>';
-      setFixtures(fixture);
-
-      event = document.createEvent("Events");
-      event.initEvent("keydown", true, true);
-
-      node = {_id:"node", position:"right"};
-      parent = {_id:"parent", position:"right", children:[node]};
-      newNode = {_id:"newNode"};
-      node.parent = parent;
-    });
-
-    it("should add new sibling on enter keypress", function() {
-      event.keyCode = 13;
-      spyOn(App.eventBinding, "newNodeAddAction");
-
-      document.getElementsByClassName("node level-0")[0].dispatchEvent(event);
-
-      expect(App.eventBinding.newNodeAddAction).toHaveBeenCalled();
-    });
-
-    it("should call all the functions in enterAction function flow", function () {
-      spyOn(App, "calculateDirection").and.returnValue(parent.position);
-      spyOn(App.map, "addNewNode").and.returnValue(newNode);
-
-      App.eventBinding.enterAction(node);
-
-      expect(App.calculateDirection).toHaveBeenCalledWith(parent);
-      expect(App.map.addNewNode).toHaveBeenCalledWith(parent, "", parent.position, node);
-    });
-
-    it("should call all the functions in afterNewNodeAddition function flow ", function() {
-      spyOn(App, "deselectNode");
-      spyOn(App.map, "makeEditable");
-      spyOn(App.eventBinding, "escapeOnNewNode");
-
-      App.eventBinding.afterNewNodeAddition(newNode, node);
-
-      expect(App.deselectNode).toHaveBeenCalled();
-      expect(App.map.makeEditable).toHaveBeenCalled();
-      expect(App.eventBinding.escapeOnNewNode).toHaveBeenCalled();
-    });
-
-    it("should add new child on tab keypress", function() {
-      event.keyCode = 9;
-
-      spyOn(App.eventBinding, "newNodeAddAction");
-      document.getElementsByClassName("node level-0")[0].dispatchEvent(event);
-
-      expect(App.eventBinding.newNodeAddAction).toHaveBeenCalled();
-    });
-
-    it("should call all the functions in tabAction function flow", function () {
-      spyOn(App, "calculateDirection").and.returnValue(node.position);
-      spyOn(App.map, "addNewNode").and.returnValue(newNode);
-
-      App.eventBinding.tabAction(node);
-
-      expect(App.calculateDirection).toHaveBeenCalledWith(node);
-      expect(App.map.addNewNode).toHaveBeenCalledWith(node, "", node.position);
-    });
-
-    it("should call all the functions in newNodeAddAction function flow for enter action", function () {
-      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-      spyOn(App.eventBinding, "enterAction").and.returnValue(newNode);
-      spyOn(App.eventBinding, "afterNewNodeAddition");
-
-      App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
-
-      expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
-      expect(App.eventBinding.enterAction).toHaveBeenCalled();
-      expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
-    });
-
-    it("should call all the functions in newNodeAddAction function flow for tab action", function () {
-      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-      spyOn(App.eventBinding, "tabAction").and.returnValue(newNode);
-      spyOn(App.eventBinding, "afterNewNodeAddition");
-
-      App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
-
-      expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
-      expect(App.eventBinding.tabAction).toHaveBeenCalled();
-      expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
-    });
-  });
-
-  describe("Node deletion", function() {
-    var event, node, newNode, parent;
-    beforeEach(function() {
-      var fixture = '<div id="mindmap"> ' +
-        '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
-        '<g transform="translate(14400,4650)"><g transform="translate(0,0)" class="node level-0 selected">' +
-        '<ellipse rx="125.859375" ry="28.834375" class="root-ellipse"></ellipse>' +
-        '<rect x="-95.859375" y="-18.5" width="191.71875" height="29.5"></rect>' +
-        '<text cols="60" rows="4" y="9">' +
-        '<tspan x="0" dy="0">New Mindmap</tspan>' +
-        '</text></g></g></svg> ' +
-        '</div>';
-      setFixtures(fixture);
-
-      event = document.createEvent("Events");
-      event.initEvent("keydown", true, true);
-
-      node = {_id:"node", position:"right"};
-      parent = {_id:"parent", position:"right", children:[node]};
-      newNode = {_id:"newNode"};
-      node.parent = parent;
-
-      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-    });
-
-    it("should call all the functions in delete keypress", function () {
-      event.keyCode = 46;
-      spyOn(Meteor, "call");
-      spyOn(App,"getDirection").and.returnValue(node.position);
-
-      document.getElementsByClassName("node")[0].dispatchEvent(event);
-
-      expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
-    });
-
-    it("should display alert when delete key is pressed on root node", function () {
-      event.keyCode = 46;
-      spyOn(window, "alert");
-      spyOn(App,"getDirection").and.returnValue("root");
-
-      document.getElementsByClassName("node level-0")[0].dispatchEvent(event);
-
-      expect(window.alert).toHaveBeenCalled();
-    });
-
-    afterEach(function() {
-      expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
-      expect(App.getDirection).toHaveBeenCalledWith(node);
-    });
-
-  });
-
-  describe("Node deletion", function() {
+  describe("Node Add/Delete/Collapse events", function() {
     var event, node, newNode, parent;
     beforeEach(function () {
       var fixture = '<div id="mindmap"> ' +
@@ -267,19 +116,120 @@ describe('create.helpers.eventBinding.js', function () {
       newNode = {_id: "newNode"};
       node.parent = parent;
     });
+    describe("New Node creation", function () {
+      it("should add new sibling on enter keypress", function () {
+        event.keyCode = 13;
+        spyOn(App.eventBinding, "newNodeAddAction");
+
+        document.getElementsByClassName("node level-0")[0].dispatchEvent(event);
+
+        expect(App.eventBinding.newNodeAddAction).toHaveBeenCalled();
+      });
+
+      it("should call all the functions in enterAction function flow", function () {
+        spyOn(App, "calculateDirection").and.returnValue(parent.position);
+        spyOn(App.map, "addNewNode").and.returnValue(newNode);
+
+        App.eventBinding.enterAction(node);
+
+        expect(App.calculateDirection).toHaveBeenCalledWith(parent);
+        expect(App.map.addNewNode).toHaveBeenCalledWith(parent, "", parent.position, node);
+      });
+
+      it("should call all the functions in afterNewNodeAddition function flow ", function () {
+        spyOn(App, "deselectNode");
+        spyOn(App.map, "makeEditable");
+        spyOn(App.eventBinding, "escapeOnNewNode");
+
+        App.eventBinding.afterNewNodeAddition(newNode, node);
+
+        expect(App.deselectNode).toHaveBeenCalled();
+        expect(App.map.makeEditable).toHaveBeenCalled();
+        expect(App.eventBinding.escapeOnNewNode).toHaveBeenCalled();
+      });
+
+      it("should add new child on tab keypress", function () {
+        event.keyCode = 9;
+
+        spyOn(App.eventBinding, "newNodeAddAction");
+        document.getElementsByClassName("node level-0")[0].dispatchEvent(event);
+
+        expect(App.eventBinding.newNodeAddAction).toHaveBeenCalled();
+      });
+
+      it("should call all the functions in tabAction function flow", function () {
+        spyOn(App, "calculateDirection").and.returnValue(node.position);
+        spyOn(App.map, "addNewNode").and.returnValue(newNode);
+
+        App.eventBinding.tabAction(node);
+
+        expect(App.calculateDirection).toHaveBeenCalledWith(node);
+        expect(App.map.addNewNode).toHaveBeenCalledWith(node, "", node.position);
+      });
+
+      it("should call all the functions in newNodeAddAction function flow for enter action", function () {
+        spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+        spyOn(App.eventBinding, "enterAction").and.returnValue(newNode);
+        spyOn(App.eventBinding, "afterNewNodeAddition");
+
+        App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
+
+        expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
+        expect(App.eventBinding.enterAction).toHaveBeenCalled();
+        expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
+      });
+
+      it("should call all the functions in newNodeAddAction function flow for tab action", function () {
+        spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+        spyOn(App.eventBinding, "tabAction").and.returnValue(newNode);
+        spyOn(App.eventBinding, "afterNewNodeAddition");
+
+        App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
+
+        expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
+        expect(App.eventBinding.tabAction).toHaveBeenCalled();
+        expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
+      });
+    });
+
+    describe("Node deletion", function () {
+      beforeEach(function() {
+        spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+      });
+      
+      it("should call all the functions in delete keypress", function () {
+        event.keyCode = 46;
+        spyOn(Meteor, "call");
+        spyOn(App, "getDirection").and.returnValue(node.position);
+
+        document.getElementsByClassName("node")[0].dispatchEvent(event);
+
+        expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
+      });
+
+      it("should display alert when delete key is pressed on root node", function () {
+        event.keyCode = 46;
+        spyOn(window, "alert");
+        spyOn(App, "getDirection").and.returnValue("root");
+
+        document.getElementsByClassName("node level-0")[0].dispatchEvent(event);
+
+        expect(window.alert).toHaveBeenCalled();
+      });
+
+      afterEach(function () {
+        expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
+        expect(App.getDirection).toHaveBeenCalledWith(node);
+      });
+    });
 
     it("should toggle collapsing of nodes on space key press", function () {
       event.keyCode = 32;
-      spyOn(App.eventBinding,"beforeBindEventAction").and.returnValue(node);
+      spyOn(App.eventBinding, "beforeBindEventAction").and.returnValue(node);
       spyOn(App, "toggleCollapsedNode");
       document.getElementsByClassName("node")[0].dispatchEvent(event);
       expect(App.eventBinding.beforeBindEventAction).toHaveBeenCalled();
       expect(App.toggleCollapsedNode).toHaveBeenCalled();
-
     });
-
-
   });
-
-
 });
