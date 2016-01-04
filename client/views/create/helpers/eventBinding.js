@@ -188,37 +188,34 @@ Mousetrap.bind('tab', function () {
 
 Mousetrap.bind('del', function () {
   var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
-  if (!selectedNode) return;
-  var dir = App.getDirection(selectedNode);
+  if (selectedNode) {
+    var dir = App.getDirection(selectedNode);
 
-  if (dir === 'root') {
-    alert('Can\'t delete root');
-    return;
+    if (dir === 'root') {
+      alert('Can\'t delete root');
+      return;
+    }
+    var children = selectedNode.parent[dir] || selectedNode.parent.children || [];
+    var selectedNodeIndex = children.indexOf(selectedNode);
+    Meteor.call('deleteNode', selectedNode._id, function () {
+      App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
+    });
   }
-  var children = selectedNode.parent[dir] || selectedNode.parent.children;
-  if (!children) {
-    alert('Could not locate children');
-    return;
-  }
-  var selectedNodeIndex = children.indexOf(selectedNode);
-  Meteor.call('deleteNode', selectedNode._id, function () {
-    App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
-  });
 });
 
 App.eventBinding.beforeBindEventAction = function (event) {
   (event.preventDefault || event.stop || event.stopPropagation || function () {
   }).call(event);
-  return d3.select(".node.selected")[0][0];
+  return App.map.getDataOfNodeWithClassNamesString(".node.selected");
 };
 
-var afterBindEventAction = function (node) {
+App.eventBinding.afterBindEventAction = function (node) {
   App.selectNode(node);
   if (node)
     App.nodeSelector.setPrevDepth(node.depth);
 };
 
-var caseAction = function (downwards, data, right) {
+App.eventBinding.caseAction = function (downwards, data, right) {
   var dir = App.getDirection(data);
   switch (dir) {
     case('root'):
@@ -230,11 +227,10 @@ var caseAction = function (downwards, data, right) {
   }
 };
 
-var bindEventAction = function (event, downwards, right) {
-  var selection = App.eventBinding.beforeBindEventAction(event);
-  if (selection) {
-    var data = selection.__data__;
-    caseAction(downwards, data, right);
+App.eventBinding.bindEventAction = function (event, downwards, right) {
+  var selectedNodeData = App.eventBinding.beforeBindEventAction(event);
+  if (selectedNodeData) {
+    App.eventBinding.caseAction(downwards, selectedNodeData, right);
   }
   return false;
 };
@@ -244,11 +240,11 @@ var caseRightLeftForUpDownEvent = function (data, downwards) {
 };
 
 Mousetrap.bind('up', function () {
-  return bindEventAction(arguments[0], 0, caseRightLeftForUpDownEvent);
+  return App.eventBinding.bindEventAction(arguments[0], 0, caseRightLeftForUpDownEvent);
 });
 
 Mousetrap.bind('down', function () {
-  return bindEventAction(arguments[0], 1, caseRightLeftForUpDownEvent);
+  return App.eventBinding.bindEventAction(arguments[0], 1, caseRightLeftForUpDownEvent);
 });
 
 
@@ -274,7 +270,7 @@ Mousetrap.bind('left', function () {
       default:
         break;
     }
-    afterBindEventAction(node);
+    App.eventBinding.afterBindEventAction(node);
   }
 });
 
@@ -303,7 +299,7 @@ Mousetrap.bind('right', function () {
       default:
         break;
     }
-    afterBindEventAction(node);
+    App.eventBinding.afterBindEventAction(node);
   }
 });
 
