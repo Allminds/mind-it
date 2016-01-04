@@ -206,7 +206,7 @@ Mousetrap.bind('del', function () {
 App.eventBinding.beforeBindEventAction = function (event) {
   (event.preventDefault || event.stop || event.stopPropagation || function () {
   }).call(event);
-  return App.map.getDataOfNodeWithClassNamesString(".node.selected");
+  return d3.select(".node.selected")[0][0];
 };
 
 App.eventBinding.afterBindEventAction = function (node) {
@@ -228,7 +228,7 @@ App.eventBinding.caseAction = function (downwards, data, right) {
 };
 
 App.eventBinding.bindEventAction = function (event, downwards, right) {
-  var selectedNodeData = App.eventBinding.beforeBindEventAction(event);
+  var selectedNodeData = App.eventBinding.beforeBindEventAction(event).__data__;
   if (selectedNodeData) {
     App.eventBinding.caseAction(downwards, selectedNodeData, right);
   }
@@ -246,7 +246,6 @@ Mousetrap.bind('up', function () {
 Mousetrap.bind('down', function () {
   return App.eventBinding.bindEventAction(arguments[0], 1, caseRightLeftForUpDownEvent);
 });
-
 
 Mousetrap.bind('left', function () {
   var event = arguments[0];
@@ -304,11 +303,8 @@ Mousetrap.bind('right', function () {
 });
 
 Mousetrap.bind('space', function () {
-  var event = arguments[0];
-  (event.preventDefault || event.stop || event.stopPropagation || function () {
-  }).call(event);
-  var selected = d3.select(".selected")[0][0].__data__;
-  App.toggleCollapsedNode(selected);
+  var selectedNodeData = App.eventBinding.beforeBindEventAction(arguments[0]).__data__;
+  App.toggleCollapsedNode(selectedNodeData);
 });
 
 Mousetrap.bind('mod+e', function createXmlFile() {
