@@ -36,7 +36,7 @@ App.chart = MindMap()
           if(newClickTime - lastClick < 300) {
               App.showEditor(this);
           }
-          App.nodeSelector.setPrevDepth(this.__data__.depth);
+          App.nodeSelector.setPrevDepth(this);
           App.select(this);
           lastClick = newClickTime;
       }

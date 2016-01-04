@@ -284,7 +284,7 @@ MindMap = function MindMap() {
       var nodeEnter = node.enter().append("svg:g")
         .attr("transform", translate);
 
-      nodeEnter.on("click", handleClick).on("dblclick", handleDblClick);
+//      nodeEnter.on("click", handleClick).on("dblclick", handleDblClick);
 
       var dragBehaviour = d3.behavior.drag()
         .on("dragstart", dragstart)
@@ -292,7 +292,7 @@ MindMap = function MindMap() {
         .on("dragend", dragend);
 
       //TODO : text box for editing does not appear when you uncomment the below line.
-      //nodeEnter.call(dragBehaviour);
+      nodeEnter.call(dragBehaviour);
 
 //TODO : handling double click, parent is same as dropped on then don't cut
       var targetNode = nodeEnter,
@@ -300,7 +300,7 @@ MindMap = function MindMap() {
         checkDrag = false;
 
       function dragstart() {
-        handleClick.call(this);
+        App.select(this);
         var currentNodeRect = d3.select(this).select('rect');
         var currentNodeText = d3.select(this).select('text');
         draggedNode = d3.select(this).node().__data__;
@@ -339,10 +339,10 @@ MindMap = function MindMap() {
 
       function dragend() {
         if (checkDrag === false) {
-          handleClick.call(d3.select(targetNode[0][0]));
           if(d3.select(targetNode[0][0]).attr('class').indexOf('level-0') == -1){
              d3.select(targetNode[0][0]).remove();
           }
+          handleClick.call(this);
           return;
         }
         var point = d3.select(targetNode[0][0]).attr('transform').replace('translate(', '').replace(')', '').split(',');
