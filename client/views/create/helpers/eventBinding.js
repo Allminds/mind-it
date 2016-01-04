@@ -169,7 +169,8 @@ App.eventBinding.enterAction = function (selectedNode) {
 };
 
 Mousetrap.bind('enter', function () {
-  App.eventBinding.newNodeAddAction(App.eventBinding.newNodeAddAction);
+  App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
+  return false;
 });
 
 App.eventBinding.tabAction = function (selectedNode) {
@@ -182,6 +183,7 @@ App.eventBinding.tabAction = function (selectedNode) {
 
 Mousetrap.bind('tab', function () {
   App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
+  return false;
 });
 
 Mousetrap.bind('del', function () {
