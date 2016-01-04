@@ -50,15 +50,8 @@ App.select = function (node) {
   if(node === d3.select(".selected")[0][0]){
     return;
   }
-  App.deselectNode();
-
-  // var directionToggler = App.DirectionToggler.getInstance(); 
-  // if (!node.__data__.position && directionToggler.getCanToggle()) {
-  //   directionToggler.changeDirection();
-  //   directionToggler.setCanToggle(false);
-  // }
-  // Select current item
   
+  App.deselectNode();
   d3.select(node).classed("selected", true);
 };
 
