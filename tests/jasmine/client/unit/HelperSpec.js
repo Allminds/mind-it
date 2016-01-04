@@ -124,7 +124,7 @@ describe('helper.js tests', function() {
       App.select(node);
       var actualNode = d3.selectAll(".selected")[0][0];
       var expectedNode = d3.selectAll(".level-0")[0][0];
-      expect(node).toEqual(expectedNode); 
+      expect(actualNode).toEqual(expectedNode);
     });
   });
 });
