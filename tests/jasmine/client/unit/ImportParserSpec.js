@@ -2,7 +2,7 @@ describe('App.ImportParser', function () {
   var importParser;
   var mindmapService;
   beforeEach(function () {
-    importParser = App.ImportParser.getInstance();
+    importParser = App.ImportParser;
     mindmapService = new MindMapService();
   });
 
