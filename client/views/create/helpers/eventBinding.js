@@ -47,66 +47,6 @@ App.pasteNode = function (sourceNode, targetNode, dir, previousSibling) {
   return newNode;
 };
 
-App.eventBinding.findSameLevelChild = function (node, depth, downwards) {
-  var index;
-  if (downwards)
-    index = 0;
-  if (!node.children)
-    return node;
-  if (node.depth == depth) {
-    return node;
-  }
-  while (node.children) {
-    if (!downwards)
-      index = node.children.length - 1;
-    node = node.children[index];
-    if (node.depth == depth) {
-      return node;
-    }
-  }
-  return node;
-};
-
-var isParentChildMatchesThisNode = function (siblings, index, node) {
-  return siblings[index]._id === node._id
-};
-
-var isGoingUpFromTopMostNode = function (siblings, node, downwards) {
-  return !downwards && isParentChildMatchesThisNode(siblings, 0, node);
-};
-
-var isGoingDownFromBottomLastNode = function (iterator, numberOfSiblings, downwards) {
-  return downwards && iterator == numberOfSiblings;
-};
-
-App.eventBinding.performLogicalVerticalMovement = function(node, downwards) {
-  var direction = App.getDirection(node);
-  if (direction === 'root') return;
-
-  var parent = node.parent,
-    siblings = parent.children || [],
-    iterator = downwards ? 0:1;
-
-  if (parent[direction]) {
-    siblings = parent[direction];
-  }
-
-  var numberOfSiblings = downwards ? siblings.length-1 : siblings.length;
-
-  while(iterator < numberOfSiblings) {
-    if (isParentChildMatchesThisNode(siblings, iterator, node)) {
-      var iteratorDiff = downwards ? 1:-1;
-      App.selectNode(App.eventBinding.findSameLevelChild(siblings[iterator + iteratorDiff], App.nodeSelector.prevDepthVisited, downwards));
-      break;
-    }
-    iterator++;
-  }
-  if (isGoingDownFromBottomLastNode(iterator, numberOfSiblings, downwards))
-    App.eventBinding.performLogicalVerticalMovement(parent, downwards);
-  if(isGoingUpFromTopMostNode(siblings, node, downwards))
-    App.eventBinding.performLogicalVerticalMovement(parent, downwards);
-};
-
 $(window).keyup(function (event) {
   if (event.keyCode == 113) { // F2
     (event.preventDefault || event.stop || event.stopPropagation || function () {
@@ -203,10 +143,78 @@ Mousetrap.bind('del', function () {
   }
 });
 
+App.eventBinding.KeyPressed = {
+  UP : "up",
+  DOWN : "down",
+  LEFT : "left",
+  RIGHT : "right"
+};
+Object.freeze(App.eventBinding.KeyPressed);
+
+App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
+  var index;
+  if (keyPressed === App.eventBinding.KeyPressed.DOWN)
+    index = 0;
+  if (!node.children)
+    return node;
+  if (node.depth == depth) {
+    return node;
+  }
+  while (node.children) {
+    if (!(keyPressed === App.eventBinding.KeyPressed.DOWN))
+      index = node.children.length - 1;
+    node = node.children[index];
+    if (node.depth == depth) {
+      return node;
+    }
+  }
+  return node;
+};
+
+var isParentChildMatchesThisNode = function (siblings, index, node) {
+  return siblings[index]._id === node._id
+};
+
+var isGoingUpFromTopMostNode = function (siblings, node, keyPressed) {
+  return !(keyPressed === App.eventBinding.KeyPressed.DOWN) && isParentChildMatchesThisNode(siblings, 0, node);
+};
+
+var isGoingDownFromBottomLastNode = function (iterator, numberOfSiblings, keyPressed) {
+  return (keyPressed === App.eventBinding.KeyPressed.DOWN) && (iterator == numberOfSiblings);
+};
+
+App.eventBinding.performLogicalVerticalMovement = function(node, keyPressed) {
+  var direction = App.getDirection(node);
+  if (direction === 'root') return;
+
+  var parent = node.parent,
+    siblings = parent.children || [],
+    iterator = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? 0:1;
+
+  if (parent[direction]) {
+    siblings = parent[direction];
+  }
+
+  var numberOfSiblings = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? siblings.length-1 : siblings.length;
+
+    while(iterator < numberOfSiblings) {
+    if (isParentChildMatchesThisNode(siblings, iterator, node)) {
+      var iteratorDiff = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? 1:-1;
+      App.selectNode(App.eventBinding.findSameLevelChild(siblings[iterator + iteratorDiff], App.nodeSelector.prevDepthVisited, keyPressed));
+      break;
+    }
+    iterator++;
+  }
+  if(isGoingDownFromBottomLastNode(iterator, numberOfSiblings, keyPressed))
+    App.eventBinding.performLogicalVerticalMovement(parent, keyPressed);
+  if(isGoingUpFromTopMostNode(siblings, node, keyPressed))
+    App.eventBinding.performLogicalVerticalMovement(parent, keyPressed);
+};
+
 App.eventBinding.beforeBindEventAction = function (event) {
   (event.preventDefault || event.stop || event.stopPropagation || function () {
   }).call(event);
-  return d3.select(".node.selected")[0][0];
+  return d3.select(".node.selected")[0][0].__data__;
 };
 
 App.eventBinding.afterBindEventAction = function (node) {
@@ -215,95 +223,91 @@ App.eventBinding.afterBindEventAction = function (node) {
     App.nodeSelector.setPrevDepth(node.depth);
 };
 
-App.eventBinding.caseAction = function (downwards, data, right) {
+App.eventBinding.caseAction = function (data, left, right, root, keyPressed) {
   var dir = App.getDirection(data);
   switch (dir) {
     case('root'):
+      root(data, keyPressed);
       break;
     case('left'):
+      left(data, keyPressed);
+      break;
     case('right'):
-      right(data, downwards);
+      right(data, keyPressed);
       break;
   }
 };
 
-App.eventBinding.bindEventAction = function (event, downwards, right) {
-  var selectedNodeData = App.eventBinding.beforeBindEventAction(event).__data__;
+App.eventBinding.bindEventAction = function (event, left, right, root, keyPressed) {
+  var selectedNodeData = App.eventBinding.beforeBindEventAction(event);
   if (selectedNodeData) {
-    App.eventBinding.caseAction(downwards, selectedNodeData, right);
+    App.eventBinding.caseAction(selectedNodeData, left, right, root, keyPressed);
   }
   return false;
 };
 
-var caseRightLeftForUpDownEvent = function (data, downwards) {
-  App.eventBinding.performLogicalVerticalMovement(data, downwards);
-};
-
 Mousetrap.bind('up', function () {
-  return App.eventBinding.bindEventAction(arguments[0], 0, caseRightLeftForUpDownEvent);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.eventBinding.KeyPressed.UP);
 });
 
 Mousetrap.bind('down', function () {
-  return App.eventBinding.bindEventAction(arguments[0], 1, caseRightLeftForUpDownEvent);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.eventBinding.KeyPressed.DOWN);
 });
 
-Mousetrap.bind('left', function () {
-  var event = arguments[0];
-  var selection = App.eventBinding.beforeBindEventAction(event);
-  if (selection) {
-    var data = selection.__data__;
-    var dir = App.getDirection(data), node;
-    switch (dir) {
-      case('right'):
-      case('root'):
-        node = data.parent || data.left[0];
-        break;
-      case('left'):
-        if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
-          App.expand(data, data._id);
-        }
-        else {
-          node = (data.children || [])[0];
-        }
-        break;
-      default:
-        break;
-    }
-    App.eventBinding.afterBindEventAction(node);
+App.eventBinding.handleCollapsing = function (data) {
+  var node;
+  if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
+    App.expand(data, data._id);
   }
+  else {
+    node = (data.children || [])[0];
+  }
+  App.eventBinding.afterBindEventAction(node);
+};
+
+App.eventBinding.getParentForEventBinding = function (data, dir) {
+  var node = data.parent || data[dir][0];
+  App.eventBinding.afterBindEventAction(node);
+};
+
+Mousetrap.bind('left', function () {
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.eventBinding.KeyPressed.LEFT);
 });
 
 Mousetrap.bind('right', function () {
-  var event = arguments[0];
-  (event.preventDefault || event.stop || event.stopPropagation || function () {
-  }).call(event);
-  // right key pressed
-  var selection = d3.select(".node.selected")[0][0];
-  if (selection) {
-    var data = selection.__data__;
-    var dir = App.getDirection(data), node;
-    switch (dir) {
-      case('left'):
-      case('root'):
-        node = data.parent || data.right[0];
-        break;
-      case('right'):
-        if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
-          App.expand(data, data._id);
-        }
-        else {
-          node = (data.children || [])[0];
-        }
-        break;
-      default:
-        break;
-    }
-    App.eventBinding.afterBindEventAction(node);
-  }
+  //var event = arguments[0];
+  //(event.preventDefault || event.stop || event.stopPropagation || function () {
+  //}).call(event);
+  //// right key pressed
+  //var selection = d3.select(".node.selected")[0][0];
+  //if (selection) {
+  //  var data = selection.__data__;
+  //  var dir = App.getDirection(data), node;
+  //  switch (dir) {
+  //    case('left'):
+  //    case('root'):
+  //      node = data.parent || data.right[0];
+  //      break;
+  //    case('right'):
+  //      if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
+  //        App.expand(data, data._id);
+  //      }
+  //      else {
+  //        node = (data.children || [])[0];
+  //      }
+  //      break;
+  //    default:
+  //      break;
+  //  }
+  //  App.eventBinding.afterBindEventAction(node);
+  //}
+
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.KeyPressed.RIGHT);
+
 });
 
 Mousetrap.bind('space', function () {
-  var selectedNodeData = App.eventBinding.beforeBindEventAction(arguments[0]).__data__;
+  var selectedNodeData = App.eventBinding.beforeBindEventAction(arguments[0]);
   App.toggleCollapsedNode(selectedNodeData);
 });
 
