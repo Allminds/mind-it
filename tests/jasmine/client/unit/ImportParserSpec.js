@@ -138,4 +138,21 @@ describe('App.ImportParser', function () {
     expect(mindmapService.addNode.calls.count()).toEqual(1);
 
   });
+
+  it("should return true for when xml has only the supported tags", function() {
+    var xmlString = '<map version="1.0.1"><node COLOR="#000000" CREATED="1451903277484" ID="ID_926874691" MODIFIED="1451907657022" TEXT="New Mindmap"><font NAME="SansSerif" SIZE="20"/><hook NAME="accessories/plugins/AutomaticLayout.properties"/><node COLOR="#0033ff" CREATED="1451903278869" ID="ID_1801074106" MODIFIED="1451907657022" POSITION="right" TEXT="A"><edge STYLE="sharp_bezier" WIDTH="8"/><font NAME="SansSerif" SIZE="18"/></node></node></map>';
+    var xmlDoc = App.ImportParser.prepareXMLDoc(xmlString).documentElement.childNodes;
+
+    var isValid = App.ImportParser.areTagsSupported(xmlDoc);
+    expect(isValid).toBe(true);
+  });
+
+  it("should return false some xml includes tags that are not supported", function() {
+    var xmlString = '<map version="1.0.1"><invalid-tag></invalid-tag></map>';
+    var xmlDoc = App.ImportParser.prepareXMLDoc(xmlString).documentElement.childNodes;
+
+    var isValid = App.ImportParser.areTagsSupported(xmlDoc);
+    expect(isValid).toBe(false);
+  });
+
 });

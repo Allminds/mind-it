@@ -1,23 +1,29 @@
 App.ImportParser = {};
 
-App.ImportParser.validateNodesForNonNodeElement = function(xmlNodes) {
-    for(var i = 0; i < xmlNodes.length; i++) {
-        if(App.ImportParser.tagsSupported.indexOf(xmlNodes[i].nodeName) == -1) {
-            return false;
-        }
-    }
-    return true;
-};
-
 App.ImportParser.tagsSupported = ["font", "edge", "hook", "node"];
-App.ImportParser.instance = undefined;
 App.ImportParser.errorMessage = "";
 App.ImportParser.warningFlag = false;
 
+var isValidTag = function(nodeName) {
+    return App.ImportParser.tagsSupported.indexOf(nodeName) != -1;
+};
+
+var hasProssessableNodes = function(nodes) {
+    var childNodeNames = [];
+    for(var index=0; index < nodes.length; index++) {
+        childNodeNames.push(nodes[index].nodeName);
+    }
+    return childNodeNames.every(isValidTag);
+};
+
+App.ImportParser.areTagsSupported = function(xmlNodes) {
+    var nodeNames = jQuery.map(xmlNodes, function(node) { return node.nodeName });
+    return nodeNames.every(isValidTag);
+};
 
 App.ImportParser.populateMindMapFromXML = function(xmlNodes, parentJSONNode, mindmapService){
     var previousSibling = null;
-    var retValue = App.ImportParser.validateNodesForNonNodeElement(xmlNodes);
+    var retValue = App.ImportParser.areTagsSupported(xmlNodes);
     if(retValue == false) {
         return false;
     }
@@ -36,11 +42,7 @@ App.ImportParser.populateMindMapFromXML = function(xmlNodes, parentJSONNode, min
 
             previousSibling = newNode;
             var childNodes = xmlNodes[i].childNodes;
-            var childNodeNames = [];
-            for(var index=0; index < childNodes.length; index++) {
-                childNodeNames.push(childNodes[index].nodeName);
-            }
-            if(childNodeNames.indexOf("node") != -1) {
+            if(hasProssessableNodes(childNodes)) {
                 if(App.ImportParser.populateMindMapFromXML(childNodes, newNode, mindmapService) == false) {
                     return false;
                 }
