@@ -46,7 +46,7 @@ Template.home.onRendered(function () {
     reader.onload = function() {
 
         var xmltext = this.result;
-        var importParser = App.ImportParser.getInstance();
+        var importParser = App.ImportParser;
         var mindMapId = importParser.createMindmapFromXML(xmltext, mindMapService),
         link = '/create/' + mindMapId;
         if(mindMapId) {
