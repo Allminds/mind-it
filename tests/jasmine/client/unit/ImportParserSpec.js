@@ -112,7 +112,7 @@ describe('App.ImportParser', function () {
     var xmlString = "<map><node ID=\"moFEj3x3nWGmd4mop\" TEXT=\"TempMM\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"six\" POSITION=\"left\"></node><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"seven\" POSITION=\"left\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"eight\"></node></node></node></map>";
     spyOn(mindmapService, "createRootNode");
     spyOn(mindmapService, "addNode");
-    var id = importParser.createMindmapFromXML(xmlString, mindmapService);
+    importParser.createMindmapFromXML(xmlString, mindmapService);
     expect(importParser.warningFlag).toBe(false);
   });
 
@@ -120,15 +120,22 @@ describe('App.ImportParser', function () {
     var xmlString = "<map><node ID=\"moFEj3x3nWGmd4mop\" TEXT=\"TempMM\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"six\" POSITION=\"left\"></node><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"seven\" POSITION=\"left\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"eight\"></node></node></node></map>";
     spyOn(mindmapService, "createRootNode");
     spyOn(mindmapService, "addNode");
-    var id = importParser.createMindmapFromXML(xmlString, mindmapService);
+    importParser.createMindmapFromXML(xmlString, mindmapService);
     expect(mindmapService.createRootNode.calls.count()).toEqual(1);
   });
 
   it("mindmapService.addNode method should be called exactly 3 times the valid mindmap file", function () {
     var xmlString = "<map><node ID=\"moFEj3x3nWGmd4mop\" TEXT=\"TempMM\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"six\" POSITION=\"left\"></node><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"seven\" POSITION=\"left\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"eight\"></node></node></node></map>";
-    spyOn(mindmapService, "createRootNode");
     spyOn(mindmapService, "addNode");
-    var id = importParser.createMindmapFromXML(xmlString, mindmapService);
+    importParser.createMindmapFromXML(xmlString, mindmapService);
     expect(mindmapService.addNode.calls.count()).toEqual(3);
+  });
+
+  it("should ignore the xml hook, font, edge tag while parsing", function() {
+    var xmlString = '<map version="1.0.1"><node COLOR="#000000" CREATED="1451903277484" ID="ID_926874691" MODIFIED="1451907657022" TEXT="New Mindmap"><font NAME="SansSerif" SIZE="20"/><hook NAME="accessories/plugins/AutomaticLayout.properties"/><node COLOR="#0033ff" CREATED="1451903278869" ID="ID_1801074106" MODIFIED="1451907657022" POSITION="right" TEXT="A"><edge STYLE="sharp_bezier" WIDTH="8"/><font NAME="SansSerif" SIZE="18"/></node></node></map>';
+    spyOn(mindmapService, "addNode");
+    importParser.createMindmapFromXML(xmlString, mindmapService);
+    expect(mindmapService.addNode.calls.count()).toEqual(1);
+
   });
 });
