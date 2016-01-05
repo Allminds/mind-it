@@ -78,10 +78,13 @@ Mousetrap.bind('mod+v', function () {
 
 App.eventBinding.escapeOnNewNode = function(newNode, parentNode){
     $(window).unbind().on("keyup", (function(e) {
-      if (e.keyCode === 27) {
-        Meteor.call('deleteNode', newNode._id, function () {
-          App.selectNode(parentNode);
-        });
+      var selectedNodeId = d3.select('.selected').node() ? d3.select('.selected').node().__data__._id : null;
+      if((selectedNodeId === null)){
+        if (e.keyCode === 27) {
+          Meteor.call('deleteNode', newNode._id, function () {
+            App.selectNode(parentNode);
+          });
+        }
       }
     }));
   };
@@ -197,7 +200,7 @@ App.eventBinding.performLogicalVerticalMovement = function(node, keyPressed) {
 
   var numberOfSiblings = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? siblings.length-1 : siblings.length;
 
-    while(iterator < numberOfSiblings) {
+  while(iterator < numberOfSiblings) {
     if (isParentChildMatchesThisNode(siblings, iterator, node)) {
       var iteratorDiff = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? 1:-1;
       App.selectNode(App.eventBinding.findSameLevelChild(siblings[iterator + iteratorDiff], App.nodeSelector.prevDepthVisited, keyPressed));
@@ -275,35 +278,7 @@ Mousetrap.bind('left', function () {
 });
 
 Mousetrap.bind('right', function () {
-  //var event = arguments[0];
-  //(event.preventDefault || event.stop || event.stopPropagation || function () {
-  //}).call(event);
-  //// right key pressed
-  //var selection = d3.select(".node.selected")[0][0];
-  //if (selection) {
-  //  var data = selection.__data__;
-  //  var dir = App.getDirection(data), node;
-  //  switch (dir) {
-  //    case('left'):
-  //    case('root'):
-  //      node = data.parent || data.right[0];
-  //      break;
-  //    case('right'):
-  //      if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
-  //        App.expand(data, data._id);
-  //      }
-  //      else {
-  //        node = (data.children || [])[0];
-  //      }
-  //      break;
-  //    default:
-  //      break;
-  //  }
-  //  App.eventBinding.afterBindEventAction(node);
-  //}
-
   return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.KeyPressed.RIGHT);
-
 });
 
 Mousetrap.bind('space', function () {
