@@ -155,4 +155,12 @@ describe('App.ImportParser', function () {
     expect(isValid).toBe(false);
   });
 
+  it("should ignore top level comments", function() {
+    var xmlString = '<map version="1.0.1"><!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net --><node COLOR="#000000" CREATED="1451994521804" ID="ID_164690743" MODIFIED="1451994563649" TEXT="New Mindmap"></node></map>'
+    spyOn(mindmapService, "createRootNode");
+    importParser.createMindmapFromXML(xmlString, mindmapService);
+    expect(mindmapService.createRootNode.calls.count()).toEqual(1);
+    expect(importParser.errorMessage).toBe("");
+  })
+
 });

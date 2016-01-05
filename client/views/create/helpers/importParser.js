@@ -8,7 +8,7 @@ var isValidTag = function(nodeName) {
     return App.ImportParser.tagsSupported.indexOf(nodeName) != -1;
 };
 
-var hasProssessableNodes = function(nodes) {
+var hasProcessableNodes = function(nodes) {
     var childNodeNames = [];
     for(var index=0; index < nodes.length; index++) {
         childNodeNames.push(nodes[index].nodeName);
@@ -42,7 +42,7 @@ App.ImportParser.populateMindMapFromXML = function(xmlNodes, parentJSONNode, min
 
             previousSibling = newNode;
             var childNodes = xmlNodes[i].childNodes;
-            if(hasProssessableNodes(childNodes)) {
+            if(hasProcessableNodes(childNodes)) {
                 if(App.ImportParser.populateMindMapFromXML(childNodes, newNode, mindmapService) == false) {
                     return false;
                 }
@@ -76,34 +76,38 @@ App.ImportParser.prepareXMLDoc = function(xmlString) {
     return xmlDoc;
 };
 
+var ignoreComments = function(nodes) {
+    return $(nodes).filter(function(index, element) { return element.nodeName != "#comment"});
+};
+
 App.ImportParser.createMindmapFromXML = function(xmlString, mindmapService) {
     App.ImportParser.errorMessage = "";
     App.ImportParser.warningFlag = false;
     var xmlDoc = App.ImportParser.prepareXMLDoc(xmlString);
     var documentNode = xmlDoc.documentElement;
-    var rootNode = documentNode.childNodes;
+    var level0Nodes = ignoreComments(documentNode.childNodes);
 
-    if(rootNode.length > 0 && rootNode[0].nodeName == "parsererror") {
+    if(level0Nodes.length > 0 && level0Nodes[0].nodeName == "parsererror") {
         App.ImportParser.errorMessage = "Invalid XML format";
         return null;
     } else if(documentNode.nodeName != "map") {
         App.ImportParser.errorMessage = "Not a mindmap: Invalid mindmap file";
         return null;
-    } else if( rootNode.length <= 0) {
+    } else if( level0Nodes.length <= 0) {
         App.ImportParser.errorMessage = "Not a mindmap: Root node not found";
         return null;
-    }else if( rootNode.length > 1) {
+    }else if( level0Nodes.length > 1) {
         App.ImportParser.errorMessage = "Not a mindmap: Multiple root nodes found";
         return null;
     }
 
-    rootNode = rootNode[0];
-    if( rootNode.nodeName != "node") {
+    var level0Node = level0Nodes[0];
+    if( level0Node.nodeName != "node") {
         App.ImportParser.errorMessage = "Not a mindmap: Non 'node' element found";
         return null;
     }
 
-    var rootChildNodes = rootNode.childNodes;
+    var rootChildNodes = level0Node.childNodes;
 
     for (var i = 0; i < rootChildNodes.length ;i++) {
         if(rootChildNodes[i].nodeName == "node" && !rootChildNodes[i].getAttribute("POSITION")) {
@@ -112,7 +116,7 @@ App.ImportParser.createMindmapFromXML = function(xmlString, mindmapService) {
         }
     }
 
-    var rootNodeText = (rootNode.getAttribute("TEXT") === undefined) ? "" : rootNode.getAttribute("TEXT");
+    var rootNodeText = (level0Node.getAttribute("TEXT") === undefined) ? "" : level0Node.getAttribute("TEXT");
     var mindMapId = "";
 
     if(mindmapService) {
