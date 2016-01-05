@@ -2,7 +2,6 @@
 * {
 	margin: 0;
 	padding: 0;
-
 }
 
 html {
@@ -14,11 +13,24 @@ body {
 	height: 100%;
 	width: 100%;
 	background-color: white;
+	font-family: SansSerif, sans-serif;
 }
 
 .btn {
 	background-color: #3fb0ac;
 	border: none;
+}
+
+h1 {
+  text-shadow: 1px 1px #ffffff;
+  font-size: 400%;
+}
+
+.btn-text{
+    font-family: 'Helvetica', cursive;
+    font-size: 25px;
+    padding: 10px 40px;
+    margin: 10px 10px 10px 10px;
 }
 
 .btn:hover {
