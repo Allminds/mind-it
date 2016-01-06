@@ -56,7 +56,9 @@ App.eventBinding.f2Action = function() {
   App.showEditor.call(selectedNode);
 };
 
-Mousetrap.bind('f2', App.eventBinding.f2Action);
+Mousetrap.bind('f2', function() {
+  App.eventBinding.f2Action()
+});
 
 Mousetrap.bind('mod+x', App.cutNode);
 
