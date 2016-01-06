@@ -16,6 +16,7 @@ App.cutNode = function (asyncCallBack) {
   }
   App.map.storeSourceNode(sourceNode);
   var selectedNodeIndex = (sourceNode.parent.children || []).indexOf(sourceNode);
+  App.removeLocally(sourceNode);
   Meteor.call('deleteNode', sourceNode._id, function (err, data) {
     App.eventBinding.focusAfterDelete(sourceNode, selectedNodeIndex);
     if (asyncCallBack)
