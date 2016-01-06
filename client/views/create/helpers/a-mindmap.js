@@ -362,9 +362,10 @@ MindMap = function MindMap() {
           if (droppedOnElement && ($.inArray(draggedNode._id, droppedOnData.parent_ids) < 0) && (draggedNode._id != droppedOnData._id)) {
             App.cutNode(function(){
               App.pasteNode(draggedNode, droppedOnData, App.calculateDirection(droppedOnData));
+              App.retainCollapsed();
               App.select(droppedOnElement);
             });
-          };
+          }
           checkDrag = false;
         }
       };
