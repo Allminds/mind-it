@@ -130,7 +130,7 @@ describe('eventBinding.js', function () {
     });
   });
 
-  describe("Node Add/Delete/Collapse events", function () {
+  describe("Node Add/Delete/Edit/Collapse events", function () {
     var event, node, newNode, parent;
     beforeEach(function () {
       var fixture = '<div id="mindmap"> ' +
@@ -256,6 +256,16 @@ describe('eventBinding.js', function () {
         expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
         expect(App.getDirection).toHaveBeenCalledWith(node);
       });
+    });
+
+    it("editing with f2", function() {
+      $(".selected")[0][0].__data__ = { depth: 0 };
+      event.keyCode = 113;
+      spyOn(App.eventBinding, "f2Action");
+      document.getElementsByClassName("node")[0].dispatchEvent(event);
+
+      expect(App.eventBinding.f2Action).toHaveBeenCalled();
+      expect(".text-box").toExist();
     });
 
     it("should toggle collapsing of nodes on space key press", function () {
