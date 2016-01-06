@@ -3,7 +3,7 @@ describe('App.ImportParser', function () {
   var mindmapService;
   beforeEach(function () {
     importParser = App.ImportParser;
-    mindmapService = new MindMapService();
+    mindmapService = App.MindMapService.getInstance();
   });
 
   it("should be able to access parser object globally", function () {
