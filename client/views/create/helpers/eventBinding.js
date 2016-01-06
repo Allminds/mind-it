@@ -48,19 +48,17 @@ App.pasteNode = function (sourceNode, targetNode, dir, previousSibling) {
   return newNode;
 };
 
-$(window).keyup(function (event) {
-  if (event.keyCode == 113) { // F2
-    (event.preventDefault || event.stop || event.stopPropagation || function () {
-    }).call(event);
-    var selectedNode = d3.select(".node.selected")[0][0];
-    if (!selectedNode) return;
-    App.showEditor.call(selectedNode);
-  }
-});
+App.eventBinding.f2Action = function() {
+  (event.preventDefault || event.stop || event.stopPropagation || function () {
+  }).call(event);
+  var selectedNode = d3.select(".node.selected")[0][0];
+  if (!selectedNode) return;
+  App.showEditor.call(selectedNode);
+};
 
-Mousetrap.bind('mod+x', function () {
-  App.cutNode();
-});
+Mousetrap.bind('f2', App.eventBinding.f2Action);
+
+Mousetrap.bind('mod+x', App.cutNode);
 
 Mousetrap.bind('mod+c', function () {
   var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");
