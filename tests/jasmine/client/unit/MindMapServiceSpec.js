@@ -9,7 +9,7 @@ describe('MindMapService', function () {
   var mindMapService;
 
   beforeEach(function () {
-    mindMapService = new MindMapService();
+    mindMapService = App.MindMapService.getInstance();
   });
 
 

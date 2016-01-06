@@ -1,4 +1,4 @@
-mindMapService = new MindMapService();
+mindMapService = App.MindMapService.getInstance();
 
 
 Template.MyButton.events({

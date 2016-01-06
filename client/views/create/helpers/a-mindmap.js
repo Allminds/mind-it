@@ -294,7 +294,6 @@ MindMap = function MindMap() {
       //TODO : text box for editing does not appear when you uncomment the below line.
       nodeEnter.call(dragBehaviour);
 
-//TODO : handling double click, parent is same as dropped on then don't cut
       var targetNode = nodeEnter,
         draggedNode = null,
         checkDrag = false;
@@ -362,6 +361,7 @@ MindMap = function MindMap() {
           if (droppedOnElement && ($.inArray(draggedNode._id, droppedOnData.parent_ids) < 0) && (draggedNode._id != droppedOnData._id)) {
             App.cutNode(function(){
               App.pasteNode(draggedNode, droppedOnData, App.calculateDirection(droppedOnData));
+              App.expand(droppedOnData, droppedOnData._id);
               App.retainCollapsed();
               App.select(droppedOnElement);
             });

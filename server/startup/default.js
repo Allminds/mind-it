@@ -1,4 +1,4 @@
-mindMapService = new MindMapService();
+mindMapService = App.MindMapService.getInstance();
 Meteor.publish('mindmap', function (id) {
   return Mindmaps.find({$or: [{_id: id}, {parent_ids: id}]});
 });

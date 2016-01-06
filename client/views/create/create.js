@@ -1,4 +1,4 @@
-var mindMapService = new MindMapService();
+var mindMapService = App.MindMapService.getInstance();
 
 var nodeSelector = {
   prevDepthVisited: 0,

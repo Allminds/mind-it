@@ -1,4 +1,4 @@
-var mindMapService = new MindMapService();
+var mindMapService = App.MindMapService.getInstance();
 
 var getDims = function () {
     var w = window, d = document, e = d.documentElement,
