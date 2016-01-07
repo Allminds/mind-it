@@ -294,3 +294,9 @@ App.cloneObject = function (obj) {
   }
   return copy;
 };
+
+App.KeyCodes = {
+  enter: 13,
+  escape: 27,
+  tab: 9
+};
