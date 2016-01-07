@@ -22,7 +22,7 @@ App.chart = MindMap()
           currentTextSelector.selectAll('tspan').remove();
           var node = currentTextSelector.node();
           if (node) {
-              var lines = node.__data__.name.wrapString(60);
+              var lines = node.__data__.name.wrapString(1000);
               lines.forEach(function (line,index) {
                   var dy = index == 0 ? 0 : 40;
                   currentTextSelector.append('svg:tspan').attr('x', 0).attr('dy', dy).text(line);
