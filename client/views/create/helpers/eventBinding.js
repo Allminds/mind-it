@@ -80,7 +80,8 @@ Mousetrap.bind('mod+v', function () {
 App.eventBinding.escapeOnNewNode = function(newNode, parentNode){
     $(window).unbind().on("keyup", (function(e) {
       var selectedNodeId = d3.select('.selected').node() ? d3.select('.selected').node().__data__._id : null;
-      if((selectedNodeId === null)){
+      var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
+      if((selectedNodeId === null && modalCreatedNodeId === null )){
         if (e.keyCode === App.KeyCodes.escape) {
           Meteor.call('deleteNode', newNode._id, function () {
             App.selectNode(parentNode);

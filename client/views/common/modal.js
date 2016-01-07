@@ -41,13 +41,11 @@ Template.ModalPopUp.events({
     restoreNodeSelection();
   },
   'shown.bs.modal #myModalHorizontal': function(event){
-    console.log("checking");
     removeNodeSelection();
     $("#modal-text").focus();
     $("#modal-text").select();
   },
   'hidden.bs.modal #myModalHorizontal': function(event){
     restoreNodeSelection();
-    console.log("checking2");
   }
 });
