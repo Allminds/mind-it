@@ -317,7 +317,7 @@ Mousetrap.bind('mod+e', function createXmlFile() {
         var blob = new Blob([XMLString]);
         fileWriter.write(blob);
         fileWriter.addEventListener("writeend", function () {
-          location.href = fileEntry.toURL();
+          window.open(fileEntry.toURL(), '_blank');
         }, false);
       }, function () {
       });
