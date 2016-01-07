@@ -21,29 +21,29 @@ path.link {
 }
 
 .node text, input {
-  font-size: 18px; /* 100 */
+  font-size: 16px;
   text-anchor: middle;
   fill-opacity: 1;
 }
 
 .node.level-0 text, input.level-0 {
-  font-size: 30px; /* 166 */
+  font-size: 24px;
 }
 
 .node.level-1 text, input.level-1 {
-  font-size: 28px; /* 150 */
+  font-size: 22px;
   fill: #0033ff;
   color: #0033ff;
 }
 
 .node.level-2 text, input.level-2 {
-  font-size: 24px; /* 133 */
+  font-size: 20px;
   fill: #00b439;
   color: #00b439;
 }
 
 .node.level-3 text, input.level-3 {
-  font-size: 21px; /* 116 */
+  font-size: 18px;
   fill: #990000;
   color: #990000;
 }
