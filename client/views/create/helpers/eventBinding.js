@@ -64,6 +64,10 @@ Mousetrap.bind('mod+x', App.cutNode);
 
 Mousetrap.bind('mod+c', function () {
   var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");
+  if(sourceNode.position == null) {
+    alert("Copying root node is not allowed");
+    return;
+  }
   App.map.storeSourceNode(sourceNode);
 });
 
