@@ -2,7 +2,6 @@ App.ImportParser = {};
 
 App.ImportParser.tagsSupported = ["font", "edge", "hook", "node"];
 App.ImportParser.errorMessage = "";
-App.ImportParser.warningFlag = false;
 
 var isValidTag = function(nodeName) {
     return App.ImportParser.tagsSupported.indexOf(nodeName) != -1;
@@ -82,7 +81,6 @@ var ignoreComments = function(nodes) {
 
 App.ImportParser.createMindmapFromXML = function(xmlString, mindmapService) {
     App.ImportParser.errorMessage = "";
-    App.ImportParser.warningFlag = false;
     var xmlDoc = App.ImportParser.prepareXMLDoc(xmlString);
     var documentNode = xmlDoc.documentElement;
     var level0Nodes = ignoreComments(documentNode.childNodes);
@@ -125,7 +123,7 @@ App.ImportParser.createMindmapFromXML = function(xmlString, mindmapService) {
         var rootNodeJSON = App.ImportParser.createRootNode(mindMapId, rootNodeText);
         if(App.ImportParser.populateMindMapFromXML(rootChildNodes, rootNodeJSON, mindmapService) == false) {
             App.ImportParser.errorMessage = "Errors in mindMap file, mindMap rendered might not be as expected";
-            App.ImportParser.warningFlag = true;
+            return mindMapId;
         }
     } else {
         App.ImportParser.errorMessage = "Internal Error";

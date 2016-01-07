@@ -73,12 +73,12 @@ describe('App.ImportParser', function () {
     expect(id).not.toBeNull();
   });
 
-  it("Parser should set warningFlag as true if anything else than 'node' is present as xml element in the childNodes ", function () {
+  it("Parser should set error message as true if anything else than 'node' is present as xml element in the childNodes ", function () {
     var xmlString = "<map><node><Node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"six\" POSITION=\"left\"></Node><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"seven\" POSITION=\"left\"><node ID=\"kzqFndthdwXF7bY8f\" TEXT=\"eight\"></node></node></node></map>";
     spyOn(mindmapService, "createRootNode");
     spyOn(mindmapService, "addNode");
-    var id = importParser.createMindmapFromXML(xmlString, mindmapService);
-    expect(importParser.warningFlag).toBe(true);
+    importParser.createMindmapFromXML(xmlString, mindmapService);
+    expect(importParser.errorMessage).toBe("Errors in mindMap file, mindMap rendered might not be as expected")
   });
 
   it("Parser should not set errorMessage, and should not return null, if inner child node does not contain POSITION attribute ", function () {
@@ -113,7 +113,6 @@ describe('App.ImportParser', function () {
     spyOn(mindmapService, "createRootNode");
     spyOn(mindmapService, "addNode");
     importParser.createMindmapFromXML(xmlString, mindmapService);
-    expect(importParser.warningFlag).toBe(false);
   });
 
   it("mindmapService.createRootNode method should be called exactly once on valid mindmap file", function () {
