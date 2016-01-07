@@ -1,7 +1,7 @@
 App.DirectionToggler = (function () {
   var instance;
 
-  var currentDir = "right";
+  var currentDir = "left";
   var canToggle = false;
 
   var init = function () {

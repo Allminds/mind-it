@@ -12,8 +12,6 @@ Template.MyButton.events({
   }
 });
 
-
-
 Template.home.onRendered(function () {
 
   $('.home-bg').slick({

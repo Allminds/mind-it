@@ -147,7 +147,7 @@ MindMap = function MindMap() {
   };
   var getX = function (node, defualtHeight) {
     if (!node.parent) return 0;
-    var siblings = node.parent[node.position] || node.parent.children || [],
+    var siblings = node.parent.position ? node.parent.children : node.parent[node.position],
       siblingHeights = siblings.map(function (sibling) {
         return getNodeHeight(sibling, defualtHeight);
       }),
@@ -179,9 +179,7 @@ MindMap = function MindMap() {
       } else {
         vis = graphRoot;
       }
-      vis = vis
-        .attr("transform", "translate(" + (w / 2 + margin.left) + "," + (margin.top + h / 2) + ")")
-      ;
+      vis = vis.attr("transform", "translate(" + (w / 2 + margin.left) + "," + (margin.top + h / 2) + ")");
 
       root.x0 = 0;
       root.y0 = 0;
@@ -193,36 +191,21 @@ MindMap = function MindMap() {
         container.call(chart);
         container.call(chart);
       };
+
       var maxDepth = function (node) {
         return (node.children || []).reduce(function (depth, child) {
           var childDepth = maxDepth(child);
           return childDepth > depth ? childDepth : depth;
         }, node.depth);
       };
-      if (!(root.left || root.right)) {
-        var i = 0, l = (root.children || []).length;
-        root.left = [];
-        root.right = [];
-
-        for (; i < l; i++) {
-          switch (root.children[i].position) {
-            case 'left' :
-              root.left.push(root.children[i]);
-              break;
-            case 'right':
-              root.right.push(root.children[i]);
-              break;
-          }
-        }
-      }
 
       //Compute the new tree layout.
       function right(d) {
-        return d.right ? d.right : d.children;
+        return d.position ? d.children : d.right;
       }
 
       function left(d) {
-        return d.left ? d.left : d.children;
+        return d.position ? d.children : d.left;
       }
 
       var first = root.left.length > 0 ? left : right,

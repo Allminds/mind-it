@@ -106,11 +106,13 @@ App.eventBinding.newNodeAddAction = function (action) {
 };
 
 App.eventBinding.enterAction = function (selectedNode) {
-  var parent = selectedNode.parent || selectedNode,
-    sibling = selectedNode.position ? selectedNode : null,
-    dir = App.calculateDirection(parent);
+  var dbNode = App.Node.d3NodeToDbNode(selectedNode),
+    parent = dbNode.parentId ? App.Node.getParent(dbNode.parentId) : dbNode,
+    dir = App.calculateDirection(parent),
+    siblings = parent.position ? parent.children : parent[dir],
+    childIndex = dbNode.position ? siblings.indexOf(dbNode._id) + 1 : siblings.length;
 
-  return App.map.addNewNode(parent, "", dir, sibling);
+  return App.map.addNewNode(parent, dir, childIndex);
 };
 
 Mousetrap.bind('enter', function () {
@@ -122,8 +124,12 @@ App.eventBinding.tabAction = function (selectedNode) {
   if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
     App.expand(selectedNode, selectedNode._id);
   }
-  var dir = App.calculateDirection(selectedNode);
-  return App.map.addNewNode(selectedNode, "", dir);
+  var dbNode = App.Node.d3NodeToDbNode(selectedNode),
+    dir = App.calculateDirection(dbNode),
+    siblings = dbNode.position ? dbNode.children : dbNode[dir],
+    childIndex = siblings.length;
+
+  return App.map.addNewNode(dbNode, dir, childIndex);
 };
 
 Mousetrap.bind('tab', function () {
