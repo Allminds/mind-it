@@ -49,17 +49,12 @@ Template.home.onRendered(function () {
         var importParser = App.ImportParser;
         var mindMapId = importParser.createMindmapFromXML(xmltext, mindMapService),
         link = '/create/' + mindMapId;
-        if(mindMapId) {
-            Router.go(link);
+        if(importParser.errorMessage) {
+            alert(importParser.errorMessage);
         } else {
-            alert(importParser.errorMessage);
+            Router.go(link);
         }
-
-        if(importParser.warningFlag == true) {
-            alert(importParser.errorMessage);
-        }
-
-    }
+    };
 
     reader.readAsText(file);
     this.value = "";
