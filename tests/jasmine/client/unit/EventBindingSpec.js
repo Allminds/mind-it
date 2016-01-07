@@ -269,14 +269,14 @@ describe('eventBinding.js', function () {
 
       it("should do nothing on f2 if no node is selected", function () {
         var fixture = '<div id="mindmap"> ' +
-            '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
-            '<g transform="translate(14400,4650)"><g transform="translate(0,0)" class="node level-0">' +
-            '<ellipse rx="125.859375" ry="28.834375" class="root-ellipse"></ellipse>' +
-            '<rect x="-95.859375" y="-18.5" width="191.71875" height="29.5"></rect>' +
-            '<text cols="60" rows="4" y="9">' +
-            '<tspan x="0" dy="0">New Mindmap</tspan>' +
-            '</text></g></g></svg> ' +
-            '</div>';
+          '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
+          '<g transform="translate(14400,4650)"><g transform="translate(0,0)" class="node level-0">' +
+          '<ellipse rx="125.859375" ry="28.834375" class="root-ellipse"></ellipse>' +
+          '<rect x="-95.859375" y="-18.5" width="191.71875" height="29.5"></rect>' +
+          '<text cols="60" rows="4" y="9">' +
+          '<tspan x="0" dy="0">New Mindmap</tspan>' +
+          '</text></g></g></svg> ' +
+          '</div>';
         setFixtures(fixture);
         event.keyCode = 113;
         spyOn(App, "showEditor");

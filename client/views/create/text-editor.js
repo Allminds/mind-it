@@ -86,7 +86,7 @@ Editor.prototype.setupAttributes = function () {
         d3.event = window.event;
 
       var e = d3.event;
-      if (e.keyCode == 13) {
+      if (e.keyCode == App.KeyCodes.enter) {
         if (typeof (e.cancelBubble) !== 'undefined') // IE
           e.cancelBubble = true;
         if (e.stopPropagation)
@@ -96,13 +96,13 @@ Editor.prototype.setupAttributes = function () {
       }
 
 
-      if (e.keyCode == 27) {
+      if (e.keyCode == App.KeyCodes.escape) {
         escaped = true;
         editor.resetEditor();
         e.preventDefault();
       }
 
-      if (e.keyCode == 9) {
+      if (e.keyCode == App.KeyCodes.tab) {
         e.stopPropagation();
         e.preventDefault();
         propagateChanges(editor);
