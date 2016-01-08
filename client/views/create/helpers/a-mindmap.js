@@ -1,5 +1,11 @@
 mapsCount = 0;
 
+var Constants = {
+  deltaEllipseXRadius: 30,
+  deltaEllipseYRadius: 25
+};
+
+
 MindMap = function MindMap() {
   "use strict";
   var
@@ -119,10 +125,10 @@ MindMap = function MindMap() {
       var rootNode = getRootNode(node);
       d3.select(rootNode).select("ellipse")
         .attr("rx", function () {
-          return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 2 + 30;
+          return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 2 + Constants.deltaEllipseXRadius;
         })
         .attr("ry", function () {
-          return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 50 + 25;
+          return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 50 + Constants.deltaEllipseYRadius;
         });
     },
     exitNode = function (node) {
@@ -537,8 +543,8 @@ MindMap = function MindMap() {
   };
   return chart;
 };
-var minTextSize = 150,
-  minTextHeight = 16,
+var minTextSize = Constants.deltaEllipseXRadius,
+  minTextHeight = Constants.deltaEllipseYRadius,
   getTextWidth = function (id) {
     if (!id) return 0;
     var text = d3.selectAll('text')[0].filter(function (text) {
