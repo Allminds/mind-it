@@ -1,15 +1,18 @@
 <template name="LoginMenu">
   {{#if currentUser}}
-    <a href="" class="navbar-nav navbar-brand" style="font-size:150%; padding-top: 35px" data-action="logout">
+    <a href="" class="navbar-element navbar-nav navbar-brand" data-action="logout" onMouseOver="this.style.color='#ED8233'"
+       onMouseOut="this.style.color='#FFFFFF'" style="color: #FFFFFF;">
       Logout
     </a>
   {{else}}
     {{#if loggingIn}}
-      <a href="" class="navbar-nav navbar-brand" style="font-size:150%; padding-top: 35px">
+      <a href="" class="navbar-element navbar-nav navbar-brand" onMouseOver="this.style.color='#ED8233'"
+         onMouseOut="this.style.color='#FFFFFF'" style="color: #FFFFFF;">
         Logging In..
       </a>
     {{else}}
-      <a href="" class="navbar-nav navbar-brand" style="font-size:150%; padding-top: 35px" data-action="login">
+      <a href="" class="navbar-element navbar-nav navbar-brand" onMouseOver="this.style.color='#ED8233'"
+         onMouseOut="this.style.color='#FFFFFF'" data-action="login" style="color: #FFFFFF;">
         Log In
       </a>
     {{/if}}
@@ -19,7 +22,7 @@
 
 <template name="UserNameInfo">
   {{#if currentUser}}
-    <span class="navbar-nav brand">
+    <span style="color: #FFFFFF;" class="navbar-nav brand">
       Hi, {{ name}}
     </span>
   {{/if}}

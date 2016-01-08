@@ -64,4 +64,15 @@ h1 {
 	width: 100%;
 }
 
+.navbar-element{
+	font-size:150%;
+	padding-top: 35px
+}
+
+.brand{
+	padding-top: 15px;
+	padding-left: 10px;
+	color: #9D9D9D;
+	font-size: 150%;
+}
 
