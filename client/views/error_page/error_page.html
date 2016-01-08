@@ -1,3 +1,8 @@
 <template name='error_page'>
-    404
+    {{> ModalPopUp modalHeaderText="Help" modalId="help-modal" path="/shortcuts.png" isFullWidth="true"}}
+    {{> TopBar topbarText="Help" linkId="help-link"}}
+    <label style="text-align: center; margin-top: 300px; font-size: x-large ">Mindmap not found</label>
+    <br>
+    <br>
+    <img src="error_page.jpg">
 </template>
