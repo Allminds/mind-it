@@ -1,5 +1,7 @@
 /* global Router */
-Router.configure({layoutTemplate: 'main'});
+
+Router.configure({layoutTemplate: 'main', notFoundTemplate: 'error_page'});
+
 Router.route('/', {
 	template: 'home',
 	waitOn: function () {
@@ -23,4 +25,12 @@ Router.route('/404', {
 	waitOn: function () {
 		return Meteor.subscribe("userdata", Meteor.userId());
 	}
+});
+
+Router.route('/(.*)', {
+	name: 'error_page',
+ 	template: 'error_page',
+ 	waitOn: function () {
+ 		return Meteor.subscribe("userdata", Meteor.userId());
+ 	}
 });
