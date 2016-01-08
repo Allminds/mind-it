@@ -22,6 +22,8 @@ var enableHelpLink = function () {
 };
 
 Template.create.rendered = function rendered() {
+  if(this.data.data.length == 0)
+    Router.go('/404');
 
   var tree = mindMapService.buildTree(this.data.id, this.data.data);
   update(tree);
