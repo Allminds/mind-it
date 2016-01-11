@@ -15,6 +15,12 @@ var update = function (data) {
     .call(App.chart);
   App.chart.update();
   App.getChartInFocus();
+  $(window).resize(function() {
+        App.getChartInFocus();
+        Console.log("I am being called...");
+
+  });
+
 };
 
 var enableHelpLink = function () {
