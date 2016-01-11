@@ -109,7 +109,7 @@ App.eventBinding.enterAction = function (selectedNode) {
   var dbNode = App.Node.d3NodeToDbNode(selectedNode),
     parent = dbNode.parentId ? App.Node.getParent(dbNode.parentId) : dbNode,
     dir = App.calculateDirection(parent),
-    siblings = parent.position ? parent.children : parent[dir],
+    siblings = parent.position ? parent.childSubTree : parent[dir],
     childIndex = dbNode.position ? siblings.indexOf(dbNode._id) + 1 : siblings.length;
 
   return App.map.addNewNode(parent, dir, childIndex);
@@ -126,7 +126,7 @@ App.eventBinding.tabAction = function (selectedNode) {
   }
   var dbNode = App.Node.d3NodeToDbNode(selectedNode),
     dir = App.calculateDirection(dbNode),
-    siblings = dbNode.position ? dbNode.children : dbNode[dir],
+    siblings = dbNode.position ? dbNode.childSubTree : dbNode[dir],
     childIndex = siblings.length;
 
   return App.map.addNewNode(dbNode, dir, childIndex);
@@ -183,6 +183,7 @@ App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
 };
 
 var isParentChildMatchesThisNode = function (siblings, index, node) {
+  console.log(siblings);
   return siblings[index]._id === node._id
 };
 
@@ -199,12 +200,12 @@ App.eventBinding.performLogicalVerticalMovement = function(node, keyPressed) {
   if (direction === 'root') return;
 
   var parent = node.parent,
-    siblings = parent.children || [],
+    siblings = (App.Node.isRoot(parent) ? parent[direction] : parent.childSubTree) || [] ,
     iterator = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? 0:1;
 
-  if (parent[direction]) {
+ /* if (parent[direction]) {
     siblings = parent[direction];
-  }
+  }*/
 
   var numberOfSiblings = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? siblings.length-1 : siblings.length;
 
@@ -475,12 +476,24 @@ Mousetrap.bind('mod+right', debounce(250, true,
     }
   }));
 
-Mousetrap.bind('mod+up', debounce(250, true,
+Mousetrap.bind('mod+up', debounce(0, true,
   function () {
     var selection = d3.select(".node.selected")[0][0].__data__;
 
     if (!(selection && selection.parent))
       return;
+
+    App.Node.reposition(selection, App.eventBinding.UP);
+
+
+
+
+
+
+
+
+/*
+
 
     var previousSibling,
       siblings = selection.parent[selection.position] || selection.parent.children,
@@ -522,6 +535,7 @@ Mousetrap.bind('mod+up', debounce(250, true,
       App.retainCollapsed();
       App.selectNode(selectedNode);
     });
+    */
   }));
 
 Mousetrap.bind('mod+down', debounce(250, true,

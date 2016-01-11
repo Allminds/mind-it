@@ -37,6 +37,12 @@ App.DirectionToggler = (function () {
 
 })();
 
+App.swapElements = function(list, firstIndex, secondIndex) {
+  var temp = list[firstIndex];
+  list[firstIndex] = list[secondIndex];
+  list[secondIndex] = temp;
+}
+
 App.nodeSelector = {
   prevDepthVisited: 0,
 

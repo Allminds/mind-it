@@ -24,6 +24,19 @@ App.tracker = {
         }, 10);
       }
     }
+    else if (fields.hasOwnProperty('childSubTree') || fields.hasOwnProperty('left') || fields.hasOwnProperty('right')){
+      var parent = App.map.getNodeDataWithNodeId(id),
+        key = Object.keys(fields)[0],
+        subTree = parent[key],
+        childIds = fields[key],
+        newSubTree = childIds.map(function(id){
+          return subTree.find(function(node){
+            return node._id == id;
+          });
+        });
+      parent[key] = newSubTree;
+      App.chart.update();
+    }
   },
   just_deleted: null,
   removed: function (id) {

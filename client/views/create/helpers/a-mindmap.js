@@ -138,16 +138,16 @@ MindMap = function MindMap() {
   var connectLine = MindMap.diagonalLine;
   var getNodeHeight = function (node, defualtHeight) {
     var textHeight = getTextHeight(node._id),
-      subTreeHeight = (node.children || []).reduce(function (height, child) {
+      subTreeHeight = (node.childSubTree || []).reduce(function (height, child) {
         height += getNodeHeight(child, defualtHeight);
         return height;
       }, 0);
-    subTreeHeight += (node.children || []).length > 0 ? (2 * defualtHeight) : 0;
+    subTreeHeight += (node.childSubTree || []).length > 0 ? (2 * defualtHeight) : 0;
     return Math.max(defualtHeight, textHeight, subTreeHeight);
   };
   var getX = function (node, defualtHeight) {
     if (!node.parent) return 0;
-    var siblings = node.parent.position ? node.parent.children : node.parent[node.position],
+    var siblings = node.parent.position ? node.parent.childSubTree : node.parent[node.position],
       siblingHeights = siblings.map(function (sibling) {
         return getNodeHeight(sibling, defualtHeight);
       }),
@@ -193,7 +193,7 @@ MindMap = function MindMap() {
       };
 
       var maxDepth = function (node) {
-        return (node.children || []).reduce(function (depth, child) {
+        return (node.childSubTree || []).reduce(function (depth, child) {
           var childDepth = maxDepth(child);
           return childDepth > depth ? childDepth : depth;
         }, node.depth);
@@ -201,24 +201,27 @@ MindMap = function MindMap() {
 
       //Compute the new tree layout.
       function right(d) {
-        return d.position ? d.children : d.right;
+        return d.position ? d.childSubTree : d.right;
       }
 
       function left(d) {
-        return d.position ? d.children : d.left;
+        return d.position ? d.childSubTree : d.left;
       }
 
       var first = root.left.length > 0 ? left : right,
         second = root.right.length > 0 ? right : left;
 
-      var firstSet = tree
-        .children(first)
-        .nodes(root)
-        .reverse();
-      var secondSet = tree
-        .children(second)
-        .nodes(root)
-        .reverse();
+      var firstSet = tree;
+      var a1 = firstSet.children(first);
+      var a2 = a1.nodes(root);
+      var a3 = a2.reverse();
+      firstSet = a3;
+
+      var secondSet = tree;
+      var b1 = secondSet.children(second);
+      var b2 = b1.nodes(root);
+      var b3 = b2.reverse();
+      secondSet = b3;
 
       root.children = root.left.concat(root.right);
 
