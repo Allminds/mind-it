@@ -150,7 +150,9 @@ Mousetrap.bind('del', function () {
       alert('Can\'t delete root');
       return;
     }
-    App.Node.delete(selectedNode);
+    var removedNodeIndex = App.Node.delete(selectedNode);
+    App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
+    Meteor.call('deleteNode', selectedNode._id);
   }
 });
 
