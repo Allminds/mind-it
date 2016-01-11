@@ -3,10 +3,10 @@ describe('helper.js tests', function() {
     it("should change current direction [App.DirectionToggler] ", function () {
       var directionToggler = App.DirectionToggler.getInstance();
       directionToggler.changeDirection();
-      expect(directionToggler.getCurrentDirection()).toBe("left");
+      expect(directionToggler.getCurrentDirection()).toBe("right");
 
       directionToggler.changeDirection();
-      expect(directionToggler.getCurrentDirection()).toBe("right");
+      expect(directionToggler.getCurrentDirection()).toBe("left");
     });
 
     it("should return root for null data [App.getDirection]", function() {
