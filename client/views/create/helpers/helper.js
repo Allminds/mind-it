@@ -59,11 +59,11 @@ App.swapElements = function(list, firstIndex, secondIndex) {
 
 App.circularReposition = function(list, keyPressed) {
   var newArray = [];
-  if(keyPressed === 'UP') {
+  if(keyPressed === App.Constants.KeyPressed.UP) {
     var temp = list[0];
     newArray = list.slice(1);
     newArray.push(temp);
-  } else if( keyPressed == 'DOWN'){
+  } else if( keyPressed == App.Constants.KeyPressed.DOWN){
     var temp = list[list.length-1];
     newArray = list.slice(0, list.length-1);
     newArray.splice(0, 0, temp);

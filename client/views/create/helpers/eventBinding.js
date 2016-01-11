@@ -154,17 +154,9 @@ Mousetrap.bind('del', function () {
   }
 });
 
-App.eventBinding.KeyPressed = {
-  UP : "up",
-  DOWN : "down",
-  LEFT : "left",
-  RIGHT : "right"
-};
-Object.freeze(App.eventBinding.KeyPressed);
-
 App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
   var index;
-  if (keyPressed === App.eventBinding.KeyPressed.DOWN)
+  if (keyPressed === App.Constants.KeyPressed.DOWN)
     index = 0;
   if (!node.children)
     return node;
@@ -172,7 +164,7 @@ App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
     return node;
   }
   while (node.children) {
-    if (!(keyPressed === App.eventBinding.KeyPressed.DOWN))
+    if (!(keyPressed === App.Constants.KeyPressed.DOWN))
       index = node.children.length - 1;
     node = node.children[index];
     if (node.depth == depth) {
@@ -188,11 +180,11 @@ var isParentChildMatchesThisNode = function (siblings, index, node) {
 };
 
 var isGoingUpFromTopMostNode = function (siblings, node, keyPressed) {
-  return !(keyPressed === App.eventBinding.KeyPressed.DOWN) && isParentChildMatchesThisNode(siblings, 0, node);
+  return !(keyPressed === App.Constants.KeyPressed.DOWN) && isParentChildMatchesThisNode(siblings, 0, node);
 };
 
 var isGoingDownFromBottomLastNode = function (iterator, numberOfSiblings, keyPressed) {
-  return (keyPressed === App.eventBinding.KeyPressed.DOWN) && (iterator == numberOfSiblings);
+  return (keyPressed === App.Constants.KeyPressed.DOWN) && (iterator == numberOfSiblings);
 };
 
 App.eventBinding.performLogicalVerticalMovement = function(node, keyPressed) {
@@ -201,17 +193,17 @@ App.eventBinding.performLogicalVerticalMovement = function(node, keyPressed) {
 
   var parent = node.parent,
     siblings = (App.Node.isRoot(parent) ? parent[direction] : parent.childSubTree) || [] ,
-    iterator = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? 0:1;
+    iterator = (keyPressed === App.Constants.KeyPressed.DOWN) ? 0:1;
 
  /* if (parent[direction]) {
     siblings = parent[direction];
   }*/
 
-  var numberOfSiblings = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? siblings.length-1 : siblings.length;
+  var numberOfSiblings = (keyPressed === App.Constants.KeyPressed.DOWN) ? siblings.length-1 : siblings.length;
 
   while(iterator < numberOfSiblings) {
     if (isParentChildMatchesThisNode(siblings, iterator, node)) {
-      var iteratorDiff = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? 1:-1;
+      var iteratorDiff = (keyPressed === App.Constants.KeyPressed.DOWN) ? 1:-1;
       App.selectNode(App.eventBinding.findSameLevelChild(siblings[iterator + iteratorDiff], App.nodeSelector.prevDepthVisited, keyPressed));
       break;
     }
@@ -259,11 +251,11 @@ App.eventBinding.bindEventAction = function (event, left, right, root, keyPresse
 };
 
 Mousetrap.bind('up', function () {
-  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.eventBinding.KeyPressed.UP);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.Constants.KeyPressed.UP);
 });
 
 Mousetrap.bind('down', function () {
-  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.eventBinding.KeyPressed.DOWN);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.Constants.KeyPressed.DOWN);
 });
 
 App.eventBinding.handleCollapsing = function (data) {
@@ -283,11 +275,11 @@ App.eventBinding.getParentForEventBinding = function (data, dir) {
 };
 
 Mousetrap.bind('left', function () {
-  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.eventBinding.KeyPressed.LEFT);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.LEFT);
 });
 
 Mousetrap.bind('right', function () {
-  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.KeyPressed.RIGHT);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.RIGHT);
 });
 
 Mousetrap.bind('space', function () {
@@ -476,123 +468,23 @@ Mousetrap.bind('mod+right', debounce(250, true,
     }
   }));
 
-Mousetrap.bind('mod+up', debounce(0, true,
-  function () {
-    var selection = d3.select(".node.selected")[0][0].__data__;
+Mousetrap.bind('mod+up', debounce(0, true, function () {
+  var selection = d3.select(".node.selected")[0][0].__data__;
 
-    if (!(selection && selection.parent))
-      return;
+  if (!(selection && selection.parent))
+    return;
 
-    App.Node.reposition(selection, 'UP');
-
-
-
-
-
-
-
-
-/*
-
-
-    var previousSibling,
-      siblings = selection.parent[selection.position] || selection.parent.children,
-      parent = selection.parent;
-    if (siblings.length <= 1) return;
-    if (selection.previous) {
-
-      if (parent[selection.position]) {
-        siblings = parent[selection.position];
-      }
-      var l = siblings.length;
-      if (l == 1)
-        return;
-      for (var i = 0; i < l; i++) {
-        if (siblings[i]._id === selection._id) {
-          previousSibling = siblings[i - 1];
-          break;
-        }
-      }
-      if (previousSibling.previous) {
-        previousSibling = siblings.find(function (x) {
-          return x._id == previousSibling.previous
-        });
-      }
-      else {
-        App.selectNode(previousSibling);
-        App.cutNode(function (err, data) {
-          App.pasteNode(previousSibling, selection.parent, selection.position, selection);
-          App.retainCollapsed();
-          App.selectNode(selection);
-        });
-        return;
-      }
-    } else {
-      previousSibling = siblings[siblings.length - 1];
-    }
-    App.cutNode(function (err, data) {
-      var selectedNode = App.pasteNode(selection, selection.parent, selection.position, previousSibling);
-      App.retainCollapsed();
-      App.selectNode(selectedNode);
-    });
-    */
-  }));
+  App.Node.reposition(selection, App.Constants.KeyPressed.UP);
+}));
 
 Mousetrap.bind('mod+down', debounce(0, true, function () {
-                             var selection = d3.select(".node.selected")[0][0].__data__;
+  var selection = d3.select(".node.selected")[0][0].__data__;
 
-                             if (!(selection && selection.parent))
-                               return;
+  if (!(selection && selection.parent))
+   return;
 
-                             App.Node.reposition(selection, 'DOWN');
-
-                                      
-    /*    var selection = d3.select(".node.selected")[0][0].__data__;
-
-    if (!(selection && selection.parent))
-      return;
-
-    var nextSibling,
-      siblings = selection.parent[selection.position] || selection.parent.children;
-    if (siblings.length <= 1) return;
-    if (selection.next) {
-      nextSibling = siblings.find(function (x) {
-        return x._id == selection.next;
-      });
-
-    }
-    else {
-      var newNode = {
-        name: selection.name, position: selection.position,
-        parent_ids: selection.parent_ids,
-        previous: null, next: siblings[0]._id
-      };
-      App.cutNode(function () {
-        var headId = siblings[0]._id;
-        newNode._id = mindMapService.addNode(newNode);
-        if (selection.hasOwnProperty('isCollapsed') && selection.isCollapsed) {
-          newNode.isCollapsed = selection.isCollapsed;
-          App.storeLocally(newNode);
-        }
-
-        mindMapService.updateNode(headId, {previous: newNode._id});
-        var previous = null;
-        (selection.children || selection._children || []).forEach(function (child) {
-          previous = App.pasteNode(child, newNode, child.position, previous);
-        });
-
-        App.retainCollapsed();
-        App.selectNode(newNode);
-      });
-      return;
-    }
-
-    App.cutNode(function () {
-      var selectedNode = App.pasteNode(selection, selection.parent, selection.position, nextSibling);
-      App.retainCollapsed();
-      App.selectNode(selectedNode);
-    });*/
-  }));
+  App.Node.reposition(selection, App.Constants.KeyPressed.DOWN);
+}));
 
 Mousetrap.bind("esc", function goToRootNode() {
   App.select(d3.select('.node.level-0')[0][0]);
