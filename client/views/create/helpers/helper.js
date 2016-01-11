@@ -37,10 +37,40 @@ App.DirectionToggler = (function () {
 
 })();
 
+App.calculateNextIndex = function(initialIndex, length, keyPressed){
+  var newIndex = -1;
+  if(keyPressed === 'UP') {
+    if(initialIndex == 0) return -1;
+    newIndex = (initialIndex - 1) < 0 ? length - 1 :  (initialIndex - 1) % length;
+  } else if(keyPressed === 'DOWN') {
+    if(initialIndex == length - 1) return -1;
+    newIndex = (initialIndex + 1) % length;
+  }
+
+  return newIndex
+};
+
 App.swapElements = function(list, firstIndex, secondIndex) {
   var temp = list[firstIndex];
   list[firstIndex] = list[secondIndex];
   list[secondIndex] = temp;
+  return list;
+};
+
+App.circularReposition = function(list, keyPressed) {
+  var newArray = [];
+  if(keyPressed === 'UP') {
+    var temp = list[0];
+    newArray = list.slice(1);
+    newArray.push(temp);
+  } else if( keyPressed == 'DOWN'){
+    var temp = list[list.length-1];
+    newArray = list.slice(0, list.length-1);
+    newArray.splice(0, 0, temp);
+  }
+
+  list = newArray;
+  return list;
 }
 
 App.nodeSelector = {

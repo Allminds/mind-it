@@ -483,7 +483,7 @@ Mousetrap.bind('mod+up', debounce(0, true,
     if (!(selection && selection.parent))
       return;
 
-    App.Node.reposition(selection, App.eventBinding.UP);
+    App.Node.reposition(selection, 'UP');
 
 
 
@@ -538,9 +538,16 @@ Mousetrap.bind('mod+up', debounce(0, true,
     */
   }));
 
-Mousetrap.bind('mod+down', debounce(250, true,
-  function () {
-    var selection = d3.select(".node.selected")[0][0].__data__;
+Mousetrap.bind('mod+down', debounce(0, true, function () {
+                             var selection = d3.select(".node.selected")[0][0].__data__;
+
+                             if (!(selection && selection.parent))
+                               return;
+
+                             App.Node.reposition(selection, 'DOWN');
+
+                                      
+    /*    var selection = d3.select(".node.selected")[0][0].__data__;
 
     if (!(selection && selection.parent))
       return;
@@ -584,7 +591,7 @@ Mousetrap.bind('mod+down', debounce(250, true,
       var selectedNode = App.pasteNode(selection, selection.parent, selection.position, nextSibling);
       App.retainCollapsed();
       App.selectNode(selectedNode);
-    });
+    });*/
   }));
 
 Mousetrap.bind("esc", function goToRootNode() {
