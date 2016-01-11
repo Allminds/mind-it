@@ -2,10 +2,14 @@ App.eventBinding = {};
 
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
   var parent = removedNode.parent,
-    children = parent[removedNode.position] || parent.children || [],
-    nextNode = children[removedNodeIndex],
-    previousNode = children[removedNodeIndex - 1];
-  App.selectNode(nextNode || previousNode || parent);
+    siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
+  var focusableNode = siblings[removedNodeIndex];
+  if(siblings.length == 0) {
+    focusableNode = parent;
+  }else if (removedNodeIndex == siblings.length ) {
+    focusableNode = siblings[removedNodeIndex - 1];
+  }
+  App.selectNode(focusableNode);
 };
 
 App.cutNode = function (asyncCallBack) {
@@ -146,11 +150,7 @@ Mousetrap.bind('del', function () {
       alert('Can\'t delete root');
       return;
     }
-    var children = selectedNode.parent[dir] || selectedNode.parent.children || [];
-    var selectedNodeIndex = children.indexOf(selectedNode);
-    Meteor.call('deleteNode', selectedNode._id, function () {
-      App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
-    });
+    App.Node.delete(selectedNode);
   }
 });
 
@@ -194,10 +194,6 @@ App.eventBinding.performLogicalVerticalMovement = function(node, keyPressed) {
   var parent = node.parent,
     siblings = (App.Node.isRoot(parent) ? parent[direction] : parent.childSubTree) || [] ,
     iterator = (keyPressed === App.Constants.KeyPressed.DOWN) ? 0:1;
-
- /* if (parent[direction]) {
-    siblings = parent[direction];
-  }*/
 
   var numberOfSiblings = (keyPressed === App.Constants.KeyPressed.DOWN) ? siblings.length-1 : siblings.length;
 

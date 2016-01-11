@@ -37,24 +37,5 @@ App.tracker = {
       parent[key] = newSubTree;
       App.chart.update();
     }
-  },
-  just_deleted: null,
-  removed: function (id) {
-    var deletedNode = App.map.getNodeDataWithNodeId(id);
-    if (!deletedNode) return;
-
-    var alreadyRemoved = deletedNode.parent_ids.some(function (parent_id) {
-      return App.tracker.just_deleted == parent_id;
-    });
-    if (alreadyRemoved) return;
-
-    var children = deletedNode.parent[deletedNode.position] || deletedNode.parent.children;
-
-    var delNodeIndex = children.indexOf(deletedNode);
-    if (delNodeIndex >= 0) {
-      children.splice(delNodeIndex, 1);
-      App.chart.update();
-      App.tracker.just_deleted = id;
-    }
   }
 };
