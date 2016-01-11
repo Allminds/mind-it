@@ -39,10 +39,10 @@ App.DirectionToggler = (function () {
 
 App.calculateNextIndex = function(initialIndex, length, keyPressed){
   var newIndex = -1;
-  if(keyPressed === 'UP') {
+  if(keyPressed === App.Constants.KeyPressed.UP) {
     if(initialIndex == 0) return -1;
     newIndex = (initialIndex - 1) < 0 ? length - 1 :  (initialIndex - 1) % length;
-  } else if(keyPressed === 'DOWN') {
+  } else if(keyPressed === App.Constants.KeyPressed.DOWN) {
     if(initialIndex == length - 1) return -1;
     newIndex = (initialIndex + 1) % length;
   }
