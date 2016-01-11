@@ -53,7 +53,7 @@ describe('eventBinding.js', function () {
         first.parent = parent;
 
         spyOn(App, "selectNode");
-        App.eventBinding.performLogicalVerticalMovement(first, App.eventBinding.KeyPressed.DOWN);
+        App.eventBinding.performLogicalVerticalMovement(first, App.Constants.KeyPressed.DOWN);
 
         expect(App.selectNode).toHaveBeenCalledWith(second);
       });
@@ -64,7 +64,7 @@ describe('eventBinding.js', function () {
         second.parent = parent;
 
         spyOn(App, "selectNode");
-        App.eventBinding.performLogicalVerticalMovement(second, App.eventBinding.KeyPressed.UP);
+        App.eventBinding.performLogicalVerticalMovement(second, App.Constants.KeyPressed.UP);
 
         expect(App.selectNode).toHaveBeenCalledWith(first);
       });
@@ -329,7 +329,7 @@ describe('eventBinding.js', function () {
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[0]).toEqual(event);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[1]).toEqual(App.eventBinding.performLogicalVerticalMovement);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[2]).toEqual(App.eventBinding.performLogicalVerticalMovement);
-        expect(App.eventBinding.bindEventAction.calls.mostRecent().args[4]).toEqual(App.eventBinding.KeyPressed.UP);
+        expect(App.eventBinding.bindEventAction.calls.mostRecent().args[4]).toEqual(App.Constants.KeyPressed.UP);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args.length).toEqual(5);
 
       });
@@ -342,7 +342,7 @@ describe('eventBinding.js', function () {
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[0]).toEqual(event);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[1]).toEqual(App.eventBinding.performLogicalVerticalMovement);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[2]).toEqual(App.eventBinding.performLogicalVerticalMovement);
-        expect(App.eventBinding.bindEventAction.calls.mostRecent().args[4]).toEqual(App.eventBinding.KeyPressed.DOWN);
+        expect(App.eventBinding.bindEventAction.calls.mostRecent().args[4]).toEqual(App.Constants.KeyPressed.DOWN);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args.length).toEqual(5);
       });
     });
@@ -357,7 +357,7 @@ describe('eventBinding.js', function () {
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[0]).toEqual(event);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[1]).toEqual(App.eventBinding.handleCollapsing);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[2]).toEqual(App.eventBinding.getParentForEventBinding);
-        expect(App.eventBinding.bindEventAction.calls.mostRecent().args[4]).toEqual(App.eventBinding.KeyPressed.LEFT);
+        expect(App.eventBinding.bindEventAction.calls.mostRecent().args[4]).toEqual(App.Constants.KeyPressed.LEFT);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args.length).toEqual(5);
       });
 
@@ -371,7 +371,7 @@ describe('eventBinding.js', function () {
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[0]).toEqual(event);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[1]).toEqual(App.eventBinding.getParentForEventBinding);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args[2]).toEqual(App.eventBinding.handleCollapsing);
-        expect(App.eventBinding.bindEventAction.calls.mostRecent().args[4]).toEqual(App.eventBinding.KeyPressed.RIGHT);
+        expect(App.eventBinding.bindEventAction.calls.mostRecent().args[4]).toEqual(App.Constants.KeyPressed.RIGHT);
         expect(App.eventBinding.bindEventAction.calls.mostRecent().args.length).toEqual(5);
       });
     });
