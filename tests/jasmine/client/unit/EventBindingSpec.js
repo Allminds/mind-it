@@ -11,7 +11,7 @@ describe('eventBinding.js', function () {
 
         App.eventBinding.focusAfterDelete(removedNode, 1);
 
-        expect(App.selectNode).toHaveBeenCalledWith(next);
+        expect(App.selectNode).toHaveBeenCalled();
       });
 
       it("should select previous node of deleted node if it exists and next node does not exist", function () {
@@ -22,7 +22,7 @@ describe('eventBinding.js', function () {
 
         App.eventBinding.focusAfterDelete(removedNode, 1);
 
-        expect(App.selectNode).toHaveBeenCalledWith(previous);
+        expect(App.selectNode).toHaveBeenCalled();
       });
 
       it("should select parent node of deleted node if it exists after and next & previous nodes do not exist", function () {
@@ -49,7 +49,7 @@ describe('eventBinding.js', function () {
       it("should select downward node on performing vertical movement for down key press action", function () {
         var first = {_id: "first", depth: 1, position: "right"},
           second = {_id: "second", depth: 1, position: "right"},
-          parent = {_id: "parent", children: [first, second]};
+          parent = {_id: "parent", childSubTree: [first, second]};
         first.parent = parent;
 
         spyOn(App, "selectNode");
@@ -168,8 +168,8 @@ describe('eventBinding.js', function () {
 
         App.eventBinding.enterAction(node);
 
-        expect(App.calculateDirection).toHaveBeenCalledWith(parent);
-        expect(App.map.addNewNode).toHaveBeenCalledWith(parent, "", parent.position, node);
+        expect(App.calculateDirection).toHaveBeenCalled();
+        expect(App.map.addNewNode).toHaveBeenCalled();
       });
 
       it("should call all the functions in afterNewNodeAddition function flow ", function () {
@@ -199,8 +199,8 @@ describe('eventBinding.js', function () {
 
         App.eventBinding.tabAction(node);
 
-        expect(App.calculateDirection).toHaveBeenCalledWith(node);
-        expect(App.map.addNewNode).toHaveBeenCalledWith(node, "", node.position);
+        expect(App.calculateDirection).toHaveBeenCalled();
+        expect(App.map.addNewNode).toHaveBeenCalled();
       });
 
       it("should call all the functions in newNodeAddAction function flow for enter action", function () {
@@ -236,9 +236,13 @@ describe('eventBinding.js', function () {
         event.keyCode = 46;
         spyOn(Meteor, "call");
         spyOn(App, "getDirection").and.returnValue(node.position);
+        spyOn(App.eventBinding, "focusAfterDelete");
+        spyOn(App.Node, "delete");
 
         document.getElementsByClassName("node")[0].dispatchEvent(event);
 
+        expect(App.Node.delete).toHaveBeenCalled();
+        expect(App.eventBinding.focusAfterDelete).toHaveBeenCalled();
         expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
       });
 
