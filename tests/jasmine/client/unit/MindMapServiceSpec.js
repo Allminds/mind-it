@@ -40,16 +40,16 @@ describe('MindMapService', function () {
 
       root.left.push(leftNode1._id);
       root.right.push(rightNode1._id);
-      leftNode1.children.push(leftNode2._id);
-      rightNode1.children.push(rightNode2._id);
+      leftNode1.childSubTree.push(leftNode2._id);
+      rightNode1.childSubTree.push(rightNode2._id);
     });
 
     it("should build tree", function () {
       var root1 = mindMapService.buildTree(root._id, [root, leftNode1, leftNode2, rightNode2, rightNode1]);
       expect(root1.left[0]._id).toBe(leftNode1._id);
-      expect(root1.left[0].children[0]._id).toBe(leftNode2._id);
+      expect(root1.left[0].childSubTree[0]._id).toBe(leftNode2._id);
       expect(root1.right[0]._id).toBe(rightNode1._id);
-      expect(root1.right[0].children[0]._id).toBe(rightNode2._id);
+      expect(root1.right[0].childSubTree[0]._id).toBe(rightNode2._id);
     })
   });
 
