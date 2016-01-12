@@ -73,7 +73,7 @@ describe('lib.Node.js', function () {
       expect(mindMapService.updateNode).toHaveBeenCalledWith(parent._id, { childSubTree: [ 'child2' ] });
     });
 
-    describe("Repositioning", function () {
+    describe("Repositioning Vertical", function () {
       var parent, child1, child2, child3;
       beforeEach(function () {
         parent = new App.Node("parent", "right", null, 0);
@@ -89,6 +89,16 @@ describe('lib.Node.js', function () {
         child3.parent = parent;
         parent.childSubTree = [child1, child2, child3];
       });
+
+      it("should not call swapElements method for reposition vertical key press on root node", function () {
+        var root = new App.Node("root");
+        spyOn(App, "swapElements");
+        spyOn(mindMapService, "updateNode");
+        App.Node.reposition(root, App.Constants.KeyPressed.DOWN);
+        expect(App.swapElements).not.toHaveBeenCalled();
+        expect(mindMapService.updateNode).not.toHaveBeenCalled();
+      });
+
 
       it("should call circularReposition method for mod+UP key press on first element", function () {
         spyOn(App, "circularReposition");
@@ -120,6 +130,110 @@ describe('lib.Node.js', function () {
         expect(App.swapElements.calls.mostRecent().args[2]).toBe(2);
       });
     });
+    describe("Repositioning Horizontal", function() {
+      var root, parent, child1, child2, child3;
+      beforeEach(function () {
+        root = new App.Node("root");
+        root._id = "root";
+        left1 = new App.Node("parent", "left", root, 0);
+        left1._id = "parent";
+        left1.parent = root;
+        child1 = new App.Node("child1", "left", left1, 0);
+        child1._id = "child1";
+        child2 = new App.Node("child2", "left", left1, 1);
+        child2._id = "child2";
+        child3 = new App.Node("child3", "left", left1, 1);
+        child2._id = "child3";
+        child1.parent = left1;
+        child2.parent = left1;
+        child3.parent = left1;
+        root.left = [left1];
+        left1.childSubTree = [child1, child2, child3];
+      });
+      it("should return false reposition horizontal key press on root node", function () {
+        var actualValue = App.Node.horizontalReposition(root, App.Constants.KeyPressed.LEFT);
+        expect(actualValue).toBe(false);
+        actualValue = App.Node.horizontalReposition(root, App.Constants.KeyPressed.RIGHT);
+        expect(actualValue).toBe(false);
+      });
 
+      it("should not change the position of left child in root for mod+LEFT when child does not have any siblings", function() {
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.LEFT);
+        expect(root.left[0]).toBe(left1);
+      });
+
+      it("should put the left child in root into right subtree for mod+RIGHT", function() {
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.RIGHT);
+        expect(root.right[0]).toBe(left1);
+      });
+
+      it("should remove the left child in root from left subtree for mod+RIGHT", function() {
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.RIGHT);
+        expect(root.left[0]).not.toBe(left1);
+      });
+
+      it("should not change the parentId of the left child in root when mod+RIGHT is pressed", function() {
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.RIGHT);
+        expect(left1.parentId).toBe(root._id);
+      });
+
+      it("should put the left root child back into left subtree of root on mod+RIGHT - mod+LEFT key press", function() {
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.RIGHT);
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.LEFT);
+        expect(root.left[0]).toBe(left1);
+      });
+
+      it("should put the left root child at the end of the right subtree of root on mod+RIGHT key press", function() {
+        var right1 = new App.Node("right1", "right", root, 0);
+        root.right = [right1];
+        right1.parent = root;
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.RIGHT);
+        expect(root.right[root.right.length - 1]).toBe(left1);
+      });
+
+      it("should put left1 as the last child of left2 on mod+LEFT key press", function() {
+        var left2 = new App.Node("left2", "left", root, 0);
+        left2._id = "left2";
+        var left2Child1 = new App.Node("left2Child1", "left", left2, 0);
+        left2Child1._id = "left2Child1";
+        left2.childSubTree = [left2Child1];
+        left2Child1.parent = [left2];
+        root.left.push(left2);
+        left2.parent = root;
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.LEFT);
+        expect(left2.childSubTree[left2.childSubTree.length - 1]).toBe(left1);
+      });
+
+
+      it("should put left3 as the last child of left2 on mod+LEFT key press", function() {
+        var left2 = new App.Node("left2", "left", root, 0);
+        left2._id = "left2";
+        var left2Child1 = new App.Node("left2Child1", "left", left2, 0);
+        left2Child1._id = "left2Child1";
+        var left3 = new App.Node("left3", "left", root, 0);
+        left3._id = "left3";
+        left2.childSubTree = [left2Child1];
+        left2Child1.parent = [left2];
+        root.left.push(left2);
+        root.left.push(left3);
+        left2.parent = root;
+        left3.parent = root;
+        App.Node.horizontalReposition(left3, App.Constants.KeyPressed.LEFT);
+        expect(left2.childSubTree[left2.childSubTree.length - 1]).toBe(left3);
+      });
+
+      it("should change the parentId of left1 as left2 on mod+LEFT key press", function() {
+        var left2 = new App.Node("left2", "left", root, 0);
+        left2._id = "left2";
+        var left2Child1 = new App.Node("left2Child1", "left", left2, 0);
+        left2Child1._id = "left2Child1";
+        left2.childSubTree = [left2Child1];
+        left2Child1.parent = [left2];
+        root.left.push(left2);
+        left2.parent = root;
+        App.Node.horizontalReposition(left1, App.Constants.KeyPressed.LEFT);
+        expect(left1.parentId).toBe(left2._id);
+      });
+    });
   });
 });
