@@ -19,18 +19,10 @@ Router.route('/create/:_id', {
 		return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
 	}
 });
-Router.route('/404', {
+Router.route('(/404)|/(.*)', {
 	name: 'error_page',
 	template: 'error_page',
 	waitOn: function () {
 		return Meteor.subscribe("userdata", Meteor.userId());
 	}
-});
-
-Router.route('/(.*)', {
-	name: 'error_page',
- 	template: 'error_page',
- 	waitOn: function () {
- 		return Meteor.subscribe("userdata", Meteor.userId());
- 	}
 });

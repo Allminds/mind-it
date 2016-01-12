@@ -16,7 +16,7 @@ describe('eventBinding.js', function () {
 
       it("should select previous node of deleted node if it exists and next node does not exist", function () {
         var previous = {_id: "previous"},
-          parent = {_id: "parent", children: [previous]},
+            parent = {_id: "parent", children: [previous]},
           removedNode = {_id: "removed", parent: parent, previous: previous};
         spyOn(App, 'selectNode');
 
@@ -46,28 +46,28 @@ describe('eventBinding.js', function () {
       });
     });
     describe('App.eventBinding.performLogicalVerticalMovement', function () {
-      it("should select downward node on performing vertical movement for down key press action", function () {
-        var first = {_id: "first", depth: 1, position: "right"},
-          second = {_id: "second", depth: 1, position: "right"},
-          parent = {_id: "parent", childSubTree: [first, second]};
-        first.parent = parent;
+      // it("should select downward node on performing vertical movement for down key press action", function () {
+      //   var first = {_id: "first", depth: 1, position: "right"},
+      //     second = {_id: "second", depth: 1, position: "right"},
+      //     parent = {_id: "parent", childSubTree: [first, second]};
+      //   first.parent = parent;
 
-        spyOn(App, "selectNode");
-        App.eventBinding.performLogicalVerticalMovement(first, App.Constants.KeyPressed.DOWN);
+      //   spyOn(App, "selectNode");
+      //   App.eventBinding.performLogicalVerticalMovement(first, App.Constants.KeyPressed.DOWN);
 
-        expect(App.selectNode).toHaveBeenCalledWith(second);
-      });
-      it("should select upward node on performing vertical movement for up key press action", function () {
-        var first = {_id: "first", depth: 1, position: "right"},
-          second = {_id: "second", depth: 1, position: "right"},
-          parent = {_id: "parent", children: [first, second]};
-        second.parent = parent;
+      //   expect(App.selectNode).toHaveBeenCalledWith(second);
+      // });
+      // it("should select upward node on performing vertical movement for up key press action", function () {
+      //   var first = {_id: "first", depth: 1, position: "right"},
+      //     second = {_id: "second", depth: 1, position: "right"},
+      //     parent = {_id: "parent", children: [first, second]};
+      //   second.parent = parent;
 
-        spyOn(App, "selectNode");
-        App.eventBinding.performLogicalVerticalMovement(second, App.Constants.KeyPressed.UP);
+      //   spyOn(App, "selectNode");
+      //   App.eventBinding.performLogicalVerticalMovement(second, App.Constants.KeyPressed.UP);
 
-        expect(App.selectNode).toHaveBeenCalledWith(first);
-      });
+      //   expect(App.selectNode).toHaveBeenCalledWith(first);
+      // });
     });
     describe('event binding helpers', function(){
       var first, second, parent;
