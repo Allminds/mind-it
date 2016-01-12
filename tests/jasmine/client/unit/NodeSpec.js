@@ -131,19 +131,19 @@ describe('lib.Node.js', function () {
       });
     });
     describe("Repositioning Horizontal", function() {
-      var root, parent, child1, child2, child3;
+      var root, left1, child1, child2, child3;
       beforeEach(function () {
         root = new App.Node("root");
         root._id = "root";
-        left1 = new App.Node("parent", "left", root, 0);
-        left1._id = "parent";
+        left1 = new App.Node("left1", "left", root, 0);
+        left1._id = "left1";
         left1.parent = root;
         child1 = new App.Node("child1", "left", left1, 0);
         child1._id = "child1";
         child2 = new App.Node("child2", "left", left1, 1);
         child2._id = "child2";
         child3 = new App.Node("child3", "left", left1, 1);
-        child2._id = "child3";
+        child3._id = "child3";
         child1.parent = left1;
         child2.parent = left1;
         child3.parent = left1;
@@ -197,7 +197,7 @@ describe('lib.Node.js', function () {
         var left2Child1 = new App.Node("left2Child1", "left", left2, 0);
         left2Child1._id = "left2Child1";
         left2.childSubTree = [left2Child1];
-        left2Child1.parent = [left2];
+        left2Child1.parent = left2;
         root.left.push(left2);
         left2.parent = root;
         App.Node.horizontalReposition(left1, App.Constants.KeyPressed.LEFT);
@@ -213,7 +213,7 @@ describe('lib.Node.js', function () {
         var left3 = new App.Node("left3", "left", root, 0);
         left3._id = "left3";
         left2.childSubTree = [left2Child1];
-        left2Child1.parent = [left2];
+        left2Child1.parent = left2;
         root.left.push(left2);
         root.left.push(left3);
         left2.parent = root;
@@ -228,11 +228,47 @@ describe('lib.Node.js', function () {
         var left2Child1 = new App.Node("left2Child1", "left", left2, 0);
         left2Child1._id = "left2Child1";
         left2.childSubTree = [left2Child1];
-        left2Child1.parent = [left2];
+        left2Child1.parent = left2;
         root.left.push(left2);
         left2.parent = root;
         App.Node.horizontalReposition(left1, App.Constants.KeyPressed.LEFT);
         expect(left1.parentId).toBe(left2._id);
+      });
+
+      it("should put child3 as the last child of child2 on mod+LEFT key press", function() {
+        var child2child1 = new App.Node("child2child1", "left", child2, 0);
+        child2child1._id = "child2child1";
+        child2child1.parent = child2;
+        child2.childSubTree.push(child2child1);
+        App.Node.horizontalReposition(child3, App.Constants.KeyPressed.LEFT);
+        expect(child2.childSubTree[child2.childSubTree.length - 1]).toBe(child3);
+      });
+
+      it("should put child1 as the last child of child2 on mod+LEFT key press", function() {
+        var child2child1 = new App.Node("child2child1", "left", child2, 0);
+        child2child1._id = "child2child1";
+        child2child1.parent = child2;
+        child2.childSubTree.push(child2child1);
+        App.Node.horizontalReposition(child1, App.Constants.KeyPressed.LEFT);
+        expect(child2.childSubTree[child2.childSubTree.length - 1]).toBe(child1);
+      });
+
+      it("should put child2 as the second child in left subtree of root on mod+RIGHT key press on child2", function() {
+        var left2 = new App.Node("left2", "left", root, 0);
+        left2._id = "left2";
+        root.left.push(left2);
+        left2.parent = root;
+        App.Node.horizontalReposition(child2, App.Constants.KeyPressed.RIGHT);
+        expect(root.left[1]).toBe(child2);
+      });
+
+      it("should put child2child1 as the third child of left1 on mod+RIGHT key press on child2child1", function() {
+        var child2child1 = new App.Node("child2child1", "left", child2, 0);
+        child2child1._id = "child2child1";
+        child2child1.parent = child2;
+        child2.childSubTree.push(child2child1);
+        App.Node.horizontalReposition(child2child1, App.Constants.KeyPressed.RIGHT);
+        expect(left1.childSubTree[2]).toBe(child2child1);
       });
     });
   });
