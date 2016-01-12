@@ -177,8 +177,7 @@ App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
 };
 
 var isParentChildMatchesThisNode = function (siblings, index, node) {
-  console.log(siblings);
-  return siblings[index]._id === node._id
+    return siblings[index]._id === node._id
 };
 
 var isGoingUpFromTopMostNode = function (siblings, node, keyPressed) {
