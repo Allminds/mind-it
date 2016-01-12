@@ -36,9 +36,11 @@ describe('create.helpers.map.js', function () {
     var name = "child3";
     var dir = "right";
 
+    spyOn(App.Node, "addToDatabase");
+    spyOn(App.Node, "addChild");
     var newNode = App.map.addNewNode(parent, name, dir);
-    expect(newNode.name).toBe(name);
-    expect(newNode.parent_ids).toEqual([parent._id]);
+    expect(App.Node.addToDatabase).toHaveBeenCalled();
+    expect(App.Node.addChild).toHaveBeenCalled();
   });
 
   it("should show an editor on making a node editable", function() {

@@ -6,42 +6,16 @@ App.map.getDataOfNodeWithClassNamesString = function (classNames) {
 };
 
 App.map.addNodeToUI = function (parent, newNode) {
-  var children = parent[newNode.position] || parent.children || parent._children;
-  if (!children) {
-    children = parent.children = [];
-  }
-  if (newNode.previous) {
-    var previousNode = children.find(function (x) {
-        return x._id == newNode.previous
-      }),
-      previousNodeIndex = children.indexOf(previousNode) + 1;
-    children.splice(previousNodeIndex, 0, newNode);
-  } else if (newNode.next) {
-    children.splice(0, 0, newNode);
-  } else
-    children.push(newNode);
+  var subTree = App.Node.isRoot(parent) ? parent[newNode.position] : parent.childSubTree;
+  subTree.splice(newNode.index, 0, newNode);
   App.chart.update();
 };
 
-App.map.addNewNode = function (parent, newNodeName, dir, previousSibling) {
-  if (!previousSibling) {
-    var children = parent.position ? parent.children : parent[dir];
-
-    previousSibling = children && children.length > 0
-      ? children[children.length - 1]
-      : {_id: null, next: null};
-  }
-  var newNode = {
-    name: newNodeName, position: dir,
-    parent_ids: [].concat(parent.parent_ids || []).concat([parent._id]),
-    previous: previousSibling._id, next: previousSibling.next
-  };
-  newNode._id = mindMapService.addNode(newNode);
-  if (previousSibling._id) {
-    mindMapService.updateNode(previousSibling._id, {next: newNode._id});
-    mindMapService.updateNode(newNode.next, {previous: newNode._id});
-  }
-  return newNode;
+App.map.addNewNode = function (parent, dir, childIndex) {
+  var node = new App.Node("", dir, parent, childIndex);
+  App.Node.addToDatabase(node);
+  App.Node.addChild(parent, node);
+  return node;
 };
 
 App.map.makeEditable = function (nodeId) {
