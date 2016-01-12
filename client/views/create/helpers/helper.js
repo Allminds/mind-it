@@ -1,7 +1,7 @@
 App.DirectionToggler = (function () {
   var instance;
 
-  var currentDir = "right";
+  var currentDir = "left";
   var canToggle = false;
 
   var init = function () {
@@ -36,6 +36,42 @@ App.DirectionToggler = (function () {
   };
 
 })();
+
+App.calculateNextIndex = function(initialIndex, length, keyPressed){
+  var newIndex = -1;
+  if(keyPressed === App.Constants.KeyPressed.UP) {
+    if(initialIndex == 0) return -1;
+    newIndex = (initialIndex - 1) < 0 ? length - 1 :  (initialIndex - 1) % length;
+  } else if(keyPressed === App.Constants.KeyPressed.DOWN) {
+    if(initialIndex == length - 1) return -1;
+    newIndex = (initialIndex + 1) % length;
+  }
+
+  return newIndex
+};
+
+App.swapElements = function(list, firstIndex, secondIndex) {
+  var temp = list[firstIndex];
+  list[firstIndex] = list[secondIndex];
+  list[secondIndex] = temp;
+  return list;
+};
+
+App.circularReposition = function(list, keyPressed) {
+  var newArray = [];
+  if(keyPressed === App.Constants.KeyPressed.UP) {
+    var temp = list[0];
+    newArray = list.slice(1);
+    newArray.push(temp);
+  } else if( keyPressed == App.Constants.KeyPressed.DOWN){
+    var temp = list[list.length-1];
+    newArray = list.slice(0, list.length-1);
+    newArray.splice(0, 0, temp);
+  }
+
+  list = newArray;
+  return list;
+}
 
 App.nodeSelector = {
   prevDepthVisited: 0,

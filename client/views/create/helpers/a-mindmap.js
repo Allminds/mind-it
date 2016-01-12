@@ -144,16 +144,16 @@ MindMap = function MindMap() {
   var connectLine = MindMap.diagonalLine;
   var getNodeHeight = function (node, defualtHeight) {
     var textHeight = getTextHeight(node._id),
-      subTreeHeight = (node.children || []).reduce(function (height, child) {
+      subTreeHeight = (node.childSubTree || []).reduce(function (height, child) {
         height += getNodeHeight(child, defualtHeight);
         return height;
       }, 0);
-    subTreeHeight += (node.children || []).length > 0 ? (2 * defualtHeight) : 0;
+    subTreeHeight += (node.childSubTree || []).length > 0 ? (2 * defualtHeight) : 0;
     return Math.max(defualtHeight, textHeight, subTreeHeight);
   };
   var getX = function (node, defualtHeight) {
     if (!node.parent) return 0;
-    var siblings = node.parent[node.position] || node.parent.children || [],
+    var siblings = node.parent.position ? node.parent.childSubTree : node.parent[node.position],
       siblingHeights = siblings.map(function (sibling) {
         return getNodeHeight(sibling, defualtHeight);
       }),
@@ -185,9 +185,7 @@ MindMap = function MindMap() {
       } else {
         vis = graphRoot;
       }
-      vis = vis
-        .attr("transform", "translate(" + (w / 2 + margin.left) + "," + (margin.top + h / 2) + ")")
-      ;
+      vis = vis.attr("transform", "translate(" + (w / 2 + margin.left) + "," + (margin.top + h / 2) + ")");
 
       root.x0 = 0;
       root.y0 = 0;
@@ -199,49 +197,37 @@ MindMap = function MindMap() {
         container.call(chart);
         container.call(chart);
       };
+
       var maxDepth = function (node) {
-        return (node.children || []).reduce(function (depth, child) {
+        return (node.childSubTree || []).reduce(function (depth, child) {
           var childDepth = maxDepth(child);
           return childDepth > depth ? childDepth : depth;
         }, node.depth);
       };
-      if (!(root.left || root.right)) {
-        var i = 0, l = (root.children || []).length;
-        root.left = [];
-        root.right = [];
-
-        for (; i < l; i++) {
-          switch (root.children[i].position) {
-            case 'left' :
-              root.left.push(root.children[i]);
-              break;
-            case 'right':
-              root.right.push(root.children[i]);
-              break;
-          }
-        }
-      }
 
       //Compute the new tree layout.
       function right(d) {
-        return d.right ? d.right : d.children;
+        return d.position ? d.childSubTree : d.right;
       }
 
       function left(d) {
-        return d.left ? d.left : d.children;
+        return d.position ? d.childSubTree : d.left;
       }
 
       var first = root.left.length > 0 ? left : right,
         second = root.right.length > 0 ? right : left;
 
-      var firstSet = tree
-        .children(first)
-        .nodes(root)
-        .reverse();
-      var secondSet = tree
-        .children(second)
-        .nodes(root)
-        .reverse();
+      var firstSet = tree;
+      var a1 = firstSet.children(first);
+      var a2 = a1.nodes(root);
+      var a3 = a2.reverse();
+      firstSet = a3;
+
+      var secondSet = tree;
+      var b1 = secondSet.children(second);
+      var b2 = b1.nodes(root);
+      var b3 = b2.reverse();
+      secondSet = b3;
 
       root.children = root.left.concat(root.right);
 
