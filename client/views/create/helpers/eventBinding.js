@@ -328,7 +328,7 @@ Mousetrap.bind('mod+e', function () {
   App.eventBinding.export();
 });
 
-Mousetrap.bind('mod+left', debounce(250, true,
+Mousetrap.bind('mod+left', debounce(0, true,
   function () {
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
@@ -337,7 +337,7 @@ Mousetrap.bind('mod+left', debounce(250, true,
     }
   }));
 
-Mousetrap.bind('mod+right', debounce(250, true,
+Mousetrap.bind('mod+right', debounce(0, true,
   function () {
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
