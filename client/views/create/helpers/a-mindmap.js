@@ -315,7 +315,7 @@ MindMap = function MindMap() {
 
         targetNode = d3.select('svg').select('g').append('svg:g')
           .attr("transform", d3.select(this).attr("transform"))
-          .attr('class', d3.select(this).attr('class'));
+          .classed("node dragSelect", true);
 
         targetNode.append("svg:rect")
           .attr('x', currentNodeRect.attr('x'))
@@ -324,7 +324,7 @@ MindMap = function MindMap() {
           .attr('width', currentNodeRect.attr('width'));
 
         targetNode.append("svg:text")
-          .text(currentNodeText.text())
+          .text('')
           .attr("cols", currentNodeText.attr('cols'))
           .attr("rows", currentNodeText.attr('rows'));
       };
@@ -340,6 +340,14 @@ MindMap = function MindMap() {
         nodeToBeDragged.attr("transform", function () {
           return "translate(" + d3.event.x + "," + d3.event.y + ")";
         });
+        // Code to highlight the nodes at the time of drag and drop.
+        var point = nodeToBeDragged.attr('transform').replace('translate(', '').replace(')', '').split(',');
+        var droppedOnElement = App.checkOverlap(point);
+        var rectList = d3.select('svg').select('g').selectAll('g');
+        d3.selectAll(".dragSelect").classed('dragSelect',false);
+        if(droppedOnElement != nodeToBeDragged && d3.select(droppedOnElement).node()){
+            d3.select(droppedOnElement).classed('dragSelect',true);
+        }
       };
 
       function dragend() {
@@ -369,6 +377,7 @@ MindMap = function MindMap() {
               App.pasteNode(draggedNode, droppedOnData, App.calculateDirection(droppedOnData));
               App.expand(droppedOnData, droppedOnData._id);
               App.retainCollapsed();
+              d3.select(droppedOnElement).classed('dragSelect',false);
               App.select(droppedOnElement);
             });
           }

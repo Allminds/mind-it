@@ -81,3 +81,14 @@ circle.indicator.unfilled {
   stroke: transparent;
   stroke-width: 1.5px;
 }
+
+.node.dragSelect rect {
+  fill: #ffad33;
+  stroke: black;
+  opacity: 0.2
+}
+
+.node.dropSelect rect {
+  fill: #ddd;
+  opacity:0.3;
+}
