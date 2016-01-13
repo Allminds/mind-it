@@ -287,8 +287,7 @@ Mousetrap.bind('space', function () {
   var selectedNodeData = App.eventBinding.beforeBindEventAction(arguments[0]);
   App.toggleCollapsedNode(selectedNodeData);
 });
-
-Mousetrap.bind('mod+e', function createXmlFile() {
+App.eventBinding.export = function () {
   var rootNode = d3.selectAll('.node')[0].find(function (node) {
     return !node.__data__.position;
   });
@@ -321,7 +320,9 @@ Mousetrap.bind('mod+e', function createXmlFile() {
     });
   }, function () {
   });
-
+};
+Mousetrap.bind('mod+e', function () {
+  App.eventBinding.export();
 });
 
 Mousetrap.bind('mod+left', debounce(250, true,
