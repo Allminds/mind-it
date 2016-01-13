@@ -20,7 +20,7 @@
 
 <!--Home template -->
 <template name='home'>
-  {{> TopBar topbarText="About Us" linkId="about-us"}}
+  {{> TopBar topbarText="About Us"  requireExport=false linkId="about-us"}}
 
   <div>
     {{> ModalPopUp modalHeaderText="About Us" modalId="aboutUs-modal" path="/About_us_mind_it.png" isFullWidth="true"}}
