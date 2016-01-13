@@ -11,7 +11,10 @@ describe('lib.Node.js', function () {
     });
 
     it("isRoot should return false for any child node", function() {
-      var childnode = new App.Node('child1', 'right');
+      var rootNode = new App.Node('root');
+      rootNode._id = 'root';
+      var childnode = new App.Node('child1', 'right', rootNode);
+      childnode.parent = rootNode;
       expect(App.Node.isRoot(childnode)).toBe(false);
     });
 
@@ -50,6 +53,48 @@ describe('lib.Node.js', function () {
       mindMapService = App.MindMapService.getInstance();
     });
 
+    
+    it("should return root for root node on getDirection]", function() {
+      var data = new App.Node('root');
+      var direction = App.getDirection(data);
+      expect(direction).toBe('root');
+    });
+
+    it("shoud return 'right' for immediate chidl in right subtree of root node on getDirection", function() {
+      var root = new App.Node("root");
+      root._id = "root";
+      var right1 = new App.Node("right1", "right", root, 0);
+      right1._id = "right1";
+      right1.parent = root;
+      root.right = [right1];
+      
+      var direction = App.getDirection(right1);
+      expect(direction).toBe('right');
+    });
+
+    it("shoud return left for a child on left subtree of root node on getDirection", function() {
+      var root = new App.Node("root");
+      root._id = "root";
+      var left1 = new App.Node("left1", "left", root, 0);
+      left1._id = "left1";
+      left1.parent = root;
+      var child1 = new App.Node("child1", "left", left1, 0);
+      child1._id = "child1";
+      var child2 = new App.Node("child2", "left", left1, 1);
+      child2._id = "child2";
+      var child3 = new App.Node("child3", "left", left1, 1);
+      child3._id = "child3";
+      child1.parent = left1;
+      child2.parent = left1;
+      child3.parent = left1;
+      root.left = [left1];
+      left1.childSubTree = [child1, child2, child3];
+
+      var direction = App.getDirection(child2);
+      expect(direction).toBe('left');
+    });
+
+
     it("should create new node in DB", function() {
       var newNode = new App.Node('newNode');
       spyOn(App.MindMapService.getInstance(), "addNode").and.returnValue("id");
@@ -58,8 +103,11 @@ describe('lib.Node.js', function () {
     });
 
     it("should delete a node and call mindMapService.updateNode method", function() {
-      var parent = new App.Node("parent", "right", null, 0);
+      var root = new App.Node("root");
+      root._id = "root";  
+      var parent = new App.Node("parent", "right", root, 0);
       parent._id = "parent";
+      parent.parent = root;
       var child1 = new App.Node("child1", "right", parent, 0);
       child1._id = "child1";
       var child2 = new App.Node("child2", "right", parent, 1);
@@ -67,7 +115,7 @@ describe('lib.Node.js', function () {
       child1.parent = parent;
       child2.parent = parent;
       parent.childSubTree = [child1, child2];
-
+      root.left = [parent];
       spyOn(mindMapService, "updateNode");
       App.Node.delete(child1);
       expect(mindMapService.updateNode).toHaveBeenCalledWith(parent._id, { childSubTree: [ 'child2' ] });
@@ -76,8 +124,11 @@ describe('lib.Node.js', function () {
     describe("Repositioning Vertical", function () {
       var parent, child1, child2, child3;
       beforeEach(function () {
-        parent = new App.Node("parent", "right", null, 0);
+        var root = new App.Node("root");
+        root._id = "root";    
+        parent = new App.Node("parent", "right", root, 0);
         parent._id = "parent";
+        parent.parent = root;
         child1 = new App.Node("child1", "right", parent, 0);
         child1._id = "child1";
         child2 = new App.Node("child2", "right", parent, 1);
@@ -88,6 +139,7 @@ describe('lib.Node.js', function () {
         child2.parent = parent;
         child3.parent = parent;
         parent.childSubTree = [child1, child2, child3];
+        root.left.push(parent);
       });
 
       it("should not call swapElements method for reposition vertical key press on root node", function () {

@@ -105,30 +105,30 @@ describe('eventBinding.js', function () {
     });
   });
 
-  describe('App.cutNode', function () {
-    it("should show alert if I try to cut root node", function () {
-      spyOn(App.map, "getDataOfNodeWithClassNamesString");
-      spyOn(window, "alert");
+  // describe('App.cutNode', function () {
+  //   it("should show alert if I try to cut root node", function () {
+  //     spyOn(App.map, "getDataOfNodeWithClassNamesString");
+  //     spyOn(window, "alert");
 
-      App.cutNode();
+  //     App.cutNode();
 
-      expect(window.alert).toHaveBeenCalled();
-    });
+  //     expect(window.alert).toHaveBeenCalled();
+  //   });
 
-    it("should call all internal methods on cutNode call for node other than root", function () {
-      var parent = {_id: "parent"},
-        node = {_id: "node", position: "right", parent: parent};
-      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-      spyOn(App.map, "storeSourceNode");
-      spyOn(Meteor, "call");
+  //   it("should call all internal methods on cutNode call for node other than root", function () {
+  //     var parent = {_id: "parent"},
+  //       node = {_id: "node", position: "right", parent: parent};
+  //     spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+  //     spyOn(App.map, "storeSourceNode");
+  //     spyOn(Meteor, "call");
 
-      App.cutNode();
+  //     App.cutNode();
 
-      expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".selected");
-      expect(App.map.storeSourceNode).toHaveBeenCalledWith(node);
-      expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
-    });
-  });
+  //     expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".selected");
+  //     expect(App.map.storeSourceNode).toHaveBeenCalledWith(node);
+  //     expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
+  //   });
+  // });
 
   describe("Node Add/Delete/Edit/Collapse events", function () {
     var event, node, newNode, parent;
@@ -152,6 +152,7 @@ describe('eventBinding.js', function () {
       newNode = {_id: "newNode"};
       node.parent = parent;
     });
+
     describe("New Node creation", function () {
       it("should add new sibling on enter keypress", function () {
         event.keyCode = 13;
