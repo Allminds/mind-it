@@ -48,7 +48,7 @@ App.pasteNode = function (sourceNode, targetNode, dir, previousSibling) {
   return newNode;
 };
 
-App.eventBinding.f2Action = function() {
+App.eventBinding.f2Action = function(event) {
   (event.preventDefault || event.stop || event.stopPropagation || function () {
   }).call(event);
   var selectedNode = d3.select(".node.selected")[0][0];
@@ -56,8 +56,8 @@ App.eventBinding.f2Action = function() {
   App.showEditor.call(selectedNode);
 };
 
-Mousetrap.bind('f2', function() {
-  App.eventBinding.f2Action()
+Mousetrap.bind('f2', function(event) {
+  App.eventBinding.f2Action(event);
 });
 
 Mousetrap.bind('mod+x', App.cutNode);
