@@ -94,37 +94,70 @@ describe('lib.Node.js', function () {
       expect(direction).toBe('left');
     });
 
+    describe("App.Node db methods", function() {
+      var root, parent, child1, child2, child3;
+      beforeEach(function () {
+        root = new App.Node("root");
+        root._id = "root";    
+        parent = new App.Node("parent", "left", root, 0);
+        parent._id = "parent";
+        parent.parent = root;
+        child1 = new App.Node("child1", "left", parent, 0);
+        child1._id = "child1";
+        child2 = new App.Node("child2", "left", parent, 1);
+        child2._id = "child2";
+        child3 = new App.Node("child3", "left", parent, 1);
+        child3._id = "child3";
+        child1.parent = parent;
+        child2.parent = parent;
+        child3.parent = parent;
+        parent.childSubTree = [child1, child2, child3];
+        root.left.push(parent);
+      });
 
-    it("should create new node in DB", function() {
-      var newNode = new App.Node('newNode');
-      spyOn(App.MindMapService.getInstance(), "addNode").and.returnValue("id");
-      var node = App.Node.addToDatabase(newNode);
-      expect(node._id).toBe("id");
-    });
 
-    it("should delete a node and call mindMapService.updateNode method", function() {
-      var root = new App.Node("root");
-      root._id = "root";  
-      var parent = new App.Node("parent", "right", root, 0);
-      parent._id = "parent";
-      parent.parent = root;
-      var child1 = new App.Node("child1", "right", parent, 0);
-      child1._id = "child1";
-      var child2 = new App.Node("child2", "right", parent, 1);
-      child2._id = "child2";
-      child1.parent = parent;
-      child2.parent = parent;
-      parent.childSubTree = [child1, child2];
-      root.left = [parent];
-      spyOn(mindMapService, "updateNode");
-      App.Node.delete(child1);
-      expect(mindMapService.updateNode).toHaveBeenCalledWith(parent._id, { childSubTree: [ 'child2' ] });
+      it("should create new node in DB", function() {
+        var newNode = new App.Node('newNode');
+        spyOn(App.MindMapService.getInstance(), "addNode").and.returnValue("id");
+        var node = App.Node.addToDatabase(newNode);
+        expect(node._id).toBe("id");
+      });
+
+      it("should call mindMapService.updateNode with parentId for updateParentIdOfNode function call", function(){
+        spyOn(mindMapService, "updateNode");
+        App.Node.updateParentIdOfNode(child1, root._id);
+        expect(mindMapService.updateNode).toHaveBeenCalledWith(child1._id, {parentId: root._id });
+      });
+
+      it("should call mindMapService.updateNode with childSubTree for updateChildTree function call on parent", function(){
+        spyOn(mindMapService, "updateNode");
+        App.Node.updateChildTree(parent);
+        expect(mindMapService.updateNode).toHaveBeenCalledWith(parent._id, {childSubTree: [ 'child1','child2','child3' ]});
+      });
+
+      it("should not call mindMapService.updateNode on root if subtree name is not provided", function(){
+        spyOn(mindMapService, "updateNode");
+        App.Node.updateChildTree(root);
+        expect(mindMapService.updateNode).not.toHaveBeenCalled();
+      });
+
+      it("should call mindMapService.updateNode on root if subtree name is provided", function(){
+        spyOn(mindMapService, "updateNode");
+        App.Node.updateChildTree(root, 'left');
+        expect(mindMapService.updateNode).toHaveBeenCalledWith(root._id, {left: [ 'parent']});
+      });
+
+      it("should delete a node and call mindMapService.updateNode method", function() {
+        spyOn(mindMapService, "updateNode");
+        App.Node.delete(child1);
+        expect(mindMapService.updateNode).toHaveBeenCalledWith(parent._id, { childSubTree: [ 'child2','child3' ] });
+      });
     });
 
     describe("Repositioning Vertical", function () {
-      var parent, child1, child2, child3;
+      var root, parent, child1, child2, child3;
       beforeEach(function () {
-        var root = new App.Node("root");
+        root = new App.Node("root");
         root._id = "root";    
         parent = new App.Node("parent", "right", root, 0);
         parent._id = "parent";
@@ -322,6 +355,24 @@ describe('lib.Node.js', function () {
         App.Node.horizontalReposition(child2child1, App.Constants.KeyPressed.RIGHT);
         expect(left1.childSubTree[2]).toBe(child2child1);
       });
+      
+      it("should call updateChildTree twice, followed by updateParentIdofNode", function(){
+        spyOn(App.Node, "updateChildTree");
+        spyOn(App.Node, "updateParentIdOfNode");
+
+        var child2child1 = new App.Node("child2child1", "left", child2, 0);
+        child2child1._id = "child2child1";
+        child2child1.parent = child2;
+        child2.childSubTree.push(child2child1);
+        App.Node.horizontalReposition(child2child1, App.Constants.KeyPressed.RIGHT);
+        expect(App.Node.updateChildTree.calls.count()).toBe(2);
+        child2child1.parentId = root._id;
+        expect(App.Node.updateParentIdOfNode).toHaveBeenCalledWith(child2child1);
+
+        
+      });
+      
+      
     });
   });
 });
