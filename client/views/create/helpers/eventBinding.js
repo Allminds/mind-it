@@ -2,7 +2,7 @@ App.eventBinding = {};
 
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
   var parent = removedNode.parent,
-    siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
+      siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
   var focusableNode = siblings[removedNodeIndex];
   if(siblings.length == 0) {
     focusableNode = parent;
@@ -115,10 +115,13 @@ App.eventBinding.newNodeAddAction = function (action) {
 
 App.eventBinding.enterAction = function (selectedNode) {
   var dbNode = App.Node.d3NodeToDbNode(selectedNode),
-    parent = dbNode.parentId ? App.Node.getParent(dbNode.parentId) : dbNode,
-    dir = App.calculateDirection(parent),
-    siblings = parent.position ? parent.childSubTree : parent[dir],
-    childIndex = dbNode.position ? siblings.indexOf(dbNode._id) + 1 : siblings.length;
+      parent = dbNode.parentId ? dbNode.parent : dbNode,
+      dir = App.calculateDirection(parent),
+      siblings = App.Node.isRoot(parent) ? parent[dir]: parent.childSubTree;
+  
+  var childIndex = App.Node.isRoot(dbNode) ? siblings.length : siblings.map(function(child){
+                                                                 return child._id;
+                                                               }).indexOf(dbNode._id) + 1;
 
   return App.map.addNewNode(parent, dir, childIndex);
 };
