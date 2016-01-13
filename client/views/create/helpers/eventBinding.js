@@ -332,144 +332,17 @@ Mousetrap.bind('mod+left', debounce(250, true,
   function () {
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
-      var data = selection.__data__;
-      var dir = App.getDirection(data),
-        parent = data.parent,
-        selectedNode,
-        target,
-        direction;
-
-      function pasteAfterCut() {
-        if (target.isCollapsed) {
-          App.expandRecursive(target, target._id);
-          App.removeLocally(target._id);
-        }
-        if (direction == "right")
-          selectedNode = App.pasteNode(data, target, direction, parent);
-        else
-          selectedNode = App.pasteNode(data, target, direction);
-        App.retainCollapsed();
-        App.selectNode(selectedNode);
-      }
-
-      switch (dir) {
-        case('right'):
-          App.cutNode(function () {
-            if (App.getDirection(parent) === 'root') {
-              if (data.hasOwnProperty('isCollapsed') && data.isCollapsed)
-                App.removeLocally(data._id);
-              selectedNode = App.pasteNode(data, parent, "left");
-              App.retainCollapsed();
-              App.selectNode(selectedNode);
-              return;
-
-            }
-            else {
-              target = parent.parent;
-              direction = "right";
-              pasteAfterCut();
-            }
-          });
-
-          break;
-        case('root'):
-          alert("Root cannot be added to a new parent");
-          break;
-        case('left'):
-          var nl = parent.children || [], i = 0;
-          if (parent[dir]) {
-            nl = parent[dir];
-          }
-          var l = nl.length;
-          for (; i < l; i++) {
-            if (nl[i]._id === data._id && l != 1) {
-              if (i === 0)
-                target = nl[(i + 1)];
-              else
-                target = nl[(i - 1)];
-              direction = "left";
-              App.cutNode(pasteAfterCut);
-              break;
-            }
-
-          }
-          break;
-        default:
-          break;
-      }
+      var node = selection.__data__;
+      App.Node.horizontalReposition(node, App.Constants.KeyPressed.LEFT);
     }
   }));
 
 Mousetrap.bind('mod+right', debounce(250, true,
   function () {
-    var selection = d3.select(".node.selected")[0][0],
-      selectedNode,
-      target,
-      direction;
-
-
+    var selection = d3.select(".node.selected")[0][0];
     if (selection) {
-      var data = selection.__data__;
-      var dir = App.getDirection(data),
-        parent = data.parent;
-
-      function pasteAfterCut() {
-        if (target.isCollapsed) {
-          App.expandRecursive(target, target._id);
-          App.removeLocally(target._id);
-        }
-        if (direction == "left")
-          selectedNode = App.pasteNode(data, target, direction, parent);
-        else
-          selectedNode = App.pasteNode(data, target, direction);
-        App.retainCollapsed();
-        App.selectNode(selectedNode);
-      }
-
-      switch (dir) {
-        case('left'):
-          App.cutNode(function () {
-            if (App.getDirection(parent) === 'root') {
-              if (data.hasOwnProperty('isCollapsed') && data.isCollapsed)
-                App.removeLocally(data._id);
-              selectedNode = App.pasteNode(data, parent, "right");
-              App.retainCollapsed();
-              App.selectNode(selectedNode);
-              return;
-            }
-            else {
-              target = parent.parent;
-              direction = "left";
-              pasteAfterCut();
-            }
-          });
-
-          break;
-        case('root'):
-          alert("Root cannot be added to a new parent");
-          break;
-        case('right'):
-          var nl = parent.children || [], i = 0;
-          if (parent[dir]) {
-            nl = parent[dir];
-          }
-          var l = nl.length;
-          for (; i < l; i++) {
-            if (nl[i]._id === data._id && l != 1) {
-              if (i === 0)
-                target = nl[(i + 1)];
-              else
-                target = nl[(i - 1)];
-              direction = "right";
-              App.cutNode(pasteAfterCut);
-              break;
-            }
-          }
-          break;
-        default:
-          break;
-      }
-
+      var node = selection.__data__;
+      App.Node.horizontalReposition(node, App.Constants.KeyPressed.RIGHT);
     }
   }));
 
