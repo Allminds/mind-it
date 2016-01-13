@@ -2,10 +2,14 @@ App.eventBinding = {};
 
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
   var parent = removedNode.parent,
-    children = parent[removedNode.position] || parent.children || [],
-    nextNode = children[removedNodeIndex],
-    previousNode = children[removedNodeIndex - 1];
-  App.selectNode(nextNode || previousNode || parent);
+      siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
+  var focusableNode = siblings[removedNodeIndex];
+  if(siblings.length == 0) {
+    focusableNode = parent;
+  }else if (removedNodeIndex == siblings.length ) {
+    focusableNode = siblings[removedNodeIndex - 1];
+  }
+  App.selectNode(focusableNode);
 };
 
 App.cutNode = function (asyncCallBack) {
@@ -110,11 +114,16 @@ App.eventBinding.newNodeAddAction = function (action) {
 };
 
 App.eventBinding.enterAction = function (selectedNode) {
-  var parent = selectedNode.parent || selectedNode,
-    sibling = selectedNode.position ? selectedNode : null,
-    dir = App.calculateDirection(parent);
+  var dbNode = App.Node.d3NodeToDbNode(selectedNode),
+      parent = dbNode.parentId ? dbNode.parent : dbNode,
+      dir = App.calculateDirection(parent),
+      siblings = App.Node.isRoot(parent) ? parent[dir]: parent.childSubTree;
+  
+  var childIndex = App.Node.isRoot(dbNode) ? siblings.length : siblings.map(function(child){
+                                                                 return child._id;
+                                                               }).indexOf(dbNode._id) + 1;
 
-  return App.map.addNewNode(parent, "", dir, sibling);
+  return App.map.addNewNode(parent, dir, childIndex);
 };
 
 Mousetrap.bind('enter', function () {
@@ -126,8 +135,12 @@ App.eventBinding.tabAction = function (selectedNode) {
   if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
     App.expand(selectedNode, selectedNode._id);
   }
-  var dir = App.calculateDirection(selectedNode);
-  return App.map.addNewNode(selectedNode, "", dir);
+  var dbNode = App.Node.d3NodeToDbNode(selectedNode),
+    dir = App.calculateDirection(dbNode),
+    siblings = dbNode.position ? dbNode.childSubTree : dbNode[dir],
+    childIndex = siblings.length;
+
+  return App.map.addNewNode(dbNode, dir, childIndex);
 };
 
 Mousetrap.bind('tab', function () {
@@ -144,25 +157,15 @@ Mousetrap.bind('del', function () {
       alert('Can\'t delete root');
       return;
     }
-    var children = selectedNode.parent[dir] || selectedNode.parent.children || [];
-    var selectedNodeIndex = children.indexOf(selectedNode);
-    Meteor.call('deleteNode', selectedNode._id, function () {
-      App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
-    });
+    var removedNodeIndex = App.Node.delete(selectedNode);
+    App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
+    Meteor.call('deleteNode', selectedNode._id);
   }
 });
 
-App.eventBinding.KeyPressed = {
-  UP : "up",
-  DOWN : "down",
-  LEFT : "left",
-  RIGHT : "right"
-};
-Object.freeze(App.eventBinding.KeyPressed);
-
 App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
   var index;
-  if (keyPressed === App.eventBinding.KeyPressed.DOWN)
+  if (keyPressed === App.Constants.KeyPressed.DOWN)
     index = 0;
   if (!node.children)
     return node;
@@ -170,7 +173,7 @@ App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
     return node;
   }
   while (node.children) {
-    if (!(keyPressed === App.eventBinding.KeyPressed.DOWN))
+    if (!(keyPressed === App.Constants.KeyPressed.DOWN))
       index = node.children.length - 1;
     node = node.children[index];
     if (node.depth == depth) {
@@ -181,15 +184,15 @@ App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
 };
 
 var isParentChildMatchesThisNode = function (siblings, index, node) {
-  return siblings[index]._id === node._id
+    return siblings[index]._id === node._id
 };
 
 var isGoingUpFromTopMostNode = function (siblings, node, keyPressed) {
-  return !(keyPressed === App.eventBinding.KeyPressed.DOWN) && isParentChildMatchesThisNode(siblings, 0, node);
+  return !(keyPressed === App.Constants.KeyPressed.DOWN) && isParentChildMatchesThisNode(siblings, 0, node);
 };
 
 var isGoingDownFromBottomLastNode = function (iterator, numberOfSiblings, keyPressed) {
-  return (keyPressed === App.eventBinding.KeyPressed.DOWN) && (iterator == numberOfSiblings);
+  return (keyPressed === App.Constants.KeyPressed.DOWN) && (iterator == numberOfSiblings);
 };
 
 App.eventBinding.performLogicalVerticalMovement = function(node, keyPressed) {
@@ -197,18 +200,14 @@ App.eventBinding.performLogicalVerticalMovement = function(node, keyPressed) {
   if (direction === 'root') return;
 
   var parent = node.parent,
-    siblings = parent.children || [],
-    iterator = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? 0:1;
+    siblings = (App.Node.isRoot(parent) ? parent[direction] : parent.childSubTree) || [] ,
+    iterator = (keyPressed === App.Constants.KeyPressed.DOWN) ? 0:1;
 
-  if (parent[direction]) {
-    siblings = parent[direction];
-  }
-
-  var numberOfSiblings = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? siblings.length-1 : siblings.length;
+  var numberOfSiblings = (keyPressed === App.Constants.KeyPressed.DOWN) ? siblings.length-1 : siblings.length;
 
   while(iterator < numberOfSiblings) {
     if (isParentChildMatchesThisNode(siblings, iterator, node)) {
-      var iteratorDiff = (keyPressed === App.eventBinding.KeyPressed.DOWN) ? 1:-1;
+      var iteratorDiff = (keyPressed === App.Constants.KeyPressed.DOWN) ? 1:-1;
       App.selectNode(App.eventBinding.findSameLevelChild(siblings[iterator + iteratorDiff], App.nodeSelector.prevDepthVisited, keyPressed));
       break;
     }
@@ -256,11 +255,11 @@ App.eventBinding.bindEventAction = function (event, left, right, root, keyPresse
 };
 
 Mousetrap.bind('up', function () {
-  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.eventBinding.KeyPressed.UP);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.Constants.KeyPressed.UP);
 });
 
 Mousetrap.bind('down', function () {
-  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.eventBinding.KeyPressed.DOWN);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function(){}, App.Constants.KeyPressed.DOWN);
 });
 
 App.eventBinding.handleCollapsing = function (data) {
@@ -280,19 +279,18 @@ App.eventBinding.getParentForEventBinding = function (data, dir) {
 };
 
 Mousetrap.bind('left', function () {
-  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.eventBinding.KeyPressed.LEFT);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.LEFT);
 });
 
 Mousetrap.bind('right', function () {
-  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.KeyPressed.RIGHT);
+  return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.RIGHT);
 });
 
 Mousetrap.bind('space', function () {
   var selectedNodeData = App.eventBinding.beforeBindEventAction(arguments[0]);
   App.toggleCollapsedNode(selectedNodeData);
 });
-
-Mousetrap.bind('mod+e', function createXmlFile() {
+App.eventBinding.export = function () {
   var rootNode = d3.selectAll('.node')[0].find(function (node) {
     return !node.__data__.position;
   });
@@ -325,7 +323,9 @@ Mousetrap.bind('mod+e', function createXmlFile() {
     });
   }, function () {
   });
-
+};
+Mousetrap.bind('mod+e', function () {
+  App.eventBinding.export();
 });
 
 Mousetrap.bind('mod+left', debounce(250, true,
@@ -473,103 +473,23 @@ Mousetrap.bind('mod+right', debounce(250, true,
     }
   }));
 
-Mousetrap.bind('mod+up', debounce(250, true,
-  function () {
-    var selection = d3.select(".node.selected")[0][0].__data__;
+Mousetrap.bind('mod+up', debounce(0, true, function () {
+  var selection = d3.select(".node.selected")[0][0].__data__;
 
-    if (!(selection && selection.parent))
-      return;
+  if (!(selection && selection.parent))
+    return;
 
-    var previousSibling,
-      siblings = selection.parent[selection.position] || selection.parent.children,
-      parent = selection.parent;
-    if (siblings.length <= 1) return;
-    if (selection.previous) {
+  App.Node.reposition(selection, App.Constants.KeyPressed.UP);
+}));
 
-      if (parent[selection.position]) {
-        siblings = parent[selection.position];
-      }
-      var l = siblings.length;
-      if (l == 1)
-        return;
-      for (var i = 0; i < l; i++) {
-        if (siblings[i]._id === selection._id) {
-          previousSibling = siblings[i - 1];
-          break;
-        }
-      }
-      if (previousSibling.previous) {
-        previousSibling = siblings.find(function (x) {
-          return x._id == previousSibling.previous
-        });
-      }
-      else {
-        App.selectNode(previousSibling);
-        App.cutNode(function (err, data) {
-          App.pasteNode(previousSibling, selection.parent, selection.position, selection);
-          App.retainCollapsed();
-          App.selectNode(selection);
-        });
-        return;
-      }
-    } else {
-      previousSibling = siblings[siblings.length - 1];
-    }
-    App.cutNode(function (err, data) {
-      var selectedNode = App.pasteNode(selection, selection.parent, selection.position, previousSibling);
-      App.retainCollapsed();
-      App.selectNode(selectedNode);
-    });
-  }));
+Mousetrap.bind('mod+down', debounce(0, true, function () {
+  var selection = d3.select(".node.selected")[0][0].__data__;
 
-Mousetrap.bind('mod+down', debounce(250, true,
-  function () {
-    var selection = d3.select(".node.selected")[0][0].__data__;
+  if (!(selection && selection.parent))
+   return;
 
-    if (!(selection && selection.parent))
-      return;
-
-    var nextSibling,
-      siblings = selection.parent[selection.position] || selection.parent.children;
-    if (siblings.length <= 1) return;
-    if (selection.next) {
-      nextSibling = siblings.find(function (x) {
-        return x._id == selection.next;
-      });
-
-    }
-    else {
-      var newNode = {
-        name: selection.name, position: selection.position,
-        parent_ids: selection.parent_ids,
-        previous: null, next: siblings[0]._id
-      };
-      App.cutNode(function () {
-        var headId = siblings[0]._id;
-        newNode._id = mindMapService.addNode(newNode);
-        if (selection.hasOwnProperty('isCollapsed') && selection.isCollapsed) {
-          newNode.isCollapsed = selection.isCollapsed;
-          App.storeLocally(newNode);
-        }
-
-        mindMapService.updateNode(headId, {previous: newNode._id});
-        var previous = null;
-        (selection.children || selection._children || []).forEach(function (child) {
-          previous = App.pasteNode(child, newNode, child.position, previous);
-        });
-
-        App.retainCollapsed();
-        App.selectNode(newNode);
-      });
-      return;
-    }
-
-    App.cutNode(function () {
-      var selectedNode = App.pasteNode(selection, selection.parent, selection.position, nextSibling);
-      App.retainCollapsed();
-      App.selectNode(selectedNode);
-    });
-  }));
+  App.Node.reposition(selection, App.Constants.KeyPressed.DOWN);
+}));
 
 Mousetrap.bind("esc", function goToRootNode() {
   App.select(d3.select('.node.level-0')[0][0]);

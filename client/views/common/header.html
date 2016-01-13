@@ -7,6 +7,12 @@
         </a>
         {{> UserNameInfo}}
         <ul class="nav navbar-nav" style="float: right">
+
+         {{#if requireExport}}
+          <li>{{> Export}}</li>
+          {{/if}}
+
+
           <li>{{> Feedback}}</li>
           <li><a href="#" class="navbar-element navbar-nav navbar-brand" style="color: #FFFFFF;" onMouseOver="this.style.color='#ED8233'"
                  onMouseOut="this.style.color='#FFFFFF'"

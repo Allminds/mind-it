@@ -3,63 +3,71 @@ describe('helper.js tests', function() {
     it("should change current direction [App.DirectionToggler] ", function () {
       var directionToggler = App.DirectionToggler.getInstance();
       directionToggler.changeDirection();
-      expect(directionToggler.getCurrentDirection()).toBe("left");
+      expect(directionToggler.getCurrentDirection()).toBe("right");
 
       directionToggler.changeDirection();
-      expect(directionToggler.getCurrentDirection()).toBe("right");
-    });
-
-    it("should return root for null data [App.getDirection]", function() {
-      var data = null;
-      var direction = App.getDirection(data);
-      expect(direction).toBe('root');
-    });
-
-    it("shoud return 'right' for a non root node on the right of root node [App.getDirection]", function() {
-      var data = {position:'right'};
-      var direction = App.getDirection(data);
-      expect(direction).toBe('right');
-    });
-
-    it("shoud return parent's position for a child of a non root node [App.getDirection]", function() {
-      var data = {
-        parent: {
-          position:'left'
-        }
-      };
-      
-      var direction = App.getDirection(data);
-      expect(direction).toBe(data.parent.position);
+      expect(directionToggler.getCurrentDirection()).toBe("left");
     });
 
     it("App.calculateDirection should toggle direction for root node [App.calculateDirection]", function() {
 
-      var parent = {_id:"parent"},
-          node = {_id:"node", position:"right", parent:parent};
-      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(parent);
-      var firstCallDirection = App.calculateDirection(parent);
-      var secondCallDirection = App.calculateDirection(parent);
+      var root = new App.Node("root");
+      root._id = "root";
+
+      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(root);
+      var firstCallDirection = App.calculateDirection(root);
+      var secondCallDirection = App.calculateDirection(root);
       expect(App.map.getDataOfNodeWithClassNamesString.calls.mostRecent().args[0]).toBe(".node.selected");
       expect(firstCallDirection).not.toBe(secondCallDirection);
     });
 
     it("App.calculateDirection should return the direction of the calling node for non root node [App.calculateDirection]", function() {
 
-      var parent = {_id:"parent"},
-          node = {_id:"node", position:"right", parent:parent};
-      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-      var direction = App.calculateDirection(node);
+      var root = new App.Node("root");
+      root._id = "root";
+      var left1 = new App.Node("left1", "left", root, 0);
+      left1._id = "left1";
+      left1.parent = root;
+      var child1 = new App.Node("child1", "left", left1, 0);
+      child1._id = "child1";
+      var child2 = new App.Node("child2", "left", left1, 1);
+      child2._id = "child2";
+      var child3 = new App.Node("child3", "left", left1, 1);
+      child3._id = "child3";
+      child1.parent = left1;
+      child2.parent = left1;
+      child3.parent = left1;
+      root.left = [left1];
+      left1.childSubTree = [child1, child2, child3];
+
+      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(child2);
+      var direction = App.calculateDirection(child2);
       expect(App.map.getDataOfNodeWithClassNamesString.calls.mostRecent().args[0]).toBe(".node.selected");
-      expect(direction).toBe(node.position);
+      expect(direction).toBe('left');
     });
 
     it("App.calculateDirection should not toggle the direction  for non root node [App.calculateDirection]", function() {
 
-      var parent = {_id:"parent"},
-          node = {_id:"node", position:"right", parent:parent};
-      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-      var direction = App.calculateDirection(node);
-      var secondDirection = App.calculateDirection(node);
+      var root = new App.Node("root");
+      root._id = "root";
+      var left1 = new App.Node("left1", "left", root, 0);
+      left1._id = "left1";
+      left1.parent = root;
+      var child1 = new App.Node("child1", "left", left1, 0);
+      child1._id = "child1";
+      var child2 = new App.Node("child2", "left", left1, 1);
+      child2._id = "child2";
+      var child3 = new App.Node("child3", "left", left1, 1);
+      child3._id = "child3";
+      child1.parent = left1;
+      child2.parent = left1;
+      child3.parent = left1;
+      root.left = [left1];
+      left1.childSubTree = [child1, child2, child3];
+
+      spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(child2);
+      var direction = App.calculateDirection(child2);
+      var secondDirection = App.calculateDirection(child2);
       expect(App.map.getDataOfNodeWithClassNamesString.calls.mostRecent().args[0]).toBe(".node.selected");
       expect(direction).toBe(secondDirection);
     });
