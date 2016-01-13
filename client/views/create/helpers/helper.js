@@ -159,28 +159,21 @@ App.showEditor = function (node) {
 };
 
 App.getDirection = function (data) {
-  if (!data) {
-    return 'root';
-  }
-  if (data.position) {
-    return data.position;
-  }
-  return App.getDirection(data.parent);
+  return App.Node.getDirection(data);
 };
 
 App.calculateDirection = function (parent) {
   var dir = App.getDirection(parent);
   var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
   if (dir === 'root') {
-    if (App.getDirection(selectedNode) === 'root') {
+    dir = App.getDirection(selectedNode);
+    if (dir === 'root') {
       var directionToggler = App.DirectionToggler.getInstance();
       directionToggler.setCanToggle(true);
       directionToggler.changeDirection();
       directionToggler.setCanToggle(false);
       dir = directionToggler.getCurrentDirection();
     }
-    else
-      dir = selectedNode.position;
   }
   return dir;
 };
