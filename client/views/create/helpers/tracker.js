@@ -37,5 +37,25 @@ App.tracker = {
       parent[key] = newSubTree;
       App.chart.update();
     }
+    else if(fields.hasOwnProperty('parentId')) {
+      var parentDepth = App.map.getNodeDataWithNodeId(fields.parentId).depth,
+        selectedNode = App.map.getNodeDataWithNodeId(id);
+      var node = d3.select(".selected")[0][0];
+      d3.select(".selected").attr("class", "node level-"+(parentDepth+1) +" selected");
+      recursiveNodeColoring(node.__data__.depth, node.__data__._id, node.__data__.depth + 1);
+    }
   }
+};
+
+var recursiveNodeColoring = function (depth, parentId, newDepth) {
+  //console.log(d3.selectAll(".level-"+depth)[0]);
+  d3.selectAll(".level-"+depth)[0].forEach(function (node) {
+    if (node.__data__.parentId == parentId) {
+      node.setAttribute("class", "node level-"+(newDepth));
+      node.__data__.childSubTree.forEach(function(d) {
+        recursiveNodeColoring(newDepth, node.__data__._id, newDepth+1);
+      });
+    }
+  });
+
 };

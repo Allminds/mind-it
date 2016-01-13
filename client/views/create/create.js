@@ -17,8 +17,6 @@ var update = function (data) {
   App.getChartInFocus();
   $(window).resize(function() {
         App.getChartInFocus();
-        Console.log("I am being called...");
-
   });
 
 };

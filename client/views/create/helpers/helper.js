@@ -71,7 +71,7 @@ App.circularReposition = function(list, keyPressed) {
 
   list = newArray;
   return list;
-}
+};
 
 App.nodeSelector = {
   prevDepthVisited: 0,

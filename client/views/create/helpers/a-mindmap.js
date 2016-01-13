@@ -30,7 +30,7 @@ MindMap = function MindMap() {
       hovered: 7,
       enter: function (node) {
         node.filter(function (x) {
-          return x.position;
+          return App.getDirection(x);
         }).append('svg:circle')
           .attr('class', 'indicator unfilled')
           .attr('r', indicator.default)
@@ -38,7 +38,7 @@ MindMap = function MindMap() {
             var text = d3.select(this.parentNode).select("text")[0][0],
               bBox = text.getBBox(),
               x = bBox.width == 0 ? -5 : bBox.x;
-            return (d.position == 'left' ? 1 : -1) * x;
+            return (App.getDirection(d) == 'left' ? 1 : -1) * x;
           })
           .on('mouseover', function (d) {
             var hasChildren = (d.children || d._children || []).length > 0,
@@ -68,7 +68,7 @@ MindMap = function MindMap() {
             var text = d3.select(this.parentNode).select("text")[0][0],
               bBox = text.getBBox(),
               x = bBox.width == 0 ? -5 : bBox.x;
-            return (d.position == 'left' ? 1 : -1) * x;
+            return (App.getDirection(d) == 'left' ? 1 : -1) * x;
           })
           .attr('r', function (d) {
             var hasChildren = (d.children || d._children || []).length > 0;
@@ -153,7 +153,7 @@ MindMap = function MindMap() {
   };
   var getX = function (node, defualtHeight) {
     if (!node.parent) return 0;
-    var siblings = node.parent.position ? node.parent.childSubTree : node.parent[node.position],
+    var siblings = App.Node.isRoot(node.parent) ? node.parent[App.getDirection(node)] : node.parent.childSubTree,
       siblingHeights = siblings.map(function (sibling) {
         return getNodeHeight(sibling, defualtHeight);
       }),
@@ -207,11 +207,11 @@ MindMap = function MindMap() {
 
       //Compute the new tree layout.
       function right(d) {
-        return d.position ? d.childSubTree : d.right;
+        return App.Node.isRoot(d) ?  d.right : d.childSubTree;
       }
 
       function left(d) {
-        return d.position ? d.childSubTree : d.left;
+        return App.Node.isRoot(d) ?  d.left : d.childSubTree;
       }
 
       var first = root.left.length > 0 ? left : right,
@@ -240,7 +240,7 @@ MindMap = function MindMap() {
           if (!node) return 0;
           var width = getTextWidth(node._id) / 2, parent = node.parent;
           while (parent) {
-            width += getTextWidth(parent._id) * (parent.position ? 1 : 0.5);
+            width += getTextWidth(parent._id) * (App.Node.isRoot(parent) ? 0.5 : 1);
             parent = parent.parent;
           }
 
@@ -250,7 +250,7 @@ MindMap = function MindMap() {
         result.sort(function (a, b) {
           return a.depth - b.depth;
         }).forEach(function (node) {
-          var dir = node.position ? (node.position == 'left' ? -1 : 1) : 0,
+          var dir = App.Node.isRoot(node) ?  0 : (App.getDirection(node) == 'left' ? -1 : 1),
             textWidth = getTotalWidth(node);
           node.y = dir * (node.depth * nodeSize[1] + textWidth);
           node.x = getX(node, nodeSize[0]);
@@ -295,7 +295,7 @@ MindMap = function MindMap() {
         var currentNodeRect = d3.select(this).select('rect');
         var currentNodeText = d3.select(this).select('text');
         draggedNode = d3.select(this).node().__data__;
-        if(d3.select(this).node().__data__.position === null){
+        if(App.Node.isRoot(d3.select(this).node().__data__)){
             return;
         }
 
@@ -316,7 +316,7 @@ MindMap = function MindMap() {
       };
 
       function drag() {
-        if(d3.select(this).node().__data__.position === null){
+        if(App.Node.isRoot(d3.select(this).node().__data__)){
             return;
         }
         checkDrag = true;
@@ -572,7 +572,7 @@ MindMap.diagonal =
   function diagonal(d) {
     var source = d.source,
       target = d.target,
-      dir = target.position == 'right' ? 1 : -1,
+      dir = App.getDirection(target) == 'right' ? 1 : -1,
       sourceWidth = dir * getTextWidth(source._id) / 2,
       targetWidth = dir * getTextWidth(target._id) / 2,
       deltaY = (source.y + sourceWidth) + ((target.y - targetWidth) - (source.y + sourceWidth)) / 2;
@@ -587,7 +587,7 @@ MindMap.diagonalLine =
   function diagonalLine(d) {
     var source = d.source,
       target = d.target,
-      dir = target.position == 'right' ? 1 : -1,
+      dir = App.getDirection(target) == 'right' ? 1 : -1,
       sourceWidth = dir * getTextWidth(source._id) / 2,
       targetWidth = dir * getTextWidth(target._id) / 2,
       deltaY = (source.y + sourceWidth) + ((target.y - targetWidth) - (source.y + sourceWidth)) / 2;
