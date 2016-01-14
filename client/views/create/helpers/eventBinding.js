@@ -333,7 +333,7 @@ Mousetrap.bind('mod+left', debounce(0, true,
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
       var node = selection.__data__;
-      App.Node.horizontalReposition(node, App.Constants.KeyPressed.LEFT);
+      App.Node.horizontalReposition(node, App.Constants.KeyPressed.LEFT, App.toggleCollapsedNode);
     }
   }));
 
@@ -342,7 +342,7 @@ Mousetrap.bind('mod+right', debounce(0, true,
     var selection = d3.select(".node.selected")[0][0];
     if (selection) {
       var node = selection.__data__;
-      App.Node.horizontalReposition(node, App.Constants.KeyPressed.RIGHT);
+      App.Node.horizontalReposition(node, App.Constants.KeyPressed.RIGHT, App.toggleCollapsedNode);
     }
   }));
 

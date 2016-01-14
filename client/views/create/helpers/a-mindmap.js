@@ -41,7 +41,7 @@ MindMap = function MindMap() {
             return (App.getDirection(d) == 'left' ? 1 : -1) * x;
           })
           .on('mouseover', function (d) {
-            var hasChildren = (d.children || d._children || []).length > 0,
+            var hasChildren = App.Node.hasChildren(d),
               r = hasChildren ? indicator.hovered : 0;
             return d3.select(this)
               .attr('r', r)
@@ -49,7 +49,7 @@ MindMap = function MindMap() {
               .classed('filled', hasChildren);
           })
           .on('mouseout', function (d) {
-            var hasChildren = (d.children || d._children || []).length > 0,
+            var hasChildren = App.Node.hasChildren(d),
               r = hasChildren ? (d.isCollapsed ? indicator.default : indicator.hovered) : 0;
             return d3.select(this)
               .attr('r', r)
@@ -71,7 +71,7 @@ MindMap = function MindMap() {
             return (App.getDirection(d) == 'left' ? 1 : -1) * x;
           })
           .attr('r', function (d) {
-            var hasChildren = (d.children || d._children || []).length > 0;
+            var hasChildren = App.Node.hasChildren(d);
             d3.select(this)
               .classed('filled', d.isCollapsed)
               .classed('unfilled', !d.isCollapsed);
