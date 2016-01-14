@@ -42,10 +42,8 @@ App.tracker = {
         selectedNode = App.map.getNodeDataWithNodeId(id);
       var node = d3.select(".selected")[0][0];
       d3.select(".selected").attr("class", "node level-"+(parentDepth+1) +" selected");
-      //recursiveNodeColoring(node.__data__.depth, node.__data__._id, node.__data__.depth + 1);
-      App.removeClassFromSubTree(node.__data__, null, App.getLevelBasedOnDepth, -1);
-      App.removeClassFromSubTree(node.__data__, null, App.getLevelBasedOnDepth, +1);
-      App.applyClassToSubTree(node.__data__, null, App.getLevelBasedOnDepth);
+      App.applyClassToSubTree(node.__data__, null, App.removeAllLevelClass);
+      App.applyClassToSubTree(node.__data__, null, App.applyLevelClass);
     }
   }
 };

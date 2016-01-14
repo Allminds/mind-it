@@ -37,14 +37,23 @@ App.DirectionToggler = (function () {
 
 })();
 
-App.getLevelBasedOnDepth = function(nodeData, adder) {
-  if(nodeData) {
-    var depth = nodeData.depth + (adder ? adder : 0);
-    return "level-"+depth;
+App.applyLevelClass = function(d3Callable) {
+  if(d3Callable) { 
+    var depth = d3Callable[0].length > 0 ? d3Callable[0][0].__data__.depth : null;
+    if(depth) {
+      d3Callable.classed("level-"+depth, true);
+    }
   }
 };
 
-App.applyClassToSubTree = function(parentNodeData, className, classCallBack, callBackArgument, nodeList) {
+App.removeAllLevelClass = function(d3Callable){
+  var levels = ['level-0', 'level-1','level-2','level-3', 'level-4', 'level-5'];
+  levels.forEach(function(level){
+    d3Callable.classed(level, false);
+  });
+};
+
+App.applyClassToSubTree = function(parentNodeData, className, classCallBack, nodeList) {
   nodeList = nodeList ? nodeList : d3.selectAll('.node')[0];
   var classToApply = null;
   if(!className && !classCallBack) return;
@@ -61,43 +70,13 @@ App.applyClassToSubTree = function(parentNodeData, className, classCallBack, cal
   });
 
   if(!className && classCallBack) {
-    var firstChild = subTree.length > 0 ? subTree[0] : null;
-    classToApply = classCallBack(firstChild, callBackArgument);
+    classCallBack(tempD3Array);
   } else {
-    classToApply = className;
+    tempD3Array.classed(className, true);
   }
-
-  tempD3Array.classed(classToApply, true);
+  
   subTree.forEach(function(child) {
-    App.applyClassToSubTree(child, className, classCallBack, callBackArgument, nodeList);
-  });
-};
-
-App.removeClassFromSubTree = function(parentNodeData, className, classCallBack, callBackArgument,  nodeList) {
-  nodeList = nodeList ? nodeList : d3.selectAll('.node')[0];
-  var classToApply = null;
-  if(!className && !classCallBack) return;
-
-  var subTree = parentNodeData.childSubTree;
-  var subTreeId = subTree.map(function(child) {
-                    return child._id;
-                  });
-  var tempD3Array = d3.select('thisClassDoesNotExist');
-  tempD3Array[0].pop();
-  nodeList.forEach(function(node){
-    if(subTreeId.indexOf(node.__data__._id) != -1)
-      tempD3Array[0].push(node);
-  });
-
-  if(!className && classCallBack) {
-    var firstChild = subTree.length > 0 ? subTree[0] : null;
-    classToApply = classCallBack(firstChild, callBackArgument);
-  } else {
-    classToApply = className;
-  }
-  tempD3Array.classed(classToApply, false);
-  subTree.forEach(function(child) {
-    App.removeClassFromSubTree(child, className, classCallBack, callBackArgument, nodeList);
+    App.applyClassToSubTree(child, className, classCallBack,  nodeList);
   });
 };
 
