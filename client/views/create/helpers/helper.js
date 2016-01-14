@@ -308,15 +308,35 @@ App.toggleCollapsedNode = function (selected) {
 App.checkOverlap = function (rect1) {
   var rectList = d3.select('svg').select('g').selectAll('g');
   for (var i = 0; i < rectList[0].length; i++) {
-    var rectPoint = d3.select(rectList[0][i]).attr('transform').replace('translate(', '').replace(')', '').split(',');
 
-    var currHeight = (d3.select(rectList[0][i]).select('rect').attr('height') * 1), currWidth = (d3.select(rectList[0][i]).select('rect').attr('width') * 1),
-      currX = rectPoint[0] * 1 - (currWidth / 2), currY = rectPoint[1] * 1 + (currHeight / 2);
+        var rectPoint = d3.select(rectList[0][i]).attr('transform').replace('translate(', '').replace(')', '').split(',');
 
-    if (rect1[0] * 1 >= currX && rect1[0] * 1 <= currX + currWidth && rect1[1] * 1 <= currY && rect1[1] * 1 >= currY - currHeight) {
-      return rectList[0][i];
-    }
+        var currHeight = (d3.select(rectList[0][i]).select('rect').attr('height') * 1), currWidth = (d3.select(rectList[0][i]).select('rect').attr('width') * 1),
+          currX = rectPoint[0] * 1 - (currWidth / 2), currY = rectPoint[1] * 1 + (currHeight / 2);
+
+        if (rect1[0] * 1 >= currX && rect1[0] * 1 <= currX + currWidth && rect1[1] * 1 <= currY && rect1[1] * 1 >= currY - currHeight) {
+
+          return rectList[0][i];
+
+        }
+
   }
+};
+
+App.dragAndDrop = function(draggedNode, droppedOnNode){
+    var parent = draggedNode.parent,
+    dir = App.Node.getDirection(draggedNode),
+    siblings = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree) || [],
+    draggedNodeIndex = siblings.indexOf(draggedNode),
+    destinationSubTree = (App.getDirection(droppedOnNode) === 'root') ? droppedOnNode[dir] : droppedOnNode.childSubTree,
+    destinationDirection = App.Node.isRoot(droppedOnNode) ? (dir) : App.getDirection(droppedOnNode);
+
+    destinationSubTree.push(draggedNode);
+    siblings.splice(draggedNodeIndex,1);
+    draggedNode.parentId = droppedOnNode._id;
+    App.Node.updateChildTree(parent, dir, siblings);
+    App.Node.updateParentIdOfNode(draggedNode);
+    App.Node.updateChildTree(droppedOnNode, destinationDirection, destinationSubTree);
 };
 
 App.JSONtoXML = function (XMLString, nodeObject) {

@@ -288,7 +288,8 @@ MindMap = function MindMap() {
 
       var targetNode = nodeEnter,
         draggedNode = null,
-        checkDrag = false;
+        checkDrag = false,
+        droppedOnElement = null;
 
       function dragstart() {
         App.select(this);
@@ -321,14 +322,13 @@ MindMap = function MindMap() {
         }
         checkDrag = true;
         var nodeToBeDragged = d3.select(targetNode[0][0]);
-        var rootNode = d3.select(".level-0");
 
         nodeToBeDragged.attr("transform", function () {
           return "translate(" + d3.event.x + "," + d3.event.y + ")";
         });
         // Code to highlight the nodes at the time of drag and drop.
         var point = nodeToBeDragged.attr('transform').replace('translate(', '').replace(')', '').split(',');
-        var droppedOnElement = App.checkOverlap(point);
+        droppedOnElement = App.checkOverlap(point);
         var rectList = d3.select('svg').select('g').selectAll('g');
         d3.selectAll(".dragSelect").classed('dragSelect',false);
         if(droppedOnElement != nodeToBeDragged && d3.select(droppedOnElement).node()){
@@ -344,30 +344,44 @@ MindMap = function MindMap() {
           handleClick.call(this);
           return;
         }
-        var point = d3.select(targetNode[0][0]).attr('transform').replace('translate(', '').replace(')', '').split(',');
-        d3.select(targetNode[0][0]).remove();
+
+         var droppedOnData = d3.select(droppedOnElement).node().textContent ? d3.select(droppedOnElement).node().__data__ : null;
+         var droppedOnId = droppedOnData ? droppedOnData._id : null;
+
+         if(!droppedOnData){
+             d3.selectAll(".dragSelect").classed("dragSelect", false);
+             d3.select(targetNode[0][0]).remove();
+             checkDrag = false;
+             return;
+         }
 
         if (checkDrag === true) {
-          var droppedOnElement = App.checkOverlap(point);
 
-          var droppedOnData = d3.select(droppedOnElement).node() ? d3.select(droppedOnElement).node().__data__ : null;
-          var droppedOnId = droppedOnData ? droppedOnData._id : null;
-          var draggedElementsImediateParent = draggedNode.parent_ids[draggedNode.parent_ids.length -1];
-          if(droppedOnId === draggedElementsImediateParent) {
-            checkDrag = false;
+          if(droppedOnId === draggedNode.parentId) {
+             d3.selectAll(".dragSelect").classed("dragSelect", false);
+             d3.select(targetNode[0][0]).remove();
+             checkDrag = false;
             return;
           }
 
+            var currentNode = droppedOnData;
+            while(App.getDirection(currentNode)!="root")
+            {
+                if(draggedNode._id === currentNode._id) {
+                    d3.selectAll(".dragSelect").classed("dragSelect", false);
+                    d3.select(targetNode[0][0]).remove();
+                    checkDrag = false;
+                    return;
+                }
+                currentNode = currentNode.parent;
+            }
+
           if (droppedOnElement && ($.inArray(draggedNode._id, droppedOnData.parent_ids) < 0) && (draggedNode._id != droppedOnData._id)) {
-            App.cutNode(function(){
-              App.pasteNode(draggedNode, droppedOnData, App.calculateDirection(droppedOnData));
-              App.expand(droppedOnData, droppedOnData._id);
-              App.retainCollapsed();
-              d3.select(droppedOnElement).classed('dragSelect',false);
-              App.select(droppedOnElement);
-            });
+             App.dragAndDrop(draggedNode, droppedOnData);
           }
           checkDrag = false;
+          d3.selectAll(".dragSelect").classed("dragSelect", false);
+          d3.select(targetNode[0][0]).remove();
         }
       };
 
