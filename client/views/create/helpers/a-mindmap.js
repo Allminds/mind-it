@@ -539,7 +539,7 @@ MindMap = function MindMap() {
   return chart;
 };
 var minTextSize = Constants.deltaEllipseXRadius,
-  minTextHeight = Constants.deltaEllipseYRadius,
+  minTextHeight = 16,
   getTextWidth = function (id) {
     if (!id) return 0;
     var text = d3.selectAll('text')[0].filter(function (text) {
