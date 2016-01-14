@@ -1,5 +1,5 @@
 .home-bg {
-  max-height: 600px;
+  max-height: 100%;
   background-size: contain;
   background: no-repeat 50% 50%;
   width: 90%;
@@ -8,7 +8,7 @@
 
 .home-bg img {
   width: 90%;
-  max-height: 500px;
+  max-height: 100%;
 }
 
 .home-bg .slick-next:before, .slick-prev:before {
