@@ -352,7 +352,7 @@ Mousetrap.bind('mod+up', debounce(0, true, function () {
   if (!(selection && selection.parent))
     return;
 
-  App.Node.reposition(selection, App.Constants.KeyPressed.UP);
+  App.Node.verticalReposition(selection, App.Constants.KeyPressed.UP);
 }));
 
 Mousetrap.bind('mod+down', debounce(0, true, function () {
@@ -361,7 +361,7 @@ Mousetrap.bind('mod+down', debounce(0, true, function () {
   if (!(selection && selection.parent))
    return;
 
-  App.Node.reposition(selection, App.Constants.KeyPressed.DOWN);
+  App.Node.verticalReposition(selection, App.Constants.KeyPressed.DOWN);
 }));
 
 Mousetrap.bind("esc", function goToRootNode() {

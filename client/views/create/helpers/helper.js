@@ -37,6 +37,12 @@ App.DirectionToggler = (function () {
 
 })();
 
+App.getLevelBasedOnDepth = function(nodeData, adder) {
+  if(nodeData) {
+    var depth = nodeData.depth + (adder ? adder : 0);
+    return "level-"+depth;
+  }
+};
 
 App.applyClassToSubTree = function(parentNodeData, className, classCallBack, callBackArgument, nodeList) {
   nodeList = nodeList ? nodeList : d3.selectAll('.node')[0];
