@@ -37,6 +37,65 @@ App.DirectionToggler = (function () {
 
 })();
 
+
+App.applyClassToSubTree = function(parentNodeData, className, classCallBack, callBackArgument, nodeList) {
+  nodeList = nodeList ? nodeList : d3.selectAll('.node')[0];
+  var classToApply = null;
+  if(!className && !classCallBack) return;
+
+  var subTree = parentNodeData.childSubTree;
+  var subTreeId = subTree.map(function(child) {
+                    return child._id;
+                  });
+  var tempD3Array = d3.select('thisClassDoesNotExist');
+  tempD3Array[0].pop();
+  nodeList.forEach(function(node){
+    if(subTreeId.indexOf(node.__data__._id) != -1)
+      tempD3Array[0].push(node);
+  });
+
+  if(!className && classCallBack) {
+    var firstChild = subTree.length > 0 ? subTree[0] : null;
+    classToApply = classCallBack(firstChild, callBackArgument);
+  } else {
+    classToApply = className;
+  }
+
+  tempD3Array.classed(classToApply, true);
+  subTree.forEach(function(child) {
+    App.applyClassToSubTree(child, className, classCallBack, callBackArgument, nodeList);
+  });
+};
+
+App.removeClassFromSubTree = function(parentNodeData, className, classCallBack, callBackArgument,  nodeList) {
+  nodeList = nodeList ? nodeList : d3.selectAll('.node')[0];
+  var classToApply = null;
+  if(!className && !classCallBack) return;
+
+  var subTree = parentNodeData.childSubTree;
+  var subTreeId = subTree.map(function(child) {
+                    return child._id;
+                  });
+  var tempD3Array = d3.select('thisClassDoesNotExist');
+  tempD3Array[0].pop();
+  nodeList.forEach(function(node){
+    if(subTreeId.indexOf(node.__data__._id) != -1)
+      tempD3Array[0].push(node);
+  });
+
+  if(!className && classCallBack) {
+    var firstChild = subTree.length > 0 ? subTree[0] : null;
+    classToApply = classCallBack(firstChild, callBackArgument);
+  } else {
+    classToApply = className;
+  }
+  tempD3Array.classed(classToApply, false);
+  subTree.forEach(function(child) {
+    App.removeClassFromSubTree(child, className, classCallBack, callBackArgument, nodeList);
+  });
+};
+
+
 App.calculateNextIndex = function(initialIndex, length, keyPressed){
   var newIndex = -1;
   if(keyPressed === App.Constants.KeyPressed.UP) {
