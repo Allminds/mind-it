@@ -222,49 +222,17 @@ App.calculateDirection = function (parent) {
   return dir;
 };
 
-App.isLocallyCollapsed = function (id) {
-  try {
-    var locallyCollapsed = store.get(id).isCollapsed;
-  }
-  catch (e) {
-  }
-  return locallyCollapsed ? true : false;
-};
-
-App.retainCollapsed = function  () {
-  store.forEach(function (key) {
-    try {
-      if (App.isLocallyCollapsed(key)) {
-        var nodeData = App.map.getNodeDataWithNodeId(key);
-        App.collapse(nodeData, key);
-      }
-    }
-    catch (e) {
-    }
-  });
-};
-
-App.storeLocally = function (d) {
-  var state = {isCollapsed: d.isCollapsed};
-  store.set(d._id, state);
-};
-
-App.removeLocally = function (d) {
-  store.remove(d._id);
-};
-
 var collapseRecursive = function (d, id) {
   if (d._id === id) {
     d.isCollapsed = true;
     App.storeLocally(d);
   }
-  if (d.hasOwnProperty('children') && d.children) {
-    d._children = [];
-    d._children = d.children;
-    d._children.forEach(collapseRecursive);
-    d.children = null;
+  if (d.hasOwnProperty('childSubTree') && d.children) {
+    d._childSubTree = [];
+    d._childSubTree = d.childSubTree;
+    d._childSubTree.forEach(collapseRecursive);
+    d.childSubTree = null;
   }
-
 };
 
 App.collapse = function (d, id) {
@@ -280,10 +248,10 @@ App.expandRecursive = function (d, id) {
   // On refresh - If child node is collapsed do not expand it
   if (App.isLocallyCollapsed(d._id) == true)
     d.isCollapsed = true;
-  if (d.hasOwnProperty('_children') && d._children && !d.isCollapsed) {
-    d.children = d._children;
-    d._children.forEach(App.expandRecursive);
-    d._children = null;
+  if (d.hasOwnProperty('_childSubTree') && d._childSubTree && !d.isCollapsed) {
+    d.childSubTree = d._childSubTree;
+    d._childSubTree.forEach(App.expandRecursive);
+    d._childSubTree = null;
   }
 };
 
@@ -293,9 +261,10 @@ App.expand = function (d, id) {
 };
 
 App.toggleCollapsedNode = function (selected) {
+
   var dir = App.getDirection(selected);
   if (dir !== 'root') {
-    if (selected.hasOwnProperty('_children') && selected._children) {
+    if (selected.hasOwnProperty('_childSubTree') && selected._childSubTree) {
       App.expand(selected, selected._id);
     }
     else {
