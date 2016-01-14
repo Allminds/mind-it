@@ -179,7 +179,7 @@ describe('lib.Node.js', function () {
         var root = new App.Node("root");
         spyOn(App, "swapElements");
         spyOn(mindMapService, "updateNode");
-        App.Node.reposition(root, App.Constants.KeyPressed.DOWN);
+        App.Node.verticalReposition(root, App.Constants.KeyPressed.DOWN);
         expect(App.swapElements).not.toHaveBeenCalled();
         expect(mindMapService.updateNode).not.toHaveBeenCalled();
       });
@@ -188,21 +188,21 @@ describe('lib.Node.js', function () {
       it("should call circularReposition method for mod+UP key press on first element", function () {
         spyOn(App, "circularReposition");
         spyOn(mindMapService, "updateNode");
-        App.Node.reposition(child1, App.Constants.KeyPressed.UP);
+        App.Node.verticalReposition(child1, App.Constants.KeyPressed.UP);
         expect(App.circularReposition).toHaveBeenCalled();
       });
 
       it("should call circularReposition method for mod+DOWN key press on last element", function () {
         spyOn(App, "circularReposition");
         spyOn(mindMapService, "updateNode");
-        App.Node.reposition(child3, App.Constants.KeyPressed.DOWN);
+        App.Node.verticalReposition(child3, App.Constants.KeyPressed.DOWN);
         expect(App.circularReposition).toHaveBeenCalled();
       });
 
       it("should call swapElements method for mod+UP key press in other cases", function () {
         spyOn(App, "swapElements");
         spyOn(mindMapService, "updateNode");
-        App.Node.reposition(child2, App.Constants.KeyPressed.UP);
+        App.Node.verticalReposition(child2, App.Constants.KeyPressed.UP);
         expect(App.swapElements.calls.mostRecent().args[1]).toBe(1);
         expect(App.swapElements.calls.mostRecent().args[2]).toBe(0);
       });
@@ -210,7 +210,7 @@ describe('lib.Node.js', function () {
       it("should call swapElements method for mod+DOWN key press in other cases", function () {
         spyOn(App, "swapElements");
         spyOn(mindMapService, "updateNode");
-        App.Node.reposition(child2, App.Constants.KeyPressed.DOWN);
+        App.Node.verticalReposition(child2, App.Constants.KeyPressed.DOWN);
         expect(App.swapElements.calls.mostRecent().args[1]).toBe(1);
         expect(App.swapElements.calls.mostRecent().args[2]).toBe(2);
       });
