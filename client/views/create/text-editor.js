@@ -28,8 +28,15 @@ Editor.prototype.createEditBox = function () {
 var textBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
 
   var rect = elementToEdit.select("rect");
-  var rectWidth = rect.attr("width");
+  var rectWidth = rect.attr("width"); //
   var rectHeight = rect.attr("height");
+
+  if(elementToEdit[0][0].__data__.isCollapsed != true) {
+    if (elementToEdit[0][0].__data__.childSubTree.length > 0 || elementToEdit[0][0].__data__.name == "") {
+      rectWidth < 50 ? rectWidth = 50 : rect.attr("width");
+    }
+  }
+
 
   var transformation = elementToEdit.attr("transform").split(",");
   var xTranslation = transformation[0].split("(")[1];
