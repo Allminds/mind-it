@@ -377,7 +377,7 @@ MindMap = function MindMap() {
             }
 
           if (droppedOnElement && ($.inArray(draggedNode._id, droppedOnData.parent_ids) < 0) && (draggedNode._id != droppedOnData._id)) {
-             App.dragAndDrop(draggedNode, droppedOnData);
+             App.dragAndDrop(draggedNode, droppedOnData, App.toggleCollapsedNode);
           }
           checkDrag = false;
           d3.selectAll(".dragSelect").classed("dragSelect", false);
