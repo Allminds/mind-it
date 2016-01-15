@@ -1,12 +1,12 @@
 <template name="TopBar">
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
-      <div class="collapse navbar-collapse" style="padding-left: 10px; padding-top: 13px; padding-bottom: 5px;">
-        <a href="/">
-          <img src="/Minditlogo.png" width="10%" height="10%" style="float: left">
-        </a>
-        {{> UserNameInfo}}
-        <ul class="nav navbar-nav" style="float: right">
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-left">
+            <li><a href="/"><img src="/Minditlogo1.png"></a></li>
+            <li>{{> UserNameInfo}}</li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
 
          {{#if requireExport}}
           <li>{{> Export}}</li>

@@ -69,9 +69,16 @@ h1 {
 	padding-top: 35px
 }
 
-.brand{
-	padding-top: 15px;
+.brand {
 	padding-left: 10px;
+	padding-top: 27%;
+	font-size: 150%;
+	color: #FFFFFF;
+}
+
+.navbar-right-element {
+	padding-left: 10px;
+	padding-top: 35%;
 	color: #9D9D9D;
 	font-size: 150%;
 }

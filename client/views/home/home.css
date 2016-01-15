@@ -31,7 +31,12 @@
 
 
 .brand{
+  padding-top: 27%;
   font-size:150%;
-  padding-top: 35px;
   color: #9d9d9d;
+}
+.navbar-right {
+    float: right !important;
+    margin-right: 15px;
+    margin-top: 1%;
 }
