@@ -23,11 +23,10 @@ App.tracker = {
           App.selectNode(selectedNode);
         }, 10);
       }
-    }
-    else if (fields.hasOwnProperty('childSubTree') || fields.hasOwnProperty('left') || fields.hasOwnProperty('right')){
+    } else if (fields.hasOwnProperty('childSubTree') || fields.hasOwnProperty('left') || fields.hasOwnProperty('right')){
       var parent = App.map.getNodeDataWithNodeId(id),
           key = Object.keys(fields)[0],
-          subTree = parent[key],
+          subTree = App.Node.isRoot(parent) ? parent[key] : (parent.isCollapsed ? parent._childSubTree : parent.childSubTree),
           childIds = fields[key],
           newlyAddedId = App.getNewlyAddedNodeId(parent, fields),
           newSubTree = childIds.map(
@@ -56,11 +55,12 @@ App.tracker = {
     }
     else if(fields.hasOwnProperty('parentId')) {
       App.tracker.updatedNodeId = id;
-
+      
       var parentDepth = App.map.getNodeDataWithNodeId(fields.parentId).depth,
           selectedNode = App.map.getNodeDataWithNodeId(id),
           newParent = App.map.getNodeDataWithNodeId(fields.parentId);
       selectedNode.parent = newParent;
+      selectedNode.parentId = newParent._id;
       var node = d3.selectAll(".node")[0].find(
         function(child){
           return child.__data__._id == id;

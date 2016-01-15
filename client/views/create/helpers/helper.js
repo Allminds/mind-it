@@ -344,21 +344,23 @@ App.checkOverlap = function (rect1) {
 };
 
 App.dragAndDrop = function(draggedNode, droppedOnNode, toggleCallback){
-    if(droppedOnNode.isCollapsed) toggleCallback(droppedOnNode);
-
+  if(droppedOnNode.isCollapsed) toggleCallback(droppedOnNode);
+  App.Node.reposition(draggedNode, droppedOnNode);
+  /*
     var parent = draggedNode.parent,
-    dir = App.Node.getDirection(draggedNode),
+        dir = App.Node.getDirection(draggedNode),
     siblings = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree) || [],
     draggedNodeIndex = siblings.indexOf(draggedNode),
-    destinationSubTree = (App.getDirection(droppedOnNode) === 'root') ? droppedOnNode[dir] : droppedOnNode.childSubTree,
+        destinationSubTree = App.Node.isRoot(droppedOnNode) ? droppedOnNode[dir] : droppedOnNode.childSubTree,
     destinationDirection = App.Node.isRoot(droppedOnNode) ? (dir) : App.getDirection(droppedOnNode);
 
     destinationSubTree.push(draggedNode);
     siblings.splice(draggedNodeIndex,1);
     draggedNode.parentId = droppedOnNode._id;
-    App.Node.updateChildTree(parent, dir, siblings);
-    App.Node.updateParentIdOfNode(draggedNode);
-    App.Node.updateChildTree(droppedOnNode, destinationDirection, destinationSubTree);
+  App.Node.updateParentIdOfNode(draggedNode);
+  App.Node.updateChildTree(droppedOnNode, destinationDirection, destinationSubTree);
+  App.Node.updateChildTree(parent, dir, siblings);  */
+    
 };
 
 App.JSONtoXML = function (XMLString, nodeObject) {

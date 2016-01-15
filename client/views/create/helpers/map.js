@@ -36,14 +36,11 @@ App.map.findOne = function (node, fun) {
 };
 
 App.map.getNodeDataWithNodeId = function (nodeId) {
-  var rootNodeData = App.map.getDataOfNodeWithClassNamesString('#mindmap svg .node.level-0');
-  if (rootNodeData) {
-    var nodeData = App.map.findOne(rootNodeData, function (x) {
-      return x._id == nodeId
+  var d3Node = d3.selectAll('.node')[0].find(
+    function(node){
+      return node.__data__._id === nodeId;
     });
-    return nodeData;
-  }
-  return null;
+  return d3Node ? d3Node.__data__ : null;
 };
 
 App.map.storeSourceNode = function (sourceNode) {
