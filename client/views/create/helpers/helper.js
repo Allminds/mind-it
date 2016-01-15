@@ -37,11 +37,12 @@ App.DirectionToggler = (function () {
 
 })();
 
-App.applyLevelClass = function(d3Callable) {
+App.applyLevelClass = function(d3Callable, depth) {
   if(d3Callable) { 
-    var depth = d3Callable[0].length > 0 ? d3Callable[0][0].__data__.depth : null;
+    depth = depth ? depth : (d3Callable[0].length > 0 ? d3Callable[0][0].__data__.depth : null);
     if(depth) {
       d3Callable.classed("level-"+depth, true);
+      return depth + 1;
     }
   }
 };
@@ -53,7 +54,26 @@ App.removeAllLevelClass = function(d3Callable){
   });
 };
 
-App.applyClassToSubTree = function(parentNodeData, className, classCallBack, nodeList) {
+App.getNewlyAddedNodeId = function(parent, fields) {
+  var key = Object.keys(fields)[0],
+      childIdTree = parent[key].map(
+        function(child){
+          return child._id;
+        }),
+      newlyAddedId = fields[key].find(
+        function(child){
+          return childIdTree.indexOf(child) == -1;
+        });
+  return newlyAddedId;
+};
+
+App.checkRepositionUpdateOnRoot = function(root, updatedDirection, addedId){
+  return root[updatedDirection == "right"? "left":"right"].map(function(child){
+           return child._id;
+         }).indexOf(addedId) != -1;
+};
+
+App.applyClassToSubTree = function(parentNodeData, className, classCallBack, callBackArgument,  nodeList) {
   nodeList = nodeList ? nodeList : d3.selectAll('.node')[0];
   var classToApply = null;
   if(!className && !classCallBack) return;
@@ -70,13 +90,13 @@ App.applyClassToSubTree = function(parentNodeData, className, classCallBack, nod
   });
 
   if(!className && classCallBack) {
-    classCallBack(tempD3Array);
+    callBackArgument = classCallBack(tempD3Array, callBackArgument);
   } else {
     tempD3Array.classed(className, true);
   }
   
   subTree.forEach(function(child) {
-    App.applyClassToSubTree(child, className, classCallBack,  nodeList);
+    App.applyClassToSubTree(child, className, classCallBack, callBackArgument,  nodeList);
   });
 };
 
