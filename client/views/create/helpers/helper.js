@@ -323,7 +323,9 @@ App.checkOverlap = function (rect1) {
   }
 };
 
-App.dragAndDrop = function(draggedNode, droppedOnNode){
+App.dragAndDrop = function(draggedNode, droppedOnNode, toggleCallback){
+    if(droppedOnNode.isCollapsed) toggleCallback(droppedOnNode);
+
     var parent = draggedNode.parent,
     dir = App.Node.getDirection(draggedNode),
     siblings = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree) || [],
