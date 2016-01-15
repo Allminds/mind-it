@@ -343,10 +343,10 @@ App.dragAndDrop = function(draggedNode, droppedOnNode, toggleCallback){
 
 App.JSONtoXML = function (XMLString, nodeObject) {
   XMLString += "<node ";
-  XMLString += "ID = \"" + nodeObject._id + "\"";
-  XMLString += "TEXT = \"" + nodeObject.name + "\"";
-  if (nodeObject.hasOwnProperty('parent_ids') && nodeObject.parent_ids.length === 1) {
-    XMLString += "POSITION = \"" + nodeObject.position + "\"";
+  XMLString += "ID=\"" + nodeObject._id + "\" ";
+  XMLString += "TEXT=\"" + nodeObject.name + "\" ";
+  if (nodeObject.depth === 1) {
+    XMLString += "POSITION=\"" + App.getDirection(nodeObject) + "\" ";
   }
   XMLString += ">\n";
   (nodeObject.children || nodeObject._children || []).forEach(function (child) {

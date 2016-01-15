@@ -12,7 +12,7 @@ var hasProcessableNodes = function(nodes) {
     for(var index=0; index < nodes.length; index++) {
         childNodeNames.push(nodes[index].nodeName);
     }
-    return childNodeNames.every(isValidTag);
+    return nodes.length > 0 && childNodeNames.every(isValidTag);
 };
 
 App.ImportParser.areTagsSupported = function(xmlNodes) {
@@ -20,8 +20,7 @@ App.ImportParser.areTagsSupported = function(xmlNodes) {
     return nodeNames.every(isValidTag);
 };
 
-App.ImportParser.populateMindMapFromXML = function(xmlNodes, parentJSONNode, mindmapService){
-    var previousSibling = null;
+App.ImportParser.populateMindMapFromXML = function(xmlNodes, parentJSONNode, mindmapService, rootId){
     var retValue = App.ImportParser.areTagsSupported(xmlNodes);
     if(retValue == false) {
         return false;
@@ -32,17 +31,13 @@ App.ImportParser.populateMindMapFromXML = function(xmlNodes, parentJSONNode, min
         if(xmlNodes[i].nodeName == "node") {
             var nodeName = xmlNodes[i].getAttribute("TEXT") ? xmlNodes[i].getAttribute("TEXT") : "";
             var direction = xmlNodes[i].getAttribute("POSITION") ? xmlNodes[i].getAttribute("POSITION") : parentJSONNode["position"];
-            var newNode = App.ImportParser.createNode(parentJSONNode, nodeName, direction, previousSibling);
+            var newNode = App.ImportParser.createNode(parentJSONNode, nodeName, direction, rootId);
             newNode._id = mindmapService.addNode(newNode);
+            mindmapService.addChild(parentJSONNode, newNode);
 
-            if (previousSibling && previousSibling._id) {
-                mindmapService.updateNode(previousSibling._id, {next: newNode._id});
-            }
-
-            previousSibling = newNode;
             var childNodes = xmlNodes[i].childNodes;
             if(hasProcessableNodes(childNodes)) {
-                if(App.ImportParser.populateMindMapFromXML(childNodes, newNode, mindmapService) == false) {
+                if(App.ImportParser.populateMindMapFromXML(childNodes, newNode, mindmapService, rootId) == false) {
                     return false;
                 }
             }
@@ -51,11 +46,12 @@ App.ImportParser.populateMindMapFromXML = function(xmlNodes, parentJSONNode, min
     return true;
 };
 
-App.ImportParser.createNode = function (parent, newNodeName, dir, previousSibling) {
+App.ImportParser.createNode = function (parent, newNodeName, direction, rootId) {
     return {
-        name: newNodeName, position: dir,
-        parent_ids: [].concat(parent.parent_ids || []).concat([parent._id]),
-        previous: (previousSibling ? previousSibling._id : null), next: null
+        name: newNodeName, position: direction,
+        parentId: parent._id,
+        rootId: rootId,
+        left: [], right:[], childSubTree:[]
     };
 };
 
@@ -121,7 +117,7 @@ App.ImportParser.createMindmapFromXML = function(xmlString, mindmapService) {
         mindMapId = mindmapService.createRootNode(rootNodeText);
 
         var rootNodeJSON = App.ImportParser.createRootNode(mindMapId, rootNodeText);
-        if(App.ImportParser.populateMindMapFromXML(rootChildNodes, rootNodeJSON, mindmapService) == false) {
+        if(App.ImportParser.populateMindMapFromXML(rootChildNodes, rootNodeJSON, mindmapService, mindMapId) == false) {
             App.ImportParser.errorMessage = "Errors in mindMap file, mindMap rendered might not be as expected";
             return mindMapId;
         }
