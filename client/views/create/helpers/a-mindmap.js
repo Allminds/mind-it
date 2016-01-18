@@ -7,6 +7,8 @@ var Constants = {
 
 App.nodeStore = [];
 
+App.nodeToPaste = [];
+
 MindMap = function MindMap() {
   "use strict";
   var
