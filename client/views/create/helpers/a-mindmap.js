@@ -5,6 +5,7 @@ var Constants = {
   deltaEllipseYRadius: 25
 };
 
+App.nodeStore = [];
 
 MindMap = function MindMap() {
   "use strict";

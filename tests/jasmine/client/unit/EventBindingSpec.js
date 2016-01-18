@@ -233,7 +233,7 @@ describe('eventBinding.js', function () {
       beforeEach(function () {
         spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
       });
-      it("should call all the functions in delete keypress", function () {
+      xit("should call all the functions in delete keypress", function () {
         event.keyCode = 46;
         spyOn(Meteor, "call");
         spyOn(App, "getDirection").and.returnValue(node.position);

@@ -88,12 +88,15 @@ Mousetrap.bind('mod+v', function () {
 App.eventBinding.escapeOnNewNode = function(newNode, parentNode){
     $(window).unbind().on("keyup", (function(e) {
       var selectedNodeId = d3.select('.selected').node() ? d3.select('.selected').node().__data__._id : null;
-      var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
+                                      var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
       if((selectedNodeId === null && modalCreatedNodeId === null )){
         if (e.keyCode === App.KeyCodes.escape) {
-          Meteor.call('deleteNode', newNode._id, function () {
+          newNode.parent = parentNode;
+          App.Node.delete(newNode);
+          /* Meteor.call('deleteNode', newNode._id, function () {
             App.selectNode(parentNode);
-          });
+             });*/
+          App.selectNode(parentNode);
         }
       }
     }));
@@ -159,7 +162,7 @@ Mousetrap.bind('del', function () {
     }
     var removedNodeIndex = App.Node.delete(selectedNode);
     App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
-    Meteor.call('deleteNode', selectedNode._id);
+   
   }
 });
 
