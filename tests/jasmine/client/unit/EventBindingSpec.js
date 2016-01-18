@@ -233,7 +233,7 @@ describe('eventBinding.js', function () {
       beforeEach(function () {
         spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
       });
-      xit("should call all the functions in delete keypress", function () {
+      it("should call all the functions in delete keypress", function () {
         event.keyCode = 46;
         spyOn(Meteor, "call");
         spyOn(App, "getDirection").and.returnValue(node.position);
@@ -244,7 +244,6 @@ describe('eventBinding.js', function () {
 
         expect(App.Node.delete).toHaveBeenCalled();
         expect(App.eventBinding.focusAfterDelete).toHaveBeenCalled();
-        expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
       });
 
       it("should display alert when delete key is pressed on root node", function () {
