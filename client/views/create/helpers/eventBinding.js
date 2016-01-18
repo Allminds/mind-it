@@ -12,21 +12,25 @@ App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
   App.selectNode(focusableNode);
 };
 
-App.cutNode = function (asyncCallBack) {
-  var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");
-  if (App.getDirection(sourceNode) === 'root') {
+App.cutNode = function (selectedNode) {
+  if (App.Node.isRoot(selectedNode) == true) {
     alert("The root node cannot be cut!");
     return;
   }
-  App.map.storeSourceNode(sourceNode);
-  var selectedNodeIndex = (sourceNode.parent.children || []).indexOf(sourceNode);
-  App.removeLocally(sourceNode);
-  Meteor.call('deleteNode', sourceNode._id, function (err, data) {
-    App.eventBinding.focusAfterDelete(sourceNode, selectedNodeIndex);
-    if (asyncCallBack)
-      asyncCallBack(err, data);
-  });
-};
+
+  if (confirm("Do you really want to cut the selected node(s)? ") == true) {
+    App.nodeToPaste = selectedNode;
+
+    var dir = App.Node.getDirection(selectedNode),
+        parent = selectedNode.parent,
+        siblings = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree) || [],
+        selectedNodeIndex = siblings.indexOf(selectedNode);
+        siblings.splice(selectedNodeIndex,1);
+      App.chart.update();
+    App.eventBinding.focusAfterDelete(selectedNode,selectedNodeIndex);
+  }
+
+}
 
 App.pasteNode = function (sourceNode, targetNode, dir, previousSibling) {
   var newNode = App.map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
@@ -64,7 +68,18 @@ Mousetrap.bind('f2', function(event) {
   App.eventBinding.f2Action(event);
 });
 
-Mousetrap.bind('mod+x', App.cutNode);
+
+Mousetrap.bind('mod+x', function () {
+      var selection = d3.select(".node.selected")[0][0];
+      if (selection) {
+
+        var node = selection.__data__;
+
+
+        App.cutNode(node);
+
+      }
+    });
 
 Mousetrap.bind('mod+c', function () {
   var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");

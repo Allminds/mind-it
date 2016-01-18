@@ -105,15 +105,56 @@ describe('eventBinding.js', function () {
     });
   });
 
-  // describe('App.cutNode', function () {
-  //   it("should show alert if I try to cut root node", function () {
-  //     spyOn(App.map, "getDataOfNodeWithClassNamesString");
-  //     spyOn(window, "alert");
+   describe('App.cutNode', function () {
 
-  //     App.cutNode();
+     var root, parent, child1, child2, child3;
+     beforeEach(function () {
+       root = new App.Node("root");
+       root._id = "root";
+       parent = new App.Node("parent", "right", root, 0);
+       parent._id = "parent";
+       parent.parent = root;
+       child1 = new App.Node("child1", "right", parent, 0);
+       child1._id = "child1";
+       child2 = new App.Node("child2", "right", parent, 1);
+       child2._id = "child2";
+       child3 = new App.Node("child3", "right", parent, 1);
+       child2._id = "child3";
+       child1.parent = parent;
+       child2.parent = parent;
+       child3.parent = parent;
+       parent.childSubTree = [child1, child2, child3];
+       root.left.push(parent);
+     });
 
-  //     expect(window.alert).toHaveBeenCalled();
-  //   });
+
+     it("should show alert if I try to cut root node", function () {
+       spyOn(window, "alert");
+       App.cutNode(root);
+       expect(window.alert).toHaveBeenCalled();
+     });
+
+     it("should show confirm dialog if I try to cut a non root node", function() {
+        spyOn(window, "confirm");
+        App.cutNode(parent);
+        expect(window.confirm).toHaveBeenCalled();
+     });
+
+     it("should delete node if I click yes on confirm dialog", function() {
+       App.chart = jasmine.createSpyObj('App.chart', [ 'update' ]);
+
+       App.chart.update.and.callFake(function() {
+         //throw 'an-exception';
+       });
+
+       spyOn(window, "confirm").and.returnValue(true);
+       spyOn(App.eventBinding,'focusAfterDelete');
+
+       App.cutNode(parent);
+       expect(root.left[0]).not.toBe(parent);
+
+
+     });
 
   //   it("should call all internal methods on cutNode call for node other than root", function () {
   //     var parent = {_id: "parent"},
@@ -128,7 +169,7 @@ describe('eventBinding.js', function () {
   //     expect(App.map.storeSourceNode).toHaveBeenCalledWith(node);
   //     expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
   //   });
-  // });
+  });
 
   describe("Node Add/Delete/Edit/Collapse events", function () {
     var event, node, newNode, parent;
