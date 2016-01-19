@@ -8,6 +8,7 @@ Router.route('/', {
 			this.render('home');
 		else {
 			Meteor.subscribe("userdata", Meteor.userId());
+			Meteor.subscribe("myPermissions", Meteor.userId());
 			Meteor.subscribe("myRootNodes", Meteor.userId());
 			this.render('dashboard');
 		}

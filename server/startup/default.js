@@ -6,8 +6,10 @@ Meteor.publish('userdata', function () {
   return Meteor.users.find(this.userId);
 });
 Meteor.publish('myRootNodes', function(userId) {
-  var myMaps = Meteor.users.findOne({_id: userId}).maps;
-  return Mindmaps.find({_id: { $in: myMaps }});
+  return App.DbService.rootNodesOfMyMaps(userId);
+});
+Meteor.publish('myPermissions', function(userId) {
+  return App.DbService.myPermissions(userId);
 });
 Meteor.methods({
   //Only Meteor can delete the documents - Not permitted for client
@@ -19,6 +21,6 @@ Meteor.methods({
     return Mindmaps.find({position: null}).count();
   },
   addMapToUser: function(userId, mindMapId) {
-    Meteor.users.update({_id: userId}, {$addToSet: {"maps": mindMapId}})
+    App.DbService.addOwner(userId, mindMapId);
   }
 });
