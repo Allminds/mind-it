@@ -18,7 +18,7 @@ Meteor.methods({
   },
 
   countMaps: function () {
-    return Mindmaps.find({position: null}).count();
+    return Mindmaps.find({parentId: null}).count();
   },
   addMapToUser: function(userId, mindMapId) {
     App.DbService.addOwner(userId, mindMapId);

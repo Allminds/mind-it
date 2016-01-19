@@ -129,9 +129,11 @@ describe('lib.Node.js', function () {
         expect(mindMapService.updateNode).toHaveBeenCalledWith(child1._id, {parentId: root._id });
       });
 
-      xit("should call mindMapService.updateNode with childSubTree for updateChildTree function call on parent", function(){
+      it("should call mindMapService.updateNode with childSubTree for updateChildTree function call on parent", function(){
         spyOn(mindMapService, "updateNode");
-        App.Node.updateChildTree(parent);
+        App.Node.updateChildTree(parent, "childSubTree", parent.childSubTree.map(function(_){
+          return _._id;
+        }));
         expect(mindMapService.updateNode).toHaveBeenCalledWith(parent._id, {childSubTree: [ 'child1','child2','child3' ]});
       });
 
@@ -141,9 +143,11 @@ describe('lib.Node.js', function () {
         expect(mindMapService.updateNode).not.toHaveBeenCalled();
       });
 
-      xit("should call mindMapService.updateNode on root if subtree name is provided", function(){
+      it("should call mindMapService.updateNode on root if subtree name is provided", function(){
         spyOn(mindMapService, "updateNode");
-        App.Node.updateChildTree(root, 'left');
+        App.Node.updateChildTree(root, 'left', root.left.map(function(_){
+          return _._id;
+        }));
         expect(mindMapService.updateNode).toHaveBeenCalledWith(root._id, {left: [ 'parent']});
       });
 
@@ -215,7 +219,7 @@ describe('lib.Node.js', function () {
         expect(App.swapElements.calls.mostRecent().args[2]).toBe(2);
       });
     });
-    xdescribe("Repositioning Horizontal", function() {
+    describe("Repositioning Horizontal", function() {
       var root, left1, child1, child2, child3;
       beforeEach(function () {
         root = new App.Node("root");
@@ -248,13 +252,14 @@ describe('lib.Node.js', function () {
       });
 
       it("should put the left child in root into right subtree for mod+RIGHT", function() {
+        spyOn(App.Node, "reposition");
         App.Node.horizontalReposition(left1, App.Constants.KeyPressed.RIGHT);
-        expect(root.right[0]).toBe(left1);
+        expect(App.Node.reposition).toHaveBeenCalledWith(left1, root, root.right, 0);
       });
 
-      it("should remove the left child in root from left subtree for mod+RIGHT", function() {
+      it("should not remove the left child in root from left subtree for mod+RIGHT", function() {
         App.Node.horizontalReposition(left1, App.Constants.KeyPressed.RIGHT);
-        expect(root.left[0]).not.toBe(left1);
+        expect(root.left[0]).toBe(left1);
       });
 
       it("should not change the parentId of the left child in root when mod+RIGHT is pressed", function() {
@@ -272,8 +277,9 @@ describe('lib.Node.js', function () {
         var right1 = new App.Node("right1", "right", root, 0);
         root.right = [right1];
         right1.parent = root;
+        spyOn(App.Node, "reposition");
         App.Node.horizontalReposition(left1, App.Constants.KeyPressed.RIGHT);
-        expect(root.right[root.right.length - 1]).toBe(left1);
+        expect(App.Node.reposition.calls.mostRecent().args[3]).toBe(1);
       });
 
       it("should put left1 as the last child of left2 on mod+LEFT key press", function() {
@@ -285,8 +291,9 @@ describe('lib.Node.js', function () {
         left2Child1.parent = left2;
         root.left.push(left2);
         left2.parent = root;
+        spyOn(App.Node, "reposition");
         App.Node.horizontalReposition(left1, App.Constants.KeyPressed.LEFT);
-        expect(left2.childSubTree[left2.childSubTree.length - 1]).toBe(left1);
+        expect(App.Node.reposition).toHaveBeenCalledWith(left1, left2, left2.childSubTree, 1);
       });
 
 
@@ -303,11 +310,12 @@ describe('lib.Node.js', function () {
         root.left.push(left3);
         left2.parent = root;
         left3.parent = root;
+        spyOn(App.Node, "reposition");
         App.Node.horizontalReposition(left3, App.Constants.KeyPressed.LEFT);
-        expect(left2.childSubTree[left2.childSubTree.length - 1]).toBe(left3);
+        expect(App.Node.reposition).toHaveBeenCalledWith(left3, left2, left2.childSubTree, 1);
       });
 
-      it("should change the parentId of left1 as left2 on mod+LEFT key press", function() {
+      it("should not change the parentId of left1 object as left2 on mod+LEFT key press", function() {
         var left2 = new App.Node("left2", "left", root, 0);
         left2._id = "left2";
         var left2Child1 = new App.Node("left2Child1", "left", left2, 0);
@@ -317,7 +325,7 @@ describe('lib.Node.js', function () {
         root.left.push(left2);
         left2.parent = root;
         App.Node.horizontalReposition(left1, App.Constants.KeyPressed.LEFT);
-        expect(left1.parentId).toBe(left2._id);
+        expect(left1.parentId).not.toBe(left2._id);
       });
 
       it("should put child3 as the last child of child2 on mod+LEFT key press", function() {
@@ -325,8 +333,9 @@ describe('lib.Node.js', function () {
         child2child1._id = "child2child1";
         child2child1.parent = child2;
         child2.childSubTree.push(child2child1);
+        spyOn(App.Node, "reposition");
         App.Node.horizontalReposition(child3, App.Constants.KeyPressed.LEFT);
-        expect(child2.childSubTree[child2.childSubTree.length - 1]).toBe(child3);
+        expect(App.Node.reposition).toHaveBeenCalledWith(child3, child2, child2.childSubTree, 1);
       });
 
       it("should put child1 as the last child of child2 on mod+LEFT key press", function() {
@@ -334,8 +343,9 @@ describe('lib.Node.js', function () {
         child2child1._id = "child2child1";
         child2child1.parent = child2;
         child2.childSubTree.push(child2child1);
+        spyOn(App.Node, "reposition");
         App.Node.horizontalReposition(child1, App.Constants.KeyPressed.LEFT);
-        expect(child2.childSubTree[child2.childSubTree.length - 1]).toBe(child1);
+        expect(App.Node.reposition).toHaveBeenCalledWith(child1, child2, child2.childSubTree, 1);
       });
 
       it("should put child2 as the second child in left subtree of root on mod+RIGHT key press on child2", function() {
@@ -343,8 +353,9 @@ describe('lib.Node.js', function () {
         left2._id = "left2";
         root.left.push(left2);
         left2.parent = root;
+        spyOn(App.Node, "reposition");
         App.Node.horizontalReposition(child2, App.Constants.KeyPressed.RIGHT);
-        expect(root.left[1]).toBe(child2);
+        expect(App.Node.reposition).toHaveBeenCalledWith(child2, root, root.left, 1);
       });
 
       it("should put child2child1 as the third child of left1 on mod+RIGHT key press on child2child1", function() {
@@ -352,8 +363,9 @@ describe('lib.Node.js', function () {
         child2child1._id = "child2child1";
         child2child1.parent = child2;
         child2.childSubTree.push(child2child1);
+        spyOn(App.Node, "reposition");
         App.Node.horizontalReposition(child2child1, App.Constants.KeyPressed.RIGHT);
-        expect(left1.childSubTree[2]).toBe(child2child1);
+        expect(App.Node.reposition).toHaveBeenCalledWith(child2child1, left1, left1.childSubTree, 2);
       });
       
       it("should call updateChildTree twice, followed by updateParentIdofNode", function(){
@@ -366,13 +378,58 @@ describe('lib.Node.js', function () {
         child2.childSubTree.push(child2child1);
         App.Node.horizontalReposition(child2child1, App.Constants.KeyPressed.RIGHT);
         expect(App.Node.updateChildTree.calls.count()).toBe(2);
-        child2child1.parentId = root._id;
-        expect(App.Node.updateParentIdOfNode).toHaveBeenCalledWith(child2child1);
-
-        
+        expect(App.Node.updateParentIdOfNode).toHaveBeenCalledWith(child2child1, left1._id);
       });
-      
-      
+    });
+
+    describe("Reposition", function(){
+
+      var root, left1, child1, child2, child3;
+      beforeEach(function () {
+        root = new App.Node("root");
+        root._id = "root";
+        left1 = new App.Node("left1", "left", root, 0);
+        left1._id = "left1";
+        left1.parent = root;
+        child1 = new App.Node("child1", "left", left1, 0);
+        child1._id = "child1";
+        child2 = new App.Node("child2", "left", left1, 1);
+        child2._id = "child2";
+        child3 = new App.Node("child3", "left", left1, 1);
+        child3._id = "child3";
+        child1.parent = left1;
+        child2.parent = left1;
+        child3.parent = left1;
+        root.left = [left1];
+        left1.childSubTree = [child1, child2, child3];
+      });
+
+      it("should call functions in sequence when repostion is called with two parameters.", function(){
+        spyOn(App.Node, "updateParentIdOfNode");
+        spyOn(App.Node, "updateChildTree");
+
+        App.Node.reposition(child1, root);
+
+        expect(App.Node.updateParentIdOfNode).toHaveBeenCalledWith(child1, root._id);
+        expect(App.Node.updateChildTree.calls.count()).toBe(2);
+        expect(App.Node.updateChildTree.calls.mostRecent().args[0]).toBe(left1);
+        expect(App.Node.updateChildTree.calls.mostRecent().args[1]).toBe("left");
+        expect(App.Node.updateChildTree.calls.mostRecent().args[2]).toEqual(["child2", "child3"]);
+      });
+
+      it("should call functions in sequence when repostion is called with two parameters.", function(){
+        spyOn(App.Node, "updateParentIdOfNode");
+        spyOn(App.Node, "updateChildTree");
+
+        App.Node.reposition(child1, root, left1.childSubTree, 0);
+
+        expect(App.Node.updateParentIdOfNode).toHaveBeenCalledWith(child1, root._id);
+        expect(App.Node.updateChildTree.calls.argsFor(0)[0]).toBe(root);
+        expect(App.Node.updateChildTree.calls.argsFor(0)[1]).toBe("left");
+        expect(App.Node.updateChildTree.calls.argsFor(0)[2]).toEqual(["child1", "child2", "child3", "child1"]);
+        expect(App.Node.updateChildTree.calls.count()).toBe(2);
+      });
+
     });
   });
 });

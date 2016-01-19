@@ -6,8 +6,9 @@ App.map.getDataOfNodeWithClassNamesString = function (classNames) {
 };
 
 App.map.addNodeToUI = function (parent, newNode) {
-  var subTree = App.Node.isRoot(parent) ? parent[newNode.position] : parent.childSubTree;
-  subTree.splice(newNode.index, 0, newNode);
+  var subTree = parent ? (App.Node.isRoot(parent) ? parent[newNode.position] : parent.childSubTree) : null;
+  if(subTree)
+    subTree.splice(newNode.index, 0, newNode);
   App.chart.update();
 };
 
@@ -36,11 +37,12 @@ App.map.findOne = function (node, fun) {
 };
 
 App.map.getNodeDataWithNodeId = function (nodeId) {
-  var d3Node = d3.selectAll('.node')[0].find(
+  /*var d3Node = d3.selectAll('.node')[0].find(
     function(node){
       return node.__data__._id === nodeId;
     });
-  return d3Node ? d3Node.__data__ : null;
+    return d3Node ? d3Node.__data__ : null;*/
+  return Object.keys(App.nodeStore).indexOf(nodeId) != -1 ? App.nodeStore[nodeId]:null;
 };
 
 App.map.storeSourceNode = function (sourceNode) {

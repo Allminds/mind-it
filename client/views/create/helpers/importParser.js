@@ -64,6 +64,8 @@ App.ImportParser.createRootNode = function(rootId, rootName) {
 
 App.ImportParser.prepareXMLDoc = function(xmlString) {
     var xmlText = xmlString.replace(new RegExp('[\n]', 'g'), '');
+    xmlText=xmlText.replace(/>\s*/g, '>');
+    xmlText=xmlText.replace(/\s*</g, '<');
     xmlText = xmlText.replace(new RegExp('[\t]', 'g'), '');
     var parser = new DOMParser();
     var xmlDoc = parser.parseFromString(xmlText, "text/xml");
