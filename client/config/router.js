@@ -3,9 +3,14 @@
 Router.configure({layoutTemplate: 'main', notFoundTemplate: 'error_page'});
 
 Router.route('/', {
-	template: 'home',
-	waitOn: function () {
-		return Meteor.subscribe("userdata", Meteor.userId());
+	onBeforeAction: function (pause) {
+		if (!Meteor.user())
+			this.render('home');
+		else {
+			Meteor.subscribe("userdata", Meteor.userId());
+			Meteor.subscribe("myRootNodes", Meteor.userId());
+			this.render('dashboard');
+		}
 	}
 });
 Router.route('/create/:_id', {
