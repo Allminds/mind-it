@@ -12,21 +12,25 @@ App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
   App.selectNode(focusableNode);
 };
 
-App.cutNode = function (asyncCallBack) {
-  var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");
-  if (App.getDirection(sourceNode) === 'root') {
+App.cutNode = function (selectedNode) {
+  if (App.Node.isRoot(selectedNode) == true) {
     alert("The root node cannot be cut!");
     return;
   }
-  App.map.storeSourceNode(sourceNode);
-  var selectedNodeIndex = (sourceNode.parent.children || []).indexOf(sourceNode);
-  App.removeLocally(sourceNode);
-  Meteor.call('deleteNode', sourceNode._id, function (err, data) {
-    App.eventBinding.focusAfterDelete(sourceNode, selectedNodeIndex);
-    if (asyncCallBack)
-      asyncCallBack(err, data);
-  });
-};
+
+  if (confirm("Do you really want to cut the selected node(s)? ") == true) {
+    App.nodeToPaste = selectedNode;
+
+    var dir = App.Node.getDirection(selectedNode),
+        parent = selectedNode.parent,
+        siblings = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree) || [],
+        selectedNodeIndex = siblings.indexOf(selectedNode);
+        siblings.splice(selectedNodeIndex,1);
+      App.chart.update();
+    App.eventBinding.focusAfterDelete(selectedNode,selectedNodeIndex);
+  }
+
+}
 
 App.pasteNode = function (sourceNode, targetNode, dir, previousSibling) {
   var newNode = App.map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
@@ -64,7 +68,18 @@ Mousetrap.bind('f2', function(event) {
   App.eventBinding.f2Action(event);
 });
 
-Mousetrap.bind('mod+x', App.cutNode);
+
+Mousetrap.bind('mod+x', function () {
+      var selection = d3.select(".node.selected")[0][0];
+      if (selection) {
+
+        var node = selection.__data__;
+
+
+        App.cutNode(node);
+
+      }
+    });
 
 Mousetrap.bind('mod+c', function () {
   var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");
@@ -88,12 +103,15 @@ Mousetrap.bind('mod+v', function () {
 App.eventBinding.escapeOnNewNode = function(newNode, parentNode){
     $(window).unbind().on("keyup", (function(e) {
       var selectedNodeId = d3.select('.selected').node() ? d3.select('.selected').node().__data__._id : null;
-      var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
+                                      var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
       if((selectedNodeId === null && modalCreatedNodeId === null )){
         if (e.keyCode === App.KeyCodes.escape) {
-          Meteor.call('deleteNode', newNode._id, function () {
+          newNode.parent = parentNode;
+          App.Node.delete(newNode);
+          /* Meteor.call('deleteNode', newNode._id, function () {
             App.selectNode(parentNode);
-          });
+             });*/
+          App.selectNode(parentNode);
         }
       }
     }));
@@ -159,7 +177,7 @@ Mousetrap.bind('del', function () {
     }
     var removedNodeIndex = App.Node.delete(selectedNode);
     App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
-    Meteor.call('deleteNode', selectedNode._id);
+   
   }
 });
 

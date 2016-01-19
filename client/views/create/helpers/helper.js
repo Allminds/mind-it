@@ -56,7 +56,8 @@ App.removeAllLevelClass = function(d3Callable){
 
 App.getNewlyAddedNodeId = function(parent, fields) {
   var key = Object.keys(fields)[0],
-      childIdTree = parent[key].map(
+      subTree = App.Node.isRoot(parent) ? parent[key] : (parent.isCollapsed ? parent._childSubTree : parent.childSubTree),
+      childIdTree = subTree.map(
         function(child){
           return child._id;
         }),
@@ -281,7 +282,7 @@ var collapseRecursive = function (d, id) {
   if (d.hasOwnProperty('childSubTree') && d.children) {
     d._childSubTree = [];
     d._childSubTree = d.childSubTree;
-    d._childSubTree.forEach(collapseRecursive);
+    //d._childSubTree.forEach(collapseRecursive);
     d.childSubTree = null;
   }
 };
@@ -295,13 +296,13 @@ App.expandRecursive = function (d, id) {
   if (d._id === id) {
     d.isCollapsed = false;
     App.removeLocally(d);
-  }
+   }
   // On refresh - If child node is collapsed do not expand it
   if (App.isLocallyCollapsed(d._id) == true)
     d.isCollapsed = true;
   if (d.hasOwnProperty('_childSubTree') && d._childSubTree && !d.isCollapsed) {
     d.childSubTree = d._childSubTree;
-    d._childSubTree.forEach(App.expandRecursive);
+   // d._childSubTree.forEach(App.expandRecursive);
     d._childSubTree = null;
   }
 };
