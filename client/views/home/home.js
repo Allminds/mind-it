@@ -6,6 +6,9 @@ Template.MyButton.events({
     // 1. cretate root node with defualt title
     var mindMapId = mindMapService.createRootNode('New Mindmap'),
       link = '/create/' + mindMapId;
+      var user = Meteor.user();
+      if(user)
+          Meteor.call("addMapToUser", user._id, mindMapId);
     // 2. Go to canvas root note
     Router.go(link);
     clearNodeCollapsedState();
