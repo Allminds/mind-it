@@ -1,8 +1,6 @@
 Template.dashboard.helpers({
     maps: function() {
-        var myMaps = Meteor.user().maps;
-        //put in mind map service
-        return Mindmaps.find({_id: { $in: myMaps }});
+        return App.DbService.rootNodesOfMyMaps(Meteor.user()._id);
     }
 });
 
