@@ -8,7 +8,7 @@ Template.MyButton.events({
       link = '/create/' + mindMapId;
       var user = Meteor.user();
       if(user)
-          Meteor.call("addMapToUser", user._id, mindMapId);
+          Meteor.call("addMapToUser", user.services.google.email, mindMapId, "o");
     // 2. Go to canvas root note
     Router.go(link);
     clearNodeCollapsedState();

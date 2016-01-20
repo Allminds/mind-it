@@ -3,14 +3,16 @@
 Router.configure({layoutTemplate: 'main', notFoundTemplate: 'error_page'});
 
 Router.route('/', {
-	onBeforeAction: function (pause) {
-		if (!Meteor.user())
-			this.render('home');
+	onBeforeAction: function () {
+		var self = this;
+		if (!Meteor.user()) {
+			self.render("home");
+		}
 		else {
 			Meteor.subscribe("userdata", Meteor.userId());
-			Meteor.subscribe("myPermissions", Meteor.userId());
-			Meteor.subscribe("myRootNodes", Meteor.userId());
-			this.render('dashboard');
+			Meteor.subscribe("myPermissions", Meteor.user().services.google.email);
+            Meteor.subscribe("myRootNodes", Meteor.user().services.google.email);
+			self.render("dashboard");
 		}
 	}
 });
