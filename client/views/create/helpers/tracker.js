@@ -33,16 +33,16 @@ App.tracker = {
           selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected"),
           newlyAddedId = App.getNewlyAddedNodeId(parent, fields),
           newSubTree = childIds.map(
-            function(id){
+            function(childid){
               return subTree.find(
                 function(node){
-                  return node._id === id;
+                  return node._id === childid;
                 });
             });
-      
+
       if(App.Node.isRoot(parent)){
         if(App.checkRepositionUpdateOnRoot(parent, key, newlyAddedId)) {
-          App.tracker.updatedNodeId = newlyAddedId;
+          App.tracker.updatedNodeId = App.tracker.updatedNodeId ? App.tracker.updatedNodeId : newlyAddedId;
         }
       }
           
@@ -61,7 +61,7 @@ App.tracker = {
             App.removeAllLevelClass(tempD3Array);
             App.applyLevelClass(tempD3Array, node.__data__.depth);
             App.applyClassToSubTree(node.__data__, null, App.removeAllLevelClass);
-            App.applyClassToSubTree(node.__data__, null, App.applyLevelClass, parentDepth+2);
+            App.applyClassToSubTree(node.__data__, null, App.applyLevelClass);
           }
           App.tracker.repaintNodeId = null;
         }
@@ -73,13 +73,16 @@ App.tracker = {
       }
     }
     else if(fields.hasOwnProperty('parentId')) {
+       if(!fields.parentId) return;
       App.tracker.updatedNodeId = id;
       App.tracker.repaintNodeId = id;
-      var parentDepth = App.map.getNodeDataWithNodeId(fields.parentId).depth,
-          selectedNode = App.map.getNodeDataWithNodeId(id),
-          newParent = App.map.getNodeDataWithNodeId(fields.parentId);
-      selectedNode.parent = newParent;
-      selectedNode.parentId = newParent._id; 
+      if(fields.parentId != "JabtakHaiJAAN") {
+        var selectedNode = App.map.getNodeDataWithNodeId(id),
+            newParent = App.map.getNodeDataWithNodeId(fields.parentId);
+
+        selectedNode.parent = newParent;
+        selectedNode.parentId = newParent._id;
+      }
     }
     
     
