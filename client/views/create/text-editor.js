@@ -17,6 +17,20 @@ Editor.prototype.createEditBox = function () {
     depth = this.nodeData.depth;
   depth = depth < adjmnt.length ? depth : 4;
 
+  /**
+   * Added Extra space for child nodes adjacent to root @Author Swapnil  ,Danny.
+   *
+   */
+  if(this.nodeData.parentId === this.nodeData.rootId) {
+    //For left
+    if(this.nodeData.position === 'left') {
+      textboxAttributes.textboxX -= 20;
+    } //For right
+    else {
+      textboxAttributes.textboxX += 20;
+    }
+  }
+
   return d3.select("#mindmap")
     .append("input")
     .attr("class", "edit-box" + " level-" + depth)
@@ -42,9 +56,10 @@ var textBoxAttribute = function (svgWidth, svgHeight, elementToEdit) {
   var xTranslation = transformation[0].split("(")[1];
   var yTranslation = transformation[1].split(")")[0];
 
+
   return {
-    textboxX: svgWidth / 2 + parseInt(xTranslation) - rectWidth / 2,
-    textboxY: svgHeight / 2 + parseInt(yTranslation) - rectHeight,
+    textboxX: svgWidth / 2 + parseInt(xTranslation) - rectWidth / 2 ,
+    textboxY: svgHeight / 2 + parseInt(yTranslation) - rectHeight ,
     textboxWidth: rectWidth
   };
 };
