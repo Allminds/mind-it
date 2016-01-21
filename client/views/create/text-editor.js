@@ -10,7 +10,7 @@ Editor = function Editor(elementToEdit, handler) {
 Editor.prototype.createEditBox = function () {
   var svgWidth = d3.select("svg").attr("width");
   var svgHeight = d3.select("svg").attr("height");
-  git stash var elementToEdit = d3.select(this.elementToEdit);
+  var elementToEdit = d3.select(this.elementToEdit);
 
   var textboxAttributes = textBoxAttribute(svgWidth, svgHeight, elementToEdit),
     adjmnt = [20, 10, 10, 10, 15],
