@@ -13,5 +13,9 @@ Meteor.methods({
 
   countMaps: function () {
     return Mindmaps.find({parentId: null}).count();
+  },
+
+  findTree: function (id) {
+    return mindMapService.findTree(id);
   }
 });
