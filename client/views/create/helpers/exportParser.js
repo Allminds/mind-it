@@ -1,30 +1,9 @@
 App.exportParser={};
 
 App.exportParser.export = function (rootNodeName) {
-    var XMLString = null;
-    XMLString = App.JSONConverter();
-    window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-    window.requestFileSystem(window.TEMPORARY, 1024 * 1024, function (fs) {
-
-        fs.root.getFile(rootNodeName+'.mm', {create: true}, function (fileEntry) {
-
-            fileEntry.createWriter(function (fileWriter) {
-                fileWriter.truncate(0);
-            }, function () {
-            });
-
-            fileEntry.createWriter(function (fileWriter) {
-                var blob = new Blob([XMLString]);
-                fileWriter.write(blob);
-                fileWriter.addEventListener("writeend", function () {
-                    window.open(fileEntry.toURL(), '_blank');
-                }, false);
-            }, function () {
-            });
-        }, function () {
-        });
-    }, function () {
-    });
+    var XMLString = App.JSONConverter();
+    var blob = new Blob([XMLString], {type: "text/plain;charset=utf-8"});
+    App.saveAs(blob, rootNodeName + ".mm");
 };
 
 var XMLString = [];
