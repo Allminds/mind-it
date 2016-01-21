@@ -19,12 +19,20 @@
   {{/if}}
 </template>
 
-
 <template name="UserNameInfo">
   {{#if currentUser}}
     <span class="navbar-nav brand">
       Hi {{ name}}
-    </span>
+      </span>
+      {{else}}
+  <span class="navbar-nav brand">
+      Hi Guest
+      </span>
   {{/if}}
+</template>
+
+<template name = "UserPictureInfo">
+  <img style="margin-top: 70%" src={{ name}} class="img-circle" alt="Cinque Terre" width="35" height="35">
+
 </template>
 
