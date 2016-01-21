@@ -10,8 +10,22 @@ Template.LoginMenu.events({
   }
 });
 
-Template.UserNameInfo.helpers({
+Template.UserInfo.helpers({
   name: function () {
     return Meteor.user().services.google.given_name;
   }
-})
+,
+ picture: function(){
+    if(Meteor.user())
+      return Meteor.user().services.google.picture;
+
+  }
+  ,
+  check:function(){
+    if(Meteor.user())
+    {
+
+    }
+  }
+
+});
