@@ -44,7 +44,7 @@ App.eventBinding.f2Action = function (event) {
     }).call(event);
     var selectedNode = d3.select(".node.selected")[0][0];
     if (!selectedNode) return;
-    App.showEditor.call(selectedNode);
+    App.showEditor(selectedNode);
 };
 
 Mousetrap.bind('f2', function (event) {

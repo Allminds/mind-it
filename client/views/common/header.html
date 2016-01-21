@@ -4,16 +4,14 @@
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-left">
             <li><a href="/"><img src="/Minditlogo.png"></a></li>
+           <li>{{> UserPictureInfo}}</li>
             <li>{{> UserNameInfo}}</li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-
-         {{#if requireExport}}
+            {{#if requireExport}}
           <li>{{> Export}}</li>
           {{/if}}
-
-
-          <li>{{> Feedback}}</li>
+            <li>{{> Feedback}}</li>
           <li><a href="#" class="navbar-element navbar-nav navbar-brand" style="color: #FFFFFF;" onMouseOver="this.style.color='#ED8233'"
                  onMouseOut="this.style.color='#FFFFFF'"
                  id={{topbarTagID linkId}}>{{topbarText}}</a></li>
@@ -23,4 +21,3 @@
     </div>
   </div>
 </template>
-
