@@ -15,7 +15,7 @@ App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
 
 App.cutNode = function (selectedNode) {
     if (App.Node.isRoot(selectedNode) == true) {
-        alert("The root node cannot be cut!");
+      alert("The root node cannot be cut!");
         return;
     }
 
@@ -85,7 +85,8 @@ Mousetrap.bind('mod+v', function () {
 
 });
 
-App.eventBinding.escapeOnNewNode = function(newNode, parentNode){
+App.eventBinding.escapeOnNewNode = function(newNode){
+  var parentNode = App.map.getNodeDataWithNodeId(newNode.parentId);
     $(window).unbind().on("keyup", (function(e) {
       var selectedNodeId = d3.select('.selected').node() ? d3.select('.selected').node().__data__._id : null;
                                       var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
