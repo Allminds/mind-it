@@ -32,7 +32,7 @@ App.cutNode = function (selectedNode) {
 
 
     App.Node.updateChildTree(parent, dir, siblingsIDList);
-    App.Node.updateParentIdOfNode(selectedNode, "JabtakHaiJAAN");
+    App.Node.updateParentIdOfNode(selectedNode, "None");
 
     App.eventBinding.focusAfterDelete(selectedNode,selectedNodeIndex);
 
