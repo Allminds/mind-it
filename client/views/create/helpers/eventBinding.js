@@ -19,7 +19,6 @@ App.cutNode = function (selectedNode) {
         return;
     }
 
-  if (confirm("Do you really want to cut the selected node(s)? ") == true) {
     App.nodeCutToPaste = selectedNode;
 
     var dir = App.Node.getDirection(selectedNode),
@@ -36,7 +35,6 @@ App.cutNode = function (selectedNode) {
 
     App.eventBinding.focusAfterDelete(selectedNode,selectedNodeIndex);
 
-  }
 }
 
 
@@ -80,7 +78,6 @@ Mousetrap.bind('mod+v', function () {
 
   if(App.nodeCutToPaste) {
     App.Node.reposition(App.nodeCutToPaste, targetNode, null, null, dir);
-    App.chart.update();
     App.nodeCutToPaste = null;
   } else {
     App.CopyParser.populateObjectFromBulletedList(sourceNodeBulleted, targetNode);
