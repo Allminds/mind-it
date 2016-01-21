@@ -64,8 +64,9 @@ App.tracker = {
             App.applyClassToSubTree(node.__data__, null, App.applyLevelClass);
           }
           App.tracker.repaintNodeId = null;
+          App.chart.update();
         }
-        App.chart.update(); 
+
       } else {
         var movedNode = App.map.getNodeDataWithNodeId(App.tracker.updatedNodeId);
         subTree.splice(childIds.indexOf(App.tracker.updatedNodeId),0,movedNode);
@@ -84,8 +85,8 @@ App.tracker = {
         selectedNode.parentId = newParent._id;
       }
     }
-    
-    
+    App.chart.update();
+
   },
   updatedNodeId: null,
   repaintNodeId: null

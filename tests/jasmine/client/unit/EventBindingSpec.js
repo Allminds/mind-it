@@ -134,12 +134,6 @@ describe('eventBinding.js', function () {
        expect(window.alert).toHaveBeenCalled();
      });
 
-     it("should show confirm dialog if I try to cut a non root node", function() {
-        spyOn(window, "confirm");
-        App.cutNode(parent);
-        expect(window.confirm).toHaveBeenCalled();
-     });
-
      it("should delete node if I click yes on confirm dialog", function() {
        App.chart = jasmine.createSpyObj('App.chart', [ 'update' ]);
 

@@ -79,7 +79,7 @@ App.applyClassToSubTree = function (parentNodeData, className, classCallBack, ca
     var classToApply = null;
     if (!className && !classCallBack) return;
 
-    var subTree = parentNodeData.childSubTree;
+    var subTree = App.Node.getSubTree(parentNodeData);
     var subTreeId = subTree.map(function (child) {
         return child._id;
     });

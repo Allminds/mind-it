@@ -15,11 +15,10 @@ App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
 
 App.cutNode = function (selectedNode) {
     if (App.Node.isRoot(selectedNode) == true) {
-        alert("The root node cannot be cut!");
+      alert("The root node cannot be cut!");
         return;
     }
 
-  if (confirm("Do you really want to cut the selected node(s)? ") == true) {
     App.nodeCutToPaste = selectedNode;
 
     var dir = App.Node.getDirection(selectedNode),
@@ -36,7 +35,6 @@ App.cutNode = function (selectedNode) {
 
     App.eventBinding.focusAfterDelete(selectedNode,selectedNodeIndex);
 
-  }
 }
 
 
@@ -46,7 +44,7 @@ App.eventBinding.f2Action = function (event) {
     }).call(event);
     var selectedNode = d3.select(".node.selected")[0][0];
     if (!selectedNode) return;
-    App.showEditor.call(selectedNode);
+    App.showEditor(selectedNode);
 };
 
 Mousetrap.bind('f2', function (event) {
@@ -80,7 +78,6 @@ Mousetrap.bind('mod+v', function () {
 
   if(App.nodeCutToPaste) {
     App.Node.reposition(App.nodeCutToPaste, targetNode, null, null, dir);
-    App.chart.update();
     App.nodeCutToPaste = null;
   } else {
     App.CopyParser.populateObjectFromBulletedList(sourceNodeBulleted, targetNode);
@@ -88,7 +85,8 @@ Mousetrap.bind('mod+v', function () {
 
 });
 
-App.eventBinding.escapeOnNewNode = function(newNode, parentNode){
+App.eventBinding.escapeOnNewNode = function(newNode){
+  var parentNode = App.map.getNodeDataWithNodeId(newNode.parentId);
     $(window).unbind().on("keyup", (function(e) {
       var selectedNodeId = d3.select('.selected').node() ? d3.select('.selected').node().__data__._id : null;
                                       var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
