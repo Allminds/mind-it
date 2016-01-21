@@ -76,7 +76,7 @@ App.tracker = {
        if(!fields.parentId) return;
       App.tracker.updatedNodeId = id;
       App.tracker.repaintNodeId = id;
-      if(fields.parentId != "JabtakHaiJAAN") {
+      if(fields.parentId != "None") {
         var selectedNode = App.map.getNodeDataWithNodeId(id),
             newParent = App.map.getNodeDataWithNodeId(fields.parentId);
 
