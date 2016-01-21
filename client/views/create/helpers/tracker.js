@@ -64,6 +64,7 @@ App.tracker = {
             App.applyClassToSubTree(node.__data__, null, App.applyLevelClass);
           }
           App.tracker.repaintNodeId = null;
+          App.chart.update();
         }
 
       } else {
