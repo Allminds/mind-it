@@ -46,7 +46,7 @@ describe("Create BulletedList from Node", function() {
 
 //var Bulletedlist = "root\n\tleft1\n\t\tchild1\n\t\tchild2\n\t\tchild3\n\tleft2";
 
-xdescribe("Create Node from Bulleted list", function() {
+describe("Create Node from Bulleted list", function() {
     var root, parent;
     var mindmapService;
 
@@ -58,7 +58,6 @@ xdescribe("Create Node from Bulleted list", function() {
         mindmapService = App.MindMapService.getInstance();
         spyOn(mindmapService, "addNode").and.callFake(function(node) {return node.name;});
         spyOn(mindmapService, "updateNode");
-        //spyOn(App.map, "getDataOfNodeWithClassNamesString").and.callFake(function() {return root});
 
     });
 
@@ -74,7 +73,6 @@ xdescribe("Create Node from Bulleted list", function() {
 
         var bulletedList = "child1";
         App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(parent.childSubTree[0]).toEqual("child1");
         expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
         expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[0]).toEqual("child1");
 
@@ -83,8 +81,6 @@ xdescribe("Create Node from Bulleted list", function() {
     it("Should append to the child of parent", function() {
         var bulletedList = "child1\nchild2";
         App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(parent.childSubTree[0]).toEqual("child1");
-        expect(parent.childSubTree[1]).toEqual("child2");
         expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
         expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[1]).toEqual("child2");
     });
@@ -92,58 +88,43 @@ xdescribe("Create Node from Bulleted list", function() {
     it("Should properly parse for level 2 children", function() {
         var bulletedList = "child1\nchild2\n\tchild2.1\n\tchild2.2\nchild3";
         App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(parent.childSubTree[0]).toEqual("child1");
-        expect(parent.childSubTree[1]).toEqual("child2");
-        expect(parent.childSubTree[2]).toEqual("child3");
-        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
-        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[2]).toEqual("child3");
-        expect(mindmapService.updateNode.calls.argsFor(0)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
+        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child2");
+        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[1]).toEqual("child2.2");
+        expect(mindmapService.updateNode.calls.argsFor(0)[1].childSubTree).toEqual(["child1", "child2", "child3"]);
     });
 
     it("Should properly parse for level 2 children for two level 1 nodes with children", function() {
         var bulletedList = "child1\nchild2\n\tchild2.1\n\tchild2.2\nchild3\n\tchild3.1\n\tchild3.2\nchild4";
         App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(parent.childSubTree[0]).toEqual("child1");
-        expect(parent.childSubTree[1]).toEqual("child2");
-        expect(parent.childSubTree[2]).toEqual("child3");
-        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
-        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[3]).toEqual("child4");
-        expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child3.1", "child3.2"]);
+        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child3");
+        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[1]).toEqual("child3.2");
+        expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
     });
 
     it("Should properly parse for level 3 children", function() {
         var bulletedList = "child1\nchild2\n\tchild2.1\n\tchild2.2\nchild3\n\tchild3.1\n\t\tchild3.1.1\n\tchild3.2\nchild4";
         App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(parent.childSubTree[0]).toEqual("child1");
-        expect(parent.childSubTree[1]).toEqual("child2");
-        expect(parent.childSubTree[2]).toEqual("child3");
-        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
-        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[3]).toEqual("child4");
-        expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child3.1.1"]);
+        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child3.1");
+        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[0]).toEqual("child3.1.1");
+        expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
         expect(mindmapService.updateNode.calls.argsFor(2)[1].childSubTree).toEqual(["child3.1", "child3.2"]);
     });
 
     it("Should properly parse for children with multiple tabs", function() {
         var bulletedList = "child1\nchild2\n\t\t\t\tchild2.1\n\tchild2.2\nchild3\n\t\t\t\tchild3.1\n\t\t\t\t\tchild3.1.1\n\tchild3.2\nchild4";
         App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(parent.childSubTree[0]).toEqual("child1");
-        expect(parent.childSubTree[1]).toEqual("child2");
-        expect(parent.childSubTree[2]).toEqual("child3");
-        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
-        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[3]).toEqual("child4");
-        expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child3.1.1"]);
+        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child3.1");
+        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[0]).toEqual("child3.1.1");
+        expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
         expect(mindmapService.updateNode.calls.argsFor(2)[1].childSubTree).toEqual(["child3.1", "child3.2"]);
     });
 
     it("Should properly parse for children with multiple tabs with carriage return", function() {
         var bulletedList = "child1\n\rchild2\n\r\t\t\t\tchild2.1\n\r\tchild2.2\n\rchild3\n\r\t\t\t\tchild3.1\n\r\t\t\t\t\tchild3.1.1\n\r\tchild3.2\n\rchild4";
         App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(parent.childSubTree[0]).toEqual("child1");
-        expect(parent.childSubTree[1]).toEqual("child2");
-        expect(parent.childSubTree[2]).toEqual("child3");
-        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
-        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[3]).toEqual("child4");
-        expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child3.1.1"]);
+        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child3.1");
+        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[0]).toEqual("child3.1.1");
+        expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
         expect(mindmapService.updateNode.calls.argsFor(2)[1].childSubTree).toEqual(["child3.1", "child3.2"]);
     });
 
