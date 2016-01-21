@@ -8,7 +8,11 @@ App.CopyParser.populateBulletedFromObject = function(node, depthOfNode){
     var depth  = depthOfNode ? depthOfNode : 0;
     for(var i = 1; i <= depth; i++ )
         returnString += "\t";
-    returnString += node.name.length == 0 ? "§" : node.name;
+    var nodeName = node.name.length == 0 ? "§" : node.name;
+    nodeName = nodeName.replace(/(\r\n|\n|\r)/gm, "‡");
+    returnString += nodeName;
+
+
 
     var temp = App.Node.isRoot(node) ? (
         node.left.reduce(function(prev, next){
@@ -44,6 +48,7 @@ var populateObjectFromBulletedList = function(bulletedList, parentNode, expected
             var nodeName = bulletedList[i].split('\t')[depth];
             if(nodeName.length > 0) {
                 nodeName = nodeName == "§" ? "" : nodeName;
+                nodeName = nodeName.replace(/‡/gm, "\n");
                 newNode = new App.Node(nodeName, dir, parentNode, i);
                 newNode = App.Node.addToDatabase(newNode);
                 siblingIdList.push(newNode._id);
