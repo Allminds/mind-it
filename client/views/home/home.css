@@ -18,7 +18,7 @@
 
 .home-bg .slick-slide {
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: top;
   float: none;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .create-mindmap {
-  margin-top: 90px;
+  margin-top: 50px;
 }
 
 
@@ -40,4 +40,21 @@
     float: right !important;
     margin-right: 15px;
     margin-top: 1%;
+}
+.navbar-inverse{
+    border-color: white;
+    background-color: white;
+}
+.navbar-inverse .navbar-nav > li > a{
+    color: #000000;
+    font-family: ‘Trebuchet MS’, Helvetica, serif;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover{
+    color: #ED8233;
+}
+.landingLogo {
+    margin-top: 70px;
 }

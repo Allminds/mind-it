@@ -6,38 +6,43 @@
       <a href="#"  onclick="document.getElementById('fileID').click(); return false;" >Import MindMap</a>
       <input type="file" accept=".mm" id="fileID" style="visibility: hidden;" />
 
-      <a href="#"  onclick="document.getElementById('backUp').click(); return false;" >Open file</a>
+      <!--<a href="#"  onclick="document.getElementById('backUp').click(); return false;" >Open file</a>-->
       <input type="file" accept=".txt" id="backUp" style="visibility: hidden;" />
 
     </div>
 </template>
 
 <template name="MinditImage">
-  <img src="/MinditLogo.png" width="20%" height="20%">
+  <img src="/Mindit-CenteredLogo.png" width="20%" height="20%">
 </template>
 
 <template name="HomeMindMapExample">
-  <div><img src="/SliderImage3-MovieDialogues.png"></div>
   <div><img src="/SliderImage1-Schedule.png"></div>
+  <div><img src="/SliderImage3-MovieDialogues.png"></div>
   <div><img src="/SliderImage2-Pune.png"></div>
 </template>
 
 <!--Home template -->
 <template name='home'>
   {{> TopBar topbarText="About Us"  requireExport=false linkId="about-us"}}
-
-  <div>
-    {{> ModalPopUp modalHeaderText="About Us" modalId="aboutUs-modal" path="/About_us_mind_it.png" isFullWidth="true"}}
-  </div>
-
-  <div class="home-bg-container" style="margin-top: 70px">
-    <div class="home-bg">
-      {{> HomeMindMapExample}}
-    </div>
+  <div class="landingLogo">
+    <img src="/MindIt-CenteredLogo.png">
   </div>
 
   <div class="create-mindmap">
     {{> MyButton}}
   </div>
+
+  <div>
+    {{> ModalPopUp modalHeaderText="About Us" modalId="aboutUs-modal" path="/About_us_mind_it.png" isFullWidth="true"}}
+  </div>
+
+  <div class="home-bg-container">
+    <div class="home-bg">
+      {{> HomeMindMapExample}}
+    </div>
+  </div>
+
+
 
 </template>
