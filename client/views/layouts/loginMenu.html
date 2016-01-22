@@ -1,18 +1,15 @@
 <template name="LoginMenu">
     {{#if currentUser}}
-    <a href="" class="navbar-element navbar-nav navbar-brand" data-action="logout" onMouseOver="this.style.color='#ED8233'"
-       onMouseOut="this.style.color='#FFFFFF'" style="color: #FFFFFF;">
+    <a href="" class="navbar-element navbar-nav navbar-brand" data-action="logout" >
         Logout
     </a>
     {{else}}
     {{#if loggingIn}}
-    <a href="" class="navbar-element navbar-nav navbar-brand" onMouseOver="this.style.color='#ED8233'"
-       onMouseOut="this.style.color='#FFFFFF'" style="color: #FFFFFF;">
+    <a href="" class="navbar-element navbar-nav navbar-brand">
         Logging In..
     </a>
     {{else}}
-    <a href="" class="navbar-element navbar-nav navbar-brand" onMouseOver="this.style.color='#ED8233'"
-       onMouseOut="this.style.color='#FFFFFF'" data-action="login" style="color: #FFFFFF;">
+    <a href="" class="navbar-element navbar-nav navbar-brand" data-action="login">
         Log In
     </a>
     {{/if}}
