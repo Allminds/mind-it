@@ -1,6 +1,6 @@
 mindMapService = App.MindMapService.getInstance();
 Meteor.publish('mindmap', function (id) {
-  return Mindmaps.find({});
+  return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
 });
 Meteor.publish('userdata', function () {
   return Meteor.users.find(this.userId);
@@ -29,12 +29,25 @@ Meteor.methods({
 //rootLefts  = {}
 //rootRights = {}
 childArrays= {}
+var counter = 0;
+var checkAllFields = function(node) {
+    var truth = node.hasOwnProperty('name') && node.hasOwnProperty('parent_ids')
+    && node.hasOwnProperty('position') && node.hasOwnProperty('next') && node.hasOwnProperty('previous') && node.parent_ids.length >= 1;
+
+    if(!truth) counter++;
+
+    return truth;
+ }
 
 var generateData= function(allNodes){
-    var rootList = allNodes.filter(function(_) {return _.position === null});
 
+    var rootList = allNodes.filter(function(_) {return  _.position === null});
+console.log(rootList.length);
     rootList.forEach(function(rootNode){
-        var tree = allNodes.filter(function(_){return _.position && _.parent_ids[0] === rootNode._id});
+
+        var tree = allNodes.filter(function(_){return checkAllFields(_) && _.position && _.parent_ids[0] === rootNode._id});
+
+        console.log("counter Value:",counter);
         var nodeMap = [];
         var nodeObject = new App.Node(rootNode.name);
         nodeObject._id = rootNode._id;
@@ -61,7 +74,6 @@ var generateData= function(allNodes){
 
         nodeMap[nodeObject._id] = nodeObject;
         tree.forEach(function(treeNode){
-        console.log(treeNode._id+"--");
             var childNode = new App.Node(treeNode.name);
             childNode._id = treeNode._id;
             childNode.parentId = treeNode.parent_ids[treeNode.parent_ids.length - 1];
@@ -69,16 +81,16 @@ var generateData= function(allNodes){
             var childSubTree = tree.filter(function(_){return _.parent_ids[_.parent_ids.length - 1] === treeNode._id});
             firstChild = childSubTree.find(function(_){return _.previous === null});
             while(firstChild) {
-            console.log("+++"+firstChild._id);
                 childNode.childSubTree.push(firstChild._id);
                 firstChild = childSubTree.find(function(_){return _._id === firstChild.next});
             }
             nodeMap[childNode._id] = childNode;
-            console.log(childNode);
+
             Mindmaps.update({_id: childNode._id} ,childNode );
 
         });
 
 
         });
+
     };
