@@ -1,6 +1,7 @@
 mindMapService = App.MindMapService.getInstance();
 Meteor.publish('mindmap', function (id) {
-  return Mindmaps.find({});
+ return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
+//    return Mindmaps.find({});
 });
 Meteor.publish('userdata', function () {
   return Meteor.users.find(this.userId);
