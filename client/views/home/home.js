@@ -5,7 +5,7 @@ Template.MyButton.events({
   'click #clickme': function () {
     // 1. cretate root node with defualt title
     var mindMapId = mindMapService.createRootNode('New Mindmap'),
-      link = '/create/' + mindMapId;
+      link = mindMapService.isDownTime ?'/createMindmap/' + mindMapId : '/create/' + mindMapId;
     // 2. Go to canvas root note
     Router.go(link);
     clearNodeCollapsedState();
@@ -43,10 +43,10 @@ Template.home.onRendered(function () {
     var reader = new FileReader();
     reader.onload = function() {
 
-        var xmltext = this.result;
-        var importParser = App.ImportParser;
-        var mindMapId = importParser.createMindmapFromXML(xmltext, mindMapService),
-        link = '/create/' + mindMapId;
+        var xmltext = this.result,
+        importParser = App.ImportParser,
+        mindMapId = importParser.createMindmapFromXML(xmltext, mindMapService),
+        link  = mindMapService.isDownTime ? '/createMindmap/' + mindMapId : '/create/' + mindMapId;
         if(importParser.errorMessage) {
             alert(importParser.errorMessage);
         } else {
