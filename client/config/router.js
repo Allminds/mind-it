@@ -3,12 +3,25 @@
 Router.configure({layoutTemplate: 'main', notFoundTemplate: 'error_page'});
 
 Router.route('/', {
+	name: 'downtimeNotify',
+	template: 'downtimeNotify'
+});
+
+Router.route('/asdfghhome/', {
 	template: 'home',
 	waitOn: function () {
 		return Meteor.subscribe("userdata", Meteor.userId());
 	}
 });
+
 Router.route('/create/:_id', {
+	template: 'downtimeNotify',
+	waitOn: function () {
+		return Meteor.subscribe("userdata", Meteor.userId());
+	}
+});
+
+Router.route('/createMindmap/:_id', {
 	name: "create",
 	template: "create",
 	waitOn: function () {
