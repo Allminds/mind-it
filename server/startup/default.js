@@ -15,9 +15,35 @@ Meteor.methods({
   countMaps: function () {
     return Mindmaps.find({parentId: null}).count();
   },
-
+  countNodes: function() {
+     return Mindmaps.find({}).count();
+  },
+  countOld: function() {
+       return Mindmaps.find({$or:[{parent_ids:{$exists:true}},{rootId:{$exists:false}}]}).count();
+   },
   findTree: function (id) {
     return mindMapService.findTree(id);
+  }
+  ,
+  dropDB: function()
+  {
+
+        var nodeslist=Mindmaps.find({}).fetch();
+
+        nodeslist.forEach(function(element)
+
+        {
+
+        Mindmaps.remove({_id:element._id});
+
+        }
+
+
+
+        );
+
+        return "Dropping Succesfull";
+
   }
   ,
   iterateOverNodesList: function(){

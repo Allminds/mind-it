@@ -1,4 +1,6 @@
 mapsCount = 0;
+nodeCount = 0;
+oldDataCount = 0;
 
 var Constants = {
   deltaEllipseXRadius: 30,
@@ -143,6 +145,18 @@ MindMap = function MindMap() {
     mapsCount = count;
   });
 
+  Meteor.call('countNodes', function (error, count) {
+      nodeCount = count;
+    });
+
+    Meteor.call('countOld', function (error, count) {
+         oldDataCount = count;
+       });
+
+   App.dropper = function() {
+
+       console.log("--->",Meteor.call('dropDB'));
+   }
   var connector = MindMap.diagonal;
   var connectLine = MindMap.diagonalLine;
   var getNodeHeight = function (node, defualtHeight) {
@@ -617,9 +631,8 @@ MindMap.diagonalLine =
 
   };
 
-
 App.migrateDb = function(){
-        Meteor.call('iterateOverNodesList', function(error, data){
+        Meteor.call('iterateOverNodesList', function(error){
           if(error){
             console.log('Error Occured ');
             console.log(error);
@@ -627,6 +640,8 @@ App.migrateDb = function(){
           console.log('Migration Completed');
         });
       };
+
+
 
 MindMap.loadFreeMind = function (fileName, callback) {
   d3.xml(fileName, 'application/xml', function (err, xml) {
