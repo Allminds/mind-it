@@ -33,7 +33,7 @@ childArrays= {}
 var counter = 0;
 var checkAllFields = function(node) {
     var truth = node.hasOwnProperty('name') && node.hasOwnProperty('parent_ids')
-    && node.hasOwnProperty('position') && node.hasOwnProperty('next') && node.hasOwnProperty('previous') && node.parent_ids.length >= 1;
+    && node.hasOwnProperty('position') && node.parent_ids.length >= 1;
 
     if(!truth) counter++;
 
@@ -43,10 +43,11 @@ var checkAllFields = function(node) {
 var generateData= function(allNodes){
 
     var rootList = allNodes.filter(function(_) {return  _.position === null});
+    var nonRoot = allNodes.filter(function(_) { return rootList.indexOf(_) == -1});
 console.log(rootList.length);
     rootList.forEach(function(rootNode){
 
-        var tree = allNodes.filter(function(_){return checkAllFields(_) && _.position && _.parent_ids[0] === rootNode._id});
+        var tree = nonRoot.filter(function(_){return checkAllFields(_) && _.position && _.parent_ids[0] === rootNode._id});
 
         console.log("counter Value:",counter);
         var nodeMap = [];
