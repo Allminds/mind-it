@@ -1,6 +1,6 @@
 mapsCount = 0;
 nodeCount = 0;
-oldDataCount = 0;
+//oldDataCount = 0;
 
 var Constants = {
   deltaEllipseXRadius: 30,
@@ -19,7 +19,7 @@ MindMap = function MindMap() {
     defaultWidth = 0,
     height = 6000,
     identity = '_id',
-    handleClick = function () {
+      handleClick = function () {
     },
     handleDblClick = function () {
     },
@@ -118,7 +118,7 @@ MindMap = function MindMap() {
           var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
           return rect.y == 0 ? -19 : rect.y;
         })
-        .attr('width', function (d) {
+      .attr('width', function (d) {
           var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
           return rect.width == 0 ? minTextSize : rect.width;
         })
@@ -149,14 +149,6 @@ MindMap = function MindMap() {
       nodeCount = count;
     });
 
-    Meteor.call('countOld', function (error, count) {
-         oldDataCount = count;
-       });
-
-   App.dropper = function() {
-
-       console.log("--->",Meteor.call('dropDB'));
-   }
   var connector = MindMap.diagonal;
   var connectLine = MindMap.diagonalLine;
   var getNodeHeight = function (node, defualtHeight) {
@@ -630,18 +622,6 @@ MindMap.diagonalLine =
       'L' + (target.y + targetWidth) + ',' + target.x;
 
   };
-
-App.migrateDb = function(){
-        Meteor.call('iterateOverNodesList', function(error){
-          if(error){
-            console.log('Error Occured ');
-            console.log(error);
-          }
-          console.log('Migration Completed');
-        });
-      };
-
-
 
 MindMap.loadFreeMind = function (fileName, callback) {
   d3.xml(fileName, 'application/xml', function (err, xml) {

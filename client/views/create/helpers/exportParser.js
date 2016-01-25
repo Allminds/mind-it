@@ -5,41 +5,7 @@ App.exportParser.export = function (rootNodeName) {
     var blob = new Blob([XMLString], {type: "text/plain;charset=utf-8"});
     App.saveAs(blob, rootNodeName + ".mm");
 };
-//newly Added
-var createNodesDataString = function(nodesArray){
-    var dataString = '';
-    for(var i=0; i<nodesArray.length; i++){
-        dataString +=  JSON.stringify(nodesArray[i]) + '!@#$%^&*(*&^%$#';
-    }
-    return dataString;
-};
 
-var createDBBackUp = function() {
-    return createNodesDataString(Mindmaps.find({}).fetch());
-};
-
-App.exportParser.createDBBackUpFile = function(fileName){
-    window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-    window.requestFileSystem(window.TEMPORARY, 1024 * 1024, function (fs) {
-
-        fs.root.getFile(fileName, {create: true}, function (fileEntry) {
-
-        var blobData = createDBBackUp();
-
-        fileEntry.createWriter(function (fileWriter) {
-            var blob = new Blob([blobData]);
-            fileWriter.write(blob);
-            fileWriter.addEventListener("writeend", function () {
-                window.open(fileEntry.toURL(), '_blank');
-            }, false);
-        }, function () {
-        });
-        }, function () {
-        });
-    }, function () {
-    });
-};
-//Newly added
 var XMLString = [];
 App.JSONConverter = function () {
 
