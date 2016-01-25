@@ -21,7 +21,8 @@ Router.route('/create/:_id', {
 	template: "create",
 	waitOn: function () {
 		Meteor.subscribe("userdata");
-		return Meteor.subscribe("mindmap", this.params._id);
+		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+		return Meteor.subscribe("mindmap", this.params._id, user);
 	},
 	data: function () {
 		return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
