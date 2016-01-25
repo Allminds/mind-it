@@ -1,6 +1,6 @@
 mindMapService = App.MindMapService.getInstance();
 Meteor.publish('mindmap', function (id) {
-   return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
+   return Mindmaps.find({});
    //return Mindmaps.find({});
 });
 Meteor.publish('userdata', function () {
@@ -27,23 +27,13 @@ Meteor.methods({
   ,
   dropDB: function()
   {
-
         var nodeslist=Mindmaps.find({}).fetch();
-
         nodeslist.forEach(function(element)
-
         {
-
         Mindmaps.remove({_id:element._id});
-
         }
-
-
-
         );
-
         return "Dropping Succesfull";
-
   }
   ,
   iterateOverNodesList: function(){
@@ -75,7 +65,7 @@ console.log(rootList.length);
 
         var tree = nonRoot.filter(function(_){return checkAllFields(_) && _.position && _.parent_ids[0] === rootNode._id});
 
-        console.log("counter Value:",counter);
+//        console.log("counter Value:",counter);
         var nodeMap = [];
         var nodeObject = new App.Node(rootNode.name);
         nodeObject._id = rootNode._id;
