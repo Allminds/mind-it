@@ -28,9 +28,18 @@ h1 {
 
 .btn-text{
     font-family: 'Helvetica', cursive;
-    font-size: 25px;
+    font-size: 20px;
     padding: 10px 40px;
-    margin: 10px 10px 10px 10px;
+    margin: 0px 10px 10px 10px;
+}
+
+.btn-text a{
+    color: #ff8433;
+}
+
+.btn-text a:hover{
+    text-decoration: none;
+    color: #8E388E;
 }
 
 .btn:hover {
@@ -43,10 +52,11 @@ h1 {
 	font-family: 'Helvetica', cursive;
 	font-size: 25px;
 	color: #FFF;
-	background-color: #3fb0ac;
-	text-shadow: 0px -2px #2980B9;
+	background-color: #ff8433;
 	transition: all 0.1s;
 	-webkit-transition: all 0.1s;
+	border-style: none;
+	border-radius: 15px;
 }
 
 .button-0:hover,
@@ -81,6 +91,12 @@ h1 {
 	padding-top: 35%;
 	color: #9D9D9D;
 	font-size: 150%;
+}
+.userInfo{
+	margin-top:20%;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 150%;
+	color: white;
 }
 
 .top-margin {

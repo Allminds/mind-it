@@ -3,8 +3,12 @@
   <button id="clickme" class="button-0">Create MindMap</button><br/>
     <div class="btn-text">
       <span>Or</span>
-      <a href="#"  onclick="document.getElementById('fileID').click(); return false;" >Import</a>
+      <a href="#"  onclick="document.getElementById('fileID').click(); return false;" >Import MindMap</a>
       <input type="file" accept=".mm" id="fileID" style="visibility: hidden;" />
+
+      <a href="#"  onclick="document.getElementById('backUp').click(); return false;" >Open file</a>
+      <input type="file" accept=".txt" id="backUp" style="visibility: hidden;" />
+
     </div>
 </template>
 
