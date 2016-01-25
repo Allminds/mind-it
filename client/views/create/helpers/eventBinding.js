@@ -1,5 +1,6 @@
 App.eventBinding = {};
-
+App.nodeToPasteBulleted = "";
+App.nodeCutToPaste = null;
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
@@ -14,54 +15,36 @@ App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
 
 App.cutNode = function (selectedNode) {
     if (App.Node.isRoot(selectedNode) == true) {
-        alert("The root node cannot be cut!");
+      alert("The root node cannot be cut!");
         return;
     }
 
-    if (confirm("Do you really want to cut the selected node(s)? ") == true) {
-        App.nodeToPaste = selectedNode;
+    App.nodeCutToPaste = selectedNode;
 
-        var dir = App.Node.getDirection(selectedNode),
-            parent = selectedNode.parent,
-            siblings = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree) || [],
-            selectedNodeIndex = siblings.indexOf(selectedNode);
-        siblings.splice(selectedNodeIndex, 1);
-        App.chart.update();
-        App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
-    }
+    var dir = App.Node.getDirection(selectedNode),
+        parent = selectedNode.parent,
+        siblings = App.Node.getSubTree(parent, dir),
+        siblingsIDList = siblings.map(function(_){return _._id;}),
+        selectedNodeIndex = siblingsIDList.indexOf(selectedNode._id);
+        siblingsIDList.splice(selectedNodeIndex,1);
+    siblings.splice(selectedNodeIndex,1);
+
+
+    App.Node.updateChildTree(parent, dir, siblingsIDList);
+    App.Node.updateParentIdOfNode(selectedNode, "None");
+
+    App.eventBinding.focusAfterDelete(selectedNode,selectedNodeIndex);
 
 }
 
-App.pasteNode = function (sourceNode, targetNode, dir, previousSibling) {
-    var newNode = App.map.addNewNode(targetNode, sourceNode.name, dir, previousSibling),
-        childrenArray;
-    if (sourceNode.hasOwnProperty('children') && sourceNode.children) {
-        childrenArray = sourceNode.children;
-    }
-    else if (sourceNode.hasOwnProperty('_children') && sourceNode._children) {
-        childrenArray = sourceNode._children;
-    }
-    if (sourceNode.hasOwnProperty('isCollapsed') && sourceNode.isCollapsed) {
-        newNode.isCollapsed = sourceNode.isCollapsed;
-        App.storeLocally(newNode);
-    }
-    if (childrenArray) {
-        var previous = null;
-        childrenArray.forEach(
-            function (d) {
-                previous = App.pasteNode(d, newNode, dir, previous);
-            }
-        );
-    }
-    return newNode;
-};
+
 
 App.eventBinding.f2Action = function (event) {
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
     var selectedNode = d3.select(".node.selected")[0][0];
     if (!selectedNode) return;
-    App.showEditor.call(selectedNode);
+    App.showEditor(selectedNode);
 };
 
 Mousetrap.bind('f2', function (event) {
@@ -70,50 +53,50 @@ Mousetrap.bind('f2', function (event) {
 
 
 Mousetrap.bind('mod+x', function () {
-    var selection = d3.select(".node.selected")[0][0];
+  var selection = d3.select(".node.selected")[0][0];
     if (selection) {
-
-        var node = selection.__data__;
-
-
-        App.cutNode(node);
-
+      var node = selection.__data__;
+      App.nodeToPasteBulleted = App.CopyParser.populateBulletedFromObject(node);
+      App.cutNode(node);
     }
 });
 
 Mousetrap.bind('mod+c', function () {
-    var sourceNode = App.map.getDataOfNodeWithClassNamesString(".selected");
-    if (sourceNode.position == null) {
-        alert("Copying root node is not allowed");
-        return;
-    }
-    App.map.storeSourceNode(sourceNode);
+  var selection = d3.select(".node.selected")[0][0];
+  if (selection) {
+    var node = selection.__data__;
+    App.nodeToPasteBulleted = App.CopyParser.populateBulletedFromObject(node);
+  }
 });
 
 Mousetrap.bind('mod+v', function () {
-    var targetNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
-    var sourceNode = App.map.sourceNode;
-    var dir = App.calculateDirection(targetNode);
-    if (targetNode.isCollapsed)
-        App.expandRecursive(targetNode, targetNode._id);
-    App.pasteNode(sourceNode, targetNode, dir);
-    App.retainCollapsed();
+  var targetNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
+  var sourceNodeBulleted = App.nodeToPasteBulleted,
+  dir = App.calculateDirection(targetNode);
+  if (targetNode.isCollapsed)
+    App.expandRecursive(targetNode, targetNode._id);
+
+  if(App.nodeCutToPaste) {
+    App.Node.reposition(App.nodeCutToPaste, targetNode, null, null, dir);
+    App.nodeCutToPaste = null;
+  } else {
+    App.CopyParser.populateObjectFromBulletedList(sourceNodeBulleted, targetNode);
+  }
+
 });
 
-App.eventBinding.escapeOnNewNode = function (newNode, parentNode) {
-    $(window).unbind().on("keyup", (function (e) {
-        var selectedNodeId = d3.select('.selected').node() ? d3.select('.selected').node().__data__._id : null;
-        var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
-        if ((selectedNodeId === null && modalCreatedNodeId === null )) {
-            if (e.keyCode === App.KeyCodes.escape) {
-                newNode.parent = parentNode;
-                App.Node.delete(newNode);
-                /* Meteor.call('deleteNode', newNode._id, function () {
-                 App.selectNode(parentNode);
-                 });*/
-                App.selectNode(parentNode);
-            }
+App.eventBinding.escapeOnNewNode = function(newNode){
+  var parentNode = App.map.getNodeDataWithNodeId(newNode.parentId);
+    $(window).unbind().on("keyup", (function(e) {
+      var selectedNodeId = d3.select('.selected').node() ? d3.select('.selected').node().__data__._id : null;
+                                      var modalCreatedNodeId = d3.select('._selected').node() ? d3.select('._selected').node().__data__._id : null;
+      if((selectedNodeId === null && modalCreatedNodeId === null )){
+        if (e.keyCode === App.KeyCodes.escape) {
+          newNode.parent = parentNode;
+          App.Node.delete(newNode);
+          App.selectNode(parentNode);
         }
+      }
     }));
 };
 

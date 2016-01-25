@@ -618,6 +618,16 @@ MindMap.diagonalLine =
   };
 
 
+App.migrateDb = function(){
+        Meteor.call('iterateOverNodesList', function(error, data){
+          if(error){
+            console.log('Error Occured ');
+            console.log(error);
+          }
+          console.log('Migration Completed');
+        });
+      };
+
 MindMap.loadFreeMind = function (fileName, callback) {
   d3.xml(fileName, 'application/xml', function (err, xml) {
     // Changes XML to JSON
