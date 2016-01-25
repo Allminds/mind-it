@@ -1,6 +1,7 @@
 App.eventBinding = {};
 App.nodeToPasteBulleted = "";
 App.nodeCutToPaste = null;
+
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
@@ -145,6 +146,7 @@ App.eventBinding.tabAction = function (selectedNode) {
 };
 
 Mousetrap.bind('tab', function () {
+    if(!App.editable) return false;
     App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
     return false;
 });
