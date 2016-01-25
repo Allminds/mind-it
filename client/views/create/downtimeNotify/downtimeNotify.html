@@ -2,13 +2,52 @@
 <template name='downtimeNotify'>
     {{> TopBar topbarText="Help" linkId="help-link" requireExport=true}}
     <div class="downtimeNotify">
-        <h3>MindIt will be back soon</h3>
+        <h3>MindIt will be back in <span id="time">
+
+            </span>
+        </h3>
 
         <span>
-            We are upgrading our features so that you can enjoy a better mind-mapping experience. Sorry for the inconvenience and thank you for your patience. Expect us to be back by 3:00pm IST.
-        </span>
+            We are upgrading our features so that you can enjoy a better mind-mapping experience. Sorry for the inconvenience and thank you for your patience. </span>
     </div>
+    <script type="application/javascript">
+        function startTimer(duration, display) {
+            var timer = Math.floor(duration/1000), minutes, seconds, hours;
+            setInterval(function () {
 
+
+                display.textContent = msToTime(timer);
+
+                if (--timer < 0) {
+                    timer = duration;
+                }
+            }, 1000);
+        }
+        function msToTime(s) {
+            var secs = s % 60;
+            s = (s - secs) / 60;
+            var mins = s % 60;
+            var hrs = (s - mins) / 60;
+            secs = secs < 10 ? '0'+secs:secs;
+            mins = mins < 10 ? '0'+mins:mins;
+            return hrs + ':' + mins + ':' + secs;
+        }
+
+        $(document).ready( function () {
+            var date1 = new Date();
+            var date2 = new Date("January 25, 2016 17:30:00"); // 5:00 PM
+
+// the following is to handle cases where the times are on the opposite side of
+// midnight e.g. when you want to get the difference between 9:00 PM and 5:00 AM
+
+
+
+            var diff = date2 - date1,
+                    display = document.querySelector('#time');
+            startTimer(diff, display);
+        });
+
+    </script>
 </template>
 
 
