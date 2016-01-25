@@ -82,7 +82,7 @@ Template.home.onRendered(function () {
                 return;
                var object= JSON.parse(node);
                console.log(object);
-               Mindmaps.insert(object);
+               Mindmaps.update({_id: object._id}, object, {upsert: true});
           });
       };
       reader.readAsText(file);
