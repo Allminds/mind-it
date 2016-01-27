@@ -11,12 +11,15 @@ Meteor.publish('userdata', function () {
   return Meteor.users.find(this.userId);
 });
 Meteor.publish('myRootNodes', function(emailId) {
-  return App.DbService.rootNodesOfMyMaps(emailId);
+  return rootNodesOfMyMaps(emailId);
 });
-Meteor.publish('myPermissions', function(emailId) {
-  var myPermissions = App.DbService.myPermissions(emailId);
-  return myPermissions;
-});
+
+var rootNodesOfMyMaps = function(emailId) {
+  var permissions = acl.find({ user_id: emailId }).fetch();
+  var myMapIds = permissions.map(function(element) { return element.mind_map_id });
+  return Mindmaps.find({_id: { $in: myMapIds }});
+};
+
 Meteor.methods({
   //Only Meteor can delete the documents - Not permitted for client
   deleteNode: function (id) {
@@ -37,8 +40,11 @@ Meteor.methods({
   iterateOverNodesList: function(){
           var AllNodes= Mindmaps.find({}).fetch();
           generateData(AllNodes);
-  //        updateData  (AllNodes);
-    }
+    },
+  isWritable: function (mindMapId, emailId) {
+      var b = acl.find({mind_map_id: mindMapId, user_id: {$in: [emailId, "*"]}, permissions: "w"}).fetch().length > 0;
+      return b;
+  }
 });
 
 //rootLefts  = {}

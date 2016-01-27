@@ -40,11 +40,9 @@ Template.create.rendered = function rendered() {
 
   App.currentMap = this.data.id;
   var email = Meteor.user() ? Meteor.user().services.google.email : null;
-    App.editable = acl.find({
-        user_id: {$in: [ email, "*" ]},
-        mind_map_id: App.currentMap,
-        permissions: "w"
-   }).fetch().length > 0;
+  Meteor.call("isWritable", App.currentMap, email, function(error, value) {
+    App.editable = value;
+  });
   var tree = mindMapService.buildTree(this.data.id, this.data.data);
   update(tree);
   var rootNode = d3.selectAll('.node')[0].find(function (node) {
