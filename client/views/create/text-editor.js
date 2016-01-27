@@ -38,10 +38,10 @@ var hasNoVisibleChildren = function(elementToEdit) {
 };
 
 var calculateTextBoxWidth = function(elementToEdit) {
-  var rectWidth = elementToEdit.select("rect").attr("width");
+  var rectWidth = parseInt(elementToEdit.select("rect").attr("width"));
   if(rectWidth < App.Constants.MinTextBoxWidth && hasNoVisibleChildren(elementToEdit))
     return App.Constants.MinTextBoxWidth;
-  return rectWidth;
+  return rectWidth + App.Constants.DeltaTextBoxWidth;
 };
 
 var calculateAdjustmentFactor = function(elementToEdit, textBoxWidth) {
