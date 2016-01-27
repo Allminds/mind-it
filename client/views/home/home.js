@@ -5,9 +5,11 @@ Template.MyButton.events({
   'click #clickme': function () {
     // 1. cretate root node with defualt title
     var mindMapId = mindMapService.createRootNode('New Mindmap'),
+
       link = '/create/' + mindMapId;
       var user = Meteor.user() ? Meteor.user().services.google.email : "*";
       Meteor.call("addMapToUser", user, mindMapId, "w");
+
     // 2. Go to canvas root note
     Router.go(link);
     clearNodeCollapsedState();
@@ -45,10 +47,10 @@ Template.home.onRendered(function () {
     var reader = new FileReader();
     reader.onload = function() {
 
-        var xmltext = this.result;
-        var importParser = App.ImportParser;
-        var mindMapId = importParser.createMindmapFromXML(xmltext, mindMapService),
-        link = '/create/' + mindMapId;
+        var xmltext = this.result,
+        importParser = App.ImportParser,
+        mindMapId = importParser.createMindmapFromXML(xmltext, mindMapService),
+        link  = mindMapService.isDownTime() ? '/createMindmap/' + mindMapId : '/create/' + mindMapId;
         if(importParser.errorMessage) {
             alert(importParser.errorMessage);
         } else {
@@ -59,38 +61,6 @@ Template.home.onRendered(function () {
     reader.readAsText(file);
     this.value = "";
   });
-
-  //NEWLY ADDED FOR RESTORING BACKUP
-
-  $('#backUp').change(function(evt){
-      var fileName = this.value;
-
-      if(fileName == "" || fileName === undefined) {
-          return;
-      }
-      if(!fileName.endsWith('.txt')) {
-          alert('Not a valid File');
-          this.value = "";
-          return;
-      }
-      var files = evt.target.files;
-      var file = files[0];
-      var reader = new FileReader();
-      reader.onload = function() {
-          var xmltext = this.result,
-          nodes = xmltext.split("!@#$%^&*(*&^%$#");
-          nodes.forEach(function(node){
-               if(node === '' )
-                return;
-               var object= JSON.parse(node);
-               console.log(object);
-               Mindmaps.update({_id: object._id}, object, {upsert: true});
-          });
-      };
-      reader.readAsText(file);
-      this.value = "";
-    });
-    //NEWLY ADDED FOR RESTORING BACKUP
 });
 
 
