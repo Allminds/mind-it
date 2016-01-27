@@ -84,6 +84,7 @@ h1 {
 	padding-top: 27%;
 	font-size: 150%;
 	color: #FFFFFF;
+	font-weight: 100;
 }
 
 .navbar-right-element {
@@ -94,8 +95,10 @@ h1 {
 }
 .userInfo{
 	margin-top:20%;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Helvetica, sans-serif;
 	font-size: 150%;
 	color: white;
+	font-weight: 100;
+	float: right;
 }
 
