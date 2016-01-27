@@ -4,7 +4,8 @@ nodeCount = 0;
 
 var Constants = {
   deltaEllipseXRadius: 30,
-  deltaEllipseYRadius: 25
+  deltaEllipseYRadius: 25,
+  deltaFromRoot: 20
 };
 
 App.nodeStore = [];
@@ -262,6 +263,7 @@ MindMap = function MindMap() {
           var dir = App.Node.isRoot(node) ?  0 : (App.getDirection(node) == 'left' ? -1 : 1),
             textWidth = getTotalWidth(node);
           node.y = dir * (node.depth * nodeSize[1] + textWidth);
+          node.y += dir * Constants.deltaFromRoot;
           node.x = getX(node, nodeSize[0]);
           node.x += (node.parent ? node.parent.x : 0);
         });
@@ -279,7 +281,7 @@ MindMap = function MindMap() {
         var parentNode = node.parent || root,
           x0 = parentNode.x0 || root.x0,
           y0 = parentNode.y0 || root.y0;
-        return "translate(" + y0 + "," + x0 + ")";
+        return "translate(" + y0  + "," + x0 + ")";
       };
 
       var nodeEnter = node.enter().append("svg:g")
@@ -599,6 +601,7 @@ MindMap.diagonal =
       sourceWidth = dir * getTextWidth(source._id) / 2,
       targetWidth = dir * getTextWidth(target._id) / 2,
       deltaY = (source.y + sourceWidth) + ((target.y - targetWidth) - (source.y + sourceWidth)) / 2;
+
     return 'M' + (source.y + sourceWidth) + ',' + source.x +
       'C' + deltaY + ',' + target.x +
       ' ' + deltaY + ',' + target.x +
