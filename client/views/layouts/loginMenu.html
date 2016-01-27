@@ -1,17 +1,17 @@
 <template name="LoginMenu">
     {{#if currentUser}}
-    <a href="" class="navbar-element navbar-nav navbar-brand" data-action="logout" onMouseOver="this.style.color='#ED8233'"
+    <a href="" class="navbar-element navbar-nav navbar-brand brand" data-action="logout" onMouseOver="this.style.color='#ED8233'"
        onMouseOut="this.style.color='#FFFFFF'" style="color: #FFFFFF;">
         Logout
     </a>
     {{else}}
     {{#if loggingIn}}
-    <a href="" class="navbar-element navbar-nav navbar-brand" onMouseOver="this.style.color='#ED8233'"
+    <a href="" class="navbar-element navbar-nav navbar-brand brand" onMouseOver="this.style.color='#ED8233'"
        onMouseOut="this.style.color='#FFFFFF'" style="color: #FFFFFF;">
         Logging In..
     </a>
     {{else}}
-    <a href="" class="navbar-element navbar-nav navbar-brand" onMouseOver="this.style.color='#ED8233'"
+    <a href="" class="navbar-element navbar-nav navbar-brand brand" onMouseOver="this.style.color='#ED8233'"
        onMouseOut="this.style.color='#FFFFFF'" data-action="login" style="color: #FFFFFF;">
         Log In
     </a>
@@ -31,7 +31,7 @@
         {{#if currentUser}}
 
         {{else}}
-    <span class="navbar-nav userInfo" style ="margin-top :24px" >
+    <span class="navbar-nav userInfo brand" style ="margin-top :24px" >
             Hi Guest
             </span>
     {{/if}}
