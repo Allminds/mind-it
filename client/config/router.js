@@ -10,7 +10,6 @@ Router.route('/', {
 		}
 		else {
 			Meteor.subscribe("userdata", Meteor.userId());
-			Meteor.subscribe("myPermissions", Meteor.user().services.google.email);
             Meteor.subscribe("myRootNodes", Meteor.user().services.google.email);
 			self.render("dashboard");
 		}
@@ -22,7 +21,6 @@ Router.route('/create/:_id', {
 	waitOn: function () {
 		Meteor.subscribe("userdata");
 		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
-		Meteor.subscribe("myPermissions", user);
 		return Meteor.subscribe("mindmap", this.params._id, user);
 	},
 	data: function () {

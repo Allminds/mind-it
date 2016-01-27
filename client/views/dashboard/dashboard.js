@@ -1,6 +1,6 @@
 Template.dashboard.helpers({
     maps: function() {
-        return App.DbService.rootNodesOfMyMaps(Meteor.user().services.google.email);
+        return Mindmaps.find().fetch();
     }
 });
 
