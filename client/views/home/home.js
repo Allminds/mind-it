@@ -1,12 +1,10 @@
 mindMapService = App.MindMapService.getInstance();
 
-
 Template.MyButton.events({
   'click #clickme': function () {
     // 1. cretate root node with defualt title
     var mindMapId = mindMapService.createRootNode('New Mindmap'),
-
-      link = '/create/' + mindMapId;
+        link = '/create/' + mindMapId;
       var user = Meteor.user() ? Meteor.user().services.google.email : "*";
       Meteor.call("addMapToUser", user, mindMapId, "w");
 
@@ -17,8 +15,7 @@ Template.MyButton.events({
 });
 
 Template.home.onRendered(function () {
-
-  $('.home-bg').slick({
+    $('.home-bg').slick({
     dots: true,
     infinite: true,
     speed: 300,

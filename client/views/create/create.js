@@ -1,5 +1,13 @@
 var mindMapService = App.MindMapService.getInstance();
 
+App.setEventBinding = function () {
+  if(!App.editable) {
+    App.eventBinding.unBindAllEvents();
+  }
+}
+
+
+
 var nodeSelector = {
   prevDepthVisited: 0,
 
@@ -42,6 +50,7 @@ Template.create.rendered = function rendered() {
   var email = Meteor.user() ? Meteor.user().services.google.email : null;
   Meteor.call("isWritable", App.currentMap, email, function(error, value) {
     App.editable = value;
+    App.setEventBinding();
   });
   var tree = mindMapService.buildTree(this.data.id, this.data.data);
   update(tree);
@@ -56,4 +65,6 @@ Template.create.rendered = function rendered() {
   d3.select("#help-link").on('click', enableHelpLink);
 
   App.setMapsCount();
+
+
 };
