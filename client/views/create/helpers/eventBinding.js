@@ -47,6 +47,23 @@ App.eventBinding.f2Action = function (event) {
     App.showEditor(selectedNode);
 };
 
+Mousetrap.bind('mod+z', function()
+{
+
+        if(App.undoNodeStack.length!=0) {
+            var node = App.undoNodeStack.pop();
+        }
+
+        if(App.undoOperationStack.length!=0)
+        var operation = App.undoOperationStack.pop();
+
+        if(node) {
+            if (operation === "delete") {
+                App.Node.delete(node);
+            }
+        }
+});
+
 Mousetrap.bind('f2', function (event) {
     App.eventBinding.f2Action(event);
 });
@@ -104,12 +121,17 @@ App.eventBinding.afterNewNodeAddition = function (newNode, selectedNode) {
     App.deselectNode();
     App.map.makeEditable(newNode._id);
     App.eventBinding.escapeOnNewNode(newNode, selectedNode);
+
+
 };
 
 App.eventBinding.newNodeAddAction = function (action) {
     var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
+
     if (selectedNode) {
         var newNode = action(selectedNode);
+        App.undoNodeStack.push(App.map.getNodeDataWithNodeId(newNode._id));
+        App.undoOperationStack.push("delete");
         App.eventBinding.afterNewNodeAddition(newNode, selectedNode);
     }
 };
