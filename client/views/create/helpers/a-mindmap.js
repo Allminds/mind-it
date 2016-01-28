@@ -1,3 +1,9 @@
+App.undoData = function(nodeData,operationData) {
+    this.nodeData = nodeData;
+    this.operationData = operationData;
+};
+
+
 mapsCount = 0;
 nodeCount = 0;
 //oldDataCount = 0;
@@ -11,8 +17,8 @@ var Constants = {
 App.nodeStore = [];
 App.nodeToPaste = [];
 
-App.undoOperationStack=[];
-App.undoNodeStack = [];
+App.undoStack=[];
+
 
 MindMap = function MindMap() {
   "use strict";

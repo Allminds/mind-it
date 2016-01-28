@@ -49,17 +49,16 @@ App.eventBinding.f2Action = function (event) {
 
 Mousetrap.bind('mod+z', function()
 {
-
-        if(App.undoNodeStack.length!=0) {
-            var node = App.undoNodeStack.pop();
+        if(App.undoStack.length!=0) {
+            var undoData = App.undoStack.pop();
         }
 
-        if(App.undoOperationStack.length!=0)
-        var operation = App.undoOperationStack.pop();
-
-        if(node) {
-            if (operation === "delete") {
-                App.Node.delete(node);
+        if(undoData.nodeData) {
+            if (undoData.operationData === "delete") {
+                if(undoData.nodeData.childSubTree.length == 0) {
+                    App.Node.delete(undoData.nodeData);
+                    App.eventBinding.focusAfterDelete(undoData.nodeData);
+                }
             }
         }
 });
@@ -130,8 +129,12 @@ App.eventBinding.newNodeAddAction = function (action) {
 
     if (selectedNode) {
         var newNode = action(selectedNode);
-        App.undoNodeStack.push(App.map.getNodeDataWithNodeId(newNode._id));
-        App.undoOperationStack.push("delete");
+        //App.undoNodeStack.push(App.map.getNodeDataWithNodeId(newNode._id));
+        //App.undoOperationStack.push("delete");
+
+        var undoData1 = new App.undoData(App.map.getNodeDataWithNodeId(newNode._id),"delete");
+        App.undoStack.push(undoData1);
+
         App.eventBinding.afterNewNodeAddition(newNode, selectedNode);
     }
 };
