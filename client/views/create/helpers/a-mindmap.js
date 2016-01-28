@@ -9,8 +9,10 @@ var Constants = {
 };
 
 App.nodeStore = [];
-
 App.nodeToPaste = [];
+
+App.undoOperationStack=[];
+App.undoNodeStack = [];
 
 MindMap = function MindMap() {
   "use strict";
