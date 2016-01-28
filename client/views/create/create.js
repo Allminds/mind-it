@@ -6,8 +6,6 @@ App.setEventBinding = function () {
   }
 }
 
-
-
 var nodeSelector = {
   prevDepthVisited: 0,
 
@@ -51,6 +49,7 @@ Template.create.rendered = function rendered() {
   Meteor.call("isWritable", App.currentMap, email, function(error, value) {
     App.editable = value;
     App.setEventBinding();
+    UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
   });
   var tree = mindMapService.buildTree(this.data.id, this.data.data);
   update(tree);
@@ -65,6 +64,4 @@ Template.create.rendered = function rendered() {
   d3.select("#help-link").on('click', enableHelpLink);
 
   App.setMapsCount();
-
-
 };
