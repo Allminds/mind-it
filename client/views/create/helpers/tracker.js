@@ -87,7 +87,5 @@ App.tracker = {
     }
     App.chart.update();
 
-  },
-  updatedNodeId: null,
-  repaintNodeId: null
+  }
 };
