@@ -69,6 +69,7 @@ Mousetrap.bind('f2', function (event) {
 
 
 Mousetrap.bind('mod+x', function () {
+  App.tracker.updatedNodeId = null;
   var selection = d3.select(".node.selected")[0][0];
     if (selection) {
       var node = selection.__data__;
