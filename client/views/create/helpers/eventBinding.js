@@ -312,6 +312,7 @@ App.eventBinding.enterAction = function (selectedNode) {
 
 Mousetrap.bind('enter', function () {
     App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
+    App.clearAllSelected();
     return false;
 });
 
@@ -329,6 +330,7 @@ App.eventBinding.tabAction = function (selectedNode) {
 
 Mousetrap.bind('tab', function () {
     App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
+    App.clearAllSelected();
     return false;
 });
 
@@ -447,13 +449,18 @@ App.eventBinding.bindEventAction = function (event, left, right, root, keyPresse
 };
 
 Mousetrap.bind('up', function () {
-    return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function () {
+    var a=App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function () {
     }, App.Constants.KeyPressed.UP);
+    App.clearAllSelected();
+    return a;
 });
 
 Mousetrap.bind('down', function () {
-    return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function () {
+
+    var a=App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function () {
     }, App.Constants.KeyPressed.DOWN);
+    App.clearAllSelected();
+    return a;
 });
 
 App.eventBinding.handleCollapsing = function (data) {
@@ -473,11 +480,16 @@ App.eventBinding.getParentForEventBinding = function (data, dir) {
 };
 
 Mousetrap.bind('left', function () {
-    return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.LEFT);
+
+    var a=App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.LEFT);
+    App.clearAllSelected();
+    return a;
 });
 
 Mousetrap.bind('right', function () {
-    return App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.RIGHT);
+    var a=App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.RIGHT);
+    App.clearAllSelected();
+    return a;
 });
 
 Mousetrap.bind('space', function () {
@@ -543,3 +555,17 @@ Mousetrap.bind("esc", function goToRootNode() {
 Mousetrap.bind('?', function showHelp() {
     $('#help-modal').modal('show');
 });
+
+
+
+var setCmd = function(e){
+    App.cmdDown=true;
+};
+
+var clearCmd =  function(e){
+    App.cmdDown=false;
+};
+
+Mousetrap.bind('mod',setCmd,'keydown');
+Mousetrap.bind('mod',clearCmd,'keyup');
+

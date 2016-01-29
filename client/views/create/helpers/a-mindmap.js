@@ -26,7 +26,7 @@ App.nodeToPaste = [];
 App.undoStack=[];
 App.redoStack=[];
 
-
+App.multiSelectedNodes=[];
 
 MindMap = function MindMap() {
   "use strict";
@@ -319,7 +319,8 @@ MindMap = function MindMap() {
         droppedOnElement = null;
 
       function dragstart() {
-        App.select(this);
+
+        //App.select(this);
         var currentNodeRect = d3.select(this).select('rect');
         var currentNodeText = d3.select(this).select('text');
         draggedNode = d3.select(this).node().__data__;
@@ -361,6 +362,8 @@ MindMap = function MindMap() {
         if(droppedOnElement != nodeToBeDragged && d3.select(droppedOnElement).node()){
             d3.select(droppedOnElement).classed('dragSelect',true);
         }
+
+
       };
 
       function dragend() {

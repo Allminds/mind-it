@@ -1,3 +1,5 @@
+App.previouslyVisitedNode = null;
+
 App.DirectionToggler = (function () {
     var instance;
 
@@ -148,17 +150,40 @@ App.nodeSelector = {
 
 App.select = function (node) {
     // Find previously selected and deselect
-    if (node === d3.select(".selected")[0][0]) {
-        return;
+
+
+    if (App.cmdDown) {
+        d3.select(node).classed("softSelected", true);
+        App.deselectNode();
+        d3.select(node).classed("selected", true);
+        if (App.multiSelectedNodes.indexOf(node) < 0)
+            App.multiSelectedNodes.push(node);
+    }
+    else{
+
+        App.deselectNode();
+        d3.select(node).classed("selected", true);
+        App.clearAllSelected();
+
     }
 
-    App.deselectNode();
-    d3.select(node).classed("selected", true);
 };
 
 App.deselectNode = function () {
     d3.selectAll(".selected").classed("selected", false);
 };
+
+App.clearAllSelected = function () {
+
+    App.multiSelectedNodes = [];
+    d3.selectAll(".softSelected").classed("softSelected", false);
+
+    var node = d3.select(".selected")[0][0];
+    d3.select(node).classed("softSelected", true);
+    App.multiSelectedNodes.push(node);
+
+}
+
 
 App.selectNode = function (target) {
     if (target) {
