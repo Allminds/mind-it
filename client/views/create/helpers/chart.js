@@ -36,6 +36,19 @@ App.chart = MindMap()
           if(newClickTime - lastClick < 300) {
               App.showEditor(this);
           }
+
+          if(App.cmdDown)
+          if( App.multiSelectedNodes.indexOf(this)>=0) {
+
+              if(App.multiSelectedNodes.length==1) return;
+              App.deselectNode();
+              App.multiSelectedNodes.splice(App.multiSelectedNodes.indexOf(this),1);
+              d3.select(App.multiSelectedNodes[App.multiSelectedNodes.length-1]).classed("selected",true);
+              d3.select(this).classed("softSelected",false);
+
+              return;
+          }
+
           App.nodeSelector.setPrevDepth(this);
           App.select(this);
           lastClick = newClickTime;
