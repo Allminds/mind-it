@@ -1,6 +1,7 @@
 App.undoData = function(nodeData,operationData) {
     this.nodeData = nodeData;
     this.operationData = operationData;
+    this.destinationDirection = null;
 };
 
 
@@ -16,8 +17,8 @@ var Constants = {
 
 App.nodeStore = [];
 App.nodeToPaste = [];
-
 App.undoStack=[];
+
 
 
 MindMap = function MindMap() {

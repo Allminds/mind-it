@@ -33,6 +33,7 @@ App.cutNode = function (selectedNode) {
     App.Node.updateChildTree(parent, dir, siblingsIDList);
     App.Node.updateParentIdOfNode(selectedNode, "None");
 
+
     App.eventBinding.focusAfterDelete(selectedNode,selectedNodeIndex);
 
 }
@@ -55,12 +56,43 @@ Mousetrap.bind('mod+z', function()
 
         if(undoData.nodeData) {
             if (undoData.operationData === "delete") {
-                if(undoData.nodeData.childSubTree.length == 0) {
+                if (undoData.nodeData.parent.isCollapsed) {
+                    App.expandRecursive(undoData.nodeData.parent, undoData.nodeData.parent._id);
+                }
+                if (undoData.nodeData.childSubTree.length == 0) {
                     App.Node.delete(undoData.nodeData);
                     App.eventBinding.focusAfterDelete(undoData.nodeData);
                 }
             }
-        }
+            if (undoData.operationData === "add") {
+                    var targetNode = undoData.nodeData.parent;
+
+                    App.tracker.updatedNodeId = undoData.nodeData._id;
+
+                    if (targetNode.isCollapsed) {
+                        App.expandRecursive(targetNode, targetNode._id);
+                    }
+
+                    var destinationDirection = undoData.destinationDirection;
+
+                    var destinationSubtree = App.Node.getSubTree(targetNode,destinationDirection);
+                    destinationIndex = destinationSubtree[undoData.nodeData.index] ? undoData.nodeData.index : destinationSubtree.length;
+
+                    undoData.nodeData.index = destinationIndex;
+
+                    var destinationIdList = destinationSubtree.map(
+                        function (child) {
+                            return child._id;
+                        });
+
+                    destinationIdList.splice(destinationIndex, 0, undoData.nodeData._id);
+                    App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
+
+
+                }
+            }
+
+
 });
 
 Mousetrap.bind('f2', function (event) {
@@ -102,6 +134,7 @@ Mousetrap.bind('mod+v', function () {
 
 });
 
+
 App.eventBinding.escapeOnNewNode = function(newNode){
   var parentNode = App.map.getNodeDataWithNodeId(newNode.parentId);
     $(window).unbind().on("keyup", (function(e) {
@@ -130,8 +163,6 @@ App.eventBinding.newNodeAddAction = function (action) {
 
     if (selectedNode) {
         var newNode = action(selectedNode);
-        //App.undoNodeStack.push(App.map.getNodeDataWithNodeId(newNode._id));
-        //App.undoOperationStack.push("delete");
 
         var undoData1 = new App.undoData(App.map.getNodeDataWithNodeId(newNode._id),"delete");
         App.undoStack.push(undoData1);
@@ -184,8 +215,16 @@ Mousetrap.bind('del', function () {
             alert('Can\'t delete root');
             return;
         }
+
+
+        var undoData1 = new App.undoData(selectedNode,"add");
+        undoData1.destinationDirection = dir;
+        App.undoStack.push(undoData1);
+
         var removedNodeIndex = App.Node.delete(selectedNode);
         App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
+
+
 
     }
 });
