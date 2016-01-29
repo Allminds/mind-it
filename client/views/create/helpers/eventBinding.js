@@ -52,24 +52,28 @@ Mousetrap.bind('mod+z', function() {
         if(App.undoStack.length!=0) {
             var undoData = App.undoStack.pop();
 
-        }
 
-        if(undoData.nodeData) {
-            if (undoData.operationData === "delete") {
-                if (undoData.nodeData.parent.isCollapsed) {
-                    App.expandRecursive(undoData.nodeData.parent, undoData.nodeData.parent._id);
-                }
-                if (undoData.nodeData.childSubTree.length == 0) {
-                    App.Node.delete(undoData.nodeData);
-                    App.eventBinding.focusAfterDelete(undoData.nodeData,undoData.nodeData.index);
-                }
+            if (undoData.nodeData) {
+                if (undoData.operationData === "delete") {
+                    if (undoData.nodeData.parent.isCollapsed) {
+                        App.expandRecursive(undoData.nodeData.parent, undoData.nodeData.parent._id);
+                    }
+                    if (undoData.nodeData.childSubTree.length == 0) {
+                        App.Node.delete(undoData.nodeData);
+                        App.eventBinding.focusAfterDelete(undoData.nodeData, undoData.nodeData.index);
+                    }
 
-                var redoData = new App.redoData(undoData.nodeData,undoData.operationData);
-                redoData.operationData = "add";
-                redoData.destinationDirection = undoData.destinationDirection;
-                App.redoStack.push(redoData);
-            }
-            if (undoData.operationData === "add") {
+                    var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
+                    redoData.operationData = "add";
+                    redoData.destinationDirection = undoData.destinationDirection;
+                    App.redoStack.push(redoData);
+                }
+                if (undoData.operationData === "add") {
+
+                    if(App.Node.isDeleted(undoData.nodeData.parent)){
+                       return;
+                    }
+
                     var targetNode = undoData.nodeData.parent;
 
                     App.tracker.updatedNodeId = undoData.nodeData._id;
@@ -80,7 +84,7 @@ Mousetrap.bind('mod+z', function() {
 
                     var destinationDirection = undoData.destinationDirection;
 
-                    var destinationSubtree = App.Node.getSubTree(targetNode,destinationDirection);
+                    var destinationSubtree = App.Node.getSubTree(targetNode, destinationDirection);
                     destinationIndex = destinationSubtree[undoData.nodeData.index] ? undoData.nodeData.index : destinationSubtree.length;
 
                     undoData.nodeData.index = destinationIndex;
@@ -94,7 +98,7 @@ Mousetrap.bind('mod+z', function() {
                     App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
                     App.selectNode(undoData.nodeData);
 
-                    var redoData = new App.redoData(undoData.nodeData,undoData.operationData);
+                    var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
                     redoData.operationData = "delete";
                     redoData.destinationDirection = undoData.destinationDirection;
                     App.redoStack.push(redoData);
@@ -102,59 +106,113 @@ Mousetrap.bind('mod+z', function() {
                 }
             }
 
+            if (undoData.operationData === "Vertical Reposition Down") {
+                if (!(undoData.nodeData && undoData.nodeData.parent))
+                    return;
 
+                App.Node.verticalReposition(undoData.nodeData, App.Constants.KeyPressed.DOWN);
+
+                var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
+                redoData.operationData = "Vertical Reposition Up";
+                redoData.destinationDirection = undoData.destinationDirection;
+                App.redoStack.push(redoData);
+            }
+
+            if (undoData.operationData === "Vertical Reposition Up") {
+                if (!(undoData.nodeData && undoData.nodeData.parent))
+                    return;
+
+                App.Node.verticalReposition(undoData.nodeData, App.Constants.KeyPressed.UP);
+
+                var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
+                redoData.operationData = "Vertical Reposition Down";
+                redoData.destinationDirection = undoData.destinationDirection;
+                App.redoStack.push(redoData);
+
+            }
+        }
 });
 
 Mousetrap.bind('command+shift+z', function() {
-    if(App.undoStack.length!=0) {
+    if(App.redoStack.length!=0) {
         var redoData = App.redoStack.pop();
-    }
 
-    if(redoData.nodeData) {
-        if (redoData.operationData === "delete") {
-            if (redoData.nodeData.parent.isCollapsed) {
-                App.expandRecursive(redoData.nodeData.parent, redoData.nodeData.parent._id);
+
+        if(redoData.nodeData) {
+            if (redoData.operationData === "delete") {
+                if (redoData.nodeData.parent.isCollapsed) {
+                    App.expandRecursive(redoData.nodeData.parent, redoData.nodeData.parent._id);
+                }
+                if (redoData.nodeData.childSubTree.length == 0) {
+                    App.Node.delete(redoData.nodeData);
+                    App.eventBinding.focusAfterDelete(redoData.nodeData, redoData.nodeData.index);
+                }
+
+                var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
+                undoData.operationData = "add";
+                undoData.destinationDirection = redoData.destinationDirection;
+                App.undoStack.push(undoData);
             }
-            if (redoData.nodeData.childSubTree.length == 0) {
-                App.Node.delete(redoData.nodeData);
-                App.eventBinding.focusAfterDelete(redoData.nodeData,redoData.nodeData.index);
+            if (redoData.operationData === "add") {
+                var targetNode = redoData.nodeData.parent;
+
+                if(App.Node.isDeleted(targetNode)){
+                    return;
+                }
+
+                App.tracker.updatedNodeId = redoData.nodeData._id;
+
+                if (targetNode.isCollapsed) {
+                    App.expandRecursive(targetNode, targetNode._id);
+                }
+
+                var destinationDirection = redoData.destinationDirection;
+
+                var destinationSubtree = App.Node.getSubTree(targetNode, destinationDirection);
+                destinationIndex = destinationSubtree[redoData.nodeData.index] ? redoData.nodeData.index : destinationSubtree.length;
+
+                redoData.nodeData.index = destinationIndex;
+
+                var destinationIdList = destinationSubtree.map(
+                    function (child) {
+                        return child._id;
+                    });
+
+                destinationIdList.splice(destinationIndex, 0, redoData.nodeData._id);
+                App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
+
+                App.selectNode(redoData.nodeData);
+
+                var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
+                undoData.operationData = "delete";
+                undoData.destinationDirection = redoData.destinationDirection
+                App.undoStack.push(undoData);
+
             }
 
-            var undoData = new App.undoData(redoData.nodeData,redoData.operationData);
-            undoData.operationData = "add";
-            undoData.destinationDirection = redoData.destinationDirection;
-            App.undoStack.push(undoData);
-        }
-        if (redoData.operationData === "add") {
-            var targetNode = redoData.nodeData.parent;
+            if (redoData.operationData === "Vertical Reposition Down") {
+                if (!(redoData.nodeData && redoData.nodeData.parent))
+                    return;
 
-            App.tracker.updatedNodeId = redoData.nodeData._id;
+                App.Node.verticalReposition(redoData.nodeData, App.Constants.KeyPressed.DOWN);
 
-            if (targetNode.isCollapsed) {
-                App.expandRecursive(targetNode, targetNode._id);
+                var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
+                undoData.operationData = "Vertical Reposition Up";
+                undoData.destinationDirection = redoData.destinationDirection;
+                App.undoStack.push(undoData);
             }
 
-            var destinationDirection = redoData.destinationDirection;
+            if (redoData.operationData === "Vertical Reposition Up") {
+                if (!(redoData.nodeData && redoData.nodeData.parent))
+                    return;
 
-            var destinationSubtree = App.Node.getSubTree(targetNode,destinationDirection);
-            destinationIndex = destinationSubtree[redoData.nodeData.index] ? redoData.nodeData.index : destinationSubtree.length;
+                App.Node.verticalReposition(redoData.nodeData, App.Constants.KeyPressed.UP);
 
-            redoData.nodeData.index = destinationIndex;
-
-            var destinationIdList = destinationSubtree.map(
-                function (child) {
-                    return child._id;
-                });
-
-            destinationIdList.splice(destinationIndex, 0, redoData.nodeData._id);
-            App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
-
-            App.selectNode(redoData.nodeData);
-
-            var undoData = new App.undoData(redoData.nodeData,redoData.operationData);
-            undoData.operationData = "delete";
-            undoData.destinationDirection = redoData.destinationDirection
-            App.undoStack.push(undoData);
+                var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
+                undoData.operationData = "Vertical Reposition Down";
+                undoData.destinationDirection = redoData.destinationDirection;
+                App.undoStack.push(undoData);
+            }
 
         }
     }
@@ -456,11 +514,20 @@ Mousetrap.bind('mod+up', debounce(0, true, function () {
     if (!(selection && selection.parent))
         return;
 
+    var undoData = new App.undoData(selection,"Vertical Reposition Down");
+    App.undoStack.push(undoData);
+
     App.Node.verticalReposition(selection, App.Constants.KeyPressed.UP);
+
+
 }));
 
 Mousetrap.bind('mod+down', debounce(0, true, function () {
     var selection = d3.select(".node.selected")[0][0].__data__;
+
+    var undoData = new App.undoData(selection,"Vertical Reposition Up");
+    App.undoStack.push(undoData);
+
 
     if (!(selection && selection.parent))
         return;
