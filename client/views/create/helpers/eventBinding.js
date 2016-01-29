@@ -36,7 +36,7 @@ App.cutNode = function (selectedNode) {
 
     App.eventBinding.focusAfterDelete(selectedNode,selectedNodeIndex);
 
-}
+};
 
 
 
@@ -48,10 +48,10 @@ App.eventBinding.f2Action = function (event) {
     App.showEditor(selectedNode);
 };
 
-Mousetrap.bind('mod+z', function()
-{
+Mousetrap.bind('mod+z', function() {
         if(App.undoStack.length!=0) {
             var undoData = App.undoStack.pop();
+
         }
 
         if(undoData.nodeData) {
@@ -61,8 +61,13 @@ Mousetrap.bind('mod+z', function()
                 }
                 if (undoData.nodeData.childSubTree.length == 0) {
                     App.Node.delete(undoData.nodeData);
-                    App.eventBinding.focusAfterDelete(undoData.nodeData);
+                    App.eventBinding.focusAfterDelete(undoData.nodeData,undoData.nodeData.index);
                 }
+
+                var redoData = new App.redoData(undoData.nodeData,undoData.operationData);
+                redoData.operationData = "add";
+                redoData.destinationDirection = undoData.destinationDirection;
+                App.redoStack.push(redoData);
             }
             if (undoData.operationData === "add") {
                     var targetNode = undoData.nodeData.parent;
@@ -87,12 +92,72 @@ Mousetrap.bind('mod+z', function()
 
                     destinationIdList.splice(destinationIndex, 0, undoData.nodeData._id);
                     App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
+                    App.selectNode(undoData.nodeData);
 
+                    var redoData = new App.redoData(undoData.nodeData,undoData.operationData);
+                    redoData.operationData = "delete";
+                    redoData.destinationDirection = undoData.destinationDirection;
+                    App.redoStack.push(redoData);
 
                 }
             }
 
 
+});
+
+Mousetrap.bind('command+shift+z', function() {
+    if(App.undoStack.length!=0) {
+        var redoData = App.redoStack.pop();
+    }
+
+    if(redoData.nodeData) {
+        if (redoData.operationData === "delete") {
+            if (redoData.nodeData.parent.isCollapsed) {
+                App.expandRecursive(redoData.nodeData.parent, redoData.nodeData.parent._id);
+            }
+            if (redoData.nodeData.childSubTree.length == 0) {
+                App.Node.delete(redoData.nodeData);
+                App.eventBinding.focusAfterDelete(redoData.nodeData,redoData.nodeData.index);
+            }
+
+            var undoData = new App.undoData(redoData.nodeData,redoData.operationData);
+            undoData.operationData = "add";
+            undoData.destinationDirection = redoData.destinationDirection;
+            App.undoStack.push(undoData);
+        }
+        if (redoData.operationData === "add") {
+            var targetNode = redoData.nodeData.parent;
+
+            App.tracker.updatedNodeId = redoData.nodeData._id;
+
+            if (targetNode.isCollapsed) {
+                App.expandRecursive(targetNode, targetNode._id);
+            }
+
+            var destinationDirection = redoData.destinationDirection;
+
+            var destinationSubtree = App.Node.getSubTree(targetNode,destinationDirection);
+            destinationIndex = destinationSubtree[redoData.nodeData.index] ? redoData.nodeData.index : destinationSubtree.length;
+
+            redoData.nodeData.index = destinationIndex;
+
+            var destinationIdList = destinationSubtree.map(
+                function (child) {
+                    return child._id;
+                });
+
+            destinationIdList.splice(destinationIndex, 0, redoData.nodeData._id);
+            App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
+
+            App.selectNode(redoData.nodeData);
+
+            var undoData = new App.undoData(redoData.nodeData,redoData.operationData);
+            undoData.operationData = "delete";
+            undoData.destinationDirection = redoData.destinationDirection
+            App.undoStack.push(undoData);
+
+        }
+    }
 });
 
 Mousetrap.bind('f2', function (event) {
@@ -165,6 +230,9 @@ App.eventBinding.newNodeAddAction = function (action) {
         var newNode = action(selectedNode);
 
         var undoData1 = new App.undoData(App.map.getNodeDataWithNodeId(newNode._id),"delete");
+
+        undoData1.destinationDirection = App.Node.isRoot(undoData1.nodeData.parent) ? undoData1.nodeData.position : App.Node.getDirection(undoData1.nodeData);
+
         App.undoStack.push(undoData1);
 
         App.eventBinding.afterNewNodeAddition(newNode, selectedNode);

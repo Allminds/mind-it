@@ -4,6 +4,12 @@ App.undoData = function(nodeData,operationData) {
     this.destinationDirection = null;
 };
 
+App.redoData = function(nodeData,operationData) {
+  this.nodeData = nodeData;
+  this.operationData = operationData;
+  this.destinationDirection = null;
+};
+
 
 mapsCount = 0;
 nodeCount = 0;
@@ -18,6 +24,7 @@ var Constants = {
 App.nodeStore = [];
 App.nodeToPaste = [];
 App.undoStack=[];
+App.redoStack=[];
 
 
 
