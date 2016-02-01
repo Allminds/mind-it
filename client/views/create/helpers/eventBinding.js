@@ -218,6 +218,9 @@ Mousetrap.bind('command+shift+z', function() {
     }
 });
 
+// The above function MUST be copied and the key binding changed to "CTRL+Y" for non- mac users
+
+
 Mousetrap.bind('f2', function (event) {
     App.eventBinding.f2Action(event);
 });

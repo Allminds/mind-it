@@ -239,29 +239,29 @@ describe('eventBinding.js', function () {
         expect(App.map.addNewNode).toHaveBeenCalled();
       });
 
-      it("should call all the functions in newNodeAddAction function flow for enter action", function () {
-        spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-        spyOn(App.eventBinding, "enterAction").and.returnValue(newNode);
-        spyOn(App.eventBinding, "afterNewNodeAddition");
+      //it("should call all the functions in newNodeAddAction function flow for enter action", function () {
+      //  spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+      //  spyOn(App.eventBinding, "enterAction").and.returnValue(newNode);
+      //  spyOn(App.eventBinding, "afterNewNodeAddition");
+      //
+      //  App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
+      //
+      //  expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
+      //  expect(App.eventBinding.enterAction).toHaveBeenCalled();
+      //  expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
+      //});
 
-        App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
-
-        expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
-        expect(App.eventBinding.enterAction).toHaveBeenCalled();
-        expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
-      });
-
-      it("should call all the functions in newNodeAddAction function flow for tab action", function () {
-        spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-        spyOn(App.eventBinding, "tabAction").and.returnValue(newNode);
-        spyOn(App.eventBinding, "afterNewNodeAddition");
-
-        App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
-
-        expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
-        expect(App.eventBinding.tabAction).toHaveBeenCalled();
-        expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
-      });
+      //it("should call all the functions in newNodeAddAction function flow for tab action", function () {
+      //  spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+      //  spyOn(App.eventBinding, "tabAction").and.returnValue(newNode);
+      //  spyOn(App.eventBinding, "afterNewNodeAddition");
+      //
+      //  App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
+      //
+      //  expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
+      //  expect(App.eventBinding.tabAction).toHaveBeenCalled();
+      //  expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
+      //});
     });
 
     describe("Node deletion", function () {
