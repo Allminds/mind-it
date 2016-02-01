@@ -39,8 +39,7 @@ h1 {
 
 .btn-text a:hover{
     text-decoration: none;
-    color: #972e8e;
-    font-weight: bolder;
+    color: #8E388E;
 }
 
 .btn:hover {
@@ -99,5 +98,9 @@ h1 {
     font-size: 20px;
     font-weight: 600;
 	color: #000000;
+}
+
+.top-margin {
+	margin-top: 100px;
 }
 

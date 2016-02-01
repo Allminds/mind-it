@@ -1,6 +1,22 @@
 App.eventBinding = {};
 App.nodeToPasteBulleted = "";
 App.nodeCutToPaste = null;
+
+App.eventBinding.unBindAllEvents = function(){
+    Mousetrap.unbind('mod+x');
+    Mousetrap.unbind('mod+c');
+    Mousetrap.unbind('mod+v');
+    Mousetrap.unbind('enter');
+    Mousetrap.unbind('tab');
+    Mousetrap.unbind('del');
+    Mousetrap.unbind('mod+left');
+    Mousetrap.unbind('mod+right');
+    Mousetrap.unbind('mod+up');
+    Mousetrap.unbind('mod+down');
+    Mousetrap.unbind('mod+x');
+
+} ;
+
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
@@ -49,6 +65,7 @@ App.eventBinding.f2Action = function (event) {
 
 Mousetrap.bind('f2', function (event) {
     App.eventBinding.f2Action(event);
+
 });
 
 
@@ -62,7 +79,7 @@ Mousetrap.bind('mod+x', function () {
 });
 
 Mousetrap.bind('mod+c', function () {
-  var selection = d3.select(".node.selected")[0][0];
+    var selection = d3.select(".node.selected")[0][0];
   if (selection) {
     var node = selection.__data__;
     App.nodeToPasteBulleted = App.CopyParser.populateBulletedFromObject(node);
@@ -145,6 +162,7 @@ App.eventBinding.tabAction = function (selectedNode) {
 };
 
 Mousetrap.bind('tab', function () {
+    if(!App.editable) return false;
     App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
     return false;
 });
