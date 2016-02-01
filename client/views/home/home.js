@@ -3,9 +3,10 @@ mindMapService = App.MindMapService.getInstance();
 Template.MyButton.events({
   'click #clickme': function () {
     // 1. cretate root node with defualt title
-    var mindMapId = mindMapService.createRootNode('New Mindmap'),
+    var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+    var mindMapId = mindMapService.createRootNode('New Mindmap',user),
         link = '/create/' + mindMapId;
-      var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+
       Meteor.call("addMapToUser", user, mindMapId, "w");
 
     // 2. Go to canvas root note

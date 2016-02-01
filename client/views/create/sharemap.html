@@ -2,7 +2,7 @@
     <input type="email" placeholder="Enter e mail address" id="e_mail">
     <select id="permission">
         {{#each permissions}}
-            <option name="{{this.name}}">{{this.value}}</option>
+            <option value="{{this.name}}">{{this.value}}</option>
         {{/each}}
     </select>
     <input type="submit" value="Share" data-action="share">
