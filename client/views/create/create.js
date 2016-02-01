@@ -1,5 +1,11 @@
 var mindMapService = App.MindMapService.getInstance();
 
+App.setEventBinding = function () {
+  if(!App.editable) {
+    App.eventBinding.unBindAllEvents();
+  }
+}
+
 var nodeSelector = {
   prevDepthVisited: 0,
 
@@ -25,10 +31,26 @@ var enableHelpLink = function () {
   $('#help-modal').modal('show');
 };
 
+Template.create.events({
+  'click [data-action=share]': function (e, args) {
+    var permission = d3.select("#permission")[0][0].value;
+    var eMail = d3.select("#e_mail")[0][0].value;
+    var mindMapId = Mindmaps.findOne({"position": null })._id;
+    Meteor.call("addMapToUser", eMail, mindMapId, permission);
+  }
+});
+
 Template.create.rendered = function rendered() {
   if(this.data.data.length == 0)
     Router.go('/404');
 
+  App.currentMap = this.data.id;
+  var email = Meteor.user() ? Meteor.user().services.google.email : null;
+  Meteor.call("isWritable", App.currentMap, email, function(error, value) {
+    App.editable = value;
+    App.setEventBinding();
+    UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
+  });
   var tree = mindMapService.buildTree(this.data.id, this.data.data);
   update(tree);
   var rootNode = d3.selectAll('.node')[0].find(function (node) {

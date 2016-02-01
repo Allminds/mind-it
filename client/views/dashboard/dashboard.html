@@ -1,0 +1,14 @@
+<template name='dashboard'>
+    {{> ModalPopUp modalHeaderText="Help" modalId="help-modal" path="/shortcuts.png" isFullWidth="true"}}
+    {{> TopBar topbarText="Help" linkId="help-link"}}
+    <div class="top-margin">
+        <ul>
+            {{#each maps}}
+            <li><a href="/create/{{_id}}">{{name}}</a></li>
+            {{/each}}
+        </ul>
+    </div>
+    <div class="create-mindmap">
+        {{> MyButton}}
+    </div>
+</template>
