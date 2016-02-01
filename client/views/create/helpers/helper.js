@@ -151,7 +151,6 @@ App.nodeSelector = {
 App.select = function (node) {
     // Find previously selected and deselect
 
-
     if (App.cmdDown) {
         d3.select(node).classed("softSelected", true);
         App.deselectNode();
