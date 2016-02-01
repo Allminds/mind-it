@@ -42,11 +42,10 @@ App.tracker = {
 
       if(App.Node.isRoot(parent)){
         if(App.checkRepositionUpdateOnRoot(parent, key, newlyAddedId)) {
-          App.tracker.updatedNodeId = App.tracker.updatedNodeId ? App.tracker.updatedNodeId : newlyAddedId;
         }
       }
-          
-      if(App.tracker.updatedNodeId == null){
+
+      if(newlyAddedId == null){
         App.Node.setSubTree(parent, newSubTree, key);
         App.chart.update();
         if(App.tracker.repaintNodeId) {
@@ -68,14 +67,13 @@ App.tracker = {
         }
 
       } else {
-        var movedNode = App.map.getNodeDataWithNodeId(App.tracker.updatedNodeId);
-        subTree.splice(childIds.indexOf(App.tracker.updatedNodeId),0,movedNode);
-        App.tracker.updatedNodeId = null;
+        var movedNode = App.map.getNodeDataWithNodeId(newlyAddedId);
+        subTree.splice(childIds.indexOf(newlyAddedId),0,movedNode);
+        newlyAddedId = null;
       }
     }
     else if(fields.hasOwnProperty('parentId')) {
        if(!fields.parentId) return;
-      App.tracker.updatedNodeId = id;
       App.tracker.repaintNodeId = id;
       if(fields.parentId != "None") {
         var selectedNode = App.map.getNodeDataWithNodeId(id),
