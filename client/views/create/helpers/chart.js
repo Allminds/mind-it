@@ -37,6 +37,8 @@ App.chart = MindMap()
               App.showEditor(this);
           }
 
+          if(App.isIndicatorActive) return;
+
           if(App.cmdDown)
           if( App.multiSelectedNodes.indexOf(this)>=0) {
 

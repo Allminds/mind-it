@@ -1,6 +1,7 @@
 App.eventBinding = {};
 App.nodeToPasteBulleted = "";
 App.nodeCutToPaste = null;
+App.isIndicatorActive=false;
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
@@ -427,6 +428,7 @@ App.eventBinding.performLogicalVerticalMovement = function (node, keyPressed) {
 App.eventBinding.beforeBindEventAction = function (event) {
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
+//    return null;
     return d3.select(".node.selected")[0][0].__data__;
 };
 
@@ -504,8 +506,20 @@ Mousetrap.bind('right', function () {
 });
 
 Mousetrap.bind('space', function () {
-    var selectedNodeData = App.eventBinding.beforeBindEventAction(arguments[0]);
-    App.toggleCollapsedNode(selectedNodeData);
+
+    event = arguments[0];
+    (event.preventDefault || event.stop || event.stopPropagation || function () {
+    }).call(event);
+
+    for (var i = 0; i < App.multiSelectedNodes.length; i++)
+        App.toggleCollapsedNode(App.multiSelectedNodes[i].__data__);
+
+    App.multiSelectedNodes = d3.selectAll(".softSelected")[0];
+
+    App.deselectNode();
+    var node=App.multiSelectedNodes[App.multiSelectedNodes.length-1];
+    d3.select(node).classed("selected", true);
+
 });
 
 Mousetrap.bind('mod+e', function () {

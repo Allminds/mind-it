@@ -65,6 +65,7 @@ MindMap = function MindMap() {
           .on('mouseover', function (d) {
             var hasChildren = App.Node.hasChildren(d),
               r = hasChildren ? indicator.hovered : 0;
+            App.isIndicatorActive=true;
             return d3.select(this)
               .attr('r', r)
               .classed('unfilled', false)
@@ -73,6 +74,7 @@ MindMap = function MindMap() {
           .on('mouseout', function (d) {
             var hasChildren = App.Node.hasChildren(d),
               r = hasChildren ? (d.isCollapsed ? indicator.default : indicator.hovered) : 0;
+            App.isIndicatorActive=false;
             return d3.select(this)
               .attr('r', r)
               .classed('filled', d.isCollapsed)
