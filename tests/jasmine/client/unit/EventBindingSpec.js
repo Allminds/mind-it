@@ -415,4 +415,104 @@ describe('eventBinding.js', function () {
       });
     });
   });
+
+  describe("undo / redo", function() {
+      beforeEach(function () {
+          root = new App.Node("root", "root", null, 0);
+          root._id = "root";
+
+          parent = new App.Node("parent", "right", root, 0);
+          parent._id = "parent";
+          parent.parent = root;
+
+          root.right.push(parent);
+      });
+
+      describe("previous actions should be maintained in stack for undo/redo", function() {
+          it("should push deletion of the new node into undoStack when new node is added", function() {
+              var newNodeData = {_id: "2", parent: root, position: "right"};
+              App.nodeStore[newNodeData._id] = newNodeData;
+              var enterAction = function() { return newNodeData; };
+              spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(root);
+              spyOn(App.eventBinding, "afterNewNodeAddition");
+
+              App.eventBinding.newNodeAddAction(enterAction);
+
+              var undoData = App.undoStack.pop();
+              expect(undoData.operationData).toBe("delete");
+              expect(undoData.nodeData).toBe(newNodeData);
+          });
+
+          it("should push addition of the new node into undoStack when new node is deleted", function() {
+              spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(parent);
+              spyOn(App.eventBinding, "focusAfterDelete");
+
+              App.eventBinding.deleteAction();
+
+              var undoData = App.undoStack.pop();
+              expect(App.eventBinding.focusAfterDelete).toHaveBeenCalled();
+              expect(root.right.length).toBe(0);
+              expect(undoData.operationData).toBe("add");
+              expect(undoData.nodeData).toBe(parent);
+          })
+      });
+
+      describe("undo operations", function() {
+          it("should be able to undo insertion of new node", function() {
+              var undoData = new App.undoData(parent, "delete");
+              App.undoStack.push(undoData);
+              spyOn(App.eventBinding, "focusAfterDelete");
+
+              App.eventBinding.undoAction();
+
+              var redoData = App.redoStack.pop();
+              expect(App.eventBinding.focusAfterDelete).toHaveBeenCalled();
+              expect(root.right.length).toBe(0);
+              expect(redoData.nodeData).toBe(undoData.nodeData);
+              expect(redoData.operationData).toBe("add");
+          });
+
+          it("should be able to undo deletion of node", function() {
+              var undoData = new App.undoData(parent, "add");
+              undoData.destinationDirection = "right";
+              App.undoStack.push(undoData);
+
+              App.eventBinding.undoAction();
+
+              var redoData = App.redoStack.pop();
+              expect(root.right[0]).toBe(parent);
+              expect(redoData.nodeData).toBe(undoData.nodeData);
+              expect(redoData.operationData).toBe("delete");
+          });
+      });
+
+      describe("redo operations", function() {
+          it("should be able to redo insertion of new node", function() {
+              var redoData = new App.redoData(parent, "add");
+              redoData.destinationDirection = "right";
+              App.redoStack.push(redoData);
+
+              App.eventBinding.redoAction();
+
+              var undoData = App.undoStack.pop();
+              expect(undoData.operationData).toBe("delete");
+              expect(undoData.nodeData).toBe(redoData.nodeData);
+          });
+
+          it("should be able to redo deletion of new node", function() {
+              var redoData = new App.redoData(parent, "delete");
+              redoData.destinationDirection = "right";
+              spyOn(App.eventBinding, "focusAfterDelete");
+              App.redoStack.push(redoData);
+
+              App.eventBinding.redoAction();
+
+              var undoData = App.undoStack.pop();
+              expect(App.eventBinding.focusAfterDelete).toHaveBeenCalled();
+              expect(root.right.length).toBe(0);
+              expect(undoData.operationData).toBe("add");
+              expect(undoData.nodeData).toBe(redoData.nodeData);
+          });
+      });
+  });
 });
