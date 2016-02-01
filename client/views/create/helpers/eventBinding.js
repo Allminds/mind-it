@@ -531,8 +531,9 @@ Mousetrap.bind('mod+right', debounce(0, true,
         }
     }));
 
-Mousetrap.bind('mod+up', debounce(0, true, function () {
-    var selection = d3.select(".node.selected")[0][0].__data__;
+
+App.eventBinding.upRepositionAction = function() {
+    var selection = App.map.getDataOfNodeWithClassNamesString(".node.selected");
 
     if (!(selection && selection.parent))
         return;
@@ -541,12 +542,14 @@ Mousetrap.bind('mod+up', debounce(0, true, function () {
     App.undoStack.push(undoData);
 
     App.Node.verticalReposition(selection, App.Constants.KeyPressed.UP);
+};
 
-
+Mousetrap.bind('mod+up', debounce(0, true, function () {
+    App.eventBinding.upRepositionAction();
 }));
 
-Mousetrap.bind('mod+down', debounce(0, true, function () {
-    var selection = d3.select(".node.selected")[0][0].__data__;
+App.eventBinding.downRepositionAction = function() {
+    var selection = App.map.getDataOfNodeWithClassNamesString(".node.selected");
 
     var undoData = new App.undoData(selection,"Vertical Reposition Up");
     App.undoStack.push(undoData);
@@ -556,6 +559,10 @@ Mousetrap.bind('mod+down', debounce(0, true, function () {
         return;
 
     App.Node.verticalReposition(selection, App.Constants.KeyPressed.DOWN);
+};
+
+Mousetrap.bind('mod+down', debounce(0, true, function () {
+    App.eventBinding.downRepositionAction();
 }));
 
 Mousetrap.bind("esc", function goToRootNode() {
