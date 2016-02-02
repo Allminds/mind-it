@@ -2,26 +2,26 @@
     {{> ModalPopUp modalHeaderText="Help" modalId="help-modal" path="/shortcuts.png" isFullWidth="true"}}
     {{> TopBar topbarText="Help" linkId="help-link"}}
     <div class="top-margin">
-        <!--<div id="tabbedPanel">-->
-            <!--<ul>-->
-                <!--<li><a href="#ownedMaps">Owned Maps</a></li>-->
-                <!--<li><a href="#sharedMaps">Shared Maps</a></li>-->
-            <!--</ul>-->
-            <!--<div id="ownedMaps">-->
-                <!--<ul>-->
-                    <!--{{#each ownedMaps}}-->
-                    <!--<li><a href="/create/{{_id}}">{{name}}</a></li>-->
-                    <!--{{/each}}-->
-                <!--</ul>-->
-            <!--</div>-->
-            <!--<div id="sharedMaps">-->
-                <!--<ul>-->
-                    <!--{{#each sharedMaps}}-->
-                    <!--<li><a href="/create/{{_id}}">{{name}}</a></li>-->
-                    <!--{{/each}}-->
-                <!--</ul>-->
-            <!--</div>-->
-        <!--</div>-->
+        <div id="tabbedPanel">
+            <ul>
+                <li><a href="#ownedMaps">Owned Maps</a></li>
+                <li><a href="#sharedMaps">Shared Maps</a></li>
+            </ul>
+            <div id="ownedMaps">
+                <ul>
+                    {{#each ownedMaps}}
+                    <li><a href="/create/{{_id}}">{{name}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div id="sharedMaps">
+                <ul>
+                    {{#each sharedMaps}}
+                    <li><a href="/create/{{_id}}">{{name}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="create-mindmap">
         {{> MyButton}}
