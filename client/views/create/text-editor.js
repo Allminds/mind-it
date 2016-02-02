@@ -121,6 +121,7 @@ Editor.prototype.setupAttributes = function () {
         if (e.stopPropagation)
           e.stopPropagation();
         e.preventDefault();
+        escaped = true;
         editor.propagateChanges();
       }
 
