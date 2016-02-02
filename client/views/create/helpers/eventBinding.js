@@ -49,25 +49,29 @@ App.eventBinding.f2Action = function (event) {
     App.showEditor(selectedNode);
 };
 
+var deleteNode = function(stack, nodeData, destinationDirection) {
+    App.Node.delete(nodeData);
+    App.eventBinding.focusAfterDelete(nodeData, nodeData.index);
+    var stackData = new App.redoData(nodeData, "add");
+    stackData.destinationDirection = destinationDirection;
+    stack.push(stackData);
+};
+
+var undoRedoDeleteOperation = function(stack, stackData) {
+    if (stackData.nodeData.parent.isCollapsed) {
+        App.expandRecursive(stackData.nodeData.parent, stackData.nodeData.parent._id);
+    }
+    if (stackData.nodeData.childSubTree.length == 0)
+        deleteNode(stack, stackData.nodeData, stackData.destinationDirection);
+};
+
 App.eventBinding.undoAction = function() {
     if(App.undoStack.length!=0) {
         var undoData = App.undoStack.pop();
 
         if (undoData.nodeData) {
-            if (undoData.operationData === "delete") {
-                if (undoData.nodeData.parent.isCollapsed) {
-                    App.expandRecursive(undoData.nodeData.parent, undoData.nodeData.parent._id);
-                }
-                if (undoData.nodeData.childSubTree.length == 0) {
-                    App.Node.delete(undoData.nodeData);
-                    App.eventBinding.focusAfterDelete(undoData.nodeData, undoData.nodeData.index);
-                }
-
-                var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
-                redoData.operationData = "add";
-                redoData.destinationDirection = undoData.destinationDirection;
-                App.redoStack.push(redoData);
-            }
+            if (undoData.operationData === "delete")
+                undoRedoDeleteOperation(App.redoStack, undoData);
             if (undoData.operationData === "add") {
 
                 if(App.Node.isDeleted(undoData.nodeData.parent)){
@@ -76,7 +80,7 @@ App.eventBinding.undoAction = function() {
 
                 var targetNode = undoData.nodeData.parent;
 
-                App.tracker.updatedNodeId = undoData.nodeData._id;
+                //App.tracker.updatedNodeId = undoData.nodeData._id;
 
                 if (targetNode.isCollapsed) {
                     App.expandRecursive(targetNode, targetNode._id);
@@ -107,28 +111,11 @@ App.eventBinding.undoAction = function() {
         }
 
         if (undoData.operationData === "Vertical Reposition Down") {
-            if (!(undoData.nodeData && undoData.nodeData.parent))
-                return;
-
-            App.Node.verticalReposition(undoData.nodeData, App.Constants.KeyPressed.DOWN);
-
-            var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
-            redoData.operationData = "Vertical Reposition Up";
-            redoData.destinationDirection = undoData.destinationDirection;
-            App.redoStack.push(redoData);
+            verticalRepositionAction(undoData.nodeData, App.Constants.KeyPressed.DOWN, App.redoStack);
         }
 
         if (undoData.operationData === "Vertical Reposition Up") {
-            if (!(undoData.nodeData && undoData.nodeData.parent))
-                return;
-
-            App.Node.verticalReposition(undoData.nodeData, App.Constants.KeyPressed.UP);
-
-            var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
-            redoData.operationData = "Vertical Reposition Down";
-            redoData.destinationDirection = undoData.destinationDirection;
-            App.redoStack.push(redoData);
-
+            verticalRepositionAction(undoData.nodeData, App.Constants.KeyPressed.UP, App.redoStack);
         }
     }
 };
@@ -144,20 +131,8 @@ App.eventBinding.redoAction = function() {
 
 
         if(redoData.nodeData) {
-            if (redoData.operationData === "delete") {
-                if (redoData.nodeData.parent.isCollapsed) {
-                    App.expandRecursive(redoData.nodeData.parent, redoData.nodeData.parent._id);
-                }
-                if (redoData.nodeData.childSubTree.length == 0) {
-                    App.Node.delete(redoData.nodeData);
-                    App.eventBinding.focusAfterDelete(redoData.nodeData, redoData.nodeData.index);
-                }
-
-                var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
-                undoData.operationData = "add";
-                undoData.destinationDirection = redoData.destinationDirection;
-                App.undoStack.push(undoData);
-            }
+            if (redoData.operationData === "delete")
+                undoRedoDeleteOperation(App.undoStack, redoData);
             if (redoData.operationData === "add") {
                 var targetNode = redoData.nodeData.parent;
 
@@ -196,27 +171,11 @@ App.eventBinding.redoAction = function() {
             }
 
             if (redoData.operationData === "Vertical Reposition Down") {
-                if (!(redoData.nodeData && redoData.nodeData.parent))
-                    return;
-
-                App.Node.verticalReposition(redoData.nodeData, App.Constants.KeyPressed.DOWN);
-
-                var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
-                undoData.operationData = "Vertical Reposition Up";
-                undoData.destinationDirection = redoData.destinationDirection;
-                App.undoStack.push(undoData);
+                verticalRepositionAction(redoData.nodeData, App.Constants.KeyPressed.DOWN, App.undoStack);
             }
 
             if (redoData.operationData === "Vertical Reposition Up") {
-                if (!(redoData.nodeData && redoData.nodeData.parent))
-                    return;
-
-                App.Node.verticalReposition(redoData.nodeData, App.Constants.KeyPressed.UP);
-
-                var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
-                undoData.operationData = "Vertical Reposition Down";
-                undoData.destinationDirection = redoData.destinationDirection;
-                App.undoStack.push(undoData);
+                verticalRepositionAction(redoData.nodeData, App.Constants.KeyPressed.UP, App.undoStack);
             }
 
         }
@@ -355,13 +314,7 @@ App.eventBinding.deleteAction = function() {
             return;
         }
 
-
-        var undoData1 = new App.undoData(selectedNode,"add");
-        undoData1.destinationDirection = dir;
-        App.undoStack.push(undoData1);
-
-        var removedNodeIndex = App.Node.delete(selectedNode);
-        App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
+        deleteNode(App.undoStack, selectedNode, dir);
     }
 };
 
@@ -545,17 +498,21 @@ Mousetrap.bind('mod+right', debounce(0, true,
         }
     }));
 
+var verticalRepositionAction = function(node, repositionDirection, stack) {
+    if (!(node && node.parent))
+        return;
+
+    var operationData = repositionDirection == App.Constants.KeyPressed.UP ? "Vertical Reposition Down" : "Vertical Reposition Up";
+    var undoData = new App.undoData(node, operationData);
+    stack.push(undoData);
+
+    App.Node.verticalReposition(node, repositionDirection);
+};
+
 
 App.eventBinding.upRepositionAction = function() {
     var selection = App.map.getDataOfNodeWithClassNamesString(".node.selected");
-
-    if (!(selection && selection.parent))
-        return;
-
-    var undoData = new App.undoData(selection,"Vertical Reposition Down");
-    App.undoStack.push(undoData);
-
-    App.Node.verticalReposition(selection, App.Constants.KeyPressed.UP);
+    verticalRepositionAction(selection, App.Constants.KeyPressed.UP, App.undoStack);
 };
 
 Mousetrap.bind('mod+up', debounce(0, true, function () {
@@ -564,15 +521,7 @@ Mousetrap.bind('mod+up', debounce(0, true, function () {
 
 App.eventBinding.downRepositionAction = function() {
     var selection = App.map.getDataOfNodeWithClassNamesString(".node.selected");
-
-    var undoData = new App.undoData(selection,"Vertical Reposition Up");
-    App.undoStack.push(undoData);
-
-
-    if (!(selection && selection.parent))
-        return;
-
-    App.Node.verticalReposition(selection, App.Constants.KeyPressed.DOWN);
+    verticalRepositionAction(selection, App.Constants.KeyPressed.DOWN, App.undoStack);
 };
 
 Mousetrap.bind('mod+down', debounce(0, true, function () {
