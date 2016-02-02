@@ -77,6 +77,9 @@ App.checkRepositionUpdateOnRoot = function (root, updatedDirection, addedId) {
 };
 
 App.applyClassToSubTree = function (parentNodeData, className, classCallBack, callBackArgument, nodeList) {
+
+    App.resetPathClassForCurrentNode(parentNodeData, null);
+
     nodeList = nodeList ? nodeList : d3.selectAll('.node')[0];
     var classToApply = null;
     if (!className && !classCallBack) return;
@@ -103,6 +106,23 @@ App.applyClassToSubTree = function (parentNodeData, className, classCallBack, ca
     });
 };
 
+App.resetPathClassForCurrentNode = function(parentNodeData, node){
+    var tempNode = d3.select('thisClassDoesNotExist'), depth;
+        tempNode[0].pop();
+    if(node){
+        depth = node.depth;
+        tempNode.push(d3.selectAll('path')[0].filter(function(_){return _.__data__.target._id == node._id}));
+    }
+    else{
+        depth = parentNodeData.depth + 1;
+        parentNodeData.childSubTree.forEach(function(child){
+                    tempNode.push(d3.selectAll('path')[0].filter(function(_){return _.__data__.target._id == child._id}));
+        });
+    }
+        tempNode.classed('thick-link', false);
+        tempNode.classed('link', false);
+        tempNode.classed(App.getPathClassForNodeDepth(depth), true);
+};
 
 App.calculateNextIndex = function (initialIndex, length, keyPressed) {
     var newIndex = -1;
@@ -427,4 +447,15 @@ App.KeyCodes = {
     enter: 13,
     escape: 27,
     tab: 9
+};
+
+App.getPathClassForNodeDepth = function(depth){
+  var nodeDepthPathClass = {
+    1 : 'thick-link',
+    2 : 'link',
+    3 : 'link',
+    4 : 'link'
+  };
+
+  return Object.keys(nodeDepthPathClass).indexOf(depth) != -1 ? nodeDepthPathClass[depth]: 'link';
 };

@@ -54,13 +54,7 @@ App.tracker = {
               return child.__data__._id == App.tracker.repaintNodeId;
             });
           if(node) {
-            var tempD3Array = d3.select('thisIsANonExistentTag');
-            tempD3Array[0].pop();
-            tempD3Array[0].push(node);
-            App.removeAllLevelClass(tempD3Array);
-            App.applyLevelClass(tempD3Array, node.__data__.depth);
-            App.applyClassToSubTree(node.__data__, null, App.removeAllLevelClass);
-            App.applyClassToSubTree(node.__data__, null, App.applyLevelClass);
+            changeCurrentNodeClass(node);
           }
           App.tracker.repaintNodeId = null;
           App.chart.update();
@@ -86,4 +80,17 @@ App.tracker = {
     App.chart.update();
 
   }
+};
+
+var changeCurrentNodeClass = function(node){
+  var tempD3Array = d3.select('thisIsANonExistentTag');
+  tempD3Array[0].pop();
+  tempD3Array[0].push(node);
+  App.removeAllLevelClass(tempD3Array);
+  App.applyLevelClass(tempD3Array, node.__data__.depth);
+  App.applyClassToSubTree(node.__data__, null, App.removeAllLevelClass);
+  App.applyClassToSubTree(node.__data__, null, App.applyLevelClass);
+
+  tempD3Array[0].pop();
+  App.resetPathClassForCurrentNode(null, node.__data__);
 };
