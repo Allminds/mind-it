@@ -325,14 +325,14 @@ describe('eventBinding.js', function () {
       })
     });
 
-    it("should toggle collapsing of nodes on space key press", function () {
-      event.keyCode = 32;
-      spyOn(App.eventBinding, "beforeBindEventAction").and.returnValue(node);
-      spyOn(App, "toggleCollapsedNode");
-      document.getElementsByClassName("node")[0].dispatchEvent(event);
-      expect(App.eventBinding.beforeBindEventAction).toHaveBeenCalled();
-      expect(App.toggleCollapsedNode).toHaveBeenCalled();
-    });
+    //it("should toggle collapsing of nodes on space key press", function () {
+    //  event.keyCode = 32;
+    //  spyOn(App.eventBinding, "beforeBindEventAction").and.returnValue(node);
+    //  spyOn(App, "toggleCollapsedNode");
+    //  document.getElementsByClassName("node")[0].dispatchEvent(event);
+    //  expect(App.eventBinding.beforeBindEventAction).toHaveBeenCalled();
+    //  expect(App.toggleCollapsedNode).toHaveBeenCalled();
+    //});
   });
 
   describe("Node navigation events", function () {
@@ -455,7 +455,7 @@ describe('eventBinding.js', function () {
 
               App.eventBinding.newNodeAddAction(enterAction);
 
-              var undoData = App.undoStack.pop();
+              var undoData = App.undoStack.pop()[0];
               expect(undoData.operationData).toBe("delete");
               expect(undoData.nodeData).toBe(newNodeData);
           });
@@ -466,7 +466,7 @@ describe('eventBinding.js', function () {
 
               App.eventBinding.deleteAction();
 
-              var undoData = App.undoStack.pop();
+              var undoData = App.undoStack.pop()[0];
               expect(App.eventBinding.focusAfterDelete).toHaveBeenCalled();
               expect(root.right.length).toBe(0);
               expect(undoData.operationData).toBe("add");
@@ -479,7 +479,7 @@ describe('eventBinding.js', function () {
 
               App.eventBinding.upRepositionAction();
 
-              var undoData = App.undoStack.pop();
+              var undoData = App.undoStack.pop()[0];
               expect(undoData.operationData).toBe("Vertical Reposition Down");
               expect(undoData.nodeData).toBe(child3);
               expect(App.Node.verticalReposition).toHaveBeenCalled();
@@ -491,7 +491,7 @@ describe('eventBinding.js', function () {
 
               App.eventBinding.downRepositionAction();
 
-              var undoData = App.undoStack.pop();
+              var undoData = App.undoStack.pop()[0];
               expect(undoData.operationData).toBe("Vertical Reposition Up");
               expect(undoData.nodeData).toBe(child3);
               expect(App.Node.verticalReposition).toHaveBeenCalled();
@@ -502,12 +502,12 @@ describe('eventBinding.js', function () {
       describe("undo operations", function() {
           it("should be able to undo insertion of new node", function() {
               var undoData = new App.undoData(parent, "delete");
-              App.undoStack.push(undoData);
+              App.undoStack.push([undoData]);
               spyOn(App.eventBinding, "focusAfterDelete");
 
               App.eventBinding.undoAction();
 
-              var redoData = App.redoStack.pop();
+              var redoData = App.redoStack.pop()[0];
               expect(App.eventBinding.focusAfterDelete).toHaveBeenCalled();
               expect(root.right.length).toBe(0);
               expect(redoData.nodeData).toBe(undoData.nodeData);
@@ -517,11 +517,11 @@ describe('eventBinding.js', function () {
           it("should be able to undo deletion of node", function() {
               var undoData = new App.undoData(parent, "add");
               undoData.destinationDirection = "right";
-              App.undoStack.push(undoData);
+              App.undoStack = [[undoData]];
 
               App.eventBinding.undoAction();
 
-              var redoData = App.redoStack.pop();
+              var redoData = App.redoStack.pop()[0];
               expect(root.right[0]).toBe(parent);
               expect(redoData.nodeData).toBe(undoData.nodeData);
               expect(redoData.operationData).toBe("delete");
@@ -532,11 +532,11 @@ describe('eventBinding.js', function () {
               spyOn(App.Node, "verticalReposition");
               var undoData = new App.undoData(child3,"Vertical Reposition Down");
               undoData.destinationDirection = "left";
-              App.undoStack.push(undoData);
+              App.undoStack.push([undoData]);
 
               App.eventBinding.undoAction();
 
-              var redoData = App.redoStack.pop();
+              var redoData = App.redoStack.pop()[0];
               expect(App.Node.verticalReposition).toHaveBeenCalledWith(undoData.nodeData, App.Constants.KeyPressed.DOWN);
               expect(redoData.nodeData).toBe(undoData.nodeData);
               expect(redoData.operationData).toBe("Vertical Reposition Up");
@@ -547,11 +547,11 @@ describe('eventBinding.js', function () {
               spyOn(App.Node, "verticalReposition");
               var undoData = new App.undoData(child3,"Vertical Reposition Up");
               undoData.destinationDirection = "left";
-              App.undoStack.push(undoData);
+              App.undoStack.push([undoData]);
 
               App.eventBinding.undoAction();
 
-              var redoData = App.redoStack.pop();
+              var redoData = App.redoStack.pop()[0];
               expect(App.Node.verticalReposition).toHaveBeenCalledWith(undoData.nodeData, App.Constants.KeyPressed.UP);
               expect(redoData.nodeData).toBe(undoData.nodeData);
               expect(redoData.operationData).toBe("Vertical Reposition Down");
@@ -562,11 +562,11 @@ describe('eventBinding.js', function () {
           it("should be able to redo insertion of new node", function() {
               var redoData = new App.redoData(parent, "add");
               redoData.destinationDirection = "right";
-              App.redoStack.push(redoData);
+              App.redoStack = [[redoData]];
 
               App.eventBinding.redoAction();
 
-              var undoData = App.undoStack.pop();
+              var undoData = App.undoStack.pop()[0];
               expect(undoData.operationData).toBe("delete");
               expect(undoData.nodeData).toBe(redoData.nodeData);
           });
@@ -575,11 +575,11 @@ describe('eventBinding.js', function () {
               var redoData = new App.redoData(parent, "delete");
               redoData.destinationDirection = "right";
               spyOn(App.eventBinding, "focusAfterDelete");
-              App.redoStack.push(redoData);
+              App.redoStack.push([redoData]);
 
               App.eventBinding.redoAction();
 
-              var undoData = App.undoStack.pop();
+              var undoData = App.undoStack.pop()[0];
               expect(App.eventBinding.focusAfterDelete).toHaveBeenCalled();
               expect(root.right.length).toBe(0);
               expect(undoData.operationData).toBe("add");
@@ -590,11 +590,11 @@ describe('eventBinding.js', function () {
               spyOn(App.Node, "verticalReposition");
               var redoData = new App.redoData(child3, "Vertical Reposition Up");
               redoData.destinationDirection = "left";
-              App.redoStack.push(redoData);
+              App.redoStack.push([redoData]);
 
               App.eventBinding.redoAction();
 
-              var undoData = App.undoStack.pop();
+              var undoData = App.undoStack.pop()[0];
               expect(undoData.operationData).toBe("Vertical Reposition Down");
               expect(undoData.nodeData).toBe(redoData.nodeData);
               expect(App.Node.verticalReposition).toHaveBeenCalledWith(redoData.nodeData, App.Constants.KeyPressed.UP)
@@ -604,11 +604,11 @@ describe('eventBinding.js', function () {
               spyOn(App.Node, "verticalReposition");
               var redoData = new App.redoData(child3, "Vertical Reposition Down");
               redoData.destinationDirection = "left";
-              App.redoStack.push(redoData);
+              App.redoStack.push([redoData]);
 
               App.eventBinding.redoAction();
 
-              var undoData = App.undoStack.pop();
+              var undoData = App.undoStack.pop()[0];
               expect(undoData.operationData).toBe("Vertical Reposition Up");
               expect(undoData.nodeData).toBe(redoData.nodeData);
               expect(App.Node.verticalReposition).toHaveBeenCalledWith(redoData.nodeData, App.Constants.KeyPressed.DOWN)

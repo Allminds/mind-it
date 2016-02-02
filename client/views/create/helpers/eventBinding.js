@@ -112,7 +112,7 @@ App.eventBinding.undoAction = function() {
                     var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
                     redoData.operationData = "delete";
                     redoData.destinationDirection = undoData.destinationDirection;
-                    App.redoStack.push(redoData);
+                    App.redoStack.push([redoData]);
 
                 }
             }
@@ -175,7 +175,7 @@ App.eventBinding.redoAction = function() {
                     var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
                     undoData.operationData = "delete";
                     undoData.destinationDirection = redoData.destinationDirection
-                    App.undoStack.push(undoData);
+                    App.undoStack.push([undoData]);
 
                 }
 
