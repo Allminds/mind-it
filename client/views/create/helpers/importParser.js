@@ -1,10 +1,9 @@
 App.ImportParser = {};
 
-App.ImportParser.tagsSupported = ["font", "edge", "hook", "node"];
 App.ImportParser.errorMessage = "";
 
 var isValidTag = function(nodeName) {
-    return App.ImportParser.tagsSupported.indexOf(nodeName) != -1;
+    return App.Constants.tagsSupported.indexOf(nodeName) != -1;
 };
 
 var hasProcessableNodes = function(nodes) {
