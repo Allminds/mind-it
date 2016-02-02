@@ -65,6 +65,11 @@ var undoRedoDeleteOperation = function(stack, stackData) {
         deleteNode(stack, stackData.nodeData, stackData.destinationDirection);
 };
 
+var clearAllSelections = function() {
+    d3.selectAll(".selected").classed("selected", false);
+    d3.selectAll(".softSelected").classed("softSelected", false);
+};
+
 App.eventBinding.undoAction = function() {
     if(App.undoStack.length!=0) {
         var undoData = App.undoStack.pop();
@@ -100,6 +105,8 @@ App.eventBinding.undoAction = function() {
 
                 destinationIdList.splice(destinationIndex, 0, undoData.nodeData._id);
                 App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
+
+                clearAllSelections();
                 App.selectNode(undoData.nodeData);
 
                 var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
@@ -161,6 +168,7 @@ App.eventBinding.redoAction = function() {
                 destinationIdList.splice(destinationIndex, 0, redoData.nodeData._id);
                 App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
 
+                clearAllSelections();
                 App.selectNode(redoData.nodeData);
 
                 var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
