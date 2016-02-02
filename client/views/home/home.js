@@ -7,7 +7,7 @@ Template.MyButton.events({
     var mindMapId = mindMapService.createRootNode('New Mindmap',user),
         link = '/create/' + mindMapId;
 
-      Meteor.call("addMapToUser", user, mindMapId, "w");
+      Meteor.call("addMapToUser", user, mindMapId, "o");
 
     // 2. Go to canvas root note
     Router.go(link);

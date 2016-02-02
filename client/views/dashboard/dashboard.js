@@ -1,6 +1,17 @@
 Template.dashboard.helpers({
-    maps: function() {
-        return Mindmaps.find().fetch();
+
+    ownedMaps: function() {
+        var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+        var aclRecords = acl.find({user_id: user, permissions: "o" }).fetch();
+        var mapIds = aclRecords.map(function(element){ return element.mind_map_id });
+        return Mindmaps.find({_id: {$in: mapIds}}).fetch();
+    },
+
+    sharedMaps: function(){
+        var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+        var aclRecords = acl.find({user_id: user, permissions: {$in: ['r','w']} }).fetch();
+        var mapIds = aclRecords.map(function(element){ return element.mind_map_id });
+        return Mindmaps.find({_id: {$in: mapIds}}).fetch();
     }
 });
 

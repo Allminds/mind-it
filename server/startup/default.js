@@ -15,7 +15,9 @@ Meteor.publish('userdata', function () {
 Meteor.publish('myRootNodes', function(emailId) {
   return rootNodesOfMyMaps(emailId);
 });
-
+Meteor.publish('acl',function(user_id){
+  return acl.find({user_id:user_id});
+});
 var rootNodesOfMyMaps = function(emailId) {
   var permissions = acl.find({ user_id: emailId }).fetch();
   var myMapIds = permissions.map(function(element) { return element.mind_map_id });
@@ -45,7 +47,7 @@ Meteor.methods({
           generateData(AllNodes);
     },
   isWritable: function (mindMapId, emailId) {
-      var b = acl.find({mind_map_id: mindMapId, user_id: {$in: [emailId, "*"]}, permissions: "w"}).fetch().length > 0;
+      var b = acl.find({mind_map_id: mindMapId, user_id: {$in: [emailId, "*"]}, permissions: {$in: ["w","o"]}}).fetch().length > 0;
       return b;
   },
   countNodes: function() {

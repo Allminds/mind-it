@@ -42,6 +42,7 @@ Router.route('/', {
 		else {
 			Meteor.subscribe("userdata", Meteor.userId());
             Meteor.subscribe("myRootNodes", Meteor.user().services.google.email);
+            Meteor.subscribe("acl",Meteor.user().services.google.email);
 			self.render("dashboard");
 		}
 	}
