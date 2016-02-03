@@ -1,0 +1,10 @@
+.dashboard{
+width:70%;
+margin:0 auto;
+margin-bottom: 0px !important;
+list-style-type: none;
+}
+#allMaps ul, #ownedMaps ul, #sharedMaps ul{
+margin-bottom: 0px !important;
+list-style-type: none;
+}

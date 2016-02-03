@@ -1,5 +1,10 @@
 Template.dashboard.helpers({
-
+    allMaps: function(){
+        var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+        var allAclMaps = acl.find({user_id: user}).fetch();
+        var mapIds = allAclMaps.map(function(element){ return element.mind_map_id});
+        return Mindmaps.find({_id: {$in: mapIds}}).fetch();
+    },
     ownedMaps: function() {
         var user = Meteor.user() ? Meteor.user().services.google.email : "*";
         var aclRecords = acl.find({user_id: user, permissions: "o" }).fetch();
