@@ -69,6 +69,7 @@ var undoRedoDeleteOperation = function(stack, stackData) {
 var clearAllSelections = function() {
     d3.selectAll(".selected").classed("selected", false);
     d3.selectAll(".softSelected").classed("softSelected", false);
+    App.multiSelectedNodes = [];
 };
 
 App.eventBinding.undoAction = function() {
@@ -107,8 +108,8 @@ App.eventBinding.undoAction = function() {
                     destinationIdList.splice(destinationIndex, 0, undoData.nodeData._id);
                     App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
 
-                    clearAllSelections();
-                    App.selectNode(undoData.nodeData);
+                    App.clearAllSelected();
+//                    App.selectNode(undoData.nodeData);
 
                     var redoData = new App.redoData(undoData.nodeData, undoData.operationData);
                     redoData.operationData = "delete";
@@ -170,7 +171,7 @@ App.eventBinding.redoAction = function() {
                     destinationIdList.splice(destinationIndex, 0, redoData.nodeData._id);
                     App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
 
-                    clearAllSelections();
+                    App.clearAllSelected();
                     App.selectNode(redoData.nodeData);
 
                     var undoData = new App.undoData(redoData.nodeData, redoData.operationData);
@@ -329,11 +330,14 @@ App.eventBinding.deleteAction = function () {
         }
     }
 
+    var areSiblings = App.checkIfSiblings(App.multiSelectedNodes);
+
     var nodeToBeFocussed = null;
     var removedNodeIndex = null;
     var elementToPush = [];
+    var selectedNode=null;
     for (var i = 0; i < App.multiSelectedNodes.length; i++) {
-        var selectedNode = App.multiSelectedNodes[i].__data__;
+        selectedNode = App.multiSelectedNodes[i].__data__;
         var existingNodesInUI = d3.selectAll(".node")[0];
 
 
@@ -346,9 +350,13 @@ App.eventBinding.deleteAction = function () {
         undoData1.destinationDirection = dir;
         elementToPush.push(undoData1);
     }
+
     App.undoStack.push(elementToPush.reverse());
 
-    if (nodeToBeFocussed) {
+    if(areSiblings){
+        App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
+    }
+    else if (nodeToBeFocussed) {
         var existingNodesInUI = d3.selectAll(".node")[0];
         nodeToBeFocussed= existingNodesInUI.filter(
             function(_){
