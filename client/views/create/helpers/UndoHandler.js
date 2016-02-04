@@ -13,19 +13,26 @@ App.RepeatHandler = {
     }
 };
 
-App.stackData = function(nodeData,operationData,destinationDirection,destinationIndex,oldParent) {
+App.stackData = function(nodeData,operationData,destinationDirection,destinationIndex,oldParent, keyPressed) {
     this.nodeData = nodeData;
     this.operationData = operationData;
     this.destinationDirection = destinationDirection;
     this.destinationIndex = destinationIndex;
     this.oldParent = oldParent;
+    this.keyPressed = keyPressed;
 };
 
 var clone = function(stackData, newAction) {
-    return new App.stackData(stackData.nodeData, newAction, stackData.destinationDirection, stackData.destinationIndex, stackData.oldParent);
+    newAction = newAction ? newAction : stackData.operationData;
+    return new App.stackData(stackData.nodeData, newAction, stackData.destinationDirection,
+        stackData.destinationIndex, stackData.oldParent, stackData.keyPressed);
 };
 
 UndoRedo = {
+    stack: {
+        undo:[],
+        redo:[]
+    },
     actions: {
         addNode: function(stackData) {
             if(App.Node.isDeleted(stackData.nodeData.parent))
@@ -58,12 +65,31 @@ UndoRedo = {
                 return clone(stackData, "addNode");
             }
         },
-        verticalReposition: function() {},
-        horizontalReposition: function() {}
-    },
-    stack: {
-        undo:[],
-        redo:[]
+        verticalReposition: function(stackData) {
+            var node = stackData.nodeData;
+            if (!(node && node.parent))
+                return;
+
+            var newKeyPressed = stackData.keyPressed == App.Constants.KeyPressed.UP ? App.Constants.KeyPressed.DOWN : App.Constants.KeyPressed.UP;
+            App.Node.verticalReposition(node, stackData.keyPressed);
+
+            var returnStackData = clone(stackData);
+            returnStackData.keyPressed = newKeyPressed;
+            return returnStackData;
+        },
+        horizontalReposition: function(stackData) {
+            var destinationSubTree = App.Node.isRoot(stackData.nodeData.parent) ? stackData.nodeData.parent[stackData.destinationDirection] : stackData.nodeData.parent.childSubtree;
+            var oldParent = stackData.nodeData.parent;
+            var selectedIndex = App.Node.getIndexOfNode(stackData.nodeData);
+            var direction = App.Node.getDirection(stackData.nodeData);
+            App.Node.reposition(stackData.nodeData,stackData.oldParent, destinationSubTree, stackData.destinationIndex);
+            var stackData1 = clone(stackData);
+            stackData1.destinationDirection = direction;
+            stackData1.selectedIndex = selectedIndex;
+            stackData1.oldParent = oldParent;
+
+            return stackData1
+        }
     },
     addToStack: function(stackData, stackName) {
         stackName = stackName ? stackName : "undo";
@@ -71,12 +97,17 @@ UndoRedo = {
     },
     performAction: function(stackName) {
         if(UndoRedo.stack[stackName].length > 0) {
-            var stackData = this.stack[stackName].pop();
-            var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
-            UndoRedo.addToStack(reverseStackData, (stackName == "undo" ? "redo" : "undo"));
+            var multipleUndo = this.stack[stackName].pop();
+            var multipleRedo = [];
+            multipleUndo.forEach(function(stackData){
+                var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
+                multipleRedo.push(reverseStackData);
+            });
+            UndoRedo.addToStack(multipleRedo, (stackName == "undo" ? "redo" : "undo"));
         }
     }
 };
+
 
 
 
