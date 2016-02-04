@@ -1,9 +1,10 @@
-App.stackData = function(nodeData,operationData,destinationDirection,destinationIndex,oldParent) {
-    this.nodeData = nodeData;
-    this.operationData = operationData;
-    this.destinationDirection = destinationDirection;
-    this.destinationIndex = destinationIndex;
-    this.oldParent = oldParent;
+App.stackData = function(nodeData,operationData,destinationDirection,destinationIndex,oldParent, keyPressed) {
+  this.nodeData = nodeData;
+  this.operationData = operationData;
+  this.destinationDirection = destinationDirection;
+  this.destinationIndex = destinationIndex;
+  this.oldParentId = oldParent ? oldParent._id : null;
+  this.keyPressed = keyPressed;
 };
 
 mapsCount = 0;
