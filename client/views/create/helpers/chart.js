@@ -34,7 +34,8 @@ App.chart = MindMap()
       if(this.__data__){
           var newClickTime = new Date().getTime();
           if(newClickTime - lastClick < 300) {
-              App.showEditor(this);
+             // App.showEditor(this);
+              App.eventBinding.f2Action(this);
           }
 
           if(App.isIndicatorActive) return;

@@ -13,19 +13,11 @@ App.RepeatHandler = {
     }
 };
 
-App.stackData = function(nodeData,operationData,destinationDirection,destinationIndex,oldParent, keyPressed) {
-    this.nodeData = nodeData;
-    this.operationData = operationData;
-    this.destinationDirection = destinationDirection;
-    this.destinationIndex = destinationIndex;
-    this.oldParent = oldParent;
-    this.keyPressed = keyPressed;
-};
 
 var clone = function(stackData, newAction) {
     newAction = newAction ? newAction : stackData.operationData;
     return new App.stackData(stackData.nodeData, newAction, stackData.destinationDirection,
-        stackData.destinationIndex, stackData.oldParent, stackData.keyPressed);
+        stackData.destinationIndex, stackData.oldParentId, stackData.keyPressed);
 };
 
 UndoRedo = {
@@ -78,18 +70,34 @@ UndoRedo = {
             return returnStackData;
         },
         horizontalReposition: function(stackData) {
-            var destinationSubTree = App.Node.isRoot(stackData.nodeData.parent) ? stackData.nodeData.parent[stackData.destinationDirection] : stackData.nodeData.parent.childSubtree;
-            var oldParent = stackData.nodeData.parent;
+            var oldParentId = stackData.nodeData.parent._id;
             var selectedIndex = App.Node.getIndexOfNode(stackData.nodeData);
             var direction = App.Node.getDirection(stackData.nodeData);
-            App.Node.reposition(stackData.nodeData,stackData.oldParent, destinationSubTree, stackData.destinationIndex);
-            var stackData1 = clone(stackData);
-            stackData1.destinationDirection = direction;
-            stackData1.selectedIndex = selectedIndex;
-            stackData1.oldParent = oldParent;
+            var parent = App.map.getNodeDataWithNodeId(stackData.oldParentId);
+            App.Node.reposition(stackData.nodeData, parent, null, stackData.destinationIndex);
+            var returnStackData = clone(stackData);
+            returnStackData.destinationDirection = direction;
+            returnStackData.selectedIndex = selectedIndex;
+            returnStackData.oldParentId = oldParentId;
 
-            return stackData1
+            return returnStackData
+        },
+        rename: function(stackData) {
+            var nodeData = stackData.nodeData;
+            var oldName = App.map.getNodeDataWithNodeId(nodeData._id).name;
+            if(oldName == nodeData.name) {
+                App.RepeatHandler.undo();
+                return null;
+            }
+            mindMapService.updateNode(nodeData._id, {name: nodeData.name});
+            nodeData.name = oldName;
+            return clone(stackData);
+        },
+        toggleCollapse: function(stackData) {
+            App.toggleCollapsedNode(stackData.nodeData);
+            return clone(stackData);
         }
+
     },
     addToStack: function(stackData, stackName) {
         stackName = stackName ? stackName : "undo";
@@ -101,9 +109,11 @@ UndoRedo = {
             var multipleRedo = [];
             multipleUndo.forEach(function(stackData){
                 var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
-                multipleRedo.push(reverseStackData);
+                if(reverseStackData != null)
+                    multipleRedo.push(reverseStackData);
             });
-            UndoRedo.addToStack(multipleRedo, (stackName == "undo" ? "redo" : "undo"));
+            if(multipleRedo.length > 0)
+                UndoRedo.addToStack(multipleRedo, (stackName == "undo" ? "redo" : "undo"));
         }
     }
 };
