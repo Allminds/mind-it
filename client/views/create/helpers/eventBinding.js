@@ -602,7 +602,7 @@ App.eventBinding.downRepositionAction = function () {
     var areSiblings = App.areSiblingsOnSameSide(App.multiSelectedNodes);
     if(!areSiblings) return;
     var orderedNodes = getInOrderOfAppearance(App.multiSelectedNodes);
-    verticalRepositionAction(orderedNodes, App.Constants.KeyPressed.DOWN, App.undoStack);
+    verticalRepositionAction(orderedNodes.reverse(), App.Constants.KeyPressed.DOWN, App.undoStack);
 };
 
 Mousetrap.bind('mod+down', debounce(0, true, function () {
