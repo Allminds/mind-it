@@ -18,6 +18,11 @@ Meteor.publish('myRootNodes', function(emailId) {
 Meteor.publish('acl',function(user_id){
   return acl.find({user_id:user_id});
 });
+
+Meteor.publish('Mindmaps', function(){
+    return Mindmaps.find();
+});
+
 var rootNodesOfMyMaps = function(emailId) {
   var permissions = acl.find({ user_id: emailId }).fetch();
   var myMapIds = permissions.map(function(element) { return element.mind_map_id });

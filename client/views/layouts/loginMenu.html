@@ -1,8 +1,9 @@
 <template name="LoginMenu">
     {{#if currentUser}}
-    <a href="" class="navbar-element navbar-nav navbar-brand" data-action="logout" >
-        Logout
-    </a>
+    <!--<a href="" class="navbar-element navbar-nav navbar-brand" data-action="logout" >-->
+        <!--Logout-->
+    <!--</a>-->
+    {{> UserInfo}}
     {{else}}
     {{#if loggingIn}}
     <a href="" class="navbar-element navbar-nav navbar-brand">
@@ -21,7 +22,7 @@
       <span class="navbar-nav userInfo">
 
       <img src={{ picture}} class="img-circle" alt="Cinque Terre" width="35" height="35">
-     Hi {{ name}}
+      <span>{{ name}}</span>
       </span>
     {{/if}}
     {{#if requireExport}}
@@ -29,17 +30,9 @@
 
         {{else}}
     <span class="navbar-nav userInfo" style ="margin-top :24px" >
-            Hi Guest
+            Guest
             </span>
     {{/if}}
     {{/if}}
-
-
-
-
-
-
-
-
 </template>
 
