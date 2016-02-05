@@ -614,5 +614,34 @@ describe('eventBinding.js', function () {
               expect(App.Node.verticalReposition).toHaveBeenCalledWith(redoData.nodeData, App.Constants.KeyPressed.DOWN)
           });
       });
+
+      describe("multi select", function() {
+          var parent, child1, child2, child3;
+          beforeEach(function() {
+              parent = new App.Node("parent", "left", null, 0);
+              parent._id = "parent";
+              child1 = new App.Node("child1", "left", parent, 0);
+              child1._id = "child1";
+              child2 = new App.Node("child2", "left", parent, 1);
+              child2._id = "child2";
+              child3 = new App.Node("child3", "left", parent, 2);
+              child3._id = "child3";
+              child1.parent = parent;
+              child2.parent = parent;
+              child3.parent = parent;
+              parent.left = [child1, child2, child3];
+          });
+
+          it("up reposition", function() {
+              spyOn(App.Node, "verticalReposition");
+              App.multiSelectedNodes = [{__data__: child3}, {__data__: child2}, {__data__: child1}];
+
+              App.eventBinding.upRepositionAction();
+
+              expect(App.Node.verticalReposition.calls.argsFor(0)).toEqual(child1, App.Constants.KeyPressed.UP);
+              expect(App.Node.verticalReposition.calls.argsFor(1)).toEqual(child2, App.Constants.KeyPressed.UP);
+              expect(App.Node.verticalReposition.calls.argsFor(2)).toEqual(child3, App.Constants.KeyPressed.UP);
+          });
+      });
   });
 });
