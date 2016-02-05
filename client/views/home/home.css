@@ -27,7 +27,7 @@
 }
 
 .create-mindmap {
-  margin-top: 50px;
+  margin-top: 25px;
 }
 
 
@@ -47,7 +47,7 @@
 }
 .navbar-inverse .navbar-nav > li > a{
     color: #000000;
-    font-family: ‘Trebuchet MS’, Helvetica, serif;
+    font-family: 'Trebuchet MS', Tahoma, Verdana, Arial, sans-serif;
     font-size: 20px;
     font-weight: 600;
 }
@@ -56,5 +56,5 @@
     color: #ED8233;
 }
 .landingLogo {
-    margin-top: 70px;
+    margin-top: 85px;
 }

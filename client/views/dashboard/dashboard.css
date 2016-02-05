@@ -1,10 +1,122 @@
 .dashboard{
-width:70%;
-margin:0 auto;
-margin-bottom: 0px !important;
-list-style-type: none;
+    width:70%;
+    margin:0 auto;
+    margin-bottom: 0px !important;
+    list-style-type: none;
 }
+
 #allMaps ul, #ownedMaps ul, #sharedMaps ul{
-margin-bottom: 0px !important;
-list-style-type: none;
+    margin-bottom: 0px !important;
+    list-style-type: none;
+}
+
+.dashboardButtons{
+    margin-top: 110px;
+    height: 60px;
+}
+
+.dashboardButtons .button-0{
+    padding: 10px 20px;
+    font-size: 15px;
+}
+
+.dashboardButtons span{
+    font-size: 15px;
+}
+
+.dashboardButtons a{
+    font-size: 15px;
+}
+
+.dashboardButtons .btn-text{
+    text-align: left;
+    padding: 7px 40px;
+}
+
+.dashboardButtons .mindmapButton{
+    float: left;
+    margin-left: 38%;
+    margin-right: 10px;
+}
+
+table.dataTable tbody tr{
+    text-align: left;
+}
+
+.ui-widget-header{
+    background: none;
+    border: none;
+}
+
+.ui-widget-content{
+    background: none;
+    border: none;
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited{
+    color: #ff8433;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active{
+    border: 1px solid #702269;
+}
+
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited{
+    color: #000000;
+}
+
+#allMaps, #ownedMaps, #sharedMaps{
+    width: 85%;
+}
+
+.dashboard{
+    width: 70%;
+    height: 100%;
+    float: left;
+    border-radius: 0px;
+    border-top: solid 1px #702269;
+}
+
+.leftPanel{
+    width: 15%;
+    border: solid 1px white;
+    height: 100%;
+    float: left;
+}
+
+#tabbedPanel li a {
+    outline-color: white;
+    width: 100%;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus{
+    background: #fff0e7;
+    border-color: #702269;
+}
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor{
+    padding: 1.5em 4em;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default{
+    background: #ffffff;
+    border-bottom: 1px solid #ccc;
+    border-top: #ffffff;
+    border-left-width: 10px;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active{
+    border-bottom: 1px solid #702269;
+    margin-bottom: 2px;
+}
+
+.ui-tabs-vertical { width: 100%; }
+.ui-tabs-vertical .ui-tabs-nav { padding: .2em 0em .2em .2em; float: left; width: 15%; border-radius: 0px; border-right: 1px solid #702269; }
+.ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+.ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-top: none; border-left-width: 10px;}
+.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+
+.dataTables_wrapper{
+    //border-left: 1px solid #702269;
 }
