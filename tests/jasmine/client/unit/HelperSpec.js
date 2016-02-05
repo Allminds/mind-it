@@ -135,6 +135,69 @@ describe('helper.js tests', function() {
       expect(actualNode).toEqual(expectedNode);
     });
   });
+
+  it("should be able to get nodes in order of appearance in the child sub tree", function() {
+    var parent = new App.Node("parent", "left", null, 0);
+    parent._id = "parent";
+    var child1 = new App.Node("child1", "left", parent, 0);
+    child1._id = "child1";
+    var child2 = new App.Node("child2", "left", parent, 1);
+    child2._id = "child2";
+    var child3 = new App.Node("child3", "left", parent, 1);
+    child3._id = "child3";
+    child1.parent = parent;
+    child2.parent = parent;
+    child3.parent = parent;
+    parent.childSubTree = [child1, child2, child3];
+    spyOn(App, "getDirection").and.returnValue("left");
+
+    var nodes = [{__data__: child3}, {__data__: child1}, {__data__: child2}];
+    var actualOrder = App.getInOrderOfAppearance(nodes).map(function(node){ return node.name; });
+
+    expect(actualOrder[0]).toBe(child1.name);
+    expect(actualOrder[1]).toBe(child2.name);
+    expect(actualOrder[2]).toBe(child3.name);
+  });
+
+  it("should return false when nodes are not siblings on same side", function() {
+    var parent = new App.Node("parent", null, null, 0);
+    parent._id = "parent";
+    var child1 = new App.Node("child1", "right", parent, 0);
+    child1._id = "child1";
+    var child2 = new App.Node("child2", "left", parent, 1);
+    child2._id = "child2";
+    var child3 = new App.Node("child3", "left", parent, 2);
+    child3._id = "child3";
+    child1.parent = parent;
+    child2.parent = parent;
+    child3.parent = parent;
+    parent.left = [child2, child3];
+    parent.right = [child1];
+
+    var areSiblingsOnSameSide = App.areSiblingsOnSameSide([{__data__: child1}, {__data__: child2}, {__data__: child3}]);
+
+    expect(areSiblingsOnSameSide).toBe(false)
+  });
+
+  it("should return true when nodes are siblings on same side", function() {
+    var parent = new App.Node("parent", "left", null, 0);
+    parent._id = "parent";
+    var child1 = new App.Node("child1", "left", parent, 0);
+    child1._id = "child1";
+    var child2 = new App.Node("child2", "left", parent, 1);
+    child2._id = "child2";
+    var child3 = new App.Node("child3", "left", parent, 2);
+    child3._id = "child3";
+    child1.parent = parent;
+    child2.parent = parent;
+    child3.parent = parent;
+    parent.left = [child1, child2, child3];
+
+    var areSiblingsOnSameSide = App.areSiblingsOnSameSide([{__data__: child1}, {__data__: child2}, {__data__: child3}]);
+
+    expect(areSiblingsOnSameSide).toBe(true);
+  });
+
 //
 //  describe('App.checkIfSiblings',function(){
 //
