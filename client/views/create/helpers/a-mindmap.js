@@ -1,15 +1,11 @@
-App.undoData = function(nodeData,operationData) {
-    this.nodeData = nodeData;
-    this.operationData = operationData;
-    this.destinationDirection = null;
-};
-
-App.redoData = function(nodeData,operationData) {
+App.stackData = function(nodeData,operationData,destinationDirection,destinationIndex,oldParent, keyPressed) {
   this.nodeData = nodeData;
   this.operationData = operationData;
-  this.destinationDirection = null;
+  this.destinationDirection = destinationDirection;
+  this.destinationIndex = destinationIndex;
+  this.oldParentId = oldParent ? oldParent._id : null;
+  this.keyPressed = keyPressed;
 };
-
 
 mapsCount = 0;
 nodeCount = 0;

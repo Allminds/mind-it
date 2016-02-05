@@ -135,4 +135,10 @@ describe('helper.js tests', function() {
       expect(actualNode).toEqual(expectedNode);
     });
   });
+//
+//  describe('App.checkIfSiblings',function(){
+//
+//
+//  });
+
 });

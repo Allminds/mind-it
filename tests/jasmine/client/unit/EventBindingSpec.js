@@ -474,7 +474,7 @@ describe('eventBinding.js', function () {
           });
 
           it("should push vertical reposition down of node into UndoStack when node is repositioned upwards", function() {
-              spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(child3);
+              App.multiSelectedNodes = [{ __data__: child3 }];
               spyOn(App.Node, "verticalReposition");
 
               App.eventBinding.upRepositionAction();
@@ -486,7 +486,7 @@ describe('eventBinding.js', function () {
           });
 
           it("should push vertical reposition up of node into UndoStack when node is repositioned downwards", function() {
-              spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(child3);
+              App.multiSelectedNodes = [{ __data__: child3 }];
               spyOn(App.Node, "verticalReposition");
 
               App.eventBinding.downRepositionAction();
