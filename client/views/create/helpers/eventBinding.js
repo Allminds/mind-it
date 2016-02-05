@@ -564,11 +564,11 @@ var verticalRepositionAction = function(nodes, repositionDirection, stack) {
     stack.push(undoStackElement.reverse());
 };
 
-var getInOrderOfAppearance = function(multiSelectedNodes) {
+App.getInOrderOfAppearance = function(multiSelectedNodes) {
     var firstSelection = multiSelectedNodes[0].__data__;
     var direction = App.getDirection(firstSelection);
     var parent = firstSelection.parent;
-    var subTree = App.Node.getSubTree(parent, direction)
+    var subTree = App.Node.getSubTree(parent, direction);
     var selectedNodeIds = multiSelectedNodes.map(function(selection) {
        return selection.__data__._id;
     });
@@ -590,7 +590,7 @@ App.areSiblingsOnSameSide = function(nodes) {
 App.eventBinding.upRepositionAction = function() {
     var areSiblings = App.areSiblingsOnSameSide(App.multiSelectedNodes);
     if(!areSiblings) return;
-    var orderedNodes = getInOrderOfAppearance(App.multiSelectedNodes);
+    var orderedNodes = App.getInOrderOfAppearance(App.multiSelectedNodes);
     verticalRepositionAction(orderedNodes, App.Constants.KeyPressed.UP, App.undoStack);
 };
 
@@ -601,7 +601,7 @@ Mousetrap.bind('mod+up', debounce(0, true, function () {
 App.eventBinding.downRepositionAction = function () {
     var areSiblings = App.areSiblingsOnSameSide(App.multiSelectedNodes);
     if(!areSiblings) return;
-    var orderedNodes = getInOrderOfAppearance(App.multiSelectedNodes);
+    var orderedNodes = App.getInOrderOfAppearance(App.multiSelectedNodes);
     verticalRepositionAction(orderedNodes.reverse(), App.Constants.KeyPressed.DOWN, App.undoStack);
 };
 
