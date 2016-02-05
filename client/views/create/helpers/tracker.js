@@ -42,11 +42,10 @@ App.tracker = {
 
       if(App.Node.isRoot(parent)){
         if(App.checkRepositionUpdateOnRoot(parent, key, newlyAddedId)) {
-          App.tracker.updatedNodeId = App.tracker.updatedNodeId ? App.tracker.updatedNodeId : newlyAddedId;
         }
       }
-          
-      if(App.tracker.updatedNodeId == null){
+
+      if(newlyAddedId == null){
         App.Node.setSubTree(parent, newSubTree, key);
         App.chart.update();
         if(App.tracker.repaintNodeId) {
@@ -55,27 +54,20 @@ App.tracker = {
               return child.__data__._id == App.tracker.repaintNodeId;
             });
           if(node) {
-            var tempD3Array = d3.select('thisIsANonExistentTag');
-            tempD3Array[0].pop();
-            tempD3Array[0].push(node);
-            App.removeAllLevelClass(tempD3Array);
-            App.applyLevelClass(tempD3Array, node.__data__.depth);
-            App.applyClassToSubTree(node.__data__, null, App.removeAllLevelClass);
-            App.applyClassToSubTree(node.__data__, null, App.applyLevelClass);
+            changeCurrentNodeClass(node);
           }
           App.tracker.repaintNodeId = null;
           App.chart.update();
         }
 
       } else {
-        var movedNode = App.map.getNodeDataWithNodeId(App.tracker.updatedNodeId);
-        subTree.splice(childIds.indexOf(App.tracker.updatedNodeId),0,movedNode);
-        App.tracker.updatedNodeId = null;
+        var movedNode = App.map.getNodeDataWithNodeId(newlyAddedId);
+        subTree.splice(childIds.indexOf(newlyAddedId),0,movedNode);
+        newlyAddedId = null;
       }
     }
     else if(fields.hasOwnProperty('parentId')) {
        if(!fields.parentId) return;
-      App.tracker.updatedNodeId = id;
       App.tracker.repaintNodeId = id;
       if(fields.parentId != "None") {
         var selectedNode = App.map.getNodeDataWithNodeId(id),
@@ -87,7 +79,18 @@ App.tracker = {
     }
     App.chart.update();
 
-  },
-  updatedNodeId: null,
-  repaintNodeId: null
+  }
+};
+
+var changeCurrentNodeClass = function(node){
+  var tempD3Array = d3.select('thisIsANonExistentTag');
+  tempD3Array[0].pop();
+  tempD3Array[0].push(node);
+  App.removeAllLevelClass(tempD3Array);
+  App.applyLevelClass(tempD3Array, node.__data__.depth);
+  App.applyClassToSubTree(node.__data__, null, App.removeAllLevelClass);
+  App.applyClassToSubTree(node.__data__, null, App.applyLevelClass);
+
+  tempD3Array[0].pop();
+  App.resetPathClassForCurrentNode(null, node.__data__);
 };

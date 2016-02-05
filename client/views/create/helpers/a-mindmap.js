@@ -1,15 +1,32 @@
+App.undoData = function(nodeData,operationData) {
+    this.nodeData = nodeData;
+    this.operationData = operationData;
+    this.destinationDirection = null;
+};
+
+App.redoData = function(nodeData,operationData) {
+  this.nodeData = nodeData;
+  this.operationData = operationData;
+  this.destinationDirection = null;
+};
+
+
 mapsCount = 0;
 nodeCount = 0;
 //oldDataCount = 0;
 
 var Constants = {
   deltaEllipseXRadius: 30,
-  deltaEllipseYRadius: 25
+  deltaEllipseYRadius: 25,
+  deltaFromRoot: 20
 };
 
 App.nodeStore = [];
-
 App.nodeToPaste = [];
+App.undoStack=[];
+App.redoStack=[];
+
+App.multiSelectedNodes=[];
 
 MindMap = function MindMap() {
   "use strict";
@@ -48,6 +65,7 @@ MindMap = function MindMap() {
           .on('mouseover', function (d) {
             var hasChildren = App.Node.hasChildren(d),
               r = hasChildren ? indicator.hovered : 0;
+            App.isIndicatorActive=true;
             return d3.select(this)
               .attr('r', r)
               .classed('unfilled', false)
@@ -56,6 +74,7 @@ MindMap = function MindMap() {
           .on('mouseout', function (d) {
             var hasChildren = App.Node.hasChildren(d),
               r = hasChildren ? (d.isCollapsed ? indicator.default : indicator.hovered) : 0;
+            App.isIndicatorActive=false;
             return d3.select(this)
               .attr('r', r)
               .classed('filled', d.isCollapsed)
@@ -264,6 +283,7 @@ MindMap = function MindMap() {
           var dir = App.Node.isRoot(node) ?  0 : (App.getDirection(node) == 'left' ? -1 : 1),
             textWidth = getTotalWidth(node);
           node.y = dir * (node.depth * nodeSize[1] + textWidth);
+          node.y += dir * Constants.deltaFromRoot;
           node.x = getX(node, nodeSize[0]);
           node.x += (node.parent ? node.parent.x : 0);
         });
@@ -281,7 +301,7 @@ MindMap = function MindMap() {
         var parentNode = node.parent || root,
           x0 = parentNode.x0 || root.x0,
           y0 = parentNode.y0 || root.y0;
-        return "translate(" + y0 + "," + x0 + ")";
+        return "translate(" + y0  + "," + x0 + ")";
       };
 
       var nodeEnter = node.enter().append("svg:g")
@@ -303,7 +323,8 @@ MindMap = function MindMap() {
         droppedOnElement = null;
 
       function dragstart() {
-        App.select(this);
+
+        //App.select(this);
         var currentNodeRect = d3.select(this).select('rect');
         var currentNodeText = d3.select(this).select('text');
         draggedNode = d3.select(this).node().__data__;
@@ -345,6 +366,8 @@ MindMap = function MindMap() {
         if(droppedOnElement != nodeToBeDragged && d3.select(droppedOnElement).node()){
             d3.select(droppedOnElement).classed('dragSelect',true);
         }
+
+
       };
 
       function dragend() {
@@ -601,6 +624,7 @@ MindMap.diagonal =
       sourceWidth = dir * getTextWidth(source._id) / 2,
       targetWidth = dir * getTextWidth(target._id) / 2,
       deltaY = (source.y + sourceWidth) + ((target.y - targetWidth) - (source.y + sourceWidth)) / 2;
+
     return 'M' + (source.y + sourceWidth) + ',' + source.x +
       'C' + deltaY + ',' + target.x +
       ' ' + deltaY + ',' + target.x +

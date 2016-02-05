@@ -61,6 +61,17 @@ path.link {
   stroke-width: 2px;
 }
 
+.node.softSelected ellipse, .node.softSelected rect {
+  fill: #ddd;
+}
+
+.node.softSelected rect {
+  stroke: #ddd;
+  stroke-width: 2px;
+}
+
+
+
 .edit-box {
   position: absolute;
 }
