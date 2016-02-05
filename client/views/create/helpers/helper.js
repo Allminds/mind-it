@@ -459,3 +459,11 @@ App.getPathClassForNodeDepth = function(depth){
 
   return Object.keys(nodeDepthPathClass).indexOf(depth) != -1 ? nodeDepthPathClass[depth]: 'link';
 };
+
+App.checkIfSiblings = function(nodesList){
+    for(var i=0; i<nodesList.length-1; i++)    {
+        if(nodesList[i].__data__.parentId != nodesList[i+1].__data__.parentId)
+            return false;
+    }
+    return true;
+};
