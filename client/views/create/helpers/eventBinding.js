@@ -46,8 +46,11 @@ App.eventBinding.f2Action = function (event) {
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
     var selectedNode = d3.select(".node.selected")[0][0];
+    var node = App.Node.d3NodeToDbNode(selectedNode.__data__);
     if (!selectedNode) return;
     App.showEditor(selectedNode);
+    var stackData = new App.stackData(node, 'rename');
+    App.RepeatHandler.addToActionStack([stackData]);
 };
 
 var deleteNode = function(stack, nodeData, destinationDirection) {
@@ -72,131 +75,17 @@ var clearAllSelections = function() {
     App.multiSelectedNodes = [];
 };
 
-App.eventBinding.undoAction = function() {
-    if(UndoRedo.stack.undo.length!=0) {
-        var multipleUndo = UndoRedo.stack.undo.pop()
-        multipleUndo.forEach(function(stackData) {
-            if (stackData.nodeData) {
-                if (stackData.operationData === "delete")
-                    undoRedoDeleteOperation(UndoRedo.stack.redo, stackData);
-                if (stackData.operationData === "add") {
-
-                    if(App.Node.isDeleted(stackData.nodeData.parent)){
-                        return;
-                    }
-
-                    var targetNode = stackData.nodeData.parent;
-
-                    if (targetNode.isCollapsed) {
-                        App.expandRecursive(targetNode, targetNode._id);
-                    }
-
-                    var destinationDirection = stackData.destinationDirection;
-
-                    var destinationSubtree = App.Node.getSubTree(targetNode, destinationDirection);
-                    destinationIndex = destinationSubtree[stackData.nodeData.index] ? stackData.nodeData.index : destinationSubtree.length;
-
-                    stackData.nodeData.index = destinationIndex;
-
-                    var destinationIdList = destinationSubtree.map(
-                        function (child) {
-                            return child._id;
-                        });
-
-                    destinationIdList.splice(destinationIndex, 0, stackData.nodeData._id);
-                    App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
-
-                    App.clearAllSelected();
-                    var stackData = new App.stackData(stackData.nodeData, stackData.operationData);
-                    stackData.operationData = "delete";
-                    stackData.destinationDirection = stackData.destinationDirection;
-                    UndoRedo.stack.redo.push([stackData]);
-
-                }
-            }
-
-            if (stackData.operationData === "Vertical Reposition Down") {
-                verticalRepositionAction([stackData.nodeData], App.Constants.KeyPressed.DOWN, UndoRedo.stack.redo);
-            }
-
-            if (stackData.operationData === "Vertical Reposition Up") {
-                verticalRepositionAction([stackData.nodeData], App.Constants.KeyPressed.UP, UndoRedo.stack.redo);
-            }
-        });
-    }
-};
-
-
 Mousetrap.bind('mod+z', function () {
-    App.eventBinding.undoAction();
+    App.RepeatHandler.undo();
 });
-
-App.eventBinding.redoAction = function() {
-    if(UndoRedo.stack.redo.length!=0) {
-        var multipleRedo = UndoRedo.stack.redo.pop();
-
-        multipleRedo.forEach(function(stackData){
-            if(stackData.nodeData) {
-                if (stackData.operationData === "delete")
-                    undoRedoDeleteOperation(UndoRedo.stack.undo, stackData);
-                if (stackData.operationData === "add") {
-                    var targetNode = stackData.nodeData.parent;
-
-                    if(App.Node.isDeleted(targetNode)){
-                        return;
-                    }
-
-                    App.tracker.updatedNodeId = stackData.nodeData._id;
-
-                    if (targetNode.isCollapsed) {
-                        App.expandRecursive(targetNode, targetNode._id);
-                    }
-
-                    var destinationDirection = stackData.destinationDirection;
-
-                    var destinationSubtree = App.Node.getSubTree(targetNode, destinationDirection);
-                    var destinationIndex = destinationSubtree[stackData.nodeData.index] ? stackData.nodeData.index : destinationSubtree.length;
-
-                    stackData.nodeData.index = destinationIndex;
-
-                    var destinationIdList = destinationSubtree.map(
-                        function (child) {
-                            return child._id;
-                        });
-
-                    destinationIdList.splice(destinationIndex, 0, stackData.nodeData._id);
-                    App.Node.updateChildTree(targetNode, destinationDirection, destinationIdList);
-
-                    App.clearAllSelected();
-                    App.selectNode(stackData.nodeData);
-
-                    var stackData = new App.stackData(stackData.nodeData, stackData.operationData);
-                    stackData.operationData = "delete";
-                    stackData.destinationDirection = stackData.destinationDirection;
-                    UndoRedo.stack.undo.push([stackData]);
-
-                }
-
-                if (stackData.operationData === "Vertical Reposition Down") {
-                    verticalRepositionAction([stackData.nodeData], App.Constants.KeyPressed.DOWN, UndoRedo.stack.undo);
-                }
-
-                if (stackData.operationData === "Vertical Reposition Up") {
-                    verticalRepositionAction([stackData.nodeData], App.Constants.KeyPressed.UP, UndoRedo.stack.undo);
-                }
-
-            }
-        });
-
-    }
-};
 
 Mousetrap.bind('command+shift+z', function () {
-    App.eventBinding.redoAction();
+    App.RepeatHandler.redo();
 });
 
-// The above function MUST be copied and the key binding changed to "CTRL+Y" for non- mac users
-
+Mousetrap.bind('ctrl+y', function () {
+    App.RepeatHandler.redo();
+});
 
 Mousetrap.bind('f2', function (event) {
     App.eventBinding.f2Action(event);
@@ -266,11 +155,11 @@ App.eventBinding.newNodeAddAction = function (action) {
     if (selectedNode) {
         var newNode = action(selectedNode);
 
-        var stackData1 = new App.stackData(App.map.getNodeDataWithNodeId(newNode._id), "delete");
+        var stackData1 = new App.stackData(App.map.getNodeDataWithNodeId(newNode._id), "deleteNode");
 
         stackData1.destinationDirection = App.Node.isRoot(stackData1.nodeData.parent) ? stackData1.nodeData.position : App.Node.getDirection(stackData1.nodeData);
 
-        UndoRedo.stack.undo.push([stackData1]);
+        App.RepeatHandler.addToActionStack([stackData1]);
 
         App.eventBinding.afterNewNodeAddition(newNode, selectedNode);
     }
@@ -342,12 +231,12 @@ App.eventBinding.deleteAction = function () {
         removedNodeIndex = App.Node.delete(selectedNode);
         nodeToBeFocussed = selectedNode.parentId;
 
-        var stackData = new App.stackData(selectedNode, "add");
+        var stackData = new App.stackData(selectedNode, "addNode");
         stackData.destinationDirection = dir;
         elementToPush.push(stackData);
     }
 
-    UndoRedo.stack.undo.push(elementToPush.reverse());
+    App.RepeatHandler.addToActionStack(elementToPush.reverse());
 
     if(areSiblings){
         App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
@@ -511,14 +400,18 @@ Mousetrap.bind('space', function () {
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
 
-    for (var i = 0; i < App.multiSelectedNodes.length; i++)
+    var multiStackData = [];
+    for (var i = 0; i < App.multiSelectedNodes.length; i++) {
         App.toggleCollapsedNode(App.multiSelectedNodes[i].__data__);
-
+        multiStackData.push(new App.stackData(App.multiSelectedNodes[i].__data__,"toggleCollapse"));
+    }
     App.multiSelectedNodes = d3.selectAll(".softSelected")[0];
 
     App.deselectNode();
     var node = App.multiSelectedNodes[App.multiSelectedNodes.length - 1];
     d3.select(node).classed("selected", true);
+
+    App.RepeatHandler.addToActionStack(multiStackData.reverse());
 
 });
 
