@@ -438,19 +438,21 @@ Mousetrap.bind('mod+right', debounce(0, true,
         }
     }));
 
-var verticalRepositionAction = function(nodes, repositionDirection, stack) {
+var verticalRepositionAction = function(nodes, repositionDirection) {
     var indexOfDeletedNode = nodes.findIndex(function (node) {
         return App.Node.isDeleted(node)
     });
     if(indexOfDeletedNode != -1) return;
 
     var undoStackElement = nodes.map(function(node) {
-        var operationData = repositionDirection == App.Constants.KeyPressed.UP ? "Vertical Reposition Down" : "Vertical Reposition Up";
+        var operationData = "verticalReposition";
         var stackData = new App.stackData(node, operationData);
+        stackData.keyPressed = repositionDirection == App.Constants.KeyPressed.UP ? App.Constants.KeyPressed.DOWN : App.Constants.KeyPressed.UP;
+
         App.Node.verticalReposition(node, repositionDirection);
         return stackData;
     });
-    stack.push(undoStackElement.reverse());
+    App.RepeatHandler.addToActionStack(undoStackElement.reverse());
 };
 
 App.getInOrderOfAppearance = function(multiSelectedNodes) {
@@ -480,7 +482,7 @@ App.eventBinding.upRepositionAction = function() {
     var areSiblings = App.areSiblingsOnSameSide(App.multiSelectedNodes);
     if(!areSiblings) return;
     var orderedNodes = App.getInOrderOfAppearance(App.multiSelectedNodes);
-    verticalRepositionAction(orderedNodes, App.Constants.KeyPressed.UP, UndoRedo.stack.undo);
+    verticalRepositionAction(orderedNodes, App.Constants.KeyPressed.UP);
 };
 
 Mousetrap.bind('mod+up', debounce(0, true, function () {
@@ -491,7 +493,7 @@ App.eventBinding.downRepositionAction = function () {
     var areSiblings = App.areSiblingsOnSameSide(App.multiSelectedNodes);
     if(!areSiblings) return;
     var orderedNodes = App.getInOrderOfAppearance(App.multiSelectedNodes);
-    verticalRepositionAction(orderedNodes.reverse(), App.Constants.KeyPressed.DOWN, UndoRedo.stack.undo);
+    verticalRepositionAction(orderedNodes.reverse(), App.Constants.KeyPressed.DOWN);
 };
 
 Mousetrap.bind('mod+down', debounce(0, true, function () {

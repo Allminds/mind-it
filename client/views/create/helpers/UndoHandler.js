@@ -112,6 +112,7 @@ var UndoRedo = {
             });
             if(multipleRedo.length > 0)
                 UndoRedo.addToStack(multipleRedo, (stackName == "undo" ? "redo" : "undo"));
+            App.clearAllSelected();
         }
     }
 };
