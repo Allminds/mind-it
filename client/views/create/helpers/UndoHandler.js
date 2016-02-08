@@ -20,7 +20,7 @@ var clone = function(stackData, newAction) {
         stackData.destinationIndex, stackData.oldParentId, stackData.keyPressed);
 };
 
-UndoRedo = {
+var UndoRedo = {
     stack: {
         undo:[],
         redo:[]
@@ -40,8 +40,6 @@ UndoRedo = {
                 App.expandRecursive(targetNode, targetNode._id);
 
             App.Node.addChild(targetNode, stackData.nodeData);
-            App.clearAllSelections();
-            App.selectNode(stackData.nodeData);
 
             return clone(stackData, "deleteNode");
 
