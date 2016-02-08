@@ -20,7 +20,7 @@ var clone = function(stackData, newAction) {
         stackData.destinationIndex, stackData.oldParentId, stackData.keyPressed);
 };
 
-var UndoRedo = {
+ UndoRedo = {
     stack: {
         undo:[],
         redo:[]
@@ -111,7 +111,7 @@ var UndoRedo = {
                     multipleRedo.push(reverseStackData);
             });
             if(multipleRedo.length > 0)
-                UndoRedo.addToStack(multipleRedo, (stackName == "undo" ? "redo" : "undo"));
+                UndoRedo.addToStack(multipleRedo.reverse(), (stackName == "undo" ? "redo" : "undo"));
             App.clearAllSelected();
         }
     }
