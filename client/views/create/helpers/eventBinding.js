@@ -420,40 +420,6 @@ Mousetrap.bind('mod+e', function () {
     App.exportParser.export(rootName);
 });
 
-Mousetrap.bind('mod+left', debounce(0, true,
-    function () {
-        var selection = d3.select(".node.selected")[0][0];
-        if (selection) {
-            var node = selection.__data__;
-            App.Node.horizontalReposition(node, App.Constants.KeyPressed.LEFT, App.toggleCollapsedNode);
-        }
-    }));
-
-Mousetrap.bind('mod+right', debounce(0, true,
-    function () {
-        var selection = d3.select(".node.selected")[0][0];
-        if (selection) {
-            var node = selection.__data__;
-            App.Node.horizontalReposition(node, App.Constants.KeyPressed.RIGHT, App.toggleCollapsedNode);
-        }
-    }));
-
-var verticalRepositionAction = function(nodes, repositionDirection) {
-    var indexOfDeletedNode = nodes.findIndex(function (node) {
-        return App.Node.isDeleted(node)
-    });
-    if(indexOfDeletedNode != -1) return;
-
-    var undoStackElement = nodes.map(function(node) {
-        var operationData = "verticalReposition";
-        var stackData = new App.stackData(node, operationData);
-        stackData.keyPressed = repositionDirection == App.Constants.KeyPressed.UP ? App.Constants.KeyPressed.DOWN : App.Constants.KeyPressed.UP;
-
-        App.Node.verticalReposition(node, repositionDirection);
-        return stackData;
-    });
-    App.RepeatHandler.addToActionStack(undoStackElement.reverse());
-};
 
 App.getInOrderOfAppearance = function(multiSelectedNodes) {
     var firstSelection = multiSelectedNodes[0].__data__;
@@ -461,7 +427,7 @@ App.getInOrderOfAppearance = function(multiSelectedNodes) {
     var parent = firstSelection.parent;
     var subTree = App.Node.getSubTree(parent, direction);
     var selectedNodeIds = multiSelectedNodes.map(function(selection) {
-       return selection.__data__._id;
+        return selection.__data__._id;
     });
     var orderedNodes = subTree.filter(function(selection) {
         return selectedNodeIds.indexOf(selection._id) >= 0;
@@ -477,27 +443,70 @@ App.areSiblingsOnSameSide = function(nodes) {
     })
 };
 
-
-App.eventBinding.upRepositionAction = function() {
+var getMultiSeletedNodes = function() {
     var areSiblings = App.areSiblingsOnSameSide(App.multiSelectedNodes);
-    if(!areSiblings) return;
-    var orderedNodes = App.getInOrderOfAppearance(App.multiSelectedNodes);
-    verticalRepositionAction(orderedNodes, App.Constants.KeyPressed.UP);
+    if(!areSiblings) return null;
+    return App.getInOrderOfAppearance(App.multiSelectedNodes);
+
+};
+
+
+App.eventBinding.horizontalRepositionAction = function(repositionDirection) {
+    var nodes = getMultiSeletedNodes();
+    if(nodes) {
+        var indexOfDeletedNode = nodes.findIndex(function (node) {
+            return App.Node.isDeleted(node)
+        });
+        if(indexOfDeletedNode != -1) return;
+
+        var undoStackElement = nodes.map(function(node) {
+            var operationData = "horizontalReposition";
+            var stackData = new App.stackData(node, operationData, null, node.index, node.parent);
+            stackData.keyPressed = repositionDirection == App.Constants.KeyPressed.RIGHT ? App.Constants.KeyPressed.LEFT : App.Constants.KeyPressed.RIGHT;
+
+            App.Node.horizontalReposition(node, repositionDirection, App.toggleCollapsedNode);
+            return stackData;
+        });
+        App.RepeatHandler.addToActionStack(undoStackElement.reverse());
+    }
+};
+
+Mousetrap.bind('mod+left', debounce(0, true,
+    function () {
+        App.eventBinding.horizontalRepositionAction(App.Constants.KeyPressed.LEFT);
+    }));
+
+Mousetrap.bind('mod+right', debounce(0, true,
+    function () {
+        App.eventBinding.horizontalRepositionAction(App.Constants.KeyPressed.RIGHT);
+    }));
+
+App.eventBinding.verticalRepositionAction = function(repositionDirection) {
+    var nodes = getMultiSeletedNodes();
+    if(nodes) {
+        var indexOfDeletedNode = nodes.findIndex(function (node) {
+            return App.Node.isDeleted(node)
+        });
+        if(indexOfDeletedNode != -1) return;
+
+        var undoStackElement = nodes.map(function(node) {
+            var operationData = "verticalReposition";
+            var stackData = new App.stackData(node, operationData);
+            stackData.keyPressed = repositionDirection == App.Constants.KeyPressed.UP ? App.Constants.KeyPressed.DOWN : App.Constants.KeyPressed.UP;
+
+            App.Node.verticalReposition(node, repositionDirection);
+            return stackData;
+        });
+        App.RepeatHandler.addToActionStack(undoStackElement.reverse());
+    }
 };
 
 Mousetrap.bind('mod+up', debounce(0, true, function () {
-    App.eventBinding.upRepositionAction();
+    App.eventBinding.verticalRepositionAction(App.Constants.KeyPressed.UP);
 }));
 
-App.eventBinding.downRepositionAction = function () {
-    var areSiblings = App.areSiblingsOnSameSide(App.multiSelectedNodes);
-    if(!areSiblings) return;
-    var orderedNodes = App.getInOrderOfAppearance(App.multiSelectedNodes);
-    verticalRepositionAction(orderedNodes.reverse(), App.Constants.KeyPressed.DOWN);
-};
-
 Mousetrap.bind('mod+down', debounce(0, true, function () {
-    App.eventBinding.downRepositionAction();
+    App.eventBinding.verticalRepositionAction(App.Constants.KeyPressed.DOWN);
 }));
 
 Mousetrap.bind("esc", function goToRootNode() {
