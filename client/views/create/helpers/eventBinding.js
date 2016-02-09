@@ -53,28 +53,6 @@ App.eventBinding.f2Action = function (event) {
     App.RepeatHandler.addToActionStack([stackData]);
 };
 
-var deleteNode = function(stack, nodeData, destinationDirection) {
-    App.Node.delete(nodeData);
-    App.eventBinding.focusAfterDelete(nodeData, nodeData.index);
-    var stackData = new App.stackData(nodeData, "add");
-    stackData.destinationDirection = destinationDirection;
-    stack.push([stackData]);
-};
-
-var undoRedoDeleteOperation = function(stack, stackData) {
-    if (stackData.nodeData.parent.isCollapsed) {
-        App.expandRecursive(stackData.nodeData.parent, stackData.nodeData.parent._id);
-    }
-    if (stackData.nodeData.childSubTree.length == 0)
-        deleteNode(stack, stackData.nodeData, stackData.destinationDirection);
-};
-
-var clearAllSelections = function() {
-    d3.selectAll(".selected").classed("selected", false);
-    d3.selectAll(".softSelected").classed("softSelected", false);
-    App.multiSelectedNodes = [];
-};
-
 Mousetrap.bind('mod+z', function () {
     App.RepeatHandler.undo();
 });
@@ -103,9 +81,9 @@ Mousetrap.bind('mod+x', function () {
         var indexOfNode = App.Node.getIndexOfNode(node);
         App.nodeToPasteBulleted.push( App.CopyParser.populateBulletedFromObject(node) );
         App.cutNode(node);
-        return new App.stackData(node, "addNode", direction, indexOfNode, parent);
+        return new App.stackData(node, "addNodeAfterCut", direction, indexOfNode, parent);
     });
-    UndoRedo.stack.undo.push(elementToBePushed.reverse());
+    App.RepeatHandler.addToActionStack(elementToBePushed.reverse());
 });
 
 App.eventBinding.copyAction = function() {
@@ -127,19 +105,25 @@ Mousetrap.bind('mod+v', function () {
     if (targetNode.isCollapsed)
         App.expandRecursive(targetNode, targetNode._id);
 
-    if (App.nodeCutToPaste) {
+    if (App.nodeCutToPaste != null && App.nodeCutToPaste.length) {
         var undoArray = App.nodeCutToPaste.map(function(element) {
             App.Node.reposition(element, targetNode, null, null, dir);
-            return new App.stackData(element, "deleteNode");
+            return new App.stackData(element, "cutNode");
         });
-        UndoRedo.stack.undo.push(undoArray);
-        App.nodeCutToPaste = null;
+       App.RepeatHandler.addToActionStack(undoArray);
+        App.nodeCutToPaste = [];
     } else {
         var undoArray = App.nodeToPasteBulleted.map(function(sourceNodeBulleted){
-            var headerNode = App.CopyParser.populateObjectFromBulletedList(sourceNodeBulleted, targetNode);
-            return new App.stackData(headerNode, "deleteNode");
+            var headerNode = App.CopyParser.populateObjectFromBulletedList(sourceNodeBulleted, targetNode),
+                index = App.Node.getSubTree(App.map.getNodeDataWithNodeId(headerNode.parentId),
+                    App.getDirection(headerNode)).length;
+
+
+            var stackData = new App.stackData(headerNode, "deleteNode",App.getDirection(headerNode), index);
+            stackData.oldParentId = headerNode.parentId;
+            return stackData;
         });
-        UndoRedo.stack.undo.push(undoArray);
+        App.RepeatHandler.addToActionStack(undoArray.reverse());
     }
 
 });

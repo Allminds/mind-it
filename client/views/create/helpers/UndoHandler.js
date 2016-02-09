@@ -16,8 +16,10 @@ App.RepeatHandler = {
 
 var clone = function(stackData, newAction) {
     newAction = newAction ? newAction : stackData.operationData;
-    return new App.stackData(stackData.nodeData, newAction, stackData.destinationDirection,
-        stackData.destinationIndex, stackData.oldParentId, stackData.keyPressed);
+    var returnStack =  new App.stackData(stackData.nodeData, newAction, stackData.destinationDirection,
+        stackData.destinationIndex, null, stackData.keyPressed);
+    returnStack.oldParentId = stackData.oldParentId;
+    return returnStack;
 };
 
  UndoRedo = {
@@ -95,6 +97,47 @@ var clone = function(stackData, newAction) {
         toggleCollapse: function(stackData) {
             App.toggleCollapsedNode(stackData.nodeData);
             return clone(stackData);
+        },
+        addNodeAfterCut: function(stackData) {
+            var targetNode = stackData.oldParentId ? App.map.getNodeDataWithNodeId(stackData.oldParentId) : stackData.nodeData.parent,
+                destinationDirection = stackData.destinationDirection,
+                destinationSubtree = App.Node.getSubTree(targetNode, destinationDirection);
+
+            stackData.nodeData.index = destinationSubtree[stackData.destinationIndex] ? stackData.destinationIndex : destinationSubtree.length;
+
+            if (targetNode.isCollapsed)
+                App.expandRecursive(targetNode, targetNode._id);
+
+            App.Node.addChild(targetNode, stackData.nodeData);
+            App.nodeCutToPaste = [];
+            return clone(stackData, "cutNode");
+        },
+
+        cutNode: function(stackData) {
+            var parent = App.map.getNodeDataWithNodeId(stackData.oldParentId);
+            if (parent && parent.isCollapsed) {
+                App.expandRecursive(parent, stackData.oldParentId);
+            }
+            if (stackData.nodeData.childSubTree.length == 0) {
+                App.Node.delete(stackData.nodeData);
+                App.eventBinding.focusAfterDelete(stackData.nodeData, stackData.nodeData.index);
+                App.nodeCutToPaste.push(stackData.nodeData);
+                return clone(stackData, "addNodeAfterCut");
+            }
+        },
+        reposition: function(stackData) {
+            var oldParent = App.map.getNodeDataWithNodeId(stackData.oldParentId),
+                parentId = stackData.nodeData.parentId,
+                parent = App.map.getNodeDataWithNodeId(parentId),
+                dir = App.getDirection(stackData.nodeData),
+                index = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree).map(function(_){return _._id}).indexOf(stackData.nodeData._id);
+
+            App.Node.reposition(stackData.nodeData, oldParent);
+            var returnStackData = clone(stackData);
+            returnStackData.oldParentId = parentId;
+            returnStackData.destinationDirection = dir;
+            returnStackData.destinationIndex = index;
+            return returnStackData;
         }
 
     },

@@ -134,21 +134,21 @@ describe('eventBinding.js', function () {
        expect(window.alert).toHaveBeenCalled();
      });
 
-     it("should delete node if I click yes on confirm dialog", function() {
-       App.chart = jasmine.createSpyObj('App.chart', [ 'update' ]);
-
-       App.chart.update.and.callFake(function() {
-         //throw 'an-exception';
-       });
-
-       spyOn(window, "confirm").and.returnValue(true);
-       spyOn(App.eventBinding,'focusAfterDelete');
-
-       App.cutNode(parent);
-       expect(root.left[0]).not.toBe(parent);
-
-
-     });
+     //it("should delete node if I click yes on confirm dialog", function() {
+     //  App.chart = jasmine.createSpyObj('App.chart', [ 'update' ]);
+     //
+     //  App.chart.update.and.callFake(function() {
+     //    //throw 'an-exception';
+     //  });
+     //
+     //  spyOn(window, "confirm").and.returnValue(true);
+     //  spyOn(App.eventBinding,'focusAfterDelete');
+     //
+     //  App.cutNode(parent);
+     //  expect(root.left[0]).not.toBe(parent);
+     //
+     //
+     //});
 
   //   it("should call all internal methods on cutNode call for node other than root", function () {
   //     var parent = {_id: "parent"},
