@@ -451,31 +451,33 @@ App.areSiblingsOnSameSide = function(nodes) {
     })
 };
 
-var getMultiSeletedNodes = function() {
+var getMultiSelectedNodes = function(inorder) {
     var areSiblings = App.areSiblingsOnSameSide(App.multiSelectedNodes);
     if(!areSiblings) return null;
-    return App.getInOrderOfAppearance(App.multiSelectedNodes);
+    return inorder? App.multiSelectedNodes.map(function(_){return _.__data__;}):App.getInOrderOfAppearance(App.multiSelectedNodes);
 
 };
 
 
 App.eventBinding.horizontalRepositionAction = function(repositionDirection) {
-    var nodes = getMultiSeletedNodes();
+    var nodes = getMultiSelectedNodes(true);
     if(nodes) {
         var indexOfDeletedNode = nodes.findIndex(function (node) {
             return App.Node.isDeleted(node)
-        });
+        }),
+            siblings = App.Node.getSubTree(nodes[0].parent, App.Node.getDirection(nodes[0]));
+
         if(indexOfDeletedNode != -1) return;
 
         var undoStackElement = nodes.map(function(node) {
             var operationData = "horizontalReposition";
-            var stackData = new App.stackData(node, operationData, null, node.index, node.parent);
+            var stackData = new App.stackData(node, operationData, null,
+                siblings.map(function(_){return _._id}).indexOf(node._id), node.parent);
             stackData.keyPressed = repositionDirection == App.Constants.KeyPressed.RIGHT ? App.Constants.KeyPressed.LEFT : App.Constants.KeyPressed.RIGHT;
-
-            App.Node.horizontalReposition(node, repositionDirection, App.toggleCollapsedNode);
             return stackData;
         });
-        App.RepeatHandler.addToActionStack(undoStackElement.reverse());
+        if(App.Node.horizontalReposition(nodes, repositionDirection, App.toggleCollapsedNode))
+        App.RepeatHandler.addToActionStack(undoStackElement);
     }
 };
 
@@ -490,7 +492,7 @@ Mousetrap.bind('mod+right', debounce(0, true,
     }));
 
 App.eventBinding.verticalRepositionAction = function(repositionDirection) {
-    var nodes = getMultiSeletedNodes();
+    var nodes = getMultiSelectedNodes();
     if(nodes) {
         var indexOfDeletedNode = nodes.findIndex(function (node) {
             return App.Node.isDeleted(node)

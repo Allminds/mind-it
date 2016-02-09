@@ -105,13 +105,15 @@ var clone = function(stackData, newAction) {
         if(UndoRedo.stack[stackName].length > 0) {
             var multipleUndo = this.stack[stackName].pop();
             var multipleRedo = [];
+            var operationData = multipleUndo[0].operationData;
             multipleUndo.forEach(function(stackData){
                 var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
                 if(reverseStackData != null)
                     multipleRedo.push(reverseStackData);
             });
             if(multipleRedo.length > 0)
-                UndoRedo.addToStack(multipleRedo.reverse(), (stackName == "undo" ? "redo" : "undo"));
+                UndoRedo.addToStack(operationData == "horizontalReposition" ? multipleRedo : multipleRedo.reverse(),
+                    (stackName == "undo" ? "redo" : "undo"));
             App.clearAllSelected();
         }
     }
