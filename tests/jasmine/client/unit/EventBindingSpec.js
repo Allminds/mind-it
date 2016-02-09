@@ -647,6 +647,17 @@ describe('eventBinding.js', function () {
               expect(App.Node.verticalReposition.calls.argsFor(1)).toEqual(child2, App.Constants.KeyPressed.UP);
               expect(App.Node.verticalReposition.calls.argsFor(2)).toEqual(child3, App.Constants.KeyPressed.UP);
           });
+
+          it("copy action", function() {
+              spyOn(App.CopyParser, "populateBulletedFromObject").and.returnValue("A");
+              App.multiSelectedNodes = [{__data__: child2}, {__data__: child1}];
+
+              App.eventBinding.copyAction();
+
+              expect(App.nodeToPasteBulleted[0]).toBe("A");
+              expect(App.nodeToPasteBulleted[1]).toBe("A");
+              expect(App.nodeToPasteBulleted.length).toBe(2);
+          })
       });
   });
 });
