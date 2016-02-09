@@ -20,7 +20,7 @@ App.cutNode = function (selectedNode) {
         return;
     }
 
-    App.nodeCutToPaste = selectedNode;
+    App.nodeCutToPaste.push(selectedNode);
 
     var dir = App.Node.getDirection(selectedNode),
         parent = selectedNode.parent,
@@ -93,12 +93,19 @@ Mousetrap.bind('f2', function (event) {
 
 
 Mousetrap.bind('mod+x', function () {
-    var selection = d3.select(".node.selected")[0][0];
-    if (selection) {
-        var node = selection.__data__;
-        App.nodeToPasteBulleted = App.CopyParser.populateBulletedFromObject(node);
+    var selectedNodes = App.multiSelectedNodes;
+    App.nodeToPasteBulleted = [];
+    App.nodeCutToPaste = [];
+    var elementToBePushed = selectedNodes.map(function(element) {
+        var node = element.__data__;
+        var parent = node.parent;
+        var direction = App.getDirection(node);
+        var indexOfNode = App.Node.getIndexOfNode(node);
+        App.nodeToPasteBulleted.push( App.CopyParser.populateBulletedFromObject(node) );
         App.cutNode(node);
-    }
+        return new App.stackData(node, "addNode", direction, indexOfNode, parent);
+    });
+    UndoRedo.stack.undo.push(elementToBePushed.reverse());
 });
 
 App.eventBinding.copyAction = function() {
@@ -121,7 +128,11 @@ Mousetrap.bind('mod+v', function () {
         App.expandRecursive(targetNode, targetNode._id);
 
     if (App.nodeCutToPaste) {
-        App.Node.reposition(App.nodeCutToPaste, targetNode, null, null, dir);
+        var undoArray = App.nodeCutToPaste.map(function(element) {
+            App.Node.reposition(element, targetNode, null, null, dir);
+            return new App.stackData(element, "deleteNode");
+        });
+        UndoRedo.stack.undo.push(undoArray);
         App.nodeCutToPaste = null;
     } else {
         var undoArray = App.nodeToPasteBulleted.map(function(sourceNodeBulleted){

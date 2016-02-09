@@ -90,8 +90,8 @@ var populateObjectFromBulletedList = function(bulletedList, parentNode, expected
 
 App.CopyParser.populateObjectFromBulletedList = function(bulletedString, parentNode) {
     if(bulletedString.length > 0) {
-        var headerNodeOfBulletedList = populateObjectFromBulletedList(bulletedString.split(/\n\r|\n/), parentNode, 0);
-        headerNodeOfBulletedList.parent = parentNode;
+        var headerNodeOfBulletedList=populateObjectFromBulletedList(bulletedString.split(/\n\r|\n/), parentNode, 0);
+        headerNodeOfBulletedList.parent=parentNode;
         return headerNodeOfBulletedList;
     }
 };

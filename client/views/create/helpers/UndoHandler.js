@@ -30,11 +30,11 @@ var clone = function(stackData, newAction) {
             if(App.Node.isDeleted(stackData.nodeData.parent))
                 return;
 
-            var targetNode = stackData.nodeData.parent,
+            var targetNode = stackData.oldParentId ? App.map.getNodeDataWithNodeId(stackData.oldParentId) : stackData.nodeData.parent,
                 destinationDirection = stackData.destinationDirection,
                 destinationSubtree = App.Node.getSubTree(targetNode, destinationDirection);
 
-            stackData.nodeData.index = destinationSubtree[stackData.nodeData.index] ? stackData.nodeData.index : destinationSubtree.length;
+            stackData.nodeData.index = destinationSubtree[stackData.destinationIndex] ? stackData.destinationIndex : destinationSubtree.length;
 
             if (targetNode.isCollapsed)
                 App.expandRecursive(targetNode, targetNode._id);
@@ -45,8 +45,9 @@ var clone = function(stackData, newAction) {
 
         },
         deleteNode: function(stackData) {
-            if (stackData.nodeData.parent.isCollapsed) {
-                App.expandRecursive(stackData.nodeData.parent, stackData.nodeData.parent._id);
+            var parent = App.map.getNodeDataWithNodeId(stackData.oldParentId);
+            if (parent && parent.isCollapsed) {
+                App.expandRecursive(parent, stackData.oldParentId);
             }
             if (stackData.nodeData.childSubTree.length == 0) {
                 App.Node.delete(stackData.nodeData);
