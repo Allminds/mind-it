@@ -39,6 +39,7 @@ var populateObjectFromBulletedList = function(bulletedList, parentNode, expected
     var childNodeList = [];
     var childNodeSubTree = [];
     var childBulletList = [];
+    var headerNodeOfBulletedList = null;
     var siblingIdList = parentNode[dir].map(function(_){return _._id ? _._id : _ });
     for(var i = 0; i < bulletedList.length;) {
         var depth = bulletedList[i].split('\t').length - 1;
@@ -50,6 +51,7 @@ var populateObjectFromBulletedList = function(bulletedList, parentNode, expected
                 nodeName = nodeName == "§" ? "" : nodeName;
                 nodeName = nodeName.replace(/‡/gm, "\n");
                 newNode = new App.Node(nodeName, dir, parentNode, i);
+                if(i == 0) headerNodeOfBulletedList = newNode;
                 newNode = App.Node.addToDatabase(newNode);
                 siblingIdList.push(newNode._id);
             }
@@ -83,10 +85,13 @@ var populateObjectFromBulletedList = function(bulletedList, parentNode, expected
         if (childBulletList && childBulletList.length > 0)
             populateObjectFromBulletedList(childBulletList, newParent, expectedDepthStore + 1);
     });
+    return headerNodeOfBulletedList;
 };
 
 App.CopyParser.populateObjectFromBulletedList = function(bulletedString, parentNode) {
     if(bulletedString.length > 0) {
-        populateObjectFromBulletedList(bulletedString.split(/\n\r|\n/), parentNode, 0);
+        var headerNodeOfBulletedList = populateObjectFromBulletedList(bulletedString.split(/\n\r|\n/), parentNode, 0);
+        headerNodeOfBulletedList.parent = parentNode;
+        return headerNodeOfBulletedList;
     }
-}
+};
