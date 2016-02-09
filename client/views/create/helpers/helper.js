@@ -115,6 +115,7 @@ App.resetPathClassForCurrentNode = function(parentNodeData, node){
     }
     else{
         depth = parentNodeData.depth + 1;
+        if(parentNodeData.childSubTree)
         parentNodeData.childSubTree.forEach(function(child){
                     tempNode.push(d3.selectAll('path')[0].filter(function(_){return _.__data__.target._id == child._id}));
         });
