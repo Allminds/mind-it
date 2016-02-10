@@ -101,37 +101,66 @@ Mousetrap.bind('mod+c', function () {
 
 var getNextSiblingForShift = function(currentNode, keyPressed) {
     var nextNode = null;
+    var siblingsOfParent = currentNode.parent.parent ? App.Node.getSubTree(currentNode.parent.parent, App.getDirection(currentNode)) : null;
     var siblings = currentNode.parent ? App.Node.getSubTree(currentNode.parent, App.getDirection(currentNode)) : null;
-    if(siblings) {
-        var currentIndex = siblings.map(function(_){return _._id}).indexOf(currentNode._id);
+
+
+    var currentNodeDepth=d3.select(".selected")[0][0].__data__.depth;
+        var allVisibleNodes= d3.selectAll(".node")[0];
+        var sameLevelNodes=allVisibleNodes.filter(function(_){
+            return (_.__data__.depth==currentNodeDepth && App.getDirection(_.__data__)==App.getDirection(d3.select(".selected")[0][0].__data__) );
+        });
+
+
+
+
+
+    if(sameLevelNodes) {
+        var currentIndex = sameLevelNodes.map(function(_){return _.__data__._id}).indexOf(currentNode._id);
         if(keyPressed == App.Constants.KeyPressed.UP) {
-            nextNode = (siblings[currentIndex - 1 < 0 ? null: currentIndex -1]);
+            nextNode = (sameLevelNodes[currentIndex - 1 < 0 ? null : currentIndex -1]);
         } else if(keyPressed == App.Constants.KeyPressed.DOWN){
-            nextNode = (siblings[currentIndex + 1 == siblings.length  ? null : currentIndex  + 1]);
+            nextNode = (sameLevelNodes[currentIndex + 1 == sameLevelNodes.length  ? null : currentIndex  + 1]);
         }
     }
     return nextNode;
 }
 
+
+var sortNodesAccToUi=function(nodes)
+{
+for(var i=0;i<nodes.length;i++)
+{
+    for(var j=i;j<nodes.length;j++)
+    {
+        if(nodes[i])
+
+    }
+
+
+}
+
+}
 Mousetrap.bind('shift+up',function()
 {
-var node = d3.select('.selected').node().__data__;
-var nextNode = getNextSiblingForShift(node, App.Constants.KeyPressed.UP);
 
-if(!nextNode)
-{
-return;
-}
 
-nextNode = d3.selectAll('.node')[0].find(function(_){return _.__data__._id == nextNode._id;});
-var node = d3.select('.selected').node();
-if( d3.select(nextNode).attr("class").indexOf("softSelected") >=0)
-    App.select(node,true);
-else
-{
-App.select(nextNode, true);
-}
 
+    var node = d3.select('.selected').node();
+    var nextNode = getNextSiblingForShift(node.__data__, App.Constants.KeyPressed.UP);
+
+    if(!nextNode)
+    {
+    return;
+    }
+
+    nextNode = d3.selectAll('.node')[0].find(function(_){return _.__data__._id == nextNode._id;});
+
+    if( d3.select(nextNode).attr("class").indexOf("softSelected") >=0)
+        App.select(node,true);
+    else {
+        App.select(nextNode, true);
+    }
 });
 
 Mousetrap.bind('shift+down',function()
@@ -324,7 +353,7 @@ App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
         index = 0;
     if (!node.children)
         return node;
-    if (node.depth == depth) {
+    if (node.deptFh == depth) {
         return node;
     }
     while (node.children) {
