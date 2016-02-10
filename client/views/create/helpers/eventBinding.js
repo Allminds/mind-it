@@ -528,8 +528,21 @@ App.eventBinding.horizontalRepositionAction = function(repositionDirection) {
             stackData.keyPressed = repositionDirection == App.Constants.KeyPressed.RIGHT ? App.Constants.KeyPressed.LEFT : App.Constants.KeyPressed.RIGHT;
             return stackData;
         });
-        if(App.Node.horizontalReposition(nodes, repositionDirection, App.toggleCollapsedNode))
-        App.RepeatHandler.addToActionStack(undoStackElement);
+
+        var oldParents = nodes.map(function(_){return _.parent;});
+
+        if(App.Node.horizontalReposition(nodes, repositionDirection, App.toggleCollapsedNode)) {
+            var newParents = nodes.map(function(_){return _.parent;});
+            var flag = true;
+            for(var i = 0; i<oldParents.length; i++) {
+                if(oldParents[i] == newParents[i]){
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag)
+            App.RepeatHandler.addToActionStack(undoStackElement);
+        }
     }
 };
 
