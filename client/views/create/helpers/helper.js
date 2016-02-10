@@ -115,6 +115,7 @@ App.resetPathClassForCurrentNode = function(parentNodeData, node){
     }
     else{
         depth = parentNodeData.depth + 1;
+        if(parentNodeData.childSubTree)
         parentNodeData.childSubTree.forEach(function(child){
                     tempNode.push(d3.selectAll('path')[0].filter(function(_){return _.__data__.target._id == child._id}));
         });
@@ -390,21 +391,13 @@ App.checkOverlap = function (rect1) {
 
 App.dragAndDrop = function (draggedNode, droppedOnNode, toggleCallback) {
     if (droppedOnNode.isCollapsed) toggleCallback(droppedOnNode);
-    App.Node.reposition(draggedNode, droppedOnNode);
-    /*
-     var parent = draggedNode.parent,
-     dir = App.Node.getDirection(draggedNode),
-     siblings = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree) || [],
-     draggedNodeIndex = siblings.indexOf(draggedNode),
-     destinationSubTree = App.Node.isRoot(droppedOnNode) ? droppedOnNode[dir] : droppedOnNode.childSubTree,
-     destinationDirection = App.Node.isRoot(droppedOnNode) ? (dir) : App.getDirection(droppedOnNode);
+    var parent = draggedNode.parent,
+        dir = App.getDirection(draggedNode),
+        siblingIds = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree).map(function(_){return _._id});
 
-     destinationSubTree.push(draggedNode);
-     siblings.splice(draggedNodeIndex,1);
-     draggedNode.parentId = droppedOnNode._id;
-     App.Node.updateParentIdOfNode(draggedNode);
-     App.Node.updateChildTree(droppedOnNode, destinationDirection, destinationSubTree);
-     App.Node.updateChildTree(parent, dir, siblings);  */
+    var stackData = new App.stackData(draggedNode, "reposition", dir, siblingIds.indexOf(draggedNode._id),parent);
+    App.Node.reposition(draggedNode, droppedOnNode);
+    App.RepeatHandler.addToActionStack([stackData]);
 
 };
 

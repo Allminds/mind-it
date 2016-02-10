@@ -16,11 +16,13 @@ App.RepeatHandler = {
 
 var clone = function(stackData, newAction) {
     newAction = newAction ? newAction : stackData.operationData;
-    return new App.stackData(stackData.nodeData, newAction, stackData.destinationDirection,
-        stackData.destinationIndex, stackData.oldParentId, stackData.keyPressed);
+    var returnStack =  new App.stackData(stackData.nodeData, newAction, stackData.destinationDirection,
+        stackData.destinationIndex, null, stackData.keyPressed);
+    returnStack.oldParentId = stackData.oldParentId;
+    return returnStack;
 };
 
-UndoRedo = {
+ UndoRedo = {
     stack: {
         undo:[],
         redo:[]
@@ -30,25 +32,24 @@ UndoRedo = {
             if(App.Node.isDeleted(stackData.nodeData.parent))
                 return;
 
-            var targetNode = stackData.nodeData.parent,
+            var targetNode = stackData.oldParentId ? App.map.getNodeDataWithNodeId(stackData.oldParentId) : stackData.nodeData.parent,
                 destinationDirection = stackData.destinationDirection,
                 destinationSubtree = App.Node.getSubTree(targetNode, destinationDirection);
 
-            stackData.nodeData.index = destinationSubtree[stackData.nodeData.index] ? stackData.nodeData.index : destinationSubtree.length;
+            stackData.nodeData.index = destinationSubtree[stackData.destinationIndex] ? stackData.destinationIndex : destinationSubtree.length;
 
             if (targetNode.isCollapsed)
                 App.expandRecursive(targetNode, targetNode._id);
 
             App.Node.addChild(targetNode, stackData.nodeData);
-            App.clearAllSelections();
-            App.selectNode(stackData.nodeData);
 
             return clone(stackData, "deleteNode");
 
         },
         deleteNode: function(stackData) {
-            if (stackData.nodeData.parent.isCollapsed) {
-                App.expandRecursive(stackData.nodeData.parent, stackData.nodeData.parent._id);
+            var parent = App.map.getNodeDataWithNodeId(stackData.oldParentId);
+            if (parent && parent.isCollapsed) {
+                App.expandRecursive(parent, stackData.oldParentId);
             }
             if (stackData.nodeData.childSubTree.length == 0) {
                 App.Node.delete(stackData.nodeData);
@@ -96,6 +97,47 @@ UndoRedo = {
         toggleCollapse: function(stackData) {
             App.toggleCollapsedNode(stackData.nodeData);
             return clone(stackData);
+        },
+        addNodeAfterCut: function(stackData) {
+            var targetNode = stackData.oldParentId ? App.map.getNodeDataWithNodeId(stackData.oldParentId) : stackData.nodeData.parent,
+                destinationDirection = stackData.destinationDirection,
+                destinationSubtree = App.Node.getSubTree(targetNode, destinationDirection);
+
+            stackData.nodeData.index = destinationSubtree[stackData.destinationIndex] ? stackData.destinationIndex : destinationSubtree.length;
+
+            if (targetNode.isCollapsed)
+                App.expandRecursive(targetNode, targetNode._id);
+
+            App.Node.addChild(targetNode, stackData.nodeData);
+            App.nodeCutToPaste = [];
+            return clone(stackData, "cutNode");
+        },
+
+        cutNode: function(stackData) {
+            var parent = App.map.getNodeDataWithNodeId(stackData.oldParentId);
+            if (parent && parent.isCollapsed) {
+                App.expandRecursive(parent, stackData.oldParentId);
+            }
+            if (stackData.nodeData.childSubTree.length == 0) {
+                App.Node.delete(stackData.nodeData);
+                App.eventBinding.focusAfterDelete(stackData.nodeData, stackData.nodeData.index);
+                App.nodeCutToPaste.push(stackData.nodeData);
+                return clone(stackData, "addNodeAfterCut");
+            }
+        },
+        reposition: function(stackData) {
+            var oldParent = App.map.getNodeDataWithNodeId(stackData.oldParentId),
+                parentId = stackData.nodeData.parentId,
+                parent = App.map.getNodeDataWithNodeId(parentId),
+                dir = App.getDirection(stackData.nodeData),
+                index = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree).map(function(_){return _._id}).indexOf(stackData.nodeData._id);
+
+            App.Node.reposition(stackData.nodeData, oldParent);
+            var returnStackData = clone(stackData);
+            returnStackData.oldParentId = parentId;
+            returnStackData.destinationDirection = dir;
+            returnStackData.destinationIndex = index;
+            return returnStackData;
         }
 
     },
@@ -107,13 +149,16 @@ UndoRedo = {
         if(UndoRedo.stack[stackName].length > 0) {
             var multipleUndo = this.stack[stackName].pop();
             var multipleRedo = [];
+            var operationData = multipleUndo[0].operationData;
             multipleUndo.forEach(function(stackData){
                 var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
                 if(reverseStackData != null)
                     multipleRedo.push(reverseStackData);
             });
             if(multipleRedo.length > 0)
-                UndoRedo.addToStack(multipleRedo, (stackName == "undo" ? "redo" : "undo"));
+                UndoRedo.addToStack(operationData == "horizontalReposition" ? multipleRedo : multipleRedo.reverse(),
+                    (stackName == "undo" ? "redo" : "undo"));
+            App.clearAllSelected();
         }
     }
 };
