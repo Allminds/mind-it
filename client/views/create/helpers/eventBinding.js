@@ -489,6 +489,8 @@ Mousetrap.bind('mod+right', debounce(0, true,
 App.eventBinding.verticalRepositionAction = function(repositionDirection) {
     var nodes = getMultiSelectedNodes();
     if(nodes) {
+        if(repositionDirection == App.Constants.KeyPressed.DOWN)
+            nodes = nodes.reverse();
         var indexOfDeletedNode = nodes.findIndex(function (node) {
             return App.Node.isDeleted(node)
         });
