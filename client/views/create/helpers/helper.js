@@ -169,10 +169,27 @@ App.nodeSelector = {
     }
 };
 
-App.select = function (node) {
+App.select = function (node, softSelect) {
     // Find previously selected and deselect
 
-    if (App.cmdDown) {
+    if (App.cmdDown || softSelect) {
+
+          if( App.multiSelectedNodes.indexOf(node)>=0) {
+
+              if(App.multiSelectedNodes.length==1) return;
+              App.deselectNode();
+              App.multiSelectedNodes.splice(App.multiSelectedNodes.indexOf(node),1);
+              d3.select(App.multiSelectedNodes[App.multiSelectedNodes.length-1]).classed("selected",true);
+              d3.select(node).classed("softSelected",false);
+
+              return;
+          }
+
+
+
+
+
+
         d3.select(node).classed("softSelected", true);
         App.deselectNode();
         d3.select(node).classed("selected", true);
