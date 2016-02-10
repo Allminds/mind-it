@@ -99,6 +99,63 @@ Mousetrap.bind('mod+c', function () {
     App.eventBinding.copyAction();
 });
 
+var getNextSiblingForShift = function(currentNode, keyPressed) {
+    var nextNode = null;
+    var siblings = currentNode.parent ? App.Node.getSubTree(currentNode.parent, App.getDirection(currentNode)) : null;
+    if(siblings) {
+        var currentIndex = siblings.map(function(_){return _._id}).indexOf(currentNode._id);
+        if(keyPressed == App.Constants.KeyPressed.UP) {
+            nextNode = (siblings[currentIndex - 1 < 0 ? null: currentIndex -1]);
+        } else if(keyPressed == App.Constants.KeyPressed.DOWN){
+            nextNode = (siblings[currentIndex + 1 == siblings.length  ? null : currentIndex  + 1]);
+        }
+    }
+    return nextNode;
+}
+
+Mousetrap.bind('shift+up',function()
+{
+var node = d3.select('.selected').node().__data__;
+var nextNode = getNextSiblingForShift(node, App.Constants.KeyPressed.UP);
+
+if(!nextNode)
+{
+return;
+}
+
+nextNode = d3.selectAll('.node')[0].find(function(_){return _.__data__._id == nextNode._id;});
+var node = d3.select('.selected').node();
+if( d3.select(nextNode).attr("class").indexOf("softSelected") >=0)
+    App.select(node,true);
+else
+{
+App.select(nextNode, true);
+}
+
+});
+
+Mousetrap.bind('shift+down',function()
+{
+var node = d3.select('.selected').node().__data__;
+var nextNode = getNextSiblingForShift(node, App.Constants.KeyPressed.DOWN);
+if(!nextNode)
+{
+return;
+}
+var node = d3.select('.selected').node();
+nextNode = d3.selectAll('.node')[0].find(function(_){return _.__data__._id == nextNode._id;});
+if( d3.select(nextNode).attr("class").indexOf("softSelected") >=0)
+    App.select(node,true);
+else
+{
+App.select(nextNode, true);
+}
+
+
+
+});
+
+
 Mousetrap.bind('mod+v', function () {
     var targetNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
     var dir = App.calculateDirection(targetNode);
