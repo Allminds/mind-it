@@ -2,6 +2,8 @@ App.eventBinding = {};
 App.nodeToPasteBulleted = [];
 App.nodeCutToPaste = null;
 App.isIndicatorActive = false;
+App.allDescendants=[];
+App.indexDescendants=0;
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
@@ -200,6 +202,177 @@ App.select(nextNode, true);
 
 
 });
+var selectAllDescendants =function(selectedNode)
+{
+
+         children = App.Node.isRoot(selectedNode) ? App.Node.getSubTree(selectedNode,"right").concat(App.Node.getSubTree(selectedNode,"left")) : selectedNode.childSubTree;
+if(children)
+{
+children.forEach(function(child)
+{
+App.allDescendants[App.indexDescendants++]=child;
+
+selectAllDescendants(child);
+
+
+}
+
+);}
+
+}
+
+Mousetrap.bind('shift+right',function()
+{
+App.allDescendants=[];
+
+
+    var selectedNode = d3.select('.selected').node();
+
+
+//var dbNode = App.Node.d3NodeToDbNode(selectedNode),
+        parent = selectedNode.__data__.parentId ? selectedNode.__data__.parent : selectedNode.__data__;
+        dir = App.calculateDirection(parent);
+        if(dir=="right")
+        {
+            selectAllDescendants(selectedNode.__data__);
+        }
+        else if(dir== "left")
+        {
+                    selectAllDescendants(parent);
+                                        //App.allDescendants[App.indexDescendants++]=parent;
+
+
+
+        }
+        else
+        {
+        App.allDescendants[App.indexDescendants++]=parent;
+                            selectAllDescendants(parent);
+        }
+
+                 var currentNodeDepth=d3.select(".selected")[0][0].__data__.depth;
+                 var allVisibleNodes= d3.selectAll(".node")[0];
+
+               allVisibleNodes.forEach(function(node)
+               {
+                App.allDescendants.forEach(function(node1)
+                {
+                    if(node1._id==node.__data__._id && selectedNode.__data__._id!=node.__data__._id && !d3.select(node).attr("class").indexOf("softSelected") >=0)
+                    {
+                        App.selectShiftHorizontal(node);
+                    }
+                    if(parent._id==node.__data__._id)
+                    {
+                        parent=node;
+                    }
+                }
+                );
+
+               }
+
+
+               );
+                 if(dir=="left")
+               {
+               d3.select(parent).classed("softSelected", true);
+                       App.deselectNode();
+                       d3.select(parent).classed("selected", true);
+                       if (App.multiSelectedNodes.indexOf(parent) < 0)
+                           App.multiSelectedNodes.push(parent);
+                }
+
+
+
+//        siblings = App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree;
+//        console.log(dir,"--");
+
+//    var childIndex = App.Node.isRoot(dbNode) ? siblings.length : siblings.map(function (child) {
+//        return child._id;
+//    }).indexOf(dbNode._id) + 1;
+//
+//    return App.map.addNewNode(parent, dir, childIndex);
+
+
+
+}
+);
+
+
+Mousetrap.bind('shift+left',function()
+{
+App.allDescendants=[];
+
+
+    var selectedNode = d3.select('.selected').node();
+
+
+//var dbNode = App.Node.d3NodeToDbNode(selectedNode),
+        parent = selectedNode.__data__.parentId ? selectedNode.__data__.parent : selectedNode.__data__;
+        dir = App.calculateDirection(parent);
+        if(dir=="left")
+        {
+            selectAllDescendants(selectedNode.__data__);
+        }
+        else if(dir== "right")
+        {
+                    selectAllDescendants(parent);
+                                       // App.allDescendants[App.indexDescendants++]=parent;
+
+
+
+        }
+        else
+        {
+        App.allDescendants[App.indexDescendants++]=parent;
+                            selectAllDescendants(parent);
+        }
+
+                 var currentNodeDepth=d3.select(".selected")[0][0].__data__.depth;
+                 var allVisibleNodes= d3.selectAll(".node")[0];
+
+               allVisibleNodes.forEach(function(node)
+               {
+                App.allDescendants.forEach(function(node1)
+                {
+                    if(node1._id==node.__data__._id && selectedNode.__data__._id!=node.__data__._id && !d3.select(node).attr("class").indexOf("softSelected") >=0)
+                    {
+                        App.selectShiftHorizontal(node);
+                    }
+                     if(parent._id==node.__data__._id)
+                                        {
+                                            parent=node;
+                                        }
+                }
+                );
+
+               }
+
+               );
+                if(dir=="right")
+               {
+                    d3.select(parent).classed("softSelected", true);
+                                   App.deselectNode();
+                                   d3.select(parent).classed("selected", true);
+                                   if (App.multiSelectedNodes.indexOf(parent) < 0)
+                                       App.multiSelectedNodes.push(parent);
+                }
+
+
+
+//        siblings = App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree;
+//        console.log(dir,"--");
+
+//    var childIndex = App.Node.isRoot(dbNode) ? siblings.length : siblings.map(function (child) {
+//        return child._id;
+//    }).indexOf(dbNode._id) + 1;
+//
+//    return App.map.addNewNode(parent, dir, childIndex);
+
+
+
+}
+);
+
 
 
 Mousetrap.bind('mod+v', function () {

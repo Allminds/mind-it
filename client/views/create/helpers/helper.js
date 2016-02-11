@@ -169,10 +169,30 @@ App.nodeSelector = {
     }
 };
 
+
+App.selectShiftHorizontal = function(node)
+{
+
+          if( App.multiSelectedNodes.indexOf(node) < 0) {
+                d3.select(node).classed("softSelected", true);
+                                       App.deselectNode();
+                                       d3.select(node).classed("selected", true);
+                                       if (App.multiSelectedNodes.indexOf(node) < 0)
+                                           App.multiSelectedNodes.push(node);
+
+
+
+              }
+
+
+
+}
+
 App.select = function (node, softSelect) {
     // Find previously selected and deselect
 
-    if (App.cmdDown || softSelect) {
+
+ if (App.cmdDown || softSelect) {
 
           if( App.multiSelectedNodes.indexOf(node)>=0) {
 
@@ -197,7 +217,7 @@ App.select = function (node, softSelect) {
             App.multiSelectedNodes.push(node);
     }
     else{
-
+    //deselct everything except currently selected
         App.deselectNode();
         d3.select(node).classed("selected", true);
         App.clearAllSelected();
