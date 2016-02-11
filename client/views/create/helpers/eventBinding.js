@@ -112,7 +112,7 @@ var getNextSiblingForShift = function(currentNode, keyPressed) {
         });
 
 
-
+        sameLevelNodes = sortNodesAccToUi(sameLevelNodes);
 
 
     if(sameLevelNodes) {
@@ -123,23 +123,40 @@ var getNextSiblingForShift = function(currentNode, keyPressed) {
             nextNode = (sameLevelNodes[currentIndex + 1 == sameLevelNodes.length  ? null : currentIndex  + 1]);
         }
     }
-    return nextNode;
+
+    //If next node turn out to be null ie we are at the end of samelevelNodes list
+    if(!nextNode)
+    {
+            return nextNode;
+
+    }
+    else
+    {
+        return nextNode.__data__;
+
+    }
 }
 
 
 var sortNodesAccToUi=function(nodes)
 {
+var temp;
 for(var i=0;i<nodes.length;i++)
 {
     for(var j=i;j<nodes.length;j++)
     {
-        if(nodes[i])
+        if(nodes[i].__data__.x > nodes[j].__data__.x)
+        {
+            temp=nodes[i];
+            nodes[i]=nodes[j];
+            nodes[j]=temp;
+        }
 
     }
 
 
 }
-
+return nodes;
 }
 Mousetrap.bind('shift+up',function()
 {
