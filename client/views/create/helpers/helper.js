@@ -188,6 +188,24 @@ App.selectShiftHorizontal = function(node)
 
 }
 
+App.selectShiftVertical = function(node)
+{
+
+          if( App.multiSelectedNodes.indexOf(node) > 0) {
+                d3.select(node).classed("softSelected", true);
+                                       App.deselectNode();
+                                       d3.select(node).classed("selected", true);
+                                       if (App.multiSelectedNodes.indexOf(node) < 0)
+                                           App.multiSelectedNodes.push(node);
+
+
+
+              }
+
+
+
+}
+
 App.select = function (node, softSelect) {
     // Find previously selected and deselect
 

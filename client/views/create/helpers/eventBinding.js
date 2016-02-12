@@ -176,7 +176,9 @@ Mousetrap.bind('shift+up',function()
     nextNode = d3.selectAll('.node')[0].find(function(_){return _.__data__._id == nextNode._id;});
 
     if( d3.select(nextNode).attr("class").indexOf("softSelected") >=0)
-        App.select(node,true);
+      {  App.select(node,true);
+        App.selectShiftVertical(nextNode);
+    }
     else {
         App.select(nextNode, true);
     }
@@ -193,8 +195,10 @@ return;
 var node = d3.select('.selected').node();
 nextNode = d3.selectAll('.node')[0].find(function(_){return _.__data__._id == nextNode._id;});
 if( d3.select(nextNode).attr("class").indexOf("softSelected") >=0)
-    App.select(node,true);
-else
+   { App.select(node,true);
+        App.selectShiftVertical(nextNode);
+
+}else
 {
 App.select(nextNode, true);
 }
