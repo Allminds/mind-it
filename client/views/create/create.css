@@ -53,7 +53,7 @@ path.link {
 }
 
 .node.selected ellipse, .node.selected rect {
-  fill: #000;
+  fill: #ddd;
 }
 
 
