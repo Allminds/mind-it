@@ -90,11 +90,50 @@ Mousetrap.bind('mod+x', function() {
 App.eventBinding.copyAction = function() {
     var nodes = App.multiSelectedNodes;
     App.nodeToPasteBulleted = [];
+    nodes=finalNodes(nodes);
     nodes.forEach(function(element) {
         var node = element.__data__;
         App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
     });
 };
+var finalNodes = function(nodes)
+{
+var mapNodes = new Map();
+
+var descendants=[];
+for(var i=0;i<nodes.length;i++)
+{
+App.allDescendants=[];
+App.indexDescendants=0;
+selectAllDescendants(nodes[i].__data__);
+descendants=App.allDescendants;
+for(var j=0;j<nodes.length;j++)
+{
+    if(descendants.indexOf(nodes[j].__data__) > -1)
+    {
+        mapNodes.set(nodes[j],true);
+    }
+
+
+
+}
+
+
+}
+var nodes1=[];
+for(var k=0;k<nodes.length;k++)
+{
+    if(mapNodes.get(nodes[k]))
+    {}
+    else
+    {
+        nodes1.push(nodes[k]);
+    }
+
+}
+
+return nodes1;
+}
 
 Mousetrap.bind('mod+c', function() {
     App.eventBinding.copyAction();
@@ -471,6 +510,8 @@ App.eventBinding.deleteAction = function() {
 
 Mousetrap.bind('del', function() {
     App.eventBinding.deleteAction();
+        App.getChartInFocus();
+
 });
 
 App.eventBinding.findSameLevelChild = function(node, depth, keyPressed) {
