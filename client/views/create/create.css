@@ -56,10 +56,7 @@ path.link {
   fill: #ddd;
 }
 
-.node.selected rect {
-  stroke: #ddd;
-  stroke-width: 2px;
-}
+
 
 .node.softSelected ellipse, .node.softSelected rect {
   fill: #ddd;
@@ -69,6 +66,13 @@ path.link {
   stroke: #ddd;
   stroke-width: 2px;
 }
+
+.node.selected rect {
+  stroke: #000;
+  stroke-width: 1px;
+}
+
+
 
 
 
