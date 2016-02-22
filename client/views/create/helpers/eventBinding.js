@@ -360,7 +360,9 @@ Mousetrap.bind('mod+v', function() {
     if (App.nodeCutToPaste != null && App.nodeCutToPaste.length) {
         var undoArray = App.nodeCutToPaste.map(function(element) {
             App.Node.reposition(element, targetNode, null, null, dir);
-            return new App.stackData(element, "cutNode");
+            var stackData=new App.stackData(element, "cutNode");
+            stackData.oldParentId=element.parentId;
+            return stackData;
         });
         App.RepeatHandler.addToActionStack(undoArray);
         App.nodeCutToPaste = [];
