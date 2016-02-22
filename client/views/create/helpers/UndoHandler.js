@@ -118,12 +118,17 @@ var clone = function(stackData, newAction) {
             if (parent && parent.isCollapsed) {
                 App.expandRecursive(parent, stackData.oldParentId);
             }
-            if (stackData.nodeData.childSubTree.length == 0) {
-                App.Node.delete(stackData.nodeData);
-                App.eventBinding.focusAfterDelete(stackData.nodeData, stackData.nodeData.index);
-                App.nodeCutToPaste.push(stackData.nodeData);
-                return clone(stackData, "addNodeAfterCut");
-            }
+            //if (stackData.nodeData.childSubTree.length == 0) {
+            //    App.Node.delete(stackData.nodeData);
+            //    App.eventBinding.focusAfterDelete(stackData.nodeData, stackData.nodeData.index);
+            //    App.nodeCutToPaste.push(stackData.nodeData);
+            //    return clone(stackData, "addNodeAfterCut");
+            //}
+
+            App.Node.delete(stackData.nodeData);
+            App.eventBinding.focusAfterDelete(stackData.nodeData, stackData.nodeData.index);
+            App.nodeCutToPaste.push(stackData.nodeData);
+            return clone(stackData, "addNodeAfterCut");
         },
         reposition: function(stackData) {
             var oldParent = App.map.getNodeDataWithNodeId(stackData.oldParentId),
@@ -145,24 +150,68 @@ var clone = function(stackData, newAction) {
         stackName = stackName ? stackName : "undo";
         return this.stack[stackName] ? this.stack[stackName].push(stackData) : "Error";
     },
-    performAction: function(stackName) {
-        if(UndoRedo.stack[stackName].length > 0) {
-            var multipleUndo = this.stack[stackName].pop();
-            var multipleRedo = [];
-            var operationData = multipleUndo[0].operationData;
-            multipleUndo.forEach(function(stackData){
-                var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
-                if(reverseStackData != null)
-                    multipleRedo.push(reverseStackData);
-            });
-            if(multipleRedo.length > 0)
-                UndoRedo.addToStack(operationData == "horizontalReposition" ? multipleRedo : multipleRedo.reverse(),
-                    (stackName == "undo" ? "redo" : "undo"));
-            App.clearAllSelected();
-        }
-    }
-};
+     performAction: function(stackName) {
+         if(UndoRedo.stack[stackName].length > 0) {
+             var multipleUndo = this.stack[stackName].pop();
+             var multipleRedo = [];
+             var operationData = multipleUndo[0].operationData;
 
+             if(multipleUndo.length==1){
+                 if(multipleUndo[0].operationData=="cutNode"){
+                     var multipleUndo2=this.stack[stackName].pop();
+                     if(multipleUndo2[0].operationData=="addNodeAfterCut"){
+                         var reverseStackData = UndoRedo.actions[multipleUndo[0].operationData](multipleUndo[0]);
+                         if(reverseStackData != null)
+                             multipleRedo.push(reverseStackData);
+                         var reverseStackData = UndoRedo.actions[multipleUndo2[0].operationData](multipleUndo2[0]);
+                         if(reverseStackData != null)
+                             multipleRedo.push(reverseStackData);
+
+                     }
+                 }
+                 else {
+                     multipleUndo.forEach(function (stackData) {
+                         var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
+                         if (reverseStackData != null)
+                             multipleRedo.push(reverseStackData);
+                     });
+                 }
+             }
+             else {
+                 if(multipleUndo[0].operationData=="cutNode"){
+                     multipleUndo.forEach(function (stackData) {
+                         var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
+                         if (reverseStackData != null)
+                             multipleRedo.push(reverseStackData);
+                     });
+                     var multiNodesNext=this.stack[stackName].pop();
+                     if(multiNodesNext[0].operationData=="addNodeAfterCut"){
+                         multiNodesNext.forEach(function (stackData) {
+                             var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
+                             if (reverseStackData != null)
+                                 multipleRedo.push(reverseStackData);
+                         });
+                     }
+                     else
+                     multipleUndo.push(multiNodesNext);
+
+                 }
+                 else{
+                     multipleUndo.forEach(function (stackData) {
+                         var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
+                         if (reverseStackData != null)
+                             multipleRedo.push(reverseStackData);
+                     });
+                 }
+
+             }
+             if (multipleRedo.length > 0)
+                 UndoRedo.addToStack(operationData == "horizontalReposition" ? multipleRedo : multipleRedo.reverse(),
+                     (stackName == "undo" ? "redo" : "undo"));
+             App.clearAllSelected();
+         }
+     }
+ };
 
 
 
