@@ -75,6 +75,12 @@ Mousetrap.bind('mod+x', function() {
     var selectedNodes = App.multiSelectedNodes;
     App.nodeToPasteBulleted = [];
     App.nodeCutToPaste = [];
+    for(var i=0; i<selectedNodes.length;i++){
+        if(App.Node.isRoot(selectedNodes[i].__data__)) {
+            alert("Selection Contains Root and the root node cannot be cut!");
+            return;
+        }
+    }
     var elementToBePushed = selectedNodes.map(function(element) {
         var node = element.__data__;
         var parent = node.parent;
