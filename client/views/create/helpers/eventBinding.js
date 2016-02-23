@@ -5,6 +5,7 @@ App.isIndicatorActive = false;
 App.allDescendants = [];
 App.indexDescendants = 0;
 App.eventBinding.focusAfterDelete = function(removedNode, removedNodeIndex) {
+
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
     var focusableNode = siblings[removedNodeIndex];
@@ -468,9 +469,7 @@ Mousetrap.bind('tab', function() {
 App.eventBinding.deleteAction = function() {
 
     for (var i = 0; i < App.multiSelectedNodes.length; i++) {
-
         var selectedNode = App.multiSelectedNodes[i].__data__;
-
         var dir = App.getDirection(selectedNode);
         if (dir === 'root') {
             alert('Can\'t delete root');
@@ -487,15 +486,14 @@ App.eventBinding.deleteAction = function() {
     for (var i = 0; i < App.multiSelectedNodes.length; i++) {
         selectedNode = App.multiSelectedNodes[i].__data__;
         var existingNodesInUI = d3.selectAll(".node")[0];
-
-
         if (existingNodesInUI.indexOf(App.multiSelectedNodes[i]) < 0)
             continue;
+        var directionForUndo=App.getDirection(selectedNode);
         removedNodeIndex = App.Node.delete(selectedNode);
         nodeToBeFocussed = selectedNode.parentId;
 
         var stackData = new App.stackData(selectedNode, "addNode");
-        stackData.destinationDirection = dir;
+        stackData.destinationDirection = directionForUndo;
         elementToPush.push(stackData);
     }
 
@@ -736,6 +734,16 @@ App.eventBinding.horizontalRepositionAction = function(repositionDirection) {
             return _.parent;
         });
 
+        nodes.forEach(function(node){
+            if(App.Node.isRoot(node.parent)){
+                if(repositionDirection=="right")
+                    node.position="right";
+                else{
+                    if(repositionDirection=="left")
+                    node.position="left";
+                }
+            }
+        });
         if (App.Node.horizontalReposition(nodes, repositionDirection, App.toggleCollapsedNode)) {
             var newParents = nodes.map(function(_) {
                 return _.parent;
