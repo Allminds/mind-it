@@ -35,6 +35,11 @@ Template.dashboard.rendered = function rendered() {
                 "aaSorting":[],
                 "bPaginate": false,
                 "info":false,
+               // "searching":false,
+                "columns": [
+                    { "width": "20%" },
+                    null
+                ],
                 "aoColumns": [
                     { "sTitle": "Name", "mData": function (data) { return "<a href='/create/"+data[0]+"'>"+data[1]+"</a>" }},
                     { "sTitle": "Owner", "mData": function (data) { return data[2] }}
@@ -57,6 +62,11 @@ Template.dashboard.rendered = function rendered() {
                 "aaSorting":[],
                 "bPaginate": false,
                 "info":false,
+               // "searching":false,
+                "columns": [
+                    { "width": "20%" },
+                    null
+                ],
                 "aoColumns": [
                     { "sTitle": "Name", "mData": function (data) { return "<a href='/create/"+data[0]+"'>"+data[1]+"</a>" }},
                     { "sTitle": "Owner", "mData": function (data) { return data[2] }}
@@ -79,11 +89,14 @@ Template.dashboard.rendered = function rendered() {
                 "aaSorting":[],
                 "bPaginate": false,
                 "info":false,
+               // "searching":false,
+                "columns": [
+                    { "width": "20%" },
+                    null
+                ],
                 "aoColumns": [
                     { "sTitle": "Name", "mData": function (data) { return "<a href='/create/"+data[0]+"'>"+data[1]+"</a>" }},
-                    { "sTitle": "Owner", "mData": function (data) { return data[2] }},
-                    { "sTitle": "Created On", "mData": function (data) { return "02/02/2016" }},
-                    { "sTitle": "Last Modified By", "mData": function (data) { return "Anubha S" }}
+                    { "sTitle": "Owner", "mData": function (data) { return data[2] }}
                 ],
                 "lengthMenu": -1
             });

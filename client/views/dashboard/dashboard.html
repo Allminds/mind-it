@@ -1,31 +1,28 @@
 <template name='dashboard'>
-    {{> TopBar sideLogo=true requireFeedback=true}}
+    {{> TopBar sideLogo=true requireFeedback=true isDashboard=true}}
     <div class="dashboardButtons">
         {{> MyButton}}
     </div>
     <div>
-        <div class="leftPanel">
-
-        </div>
         <div id="tabbedPanel" class="dashboard">
-            <ul>
-                <li><a href="#allMaps">All Maps</a></li>
-                <li><a href="#ownedMaps">Owned Maps</a></li>
-                <li><a href="#sharedMaps">Shared Maps</a></li>
-            </ul>
-            <div id="allMaps">
+            <div class="col-2">
+                <ul>
+                    <li><a href="#allMaps">All Maps</a></li>
+                    <li><a href="#ownedMaps">Owned Maps</a></li>
+                    <li><a href="#sharedMaps">Shared Maps</a></li>
+                </ul>
+            </div>
+            <div id="allMaps" class="col-10">
                 <table id="allMapsTable" class="display" cellspacing="0" width="100%">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Owner</th>
-                            <th>Created On</th>
-                            <th>Last Modified By</th>
                         </tr>
                     </thead>
                 </table>
             </div>
-            <div id="ownedMaps">
+            <div id="ownedMaps" class="col-10">
                 <table id="ownedMapsTable" class="display" cellspacing="0" width="100%">
                     <thead>
                         <tr>
@@ -35,7 +32,7 @@
                     </thead>
                 </table>
             </div>
-            <div id="sharedMaps">
+            <div id="sharedMaps" class="col-10">
                 <table id="sharedMapsTable" class="display" cellspacing="0" width="100%">
                     <thead>
                         <tr>
@@ -45,9 +42,6 @@
                     </thead>
                 </table>
             </div>
-        </div>
-        <div class="rightPanel">
-
         </div>
     </div>
 

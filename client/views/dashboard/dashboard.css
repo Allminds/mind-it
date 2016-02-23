@@ -30,7 +30,8 @@
 
 .dashboardButtons .btn-text{
     text-align: left;
-    padding: 7px 40px;
+    padding: 12px 40px;
+    float: none;
 }
 
 .dashboardButtons .mindmapButton{
@@ -63,10 +64,6 @@ table.dataTable tbody tr{
 
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited{
     color: #000000;
-}
-
-#allMaps, #ownedMaps, #sharedMaps{
-    width: 85%;
 }
 
 .dashboard{
@@ -111,12 +108,68 @@ table.dataTable tbody tr{
 }
 
 .ui-tabs-vertical { width: 100%; }
-.ui-tabs-vertical .ui-tabs-nav { padding: .2em 0em .2em .2em; float: left; width: 15%; border-radius: 0px; border-right: 1px solid #702269; }
+.ui-tabs-vertical .ui-tabs-nav { padding: .2em 0em .2em .2em; float: left; width:100%; border-radius: 0px; border-right: 1px solid #702269; }
 .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
 .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
 .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-top: none; border-left-width: 10px;}
-.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
 
 .dataTables_wrapper{
     //border-left: 1px solid #702269;
+}
+
+.searchMM {
+    width: 100%;
+}
+
+.searchDiv {
+    padding: 2%;
+}
+
+[class^="col-"] {
+    float: left;
+    padding: 5px;
+}
+.col-1 {width: 8.33%;}
+.col-2 {width: 16.66%;}
+.col-3 {width: 25%;}
+.col-4 {width: 33.33%;}
+.col-5 {width: 41.66%;}
+.col-6 {width: 50%;}
+.col-7 {width: 58.33%;}
+.col-8 {width: 66.66%;}
+.col-9 {width: 75%;}
+.col-10 {width: 83.33%;}
+.col-11 {width: 91.66%;}
+.col-12 {width: 100%;}
+
+col-m-6{}
+
+@media(max-width: 660px){
+    /* For mobile phones: */
+        [class^="col-"] {
+            width: 100%;
+        }
+
+        m-col-6{
+            width: 100%;
+        }
+
+        .dashboardButtons .mindmapButton{
+            margin: 0 auto;
+        }
+
+        .dashboardButtons .btn-text{
+            text-align: center;
+            padding: 0;
+            margin-left: 0;
+            float: left;
+        }
+
+        .ui-tabs-vertical .ui-tabs-nav{
+             border-right: none;
+        }
+
+       .ui-tabs .ui-tabs-panel{
+            border-top: 1px solid #702269;
+        }
 }
