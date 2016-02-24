@@ -34,26 +34,6 @@ Router.configure({layoutTemplate: 'main', notFoundTemplate: 'error_page'});
 //});
 
 
-var IS_IPAD = navigator.userAgent.match(/iPad/i) != null,
-    IS_IPHONE = !IS_IPAD && ((navigator.userAgent.match(/iPhone/i) != null) || (navigator.userAgent.match(/iPod/i) != null)),
-    IS_IOS = IS_IPAD || IS_IPHONE
-
-
-    var checkPlatform = function() {
-
-      if(IS_IOS) {
-          window.location = "mindit.xyz://create/1234";
-    
-          setTimeout(function() {    
-            if (!document.webkitHidden) {
-                window.location = 'http://mindit.xyz';
-            }
-          }, 5000);  
-      }
-    }
-
-    checkPlatform()
-
 Router.route('/', {
 	name:'home',
 	template: 'home',
