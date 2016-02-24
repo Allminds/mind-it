@@ -61,6 +61,21 @@ App.tracker = {
         }
 
       } else {
+
+        var flag = false;
+        App.nodeStore.forEach(function(e){
+            if(e._id == newlyAddedId)
+                flag = true;
+        });
+
+        if(!flag && parent){
+            var dir = fields.hasOwnProperty("left")?"left":(fields.hasOwnProperty("right")?"right":App.getDirection(parent))
+                siblings = App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree;
+
+            var tempFields = App.Node("",dir,parent,null) ? App.Node("",dir,parent,null) : new Object(new App.Node("",dir,parent,null));
+            App.tracker.added(newlyAddedId, tempFields);
+        }
+
         var movedNode = App.map.getNodeDataWithNodeId(newlyAddedId);
         subTree.splice(childIds.indexOf(newlyAddedId),0,movedNode);
         newlyAddedId = null;
