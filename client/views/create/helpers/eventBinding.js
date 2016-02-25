@@ -494,6 +494,7 @@ App.eventBinding.deleteAction = function() {
 
         var stackData = new App.stackData(selectedNode, "addNode");
         stackData.destinationDirection = directionForUndo;
+        stackData.destinationIndex=removedNodeIndex;
         elementToPush.push(stackData);
     }
 
