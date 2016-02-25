@@ -5,7 +5,7 @@ App.isIndicatorActive = false;
 App.allDescendants = [];
 App.indexDescendants = 0;
 App.eventBinding.focusAfterDelete = function(removedNode, removedNodeIndex) {
-
+    console.log(removedNode);
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
     var focusableNode = siblings[removedNodeIndex];
@@ -40,7 +40,7 @@ App.cutNode = function(selectedNode) {
     App.Node.updateParentIdOfNode(selectedNode, "None");
 
 
-    App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
+    //App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
 
 };
 
@@ -82,15 +82,50 @@ Mousetrap.bind('mod+x', function() {
             return;
         }
     }
+    var nodeToBeFocussed = null;
+    var removedNodeIndex = null;
+    var parentOfSelectedNode =null;
+    var nodeToBeFocussedPosition=null;
+    var selectedNode = null;
+    var selectedNodesArray=[];
+    var parent=null;
     var elementToBePushed = selectedNodes.map(function(element) {
         var node = element.__data__;
-        var parent = node.parent;
+        selectedNodesArray.push(node);
+        parent = node.parent;
         var direction = App.getDirection(node);
         var indexOfNode = App.Node.getIndexOfNode(node);
+        selectedNode=node;
+        parentOfSelectedNode=node.parent;
+        nodeToBeFocussed=selectedNode.parentId;
+        removedNodeIndex=indexOfNode;
+        nodeToBeFocussedPosition=parentOfSelectedNode.position;
         App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
         App.cutNode(node);
         return new App.stackData(node, "addNodeAfterCut", direction, indexOfNode, parent);
     });
+
+    var areSiblings=App.checkIfSiblings(selectedNodes);
+    if (areSiblings) {
+        var nodeToFocus=null;
+        var siblings = (App.Node.isRoot(parent) ? parent[nodeToBeFocussedPosition] : parent.childSubTree) || [];
+        if (siblings.length == 0) {
+            nodeToFocus = parent;
+        } else if (removedNodeIndex <= siblings.length) {
+            nodeToFocus = siblings[removedNodeIndex - 1];
+        }
+        App.selectNode(nodeToFocus);
+    } else if (nodeToBeFocussed) {
+        var existingNodesInUI = d3.selectAll(".node")[0];
+        nodeToBeFocussed = existingNodesInUI.filter(
+            function(_) {
+                if (_.__data__._id == nodeToBeFocussed)
+                    return _;
+            }
+        );
+        App.select(nodeToBeFocussed[0]);
+    }
+
     App.RepeatHandler.addToActionStack(elementToBePushed.reverse());
 });
 
@@ -494,7 +529,7 @@ App.eventBinding.deleteAction = function() {
 
         var stackData = new App.stackData(selectedNode, "addNode");
         stackData.destinationDirection = directionForUndo;
-        stackData.destinationIndex=removedNodeIndex;
+        stackData.destinationIndex=removedNodeIndex
         elementToPush.push(stackData);
     }
 
