@@ -94,6 +94,13 @@ App.tracker = {
         }
         App.chart.update();
 
+        if((d3.select(".selected").length == 1) && (d3.select(".selected")[0][0] == null)){
+            var nodeToBeSelected = d3.selectAll('.node')[0].find(function(_) {
+                                        return _.__data__._id == id;
+                                    });
+            d3.select(nodeToBeSelected).classed("selected", true);
+        }
+
     }
 };
 
