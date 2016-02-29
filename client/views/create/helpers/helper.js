@@ -512,7 +512,7 @@ App.getPathClassForNodeDepth = function(depth) {
 
 App.checkIfSiblings = function(nodesList) {
     for (var i = 0; i < nodesList.length - 1; i++) {
-        if (nodesList[i].__data__.parentId != nodesList[i + 1].__data__.parentId)
+        if (nodesList[i].parentId != nodesList[i + 1].parentId)
             return false;
     }
     return true;
