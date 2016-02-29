@@ -73,7 +73,13 @@ Mousetrap.bind('f2', function(event) {
 
 
 Mousetrap.bind('mod+x', function() {
-    var selectedNodes = App.multiSelectedNodes;
+  var selectedNodes=[];
+    selectedNodes = App.multiSelectedNodes.map(function(elem)
+    {
+    return elem.__data__;
+
+    });
+    App.multiSelectedNodes=[];
     App.nodeToPasteBulleted = [];
     App.nodeCutToPaste = [];
     for(var i=0; i<selectedNodes.length;i++){
@@ -90,10 +96,13 @@ Mousetrap.bind('mod+x', function() {
     var selectedNodesArray=[];
     var parent=null;
     var elementToBePushed = selectedNodes.map(function(element) {
-        var node = element.__data__;
+        //var node = element.__data__;
+        var node = element;
         selectedNodesArray.push(node);
-        parent = node.parent;
-        var direction = App.getDirection(node);
+  parent = element.parent;
+//        var node = element;
+      //  var parent = node.parent;
+        var direction = App.getDirection(element);
         var indexOfNode = App.Node.getIndexOfNode(node);
         selectedNode=node;
         parentOfSelectedNode=node.parent;
@@ -102,6 +111,7 @@ Mousetrap.bind('mod+x', function() {
         nodeToBeFocussedPosition=parentOfSelectedNode.position;
         App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
         App.cutNode(node);
+           // selectedNodes = App.multiSelectedNodes;
         return new App.stackData(node, "addNodeAfterCut", direction, indexOfNode, parent);
     });
 
@@ -131,8 +141,13 @@ Mousetrap.bind('mod+x', function() {
 
 App.eventBinding.copyAction = function() {
     var nodes = App.multiSelectedNodes;
+        App.multiSelectedNodes=[];
+            App.nodeCutToPaste=[];
+
+
     App.nodeToPasteBulleted = [];
     nodes=finalNodes(nodes);
+
     nodes.forEach(function(element) {
         var node = element.__data__;
         App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
@@ -405,6 +420,7 @@ Mousetrap.bind('mod+v', function() {
             var stackData=new App.stackData(element, "cutNode");
             stackData.oldParentId=element.parentId;
             return stackData;
+
         });
         App.RepeatHandler.addToActionStack(undoArray);
         App.nodeCutToPaste = [];
@@ -529,7 +545,8 @@ App.eventBinding.deleteAction = function() {
 
         var stackData = new App.stackData(selectedNode, "addNode");
         stackData.destinationDirection = directionForUndo;
-        stackData.destinationIndex=removedNodeIndex
+        stackData.destinationIndex=removedNodeIndex;
+
         elementToPush.push(stackData);
     }
 
@@ -552,6 +569,7 @@ App.eventBinding.deleteAction = function() {
 
 Mousetrap.bind('del', function() {
     App.eventBinding.deleteAction();
+
         App.getChartInFocus();
 
 });
