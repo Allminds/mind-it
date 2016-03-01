@@ -1,8 +1,10 @@
 App.tracker = {
     added: function (id, fields) {
         var newNode = App.map.getNodeDataWithNodeId(id);
-        if (newNode)
+        if (newNode){
+            newNode.name=fields.name;
             return;
+        }
         newNode = fields;
         newNode._id = id;
 
