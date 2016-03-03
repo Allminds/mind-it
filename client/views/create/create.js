@@ -36,7 +36,8 @@ Template.create.rendered = function rendered() {
   });
 
   App.select(rootNode);
-  Mindmaps.find().observeChanges(App.tracker);
+  //Mindmaps.find().observeChanges(App.tracker);
+  MindmapCommands.find().observeChanges(App.CommandTracker);
 
   App.retainCollapsed();
   d3.select("#help-link").on('click', enableHelpLink);

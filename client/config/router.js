@@ -47,6 +47,9 @@ Router.route('/create/:_id', {
 	template: "create",
 	waitOn: function () {
 		Meteor.subscribe("userdata");
+		 Meteor.subscribe("MindmapCommands", this.params._id);
+        //command pattern row add
+
 		return Meteor.subscribe("mindmap", this.params._id);
 	},
 	data: function () {

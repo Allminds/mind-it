@@ -5,7 +5,7 @@ App.isIndicatorActive = false;
 App.allDescendants = [];
 App.indexDescendants = 0;
 App.eventBinding.focusAfterDelete = function(removedNode, removedNodeIndex) {
-    console.log(removedNode);
+    //console.log(removedNode);
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
     var focusableNode = siblings[removedNodeIndex];
@@ -53,6 +53,7 @@ App.eventBinding.f2Action = function(event) {
     App.showEditor(selectedNode);
     var stackData = new App.stackData(node, 'rename');
     App.RepeatHandler.addToActionStack([stackData]);
+    console.log("f2action",node.name);
 };
 
 Mousetrap.bind('mod+z', function() {
@@ -469,14 +470,11 @@ App.eventBinding.newNodeAddAction = function(action) {
 
     if (selectedNode) {
         var newNode = action(selectedNode);
+        //this is a hack
 
-        var stackData1 = new App.stackData(App.map.getNodeDataWithNodeId(newNode._id), "deleteNode");
-
-        stackData1.destinationDirection = App.Node.isRoot(stackData1.nodeData.parent) ? stackData1.nodeData.position : App.Node.getDirection(stackData1.nodeData);
-
-        App.RepeatHandler.addToActionStack([stackData1]);
 
         App.eventBinding.afterNewNodeAddition(newNode, selectedNode);
+        return newNode;
     }
 };
 
@@ -512,8 +510,21 @@ App.eventBinding.tabAction = function(selectedNode) {
 };
 
 Mousetrap.bind('tab', function() {
-    App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
-    App.clearAllSelected();
+    var newNode = App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
+
+   var parent = App.map.getNodeDataWithNodeId(newNode.parentId);
+             newNode.parent=parent;
+
+     App.nodeStore[newNode._id] = newNode;
+
+            var stackData1 = new App.stackData(App.map.getNodeDataWithNodeId(newNode._id), "deleteNode");
+
+            stackData1.destinationDirection = App.Node.isRoot(stackData1.nodeData.parent) ? stackData1.nodeData.position : App.Node.getDirection(stackData1.nodeData);
+
+            App.RepeatHandler.addToActionStack([stackData1]);
+
+     App.eventBinding.afterNewNodeAddition(newNode, newNode.parent);
+
     return false;
 });
 

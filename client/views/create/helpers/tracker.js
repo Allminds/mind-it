@@ -1,17 +1,18 @@
 App.tracker = {
     added: function (id, fields) {
-        var newNode = App.map.getNodeDataWithNodeId(id);
-        if (newNode)
-            return;
-        newNode = fields;
-        newNode._id = id;
-
-        var parent = App.map.getNodeDataWithNodeId(newNode.parentId);
-        App.nodeStore[id] = newNode;
-        App.map.addNodeToUI(parent, newNode);
-        App.nodeSelector.setPrevDepth(newNode.depth);
+//        var newNode = App.map.getNodeDataWithNodeId(id);
+//        if (newNode)
+//            return;
+//        newNode = fields;
+//        newNode._id = id;
+//
+//        var parent = App.map.getNodeDataWithNodeId(newNode.parentId);
+//          App.nodeStore[id] = newNode;
+//        App.map.addNodeToUI(parent, newNode);
+//        App.nodeSelector.setPrevDepth(newNode.depth);
     },
-    changed: function (id, fields) {
+
+   changed: function (id, fields) {
         var updatedNode = App.map.getNodeDataWithNodeId(id);
         if (!updatedNode) return;
         if (fields.hasOwnProperty('name')) {

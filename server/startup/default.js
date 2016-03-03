@@ -5,6 +5,9 @@ Meteor.publish('mindmap', function (id) {
 Meteor.publish('userdata', function () {
   return Meteor.users.find(this.userId);
 });
+Meteor.publish('MindmapCommands', function (mindmapId) {
+  return MindmapCommands.find({rootId:mindmapId});
+});
 Meteor.methods({
   //Only Meteor can delete the documents - Not permitted for client
   deleteNode: function (id) {

@@ -15,6 +15,12 @@ App.map.addNodeToUI = function (parent, newNode) {
 App.map.addNewNode = function (parent, dir, childIndex) {
   var node = new App.Node("", dir, parent, childIndex);
   App.Node.addToDatabase(node);
+
+  var args=[];
+  args[0]=node;
+  App.insertMindmapCommand("Add", node._id, args,node.rootId );
+  App.clearAllSelected();
+
   App.Node.addChild(parent, node);
   return node;
 };

@@ -275,7 +275,9 @@ var updateDbWithPromptInput = function(nodeData) {
         mindMapService.updateNode(nodeData._id, {
             name: nodeData.name
         });
-        App.chart.update();
+        // App.chart.update();
+
+        App.rename(nodeData);
         setTimeout(function() {
             App.chart.update();
             App.selectNode(nodeData);
@@ -301,6 +303,8 @@ var updateNode = function(nodeData) {
     mindMapService.updateNode(nodeData._id, {
         name: nodeData.name
     });
+    App.rename(nodeData);
+
     setTimeout(function() {
         App.selectNode(nodeData);
     }, 10);
@@ -312,6 +316,7 @@ App.showEditor = function(node) {
 
     if (nodeData && nodeData.name && nodeData.name.length >= 50) {
         showPrompt(nodeData);
+
         return;
     }
 
@@ -319,6 +324,7 @@ App.showEditor = function(node) {
     var editBox = editor.createEditBox();
     editor.setupEditBox(editBox);
     editor.setupAttributes();
+
 };
 
 App.getDirection = function(data) {
@@ -483,7 +489,6 @@ App.clone = function(node) {
     return clonedNode;
 };
 
-
 App.cloneObject = function(obj) {
     if (null == obj || "object" != typeof obj) return obj;
     var copy = obj.constructor();
@@ -517,3 +522,5 @@ App.checkIfSiblings = function(nodesList) {
     }
     return true;
 };
+
+
