@@ -33,6 +33,7 @@ Router.configure({layoutTemplate: 'main', notFoundTemplate: 'error_page'});
 //	}
 //});
 
+
 Router.route('/', {
 	onBeforeAction: function () {
 		var self = this;
