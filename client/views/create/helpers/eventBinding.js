@@ -580,7 +580,7 @@ App.eventBinding.findSameLevelChild = function(node, depth, keyPressed) {
         index = 0;
     if (!node.children)
         return node;
-    if (node.deptFh == depth) {
+    if (node.depth == depth) {
         return node;
     }
     while (node.children) {

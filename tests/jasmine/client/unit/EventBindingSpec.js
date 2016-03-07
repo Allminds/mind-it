@@ -41,7 +41,8 @@ describe('eventBinding.js', function () {
         expect(App.eventBinding.findSameLevelChild(node, 2, 0)).toBe(node);
       });
       it("should return passed node as sameLevelChild if it has same depth", function () {
-        var node = {depth: 2, children: []};
+        var node = {children: []};
+        node.depth = 2;
         expect(App.eventBinding.findSameLevelChild(node, 2, 0)).toBe(node);
       });
     });
