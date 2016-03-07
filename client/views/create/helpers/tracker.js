@@ -113,6 +113,22 @@ App.tracker = {
             if (fields.parentId != "None") {
                 var selectedNode = App.map.getNodeDataWithNodeId(id),
                     newParent = App.map.getNodeDataWithNodeId(fields.parentId);
+                var oldParent = App.map.getNodeDataWithNodeId(selectedNode.parentId);
+                if(App.Node.isRoot(oldParent)){
+                    var subtree= oldParent['left'];
+                    if(subtree.indexOf(selectedNode)!=-1)
+                        subtree.splice(subtree.indexOf(selectedNode),1);
+                     subtree=oldParent['right'];
+                    if(subtree.indexOf(selectedNode)!=-1)
+                        subtree.splice(subtree.indexOf(selectedNode),1);
+
+
+                }
+                else {
+                    var subtree= oldParent['childSubTree'];
+                    if(subtree.indexOf(selectedNode)!=-1)
+                        subtree.splice(subtree.indexOf(selectedNode),1);
+                }
                 selectedNode.parent = newParent;
                 selectedNode.parentId = newParent._id;
 
