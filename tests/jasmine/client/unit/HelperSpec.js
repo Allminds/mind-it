@@ -81,10 +81,10 @@ describe('helper.js tests', function() {
       var direction = App.calculateDirection(node.parent);
       expect(App.map.getDataOfNodeWithClassNamesString.calls.mostRecent().args[0]).toBe(".node.selected");
       expect(direction).toBe(parent.position);
-    }); 
+    });
   });
-  
-  
+
+
   describe('App.deselectNode', function () {
     it("should deselect a previously selected node", function() {
       var fixture = '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="15680">' +
@@ -124,7 +124,7 @@ describe('helper.js tests', function() {
         '<text cols="60" rows="4" y="-2" visibility="">b</text>' +
         '<circle class="indicator unfilled" r="0" cx="8.296875"></circle></g></g></svg>';
       setFixtures(fixture);
-      
+
       var node = d3.selectAll(".level-0")[0][0];
       node.__data__ = {_id : "parent",
                        position: null

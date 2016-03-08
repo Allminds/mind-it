@@ -1,9 +1,0 @@
-<template name="sharemap">
-    <input type="email" placeholder="Enter e mail address" id="e_mail">
-    <select id="permission">
-        {{#each permissions}}
-            <option value="{{this.name}}">{{this.value}}</option>
-        {{/each}}
-    </select>
-    <input type="submit" value="Share" data-action="share">
-</template>
