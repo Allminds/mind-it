@@ -7,6 +7,7 @@ Template.TopBar.events({
   'click [data-action=logout]': function (e, args) {
     e.preventDefault();
     Meteor.logout();
+    window.location = "/";
   },
   'click [data-action=toggleOptions]': function (e, args) {
     e.preventDefault();
