@@ -35,7 +35,8 @@ Template.create.events({
   'click [data-action=share]': function (e, args) {
     var permission = d3.select("#permission")[0][0].value;
     var eMail = d3.select("#e_mail")[0][0].value;
-    var mindMapId = Mindmaps.findOne({"position": null })._id;
+    //var mindMapId = Mindmaps.findOne({"position": null })._id;
+    var mindMapId=d3.select(".node.level-0")[0][0].__data__._id;
     Meteor.call("addMapToUser", eMail, mindMapId, permission);
   }
 });
