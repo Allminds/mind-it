@@ -10,7 +10,31 @@ Template.ModalBody.helpers({
   },
   isModalForImage: function (path) {
     return path ? true : false;
+  },
+
+  permissions : function() {
+    console.log("EDIT :" + App.editable);
+    if(App.editable) {
+      return [{name: 'r' , value: 'Read Only'} , {name: 'w' , value: 'Read-Write'}];
+    }
+    else {
+      return [{name: 'r' , value: 'Read Only'}];
+    }
   }
+});
+
+
+Template.ModalBody.events({
+  'click [data-action=share]': function (e, args) {
+    console.log("pohochalo...");
+    var permission = d3.select("#permission")[0][0].value;
+    var eMail = d3.select("#e_mail")[0][0].value;
+    //var mindMapId = Mindmaps.findOne({"position": null })._id;
+    var mindMapId=d3.select(".node.level-0")[0][0].__data__._id;
+    Meteor.call("addMapToUser", eMail, mindMapId, permission);
+    console.log("pohochalo..."+mindMapId+"   "+eMail);
+  }
+
 });
 
 Template.ModalPopUp.helpers({

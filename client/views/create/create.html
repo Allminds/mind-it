@@ -2,9 +2,11 @@
 <template name='create'>
   <h2>{{name}}</h2>
   <div class="top-margin" style="position: fixed">
-   <div id="shareblock">
+    <button id="Share_btn" >Share MindMap</button>
 
-   </div>
+   <!--<div id="shareblock">-->
+
+   <!--</div>-->
   </div>
   <div id='mindmap'>
     <svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="960" height="6000">
@@ -18,6 +20,10 @@
 
   <div>
     {{> ModalPopUp modalHeaderText="Help" modalId="help-modal" path="/shortcuts.png" isFullWidth="true"}}
+  </div>
+
+  <div>
+    {{> ModalPopUp modalHeaderText="Share Mindmap" modalId="share-modal" isModalForShare="true" }}
   </div>
 
   {{> TopBar topbarText="Help" linkId="help-link" requireExport=true requireHelp=true sideLogo=true requireFeedback=true}}
