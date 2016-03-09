@@ -1,6 +1,6 @@
 App.tracker = {
     added: function (id, fields) {
-        console.log("added: fields: ", fields, id);
+        console.log("added: fields: ", fields);
         var newNode = App.map.getNodeDataWithNodeId(id);
         if (newNode) {
             newNode.name = fields.name;
@@ -27,17 +27,13 @@ App.tracker = {
         var parent = App.map.getNodeDataWithNodeId(id),
             isCollapsed = parent.isCollapsed;
         // var key = Object.keys(fields)[0],
+
+        console.log("in updateTree: ", parent);
         subTree = App.Node.getSubTree(parent, key),
             childIds = fields[key],
             selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected"),
-            newlyAddedId = App.getNewlyAddedNodeId(parent, fields),
-            newSubTree = childIds.map(
-                function (childid) {
-                    return subTree.find(
-                        function (node) {
-                            return node._id === childid;
-                        });
-                });
+            newlyAddedId = App.getNewlyAddedNodeId(parent, fields);
+        console.log("NewlyAddedId", newlyAddedId);
 
         if (App.Node.isRoot(parent)) {
             if (App.checkRepositionUpdateOnRoot(parent, key, newlyAddedId)) {
@@ -45,10 +41,22 @@ App.tracker = {
             }
         }
 
-        if (newlyAddedId == null) {
+        if (newlyAddedId == null ) {
+            console.log("SUbtree in if>>:", subTree);
+            newSubTree = childIds.map(
+                function (childid) {
+                    return App.map.getNodeDataWithNodeId(childid);
+                    //subTree.find(
+                    //    function (node) {
+                    //        return node._id === childid;
+                    //    });
+                });
+            console.log("newSubTree", newSubTree);
+
             App.Node.setSubTree(parent, newSubTree, key);
             App.chart.update();
             if (App.tracker.repaintNodeId) {
+                console.log("In IF");
                 var node = d3.selectAll(".node")[0].find(
                     function (child) {
                         return child.__data__._id == App.tracker.repaintNodeId;
@@ -73,15 +81,28 @@ App.tracker = {
                 var tempFields = App.Node("", dir, parent, null) ? App.Node("", dir, parent, siblings.length) : new Object(new App.Node("", dir, parent, siblings.length));
                 App.tracker.added(newlyAddedId, tempFields);
             }
+            subTree = App.Node.getSubTree(parent, key),
+                console.log("Old Subtree",subTree);
+            newSubTree = childIds.map(
+                function (childid) {
+                    return subTree.find(
+                        function (node) {
+                            return node._id === childid;
+                        });
+                });
+            console.log("newSubTree", newSubTree);
 
             var movedNode = App.map.getNodeDataWithNodeId(newlyAddedId);
             subTree.splice(childIds.indexOf(newlyAddedId), 0, movedNode);
             newlyAddedId = null;
         }
         return node;
-    }, changed: function (id, fields) {
+    },
 
-        console.log("on CHanged:::",fields,id);
+
+    changed: function (id, fields) {
+
+        console.log("on CHanged:::",fields);
         var updatedNode = App.map.getNodeDataWithNodeId(id);
         if (!updatedNode) return;
         if (fields.hasOwnProperty('name')) {
@@ -101,10 +122,13 @@ App.tracker = {
             var node = App.tracker.updateSubtree(id, fields,'childSubTree');
         }
         if(fields.hasOwnProperty('left')){
+            console.log("in left...");
             var node = App.tracker.updateSubtree(id, fields,'left');
 
         }
         if(fields.hasOwnProperty('right')){
+            console.log("in rightg...");
+
             var node = App.tracker.updateSubtree(id, fields,'right');
         }
         if (fields.hasOwnProperty('parentId')) {
@@ -113,22 +137,6 @@ App.tracker = {
             if (fields.parentId != "None") {
                 var selectedNode = App.map.getNodeDataWithNodeId(id),
                     newParent = App.map.getNodeDataWithNodeId(fields.parentId);
-                var oldParent = App.map.getNodeDataWithNodeId(selectedNode.parentId);
-                if(App.Node.isRoot(oldParent)){
-                    var subtree= oldParent['left'];
-                    if(subtree.indexOf(selectedNode)!=-1)
-                        subtree.splice(subtree.indexOf(selectedNode),1);
-                     subtree=oldParent['right'];
-                    if(subtree.indexOf(selectedNode)!=-1)
-                        subtree.splice(subtree.indexOf(selectedNode),1);
-
-
-                }
-                else {
-                    var subtree= oldParent['childSubTree'];
-                    if(subtree.indexOf(selectedNode)!=-1)
-                        subtree.splice(subtree.indexOf(selectedNode),1);
-                }
                 selectedNode.parent = newParent;
                 selectedNode.parentId = newParent._id;
 
