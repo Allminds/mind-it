@@ -1,109 +1,169 @@
 path.thick-link {
-  fill: none;
-  stroke: #aaa;
-  stroke-width: 4px;
-  stroke-linecap: round;
+    fill: none;
+    stroke: #aaa;
+    stroke-width: 4px;
+    stroke-linecap: round;
 }
 
 path.link {
-  fill: none;
-  stroke: #aaa;
-  stroke-width: 1.5px;
+    fill: none;
+    stroke: #aaa;
+    stroke-width: 1.5px;
 
 }
 
 .node ellipse {
-  cursor: pointer;
-  fill: #fff;
-  stroke: #aaa;
-  stroke-width: 1.5px;
-  fill-opacity: 1;
+    cursor: pointer;
+    fill: #fff;
+    stroke: #aaa;
+    stroke-width: 1.5px;
+    fill-opacity: 1;
 }
 
 .node text, input {
-  font-size: 16px;
-  text-anchor: middle;
-  fill-opacity: 1;
+    font-size: 16px;
+    text-anchor: middle;
+    fill-opacity: 1;
 }
 
 .node.level-0 text, input.level-0 {
-  font-size: 24px;
+    font-size: 24px;
 }
 
 .node.level-1 text, input.level-1 {
-  font-size: 22px;
-  fill: #0033ff;
-  color: #0033ff;
+    font-size: 22px;
+    fill: #0033ff;
+    color: #0033ff;
 }
 
 .node.level-2 text, input.level-2 {
-  font-size: 20px;
-  fill: #00b439;
-  color: #00b439;
+    font-size: 20px;
+    fill: #00b439;
+    color: #00b439;
 }
 
 .node.level-3 text, input.level-3 {
-  font-size: 18px;
-  fill: #990000;
-  color: #990000;
+    font-size: 18px;
+    fill: #990000;
+    color: #990000;
 }
 
 .node rect {
-  fill: transparent;
+    fill: transparent;
 }
 
 .node.selected ellipse, .node.selected rect {
-  fill: #ddd;
+    fill: #ddd;
 }
 
-
-
 .node.softSelected ellipse, .node.softSelected rect {
-  fill: #ddd;
+    fill: #ddd;
 }
 
 .node.softSelected rect {
-  stroke: #ddd;
-  stroke-width: 2px;
+    stroke: #ddd;
+    stroke-width: 2px;
 }
 
 .node.selected rect {
-  stroke: #000;
-  stroke-width: 1px;
+    stroke: #000;
+    stroke-width: 1px;
 }
 
-
-
-
-
 .edit-box {
-  position: absolute;
+    position: absolute;
 }
 
 .node.selected.level-0 rect {
-  fill: transparent;
-  stroke: transparent;
+    fill: transparent;
+    stroke: transparent;
 }
 
 circle.indicator.filled {
-  fill: white;
-  stroke: #888;
-  stroke-width: 1.5px;
+    fill: white;
+    stroke: #888;
+    stroke-width: 1.5px;
 }
 
 circle.indicator.unfilled {
-  fill: transparent;
-  stroke: transparent;
-  stroke-width: 1.5px;
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 1.5px;
 }
 
 .node.dragSelect rect {
-  fill: #ffad33;
-  stroke: black;
-  opacity: 0.2
+    fill: #ffad33;
+    stroke: black;
+    opacity: 0.2
 }
 
 .node.dropSelect rect {
-  fill: #ddd;
-  opacity:0.3;
+    fill: #ddd;
+    opacity: 0.3;
 }
+
+.share_button {
+    margin-right: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+
+    color: #2a6496;
+    float: right;
+
+}
+
+.dropdown dt a {
+    display: block;
+    height: 2.5em;
+    width: 100%;
+    border: 1px solid #ecf0f1;
+    border-radius: 3px;
+    text-decoration: none;
+}
+.dropdown dt a:hover, .dropdown dt a:active {
+    border-color: #bdc3c7;
+}
+.dropdown dt span {
+    display: block;
+    padding: 0 1em;
+    line-height: 2.5em;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHo+AACAQQAA+MoAAIC0AAB48QAA9RwAADw3AAAbzhlfIT4AAACJSURBVHjajNAxCsJAEEbhb5cU4i0sbHIaL6IQTxFPo4VeROwXQs4gKW1cWJZEM90wj5l5f0jDeMXBunqENIw7vLD9A09oIxL6FdsvSCENI2zwxH4BTmgxxeJc92P76cuIpRBuc6K45yZWwzPeleixBOLMr30tWgJZuqwcQJNFy2GzkHeHUMPwGQChFSPmzlJ1WgAAAABJRU5ErkJggg==) no-repeat scroll right center;
+    border-right: 1em solid transparent;
+    cursor: pointer;
+}
+.dropdown dd {
+    position: relative;
+}
+.dropdown dd ul {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: -2.5em;
+    width: 100%;
+    list-style: none;
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #bdc3c7;
+    border-radius: 3px;
+}
+.dropdown dd ul li:first-child a:hover {
+    border-radius: 3px 3px 0 0;
+}
+.dropdown dd ul li:last-child a:hover {
+    border-radius: 0 0 3px 3px;
+}
+.dropdown dd li a {
+    display: block;
+    padding: 0 1em;
+    line-height: 2.5em;
+    text-decoration: none;
+}
+.dropdown dd li a:hover {
+    background-color: #2ecc71;
+    color: #fff;
+    cursor: pointer;
+}
+
+.selected {
+    font-weight: 700;
+}
+

@@ -1,74 +1,97 @@
 <template name="ModalHeader">
-  <div class="modal-header">
-    <button type="button" class="close"
-            data-dismiss="modal">
-      <span aria-hidden="true">&times;</span>
-      <span class="sr-only">Close</span>
-    </button>
-    <h4 class="modal-title" id={{modalTagID labelId}}>{{modalHeaderText}}</h4>
-  </div>
+    <div class="modal-header">
+        <button type="button" class="close"
+                data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id={{modalTagID labelId}}>{{modalHeaderText}}</h4>
+    </div>
 </template>
 
 <template name="ModalBody">
-  <div class="modal-body">
-    <form class="form-horizontal" role="form">
-      <div class="form-group">
-        {{#if isModalForImage path}}
-          <div class="col-lg-12">
-            <img src={{modalBodyImageSrc path}} style="width: 100%;height: 100%"/>
-          </div>
-        {{/if}}
-        {{#if isModalForShare}}
-            <div>
-              <input type="email" placeholder="Enter e mail address" id="e_mail">
-              <select id="permission">
-                {{#each permissions}}
-                <option value="{{this.name}}">{{this.value}}</option>
-                {{/each}}
-              </select>
-              <input type="submit" value="Share" data-action="share">
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                {{#if isModalForImage path}}
+                <div class="col-lg-12">
+                    <img src={{modalBodyImageSrc path}} style="width: 100%;height: 100%"/>
+                </div>
+                {{/if}}
+                {{#if isModalForShare}}
+                <div>
+                    <form>
+                        <div>
+
+                            <input type="email" placeholder="   Email Address" id="e_mail" style="width: 60%; padding:3px; margin-top: 5%" >
+                        </div>
+                        <div style="width: 100%; padding: 5%">
+                            <!--<select id="permission" style="margin-right: 20%;">-->
+
+                                <!--{{#each permissions}}-->
+                                <!--<option value="{{this.name}}">{{this.value}}</option>-->
+                                <!--{{/each}}-->
+                            <!--</select>-->
+
+                            <dl class="dropdown" id="drop">
+                                <dt><a><span>Permission Options</span></a></dt>
+                                <dd>
+                                    <ul>
+                                        {{#each permissions}}
+                                        <li><a>{this.value}}</a></li>
+                                        {{/each}}
+                                    </ul>
+                                </dd>
+                            </dl>
+
+                            <input type="submit" value="Share" data-action="share" style="margin-left: 20%" >
+
+                        </div>
+                    </form>
+                </div>
+
+
+                {{else}}
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="modal-text" style="resize: none;" rows="10"></textarea>
+                </div>
+                {{/if}}
             </div>
-        {{else}}
-          <div class="col-sm-10">
-            <textarea class="form-control" id="modal-text" style="resize: none;" rows="10"></textarea>
-          </div>
-        {{/if}}
-      </div>
-    </form>
-  </div>
+        </form>
+    </div>
 </template>
 
 
 <template name="ModalFooter">
-  <div class="modal-footer">
-    <button type="button" class="btn btn-default"
-            data-dismiss="modal">
-      Close
-    </button>
-    <button type="button" class="btn btn-primary" id="modal-save">
-      Save changes
-    </button>
-  </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default"
+                data-dismiss="modal">
+            Close
+        </button>
+        <button type="button" class="btn btn-primary" id="modal-save">
+            Save changes
+        </button>
+    </div>
 </template>
 
 
 <template name="ModalPopUp">
-  <div class="modal fade modal-fullscreen force-fullscreen" tabindex="-1" role="dialog" id={{modalTagID modalId}}
-    aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="{{style isFullWidth}}">
-      <div class="modal-content">
-        <!-- Modal Header -->
-        {{> ModalHeader}}
-        <!-- Modal Body -->
-        {{> ModalBody}}
+    <div class="modal fade modal-fullscreen force-fullscreen" tabindex="-1" role="dialog" id={{modalTagID modalId}}
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="{{style isFullWidth}}">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                {{> ModalHeader}}
+                <!-- Modal Body -->
+                {{> ModalBody}}
 
-        {{#if requireFooter}}
-          <!-- conditional footer. Set requireFooter="true"-->
-          {{> ModalFooter}}
-        {{/if}}
-      </div>
+                {{#if requireFooter}}
+                <!-- conditional footer. Set requireFooter="true"-->
+                {{> ModalFooter}}
+                {{/if}}
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 
