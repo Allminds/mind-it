@@ -93,7 +93,8 @@ App.tracker = {
             console.log("newSubTree", newSubTree);
 
             var movedNode = App.map.getNodeDataWithNodeId(newlyAddedId);
-            subTree.splice(childIds.indexOf(newlyAddedId), 0, movedNode);
+            if(subTree.indexOf(movedNode)==-1)
+                subTree.splice(childIds.indexOf(newlyAddedId), 0, movedNode);
             newlyAddedId = null;
         }
         return node;
