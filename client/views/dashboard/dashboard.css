@@ -12,7 +12,7 @@
 
 .dashboardButtons{
     margin-top: 110px;
-    height: 60px;
+    height: 80px;
 }
 
 .dashboardButtons .button-0{
@@ -41,7 +41,7 @@
 }
 
 table.dataTable tbody tr{
-    text-align: left;
+    text-align: center;
 }
 
 .ui-widget-header{
@@ -71,7 +71,7 @@ table.dataTable tbody tr{
     height: 100%;
     float: left;
     border-radius: 0px;
-    border-top: solid 1px #702269;
+    border-top: solid 1px white;
 }
 
 .leftPanel{
@@ -82,7 +82,7 @@ table.dataTable tbody tr{
 }
 
 #tabbedPanel li a {
-    outline-color: white;
+    outline-color: red;
     width: 100%;
 }
 
