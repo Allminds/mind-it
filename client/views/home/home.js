@@ -59,6 +59,7 @@ Template.home.onRendered(function () {
     reader.readAsText(file);
     this.value = "";
   });
+
 });
 
 

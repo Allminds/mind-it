@@ -24,6 +24,7 @@ var enableHelpLink = function () {
     $('#help-modal').modal('show');
 };
 
+
 Template.dashboard.rendered = function rendered() {
     d3.select("#help-link").on('click', enableHelpLink);
     $("#tabbedPanel").tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );

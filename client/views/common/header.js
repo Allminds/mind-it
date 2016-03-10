@@ -6,13 +6,17 @@ Template.TopBar.events({
 
   'click [data-action=logout]': function (e, args) {
     e.preventDefault();
-    Meteor.logout();
-    window.location = "/";
+    Meteor.logout(function(err) {
+      location.reload(true);
+      history.go(-(history.length - 2));
+      Router.go("/")
+    })
   },
   'click [data-action=toggleOptions]': function (e, args) {
     e.preventDefault();
     $("div#userOptions").toggle();
   }
+
 });
 
 Template.TopBar.helpers({
