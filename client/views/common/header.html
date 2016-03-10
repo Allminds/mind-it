@@ -2,73 +2,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <template name="TopBar">
-    <div class="navbar navbar-inverse navbar-fixed-top" style="box-shadow:  0 0 8px 0 rgba(0, 0, 0, 0.19);" role="navigation">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="box-shadow:  0 0 8px 0 rgba(0, 0, 0, 0.19);"
+         role="navigation">
         <div class="container-fluid">
             <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-left" >
-                        {{#if sideLogo}}
+                <ul class="nav navbar-nav navbar-left">
+                    {{#if sideLogo}}
+                    <li>
+                        <a href="/">
+                            <img src="/Minditlogo.png">
+                        </a>
+                    </li>
+                    {{/if}}
+
+                    {{#if sideLogoSmall}}
+                    <li>
+                        <a href="/">
+                            <img src="/smalllogomindit.png" height="40" width="43">
+                        </a>
+                    </li>
+                    {{/if}}
+
+                    <!--{{#if isDashboard}}-->
+                    <!--<li>-->
+                    <!--<input type="search" placeholder="Search Mindmap" class="searchMM">-->
+                    <!--</li>-->
+                    <!--{{/if}}-->
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+
+                    {{#if requireExport}}
+                    <li><a href="#" target="new">
+                        Export
+                    </a></li>
+                    {{/if}}
+
+
+                    {{#if requireFeedback}}
+                    <li>
+                        {{> Feedback }}
+                    </li>
+                    {{/if}}
+                    {{#if topbarText}}
+                    <li><a href="#" class="navbar-element navbar-nav navbar-brand"
+                           id={{topbarTagID linkId}}>{{topbarText}}</a></li>
+                    {{/if}}
+
+                    {{#if currentUser}}
+
                         <li>
-                            <a href="/">
-                                <img src="/Minditlogo.png">
-                            </a>
+                        <a style="float: left; pointer-events: none;">{{ name}}</a>
+
                         </li>
-                        {{/if}}
+                        <li class="dropdown">
+                                <img src={{ picture}} class="img-circle dropdown-toggle" alt="Cinque Terre"
+                                     style="float: left; margin-top: 5px; margin-left: -10px; margin-right: 15px;"
+                                     width="35" height="35"
+                                     data-action="toggleOptions" data-toggle="dropdown">
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="/" data-action="logout">
+                                            Logout
+                                        </a>
+                                    </li>
+                                </ul>
 
-                        {{#if sideLogoSmall}}
-                        <li>
-                            <a href="/">
-                                <img src="/smalllogomindit.png" height="40" width="43">
-                            </a>
                         </li>
-                        {{/if}}
-
-                        <!--{{#if isDashboard}}-->
-                            <!--<li>-->
-                                <!--<input type="search" placeholder="Search Mindmap" class="searchMM">-->
-                            <!--</li>-->
-                        <!--{{/if}}-->
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-
-                        {{#if requireExport}}
-                        <li><a href="#" target="new">
-                            Export
-                        </a></li>
-                        {{/if}}
+                    {{/if}}
 
 
-                        {{#if requireFeedback}}
-                            <li>
-                                {{> Feedback }}
-                            </li>
-                        {{/if}}
-                        {{#if topbarText}}
-                        <li><a href="#" class="navbar-element navbar-nav navbar-brand"
-                               id={{topbarTagID linkId}}>{{topbarText}}</a></li>
-                        {{/if}}
-
-                        {{#if currentUser}}
-                        <li>
-                            <a style="float: left;">{{ name}}</a>
-                            <img src={{ picture}} class="img-circle" alt="Cinque Terre" style="float: left; margin-top: 5px; margin-left: -10px; margin-right: 15px;" width="35" height="35"
-                                 data-action="toggleOptions">
-                        </li>
-                        {{/if}}
-
-
-                        {{#if currentUser}}
-                        <li>
-                                <a href="/" class="navbar-element navbar-nav navbar-brand" data-action="logout">
-                                    Logout
-                                </a>
-                        </li>
-                        {{else}}
-                        <li><a href="" class="navbar-element navbar-nav navbar-brand" data-action="login">
-                            Log In
-                        </a></li>
-                        {{/if}}
-                    </ul>
+                    {{#if currentUser}}
+                    {{else}}
+                    <li><a href="" class="navbar-element navbar-nav navbar-brand" data-action="login">
+                        Log In
+                    </a></li>
+                    {{/if}}
+                </ul>
             </div>
         </div>
     </div>
