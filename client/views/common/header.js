@@ -13,6 +13,7 @@ Template.TopBar.events({
     e.preventDefault();
     $("div#userOptions").toggle();
   }
+
 });
 
 Template.TopBar.helpers({
