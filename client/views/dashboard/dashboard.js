@@ -84,6 +84,9 @@ Template.dashboard.rendered = function rendered() {
                 dt.fnAddData(p);
         }
 
+
+        //$('#allMapsTable').dataTable( { "oLanguage": { "sEmptyTable": "My Custom Message On Empty Table" } } );
+
         if(!($("#allMapsTable").hasClass("dataTable"))){
             var dt = $("#allMapsTable").dataTable({
                 "aaSorting":[],
@@ -91,21 +94,24 @@ Template.dashboard.rendered = function rendered() {
                 "info":false,
                // "searching":false,
                 "columns": [
-                    { "width": "20%" },
+                    { "width": "100%" },
                     null
                 ],
                 "aoColumns": [
-                    { "sTitle": "Name", "mData": function (data) { return "<a href='/create/"+data[0]+"'>"+data[1]+"</a>" }},
-                    { "sTitle": "Owner", "mData": function (data) { return data[2] }}
+                    { "sTitle": "", "mData": function (data) { return "<a href='/create/"+data[0]+"'>"+data[1]+"</a>" }},
+                    //{ "sTitle": "Owner", "mData": function (data) { return data[2] }}
                 ],
+                "oLanguage": { "sEmptyTable": "Currently, you don't have any mindmap."},
                 "lengthMenu": -1
             });
             var p = [];
-            Template.dashboard.__helpers[" allMaps"]().forEach(function(e){
-                if(e.name && e.owner)
-                    p.push([e._id,e.name, e.owner]);
-            });
 
+            Template.dashboard.__helpers[" allMaps"]().forEach(function(e){
+                //if(e.name && e.owner)
+                //    p.push([e._id,e.name, e.owner]);
+                if(e.name )
+                    p.push([e._id,e.name]);
+            });
             if(p.length > 0)
                 dt.fnAddData(p);
         }
