@@ -1,6 +1,5 @@
 App.tracker = {
     added: function (id, fields) {
-        console.log("added: fields: ", fields, id);
         var newNode = App.map.getNodeDataWithNodeId(id);
         if (newNode) {
             newNode.name = fields.name;
@@ -27,25 +26,28 @@ App.tracker = {
         var parent = App.map.getNodeDataWithNodeId(id),
             isCollapsed = parent.isCollapsed;
         // var key = Object.keys(fields)[0],
+
         subTree = App.Node.getSubTree(parent, key),
             childIds = fields[key],
             selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected"),
-            newlyAddedId = App.getNewlyAddedNodeId(parent, fields),
-            newSubTree = childIds.map(
-                function (childid) {
-                    return subTree.find(
-                        function (node) {
-                            return node._id === childid;
-                        });
-                });
-
+            newlyAddedId = App.getNewlyAddedNodeId(parent, fields);
         if (App.Node.isRoot(parent)) {
             if (App.checkRepositionUpdateOnRoot(parent, key, newlyAddedId)) {
 
             }
         }
 
-        if (newlyAddedId == null) {
+        if (newlyAddedId == null ) {
+            newSubTree = childIds.map(
+                function (childid) {
+                    return App.map.getNodeDataWithNodeId(childid);
+                    //subTree.find(
+                    //    function (node) {
+                    //        return node._id === childid;
+                    //    });
+                });
+
+
             App.Node.setSubTree(parent, newSubTree, key);
             App.chart.update();
             if (App.tracker.repaintNodeId) {
@@ -65,7 +67,6 @@ App.tracker = {
             if (App.map.getNodeDataWithNodeId(newlyAddedId) != null) {
                 flag = true;
             }
-            console.log("Flag::::::", flag);
 
             if (!flag && parent) {
                 var dir = fields.hasOwnProperty("left") ? "left" : (fields.hasOwnProperty("right") ? "right" : App.getDirection(parent))
@@ -73,15 +74,26 @@ App.tracker = {
                 var tempFields = App.Node("", dir, parent, null) ? App.Node("", dir, parent, siblings.length) : new Object(new App.Node("", dir, parent, siblings.length));
                 App.tracker.added(newlyAddedId, tempFields);
             }
+            subTree = App.Node.getSubTree(parent, key),
+            newSubTree = childIds.map(
+                function (childid) {
+                    return subTree.find(
+                        function (node) {
+                            return node._id === childid;
+                        });
+                });
 
             var movedNode = App.map.getNodeDataWithNodeId(newlyAddedId);
-            subTree.splice(childIds.indexOf(newlyAddedId), 0, movedNode);
+            if(subTree.indexOf(movedNode)==-1)
+                subTree.splice(childIds.indexOf(newlyAddedId), 0, movedNode);
             newlyAddedId = null;
         }
         return node;
-    }, changed: function (id, fields) {
+    },
 
-        console.log("on CHanged:::",fields,id);
+
+    changed: function (id, fields) {
+
         var updatedNode = App.map.getNodeDataWithNodeId(id);
         if (!updatedNode) return;
         if (fields.hasOwnProperty('name')) {
