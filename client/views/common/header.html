@@ -2,14 +2,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <template name="TopBar">
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="box-shadow:  0 0 8px 0 rgba(0, 0, 0, 0.19);" role="navigation">
         <div class="container-fluid">
             <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-left">
+                    <ul class="nav navbar-nav navbar-left" >
                         {{#if sideLogo}}
                         <li>
                             <a href="/">
                                 <img src="/Minditlogo.png">
+                            </a>
+                        </li>
+                        {{/if}}
+
+                        {{#if sideLogoSmall}}
+                        <li>
+                            <a href="/">
+                                <img src="/smalllogomindit.png" height="40" width="43">
                             </a>
                         </li>
                         {{/if}}
@@ -29,13 +37,6 @@
                         </a></li>
                         {{/if}}
 
-                        {{#if currentUser}}
-                        <li>
-                            <a style="float: left;">{{ name}}</a>
-                            <img src={{ picture}} class="img-circle" alt="Cinque Terre" style="float: left; margin-top: 5px; margin-left: -10px; margin-right: 15px;" width="35" height="35"
-                                 data-action="toggleOptions">
-                        </li>
-                        {{/if}}
 
                         {{#if requireFeedback}}
                             <li>
@@ -46,6 +47,15 @@
                         <li><a href="#" class="navbar-element navbar-nav navbar-brand"
                                id={{topbarTagID linkId}}>{{topbarText}}</a></li>
                         {{/if}}
+
+                        {{#if currentUser}}
+                        <li>
+                            <a style="float: left;">{{ name}}</a>
+                            <img src={{ picture}} class="img-circle" alt="Cinque Terre" style="float: left; margin-top: 5px; margin-left: -10px; margin-right: 15px;" width="35" height="35"
+                                 data-action="toggleOptions">
+                        </li>
+                        {{/if}}
+
 
                         {{#if currentUser}}
                         <li>
