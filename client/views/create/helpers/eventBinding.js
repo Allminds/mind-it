@@ -5,7 +5,6 @@ App.isIndicatorActive = false;
 App.allDescendants = [];
 App.indexDescendants = 0;
 App.eventBinding.focusAfterDelete = function(removedNode, removedNodeIndex) {
-    console.log(removedNode);
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
     var focusableNode = siblings[removedNodeIndex];
