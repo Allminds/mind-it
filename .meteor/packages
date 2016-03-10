@@ -29,3 +29,4 @@ accounts-google
 service-configuration
 twbs:bootstrap
 mrt:reactive-store
+naxio:flash

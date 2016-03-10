@@ -5,7 +5,6 @@ App.setEventBinding = function () {
     App.eventBinding.unBindAllEvents();
   }
 }
-
 var nodeSelector = {
   prevDepthVisited: 0,
 
@@ -39,8 +38,14 @@ Template.create.events({
 });
 
 Template.create.rendered = function rendered() {
-  if(this.data.data.length == 0)
-    Router.go('/404');
+  if(this.data.data.length == 0) {
+    var message = "Invalid mindmap"
+    //Flash.set([1], message, [1000], [true])
+    //Flash.warning([1], message , [1000])
+    Router.go("/404");
+
+  }
+
 
   App.currentMap = this.data.id;
   var email = Meteor.user() ? Meteor.user().services.google.email : null;
