@@ -1,9 +1,10 @@
 <template name='error_page'>
-    {{> ModalPopUp modalHeaderText="Help" modalId="help-modal" path="/shortcuts.png" isFullWidth="true"}}
-    {{> TopBar topbarText="Help" linkId="help-link"}}
+    {{> TopBar linkId="help-link" sideLogoSmall=true}}
 
     <div class="errorPage">
-        <h1>Oops!!!!!</h1>
-        <h3>Looks like you were led astray with an incorrect URL.</h3>
+        <h3>{{ error_msg }}</h3>
+        <h5> <a href="" data-action="redirectToHome">
+            Back to home
+        </a></h5>
     </div>
 </template>
