@@ -8,7 +8,6 @@ Template.TopBar.events({
     e.preventDefault();
     Meteor.logout(function(err) {
       location.reload(true);
-      history.go(-(history.length - 2));
       Router.go("/")
     })
   },

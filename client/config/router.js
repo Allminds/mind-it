@@ -74,9 +74,9 @@ Router.route('/create/:_id', {
 		if(mindMapService.findTree(this.params._id).length == 0) {
 			Meteor.call("isInvalidMindmap",this.params._id , function(error , result) {
 				if(result == true)
-					error_msg = "Looks like you were led astray with an incorrect URL.";
+					error_msg = "Invalid Mindmap";
 				else
-					error_msg = "Seems that the owner of this mindmap hasn't shared this mindmap with you ";
+					error_msg = "Inaccessible Mindmap";
 				App.ERROR_MESSAGE = error_msg;
 				console.log(App.ERROR_MESSAGE)
 				self.render("error_page");
