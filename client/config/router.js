@@ -68,6 +68,15 @@ Router.route('/', {
 Router.route('/create/:_id', {
 	name: "create",
 	template: "create",
+	onBeforeAction: function () {
+		var self = this;
+		if(mindMapService.findTree(this.params._id).length == 0) {
+			self.render("error_page");
+		}
+		else {
+			this.next();
+		}
+	},
 	waitOn: function () {
 		Meteor.subscribe("userdata");
 		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
