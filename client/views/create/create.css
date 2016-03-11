@@ -66,8 +66,9 @@ path.link {
 }
 
 .node.selected rect {
-    stroke: #000;
-    stroke-width: 1px;
+
+  stroke: #000;
+  stroke-width: 0px;
 }
 
 .edit-box {
