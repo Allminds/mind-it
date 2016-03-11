@@ -5,7 +5,7 @@ Meteor.publish('mindmap', function (id, user_email_id) {
   if(readPermitted)
     return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
   else
-    return Mindmaps.find({_id: null});
+      return Mindmaps.find({_id: null});
    //return Mindmaps.find({});
 
 });
@@ -57,6 +57,8 @@ Meteor.methods({
   },
   countNodes: function() {
      return Mindmaps.find({}).count();
+  },
+  isInvalidMindmap: function(id){
+    return Mindmaps.find({_id:id}).fetch().length == 0;
   }
-
 });

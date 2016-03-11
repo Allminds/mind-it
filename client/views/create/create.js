@@ -40,8 +40,6 @@ Template.create.events({
 Template.create.rendered = function rendered() {
   if(this.data.data.length == 0) {
     var message = "Invalid mindmap"
-    //Flash.set([1], message, [1000], [true])
-    //Flash.warning([1], message , [1000])
     Router.go("/404");
 
   }

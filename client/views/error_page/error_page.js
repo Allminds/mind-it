@@ -5,11 +5,18 @@ var enableHelpLink = function () {
 Template.error_page.rendered = function rendered() {
     d3.select("#help-link").on('click', enableHelpLink);
 };
-window.addEventListener("hashchange", function(e) {
-    Router.go("/");
-})
 
-/*
-window.onhashchange = function() {
-    Router.go("/");
-}*/
+Template.error_page.events({
+    'click [data-action=redirectToHome]': function(e, args) {
+        e.preventDefault();
+        Router.go("/");
+    }
+
+});
+
+Template.error_page.helpers({
+    error_msg: function() {
+        console.log("helper:" + App.ERROR_MESSAGE)
+        return App.ERROR_MESSAGE
+    }
+})
