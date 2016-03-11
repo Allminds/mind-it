@@ -15,8 +15,21 @@ Template.error_page.events({
 });
 
 Template.error_page.helpers({
+    error_title : function(){
+        if(App.ERROR_MESSAGE == "Invalid Mindmap") {
+            return "";
+        }
+        else{
+            return "You need permission ";
+        }
+    },
     error_msg: function() {
-        console.log("helper:" + App.ERROR_MESSAGE)
-        return App.ERROR_MESSAGE
+        if(App.ERROR_MESSAGE == "Invalid Mindmap") {
+            return "Looks like you were led astray with an incorrect URL.";
+        }
+        else{
+            return "Seems that the owner of this mindmap hasn't shared this mindmap with you ";
+        }
+
     }
 })
