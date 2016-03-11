@@ -2,15 +2,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <template name="TopBar">
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19);">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation"
+         style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19); color: #00b439">
         <div class="container-fluid">
-            <div>
-                <ul class="nav navbar-nav navbar-left">
+
+            <div class="navbar-header">
+                <button type="button" class=" nav navbar-nav navbar-right navbar-toggle" data-toggle="collapse"
+                        data-target="#myNavbar" >
+                    <span class="icon-bar" ></span>
+                    <span class="icon-bar" ></span>
+                    <span class="icon-bar" ></span>
+                </button>
+                <ul class="nav navbar-nav navbar-left " style="float: left">
                     {{#if sideLogo}}
                     <li>
                         <a href="/">
-                            <img src="/Minditlogo.png" style="float: left">
+                            <img src="/Minditlogo.png">
                         </a>
+
                     </li>
                     {{/if}}
 
@@ -19,6 +28,7 @@
                         <a href="/">
                             <img src="/smalllogomindit.png" height="40" width="43">
                         </a>
+
                     </li>
                     {{/if}}
 
@@ -28,15 +38,12 @@
                     <!--</li>-->
                     <!--{{/if}}-->
                 </ul>
-                <!--<div class="navbar-header">-->
-                    <!--<button type="button" class=" nav navbar-nav navbar-right navbar-toggle" data-toggle="collapse" data-target="#myNavbar">-->
-                        <!--<span class="icon-bar" style="color: black"></span>-->
-                        <!--<span class="icon-bar" style="color: black"></span>-->
-                        <!--<span class="icon-bar" style="color: black"></span>-->
-                    <!--</button>-->
-                <!--</div>-->
 
-                <ul class="nav navbar-nav navbar-right collapse navbar-collapse" id="myNavbar">
+            </div>
+
+            <div class="collapse navbar-collapse" id="myNavbar">
+
+                <ul class="nav navbar-nav navbar-right " style="float: left">
                     {{#if requireExport}}
                     <li><a href="#" target="new">
                         Export
@@ -50,42 +57,44 @@
                     </li>
                     {{/if}}
                     {{#if topbarText}}
-                    <li><a href="#" class="navbar-element navbar-nav navbar-brand"
+                    <li><a href="#"
                            id={{topbarTagID linkId}}>{{topbarText}}</a></li>
                     {{/if}}
 
                     {{#if currentUser}}
 
-                        <li>
-                        <a style="float: left; pointer-events: none;">{{ name}}</a>
+                    <li  style="display: inline-block">
+                        <a style=" float: left;  pointer-events: none;">{{ name}}</a>
+
+                        <!--<h4 style="display: inline-block;padding-right: 15px">{{ name}} </h4>-->
+                        <li class="dropdown" style="display: inline-block">
+                        <img src={{ picture}} class="img-circle dropdown-toggle" alt="Cinque Terre"
+                             style="float: right; margin-top: 5px; margin-left: -10px; margin-right: 15px;"
+                             width="35" height="35"
+                             data-action="toggleOptions" data-toggle="dropdown">
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="" data-action="logout">
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
 
                         </li>
-                        <li class="dropdown">
-                                <img src={{ picture}} class="img-circle dropdown-toggle" alt="Cinque Terre"
-                                     style="float: left; margin-top: 5px; margin-left: -10px; margin-right: 15px;"
-                                     width="35" height="35"
-                                     data-action="toggleOptions" data-toggle="dropdown">
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="" data-action="logout">
-                                            Logout
-                                        </a>
-                                    </li>
-                                </ul>
+                    </li>
 
-
-                        </li>
                     {{/if}}
 
 
                     {{#if currentUser}}
                     {{else}}
-                    <li><a href="" class="navbar-element navbar-nav navbar-brand" data-action="login">
+                    <li><a href="" data-action="login" >
                         Log In
                     </a></li>
                     {{/if}}
                 </ul>
             </div>
+
         </div>
     </div>
 </template>

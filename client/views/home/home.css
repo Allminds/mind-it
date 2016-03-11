@@ -55,6 +55,16 @@
 .navbar-inverse .navbar-nav > li > a:hover{
     color: #ED8233;
 }
+
+.navbar-toggle{
+    margin-top: 25px;
+    border: 0px;
+    background-color: #ED8233;
+}
+ .navbar-toggle .icon-bar {
+    background-color: black;
+}
+
 .landingLogo {
     margin-top: 90px;
 }
