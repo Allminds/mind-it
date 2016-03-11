@@ -4,12 +4,12 @@
 <template name="TopBar">
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19);">
         <div class="container-fluid">
-            <div class="collapse navbar-collapse">
+            <div>
                 <ul class="nav navbar-nav navbar-left">
                     {{#if sideLogo}}
                     <li>
                         <a href="/">
-                            <img src="/Minditlogo.png">
+                            <img src="/Minditlogo.png" style="float: left">
                         </a>
                     </li>
                     {{/if}}
@@ -28,8 +28,15 @@
                     <!--</li>-->
                     <!--{{/if}}-->
                 </ul>
+                <!--<div class="navbar-header">-->
+                    <!--<button type="button" class=" nav navbar-nav navbar-right navbar-toggle" data-toggle="collapse" data-target="#myNavbar">-->
+                        <!--<span class="icon-bar" style="color: black"></span>-->
+                        <!--<span class="icon-bar" style="color: black"></span>-->
+                        <!--<span class="icon-bar" style="color: black"></span>-->
+                    <!--</button>-->
+                <!--</div>-->
 
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right collapse navbar-collapse" id="myNavbar">
                     {{#if requireExport}}
                     <li><a href="#" target="new">
                         Export
