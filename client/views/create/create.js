@@ -59,16 +59,13 @@ Template.create.rendered = function rendered() {
   });
 
   App.select(rootNode);
-  Mindmaps.find().observeChanges(App.tracker);
+  Mindmaps.find({$or:[{_id:this.data.id},{rootId:this.data.id}]}).observeChanges(App.tracker);
 
   App.retainCollapsed();
   d3.select("#help-link").on('click', enableHelpLink);
 
-  App.setMapsCount();
+//  App.setMapsCount();
 
-  //$("#sh").click(function () {
-  //  $('#share-modal').modal('show');
-  //});
 };
 
 

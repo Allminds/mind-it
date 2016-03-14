@@ -30,7 +30,7 @@ Template.dashboard.rendered = function rendered() {
     $("#tabbedPanel").tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
     $( "#tabbedPanel li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
 
-    Meteor.subscribe('Mindmaps',function(){
+    Meteor.subscribe('Mindmaps',Meteor.user().services.google.email ,function( ){
         if(!($("#ownedMapsTable").hasClass("dataTable"))){
             var dt = $("#ownedMapsTable").dataTable({
                 "aaSorting":[],
@@ -99,7 +99,7 @@ Template.dashboard.rendered = function rendered() {
                     null
                 ],
                 "aoColumns": [
-                    { "sTitle": "", "mData": function (data) { return "<a href='/create/"+data[0]+"'>"+data[1]+"</a>" }},
+                    { "sTitle": "", "mData": function (data) {  return "<a href='/create/"+data[0]+"'>"+data[1]+"</a>" }},
                     //{ "sTitle": "Owner", "mData": function (data) { return data[2] }}
                 ],
                 "oLanguage": { "sEmptyTable": "Currently, you don't have any mindmap."},
