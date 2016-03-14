@@ -1,9 +1,9 @@
 mindMapService = App.MindMapService.getInstance();
 
 Meteor.publish('mindmap', function (id, user_email_id) {
-  var readPermitted = acl.find({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id}).fetch();
+  var readPermitted = acl.findOne({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id});
 
-
+  //console.log(readPermitted);
   if(readPermitted ){
     return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
 
