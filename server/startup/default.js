@@ -1,12 +1,18 @@
 mindMapService = App.MindMapService.getInstance();
 
 Meteor.publish('mindmap', function (id, user_email_id) {
-  var readPermitted = acl.findOne({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id});
-  if(readPermitted)
+  var readPermitted = acl.find({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id}).fetch();
+
+
+  if(readPermitted ){
     return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
-  else
-      return Mindmaps.find({_id: null});
-   //return Mindmaps.find({});
+
+  }
+  else{
+    return Mindmaps.find({_id: null});
+
+  }
+  //return Mindmaps.find({});
 
 });
 Meteor.publish('userdata', function () {
@@ -19,11 +25,16 @@ Meteor.publish('acl',function(user_id){
   return acl.find({user_id:user_id});
 });
 
-Meteor.publish('Mindmaps', function(){
-    return Mindmaps.find();
+Meteor.publish('Mindmaps', function(emailId){
+    //return Mindmaps.find();
+  //var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+  var allAclMaps = acl.find({user_id: emailId}).fetch();
+  var mapIds = allAclMaps.map(function(element){ return element.mind_map_id});
+  return Mindmaps.find({_id: {$in: mapIds}});
 });
 
 var rootNodesOfMyMaps = function(emailId) {
+
   var permissions = acl.find({ user_id: emailId }).fetch();
   var myMapIds = permissions.map(function(element) { return element.mind_map_id });
   return Mindmaps.find({_id: { $in: myMapIds }});

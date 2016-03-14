@@ -69,6 +69,7 @@ Router.route('/create/:_id', {
 	name: "create",
 	template: "create",
 	onBeforeAction: function () {
+		console.log("on before action");
 		var self = this;
 		var error_msg;
 		if(mindMapService.findTree(this.params._id).length == 0) {
@@ -83,17 +84,18 @@ Router.route('/create/:_id', {
 			})
 		}
 		else {
-			this.next();
+			self.render("create");
 		}
+	},
+	data: function () {
+		return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
 	},
 	waitOn: function () {
 		Meteor.subscribe("userdata");
 		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
 		return Meteor.subscribe("mindmap", this.params._id, user);
-	},
-	data: function () {
-		return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
 	}
+
 });
 
 
