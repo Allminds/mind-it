@@ -1,74 +1,87 @@
 var mindMapService = App.MindMapService.getInstance();
 
 App.setEventBinding = function () {
-  if(!App.editable) {
-    App.eventBinding.unBindAllEvents();
-  }
+    if (!App.editable) {
+        App.eventBinding.unBindAllEvents();
+    }
 }
 var nodeSelector = {
-  prevDepthVisited: 0,
+    prevDepthVisited: 0,
 
-  setPrevDepth: function (depth) {
-    this.prevDepthVisited = depth;
-  }
+    setPrevDepth: function (depth) {
+        this.prevDepthVisited = depth;
+    }
 };
 
 var update = function (data) {
-  window.data = data;
-  d3.select('#mindmap svg')
-    .datum(data)
-    .call(App.chart);
-  App.chart.update();
-  App.getChartInFocus();
-  $(window).resize(function() {
+    window.data = data;
+    d3.select('#mindmap svg')
+        .datum(data)
+        .call(App.chart);
+    App.chart.update();
+    App.getChartInFocus();
+    $(window).resize(function () {
         App.getChartInFocus();
-  });
+    });
 
 };
 
 var enableHelpLink = function () {
-  $('#help-modal').modal('show');
+    $('#help-modal').modal('show');
 };
 
 Template.create.events({
-  'click #Share_btn': function () {
-    $('#share-modal').modal('show');
+    'click #Share_btn': function () {
+        $('#share-modal').modal('show');
 
-  }
+    }
+});
+
+Template.create.helpers({
+    onlineUsers: function () {
+        var users = Meteor.users.find().fetch();
+        var userNames = [];
+        //return users[0].profile.name;
+            users.forEach(function(user){
+            userNames.push(user.profile.name);
+            });
+        return userNames[0];
+    },
+
+
+
 });
 
 Template.create.rendered = function rendered() {
-  if(this.data.data.length == 0) {
-    var message = "Invalid mindmap"
-    Router.go("/404");
+    if (this.data.data.length == 0) {
+        var message = "Invalid mindmap"
+        Router.go("/404");
 
-  }
+    }
+    App.currentMap = this.data.id;
+    var email = Meteor.user() ? Meteor.user().services.google.email : null;
+    Meteor.call("isWritable", App.currentMap, email, function (error, value) {
+        App.editable = value;
+        App.setEventBinding();
+        UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
+    });
+    var tree = mindMapService.buildTree(this.data.id, this.data.data);
+    update(tree);
+    var rootNode = d3.selectAll('.node')[0].find(function (node) {
+        return !node.__data__.position;
+    });
 
+    App.select(rootNode);
+    Mindmaps.find().observeChanges(App.tracker);
 
-  App.currentMap = this.data.id;
-  var email = Meteor.user() ? Meteor.user().services.google.email : null;
-  Meteor.call("isWritable", App.currentMap, email, function(error, value) {
-    App.editable = value;
-    App.setEventBinding();
-    UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
-  });
-  var tree = mindMapService.buildTree(this.data.id, this.data.data);
-  update(tree);
-  var rootNode = d3.selectAll('.node')[0].find(function (node) {
-    return !node.__data__.position;
-  });
+    App.retainCollapsed();
+    d3.select("#help-link").on('click', enableHelpLink);
 
-  App.select(rootNode);
-  Mindmaps.find().observeChanges(App.tracker);
+    App.setMapsCount();
 
-  App.retainCollapsed();
-  d3.select("#help-link").on('click', enableHelpLink);
-
-  App.setMapsCount();
-
-  //$("#sh").click(function () {
-  //  $('#share-modal').modal('show');
-  //});
+    //$("#sh").click(function () {
+    //  $('#share-modal').modal('show');
+    //});
 };
 
 
