@@ -50,6 +50,9 @@ var checkPlatform = function() {
 
 checkPlatform()
 
+App.ERROR_MESSAGE = "Page Not Found";
+
+
 Router.route('/', {
 	onBeforeAction: function () {
 		var self = this;
@@ -111,7 +114,7 @@ Router.route('/create/:_id', {
 Router.route('(/404)|/(.*)', {
 	name: 'error_page',
 	template: 'error_page',
-	waitOn: function () {
-		return Meteor.subscribe("userdata", Meteor.userId());
-	}
+	//waitOn: function () {
+	//	return Meteor.subscribe("userdata", Meteor.userId());
+	//}
 });
