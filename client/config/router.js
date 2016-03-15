@@ -74,13 +74,24 @@ Router.route('/create/:_id', {
 		var error_msg;
 		if(mindMapService.findTree(this.params._id).length == 0) {
 			Meteor.call("isInvalidMindmap",this.params._id , function(error , result) {
-				if(result == true)
+				if(result == true) {
 					error_msg = "Invalid Mindmap";
-				else
+					App.ERROR_MESSAGE = error_msg;
+					console.log(App.ERROR_MESSAGE);
+					self.render("error_page");
+				}
+				else {
 					error_msg = "Inaccessible Mindmap";
-				App.ERROR_MESSAGE = error_msg;
-				console.log(App.ERROR_MESSAGE)
-				self.render("error_page");
+					if(!Meteor.user()) {
+						console.log(App.ERROR_MESSAGE);
+						self.render("login_loading_page");
+
+					}else{
+						self.render("error_page");
+					}
+
+				}
+
 			})
 		}
 		else {
