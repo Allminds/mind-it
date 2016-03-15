@@ -77,13 +77,11 @@ Router.route('/create/:_id', {
 				if(result == true) {
 					error_msg = "Invalid Mindmap";
 					App.ERROR_MESSAGE = error_msg;
-					console.log(App.ERROR_MESSAGE);
 					self.render("error_page");
 				}
 				else {
 					error_msg = "Inaccessible Mindmap";
 					if(!Meteor.user()) {
-						console.log(App.ERROR_MESSAGE);
 						self.render("login_loading_page");
 
 					}else{
