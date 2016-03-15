@@ -61,9 +61,11 @@ App.eventBinding.f2Action = function(event) {
     var selectedNode = d3.select(".node.selected")[0][0];
     var node = App.Node.d3NodeToDbNode(selectedNode.__data__);
     if (!selectedNode) return;
-    App.showEditor(selectedNode);
-    var stackData = new App.stackData(node, 'rename');
-    App.RepeatHandler.addToActionStack([stackData]);
+    if(App.editable) {
+        App.showEditor(selectedNode);
+        var stackData = new App.stackData(node, 'rename');
+        App.RepeatHandler.addToActionStack([stackData]);
+    }
 };
 
 Mousetrap.bind('mod+z', function() {
