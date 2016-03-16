@@ -8,17 +8,11 @@ Meteor.publish('mindmap', function (id, user_email_id) {
 
   }
   else{
-<<<<<<< HEAD
-
-    return Mindmaps.find({_id: null});
-
-=======
     if(acl.find({mind_map_id: id}).count() == 0 ) {
       return Mindmaps.find({$or: [{_id: id}, {rootId: id}]});
     } else {
       return Mindmaps.find({_id: null});
     }
->>>>>>> 926eceac8c2288d7ab9ee3ab579f7875ab60f681
   }
 
 });
