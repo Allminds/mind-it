@@ -65,9 +65,9 @@ Meteor.methods({
     },
   isWritable: function (mindMapId, emailId) {
       var b = acl.find({mind_map_id: mindMapId, user_id: {$in: [emailId, "*"]}, permissions: {$in: ["w","o"]}}).fetch().length > 0;
-      if(acl.find({mind_map_id: mindMapId}).count() == 0 ){
-       b =  true;
-        console.log("b:",b);
+
+      if(acl.find({mind_map_id: id}).count() == 0 ){
+        b = true;
       }
       return b;
   },
