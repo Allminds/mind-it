@@ -96,6 +96,8 @@ Router.route('/create/:_id', {
 			})
 		}
 		else {
+			//var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+
 			self.render("create");
 		}
 	},
@@ -105,6 +107,11 @@ Router.route('/create/:_id', {
 	waitOn: function () {
 		Meteor.subscribe("userdata");
 		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+		Meteor.call("isWritable", this.params._id, user, function(error, value) {
+			App.editable = value;
+			console.log(" in router renderd:",App.editable);
+
+		});
 		return Meteor.subscribe("mindmap", this.params._id, user);
 	}
 

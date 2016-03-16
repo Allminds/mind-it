@@ -1,5 +1,4 @@
 var mindMapService = App.MindMapService.getInstance();
-
 App.setEventBinding = function () {
   if(!App.editable) {
     App.eventBinding.unBindAllEvents();
@@ -37,6 +36,8 @@ Template.create.events({
   }
 });
 
+
+
 Template.create.rendered = function rendered() {
   if(this.data.data.length == 0) {
     var message = "Invalid mindmap"
@@ -49,6 +50,8 @@ Template.create.rendered = function rendered() {
   var email = Meteor.user() ? Meteor.user().services.google.email : null;
   Meteor.call("isWritable", App.currentMap, email, function(error, value) {
     App.editable = value;
+    console.log("renderd:",App.editable);
+    //console.log("error:",error,value);
     App.setEventBinding();
     UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
   });
@@ -65,10 +68,26 @@ Template.create.rendered = function rendered() {
   d3.select("#help-link").on('click', enableHelpLink);
 
 //  App.setMapsCount();
-
 };
-
-
-
+Template.readOnly.helpers({
+  statusmsg : function(){
+    console.log("in helpers:",App.editable);
+    if(App.editable)
+        return "";
+    else
+        return "Read-Only";
+  }
+});
+//Template.readOnly.rendered = function rendered() {
+//  console.log("in rendered",App.editable);
+//
+//  if (App.editable)
+//    statusmsg("prajakta");
+//  else
+//    statusmsg("Read-only");
+//
+//
+//}
+//
 
 
