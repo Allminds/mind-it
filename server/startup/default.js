@@ -3,16 +3,17 @@ mindMapService = App.MindMapService.getInstance();
 Meteor.publish('mindmap', function (id, user_email_id) {
   var readPermitted = acl.findOne({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id});
 
-  //console.log(readPermitted);
   if(readPermitted ){
     return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
 
   }
   else{
-    return Mindmaps.find({_id: null});
-
+    if(acl.find({mind_map_id: id}).count() == 0 ) {
+      return Mindmaps.find({$or: [{_id: id}, {rootId: id}]});
+    } else {
+      return Mindmaps.find({_id: null});
+    }
   }
-  //return Mindmaps.find({});
 
 });
 Meteor.publish('userdata', function () {
