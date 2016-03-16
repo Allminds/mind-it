@@ -3,6 +3,7 @@ var mindMapService = App.MindMapService.getInstance();
 App.setEventBinding = function () {
   if(!App.editable) {
     App.eventBinding.unBindAllEvents();
+    console.log("App",App.editable);
   }
 }
 var nodeSelector = {
