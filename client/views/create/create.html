@@ -2,16 +2,17 @@
 <template name='create'>
   <h2>{{name}}</h2>
 
-  <div class="top-margin" style="position: fixed">
-
-
-    <!--Uncomment this button when need shareoptions-->
-    <button id="Share_btn" >Share MindMap</button>
-
-   <!--<div id="shareblock">-->
-
-   <!--</div>-->
+  <div class="top-margin" style="width: 100% ; position: fixed; margin-top: 6%">
+    {{> readOnly }}
   </div>
+
+  <div class="top-margin" style="width: 100% ; position: fixed">
+    <!--<button id="Share_btn" style="float: right">Share MindMap</button>-->
+    <img src="/shareIcon.png" id="Share_btn" style="float: right">
+  </div>
+
+
+
 
   <div id='mindmap'>
     <svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="960" height="6000">
@@ -48,6 +49,14 @@
     ga('create', 'UA-71673347-1', 'auto');
     ga('send', 'pageview');
   </script>
+
+</template>
+
+<template name = "readOnly">
+
+
+    <h4>{{ statusmsg }}</h4>
+
 
 </template>
 
