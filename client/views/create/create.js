@@ -48,7 +48,7 @@ Template.create.rendered = function rendered() {
 
   App.currentMap = this.data.id;
   var email = Meteor.user() ? Meteor.user().services.google.email : null;
-  Meteor.call("isWritable", App.currentMap, email, function(error, value) {
+  Meteor.call("isWritable", App.currentMap, email, function(value, error) {
     App.editable = value;
     App.setEventBinding();
     UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
