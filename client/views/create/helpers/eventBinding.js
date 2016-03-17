@@ -15,7 +15,19 @@ App.eventBinding.focusAfterDelete = function(removedNode, removedNodeIndex) {
     }
     App.selectNode(focusableNode);
 };
-
+App.eventBinding.unBindAllEvents = function(){
+        Mousetrap.unbind('mod+x');
+        Mousetrap.unbind('mod+c');
+        Mousetrap.unbind('mod+v');
+        Mousetrap.unbind('enter');
+        Mousetrap.unbind('tab');
+        Mousetrap.unbind('del');
+        Mousetrap.unbind('mod+left');
+        Mousetrap.unbind('mod+right');
+        Mousetrap.unbind('mod+up');
+        Mousetrap.unbind('mod+down');
+        Mousetrap.unbind('mod+x');
+};
 App.cutNode = function(selectedNode) {
     if (App.Node.isRoot(selectedNode) == true) {
         alert("The root node cannot be cut!");
@@ -49,9 +61,11 @@ App.eventBinding.f2Action = function(event) {
     var selectedNode = d3.select(".node.selected")[0][0];
     var node = App.Node.d3NodeToDbNode(selectedNode.__data__);
     if (!selectedNode) return;
-    App.showEditor(selectedNode);
-    var stackData = new App.stackData(node, 'rename');
-    App.RepeatHandler.addToActionStack([stackData]);
+    if(App.editable) {
+        App.showEditor(selectedNode);
+        var stackData = new App.stackData(node, 'rename');
+        App.RepeatHandler.addToActionStack([stackData]);
+    }
 };
 
 Mousetrap.bind('mod+z', function() {
