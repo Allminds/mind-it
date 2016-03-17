@@ -1,14 +1,41 @@
 mindMapService = App.MindMapService.getInstance();
 
+function randomString(length, chars) {
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
+}
+function getSharableLink(){
+
+
+    var date = ""+new Date().getTime();
+    var  url=date.substring(0,date.length/2);
+
+    url += randomString(10, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+    url += date.substring(date.length/2+1,date.length-1);
+    url += randomString(10, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+
+    return url;
+}
+
+
 Template.MyButton.events({
     'click #clickme': function () {
         // 1. cretate root node with defualt title
         var user = Meteor.user() ? Meteor.user().services.google.email : "*";
         var mindMapId = mindMapService.createRootNode('New Mindmap', user),
             link = '/create/' + mindMapId;
+        var sharedReadLink = "www.mindit.xyz/sharedLink/"+getSharableLink();
+        var sharedWriteLink = "www.mindit.xyz/sharedLink/"+getSharableLink();
         if (Meteor.user()) {
             Meteor.call("addMapToUser", user, mindMapId, "o");
+            Meteor.call("addMaptoMindmapMetadata", user, mindMapId, sharedReadLink,sharedWriteLink );
         }
+        else {
+            Meteor.call("addMaptoMindmapMetadata", "*", mindMapId, sharedReadLink,sharedWriteLink);
+        }
+
         // 2. Go to canvas root note
         Router.go(link);
         clearNodeCollapsedState();
