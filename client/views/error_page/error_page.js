@@ -17,17 +17,23 @@ Template.error_page.events({
 Template.error_page.helpers({
     error_title : function(){
         if(App.ERROR_MESSAGE == "Invalid Mindmap") {
-            return "";
+            return "Invalid Mindmap";
         }
-        else{
+        if(App.ERROR_MESSAGE == "Inaccessible Mindmap"){
             return "You need permission ";
+        }
+        if(App.ERROR_MESSAGE == "Page Not Found"){
+            return "Sorry, this page isn't available";
         }
     },
     error_msg: function() {
-        if(App.ERROR_MESSAGE == "Invalid Mindmap") {
-            return "Looks like you were led astray with an incorrect URL.";
+        if(App.ERROR_MESSAGE == "Page Not Found") {
+            return "The link you followed may be broken, or the page may have been removed."
         }
-        else{
+        if(App.ERROR_MESSAGE == "Invalid Mindmap") {
+            return "The link you followed may be broken";
+        }
+        if(App.ERROR_MESSAGE == "Inaccessible Mindmap"){
             return "Seems that the owner of this mindmap hasn't shared this mindmap with you ";
         }
 

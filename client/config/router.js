@@ -50,6 +50,9 @@ var checkPlatform = function() {
 
 checkPlatform()
 
+App.ERROR_MESSAGE = "Page Not Found";
+
+
 Router.route('/', {
 	onBeforeAction: function () {
 		var self = this;
@@ -74,16 +77,27 @@ Router.route('/create/:_id', {
 		var error_msg;
 		if(mindMapService.findTree(this.params._id).length == 0) {
 			Meteor.call("isInvalidMindmap",this.params._id , function(error , result) {
-				if(result == true)
+				if(result == true) {
 					error_msg = "Invalid Mindmap";
-				else
+					App.ERROR_MESSAGE = error_msg;
+					self.render("error_page");
+				}
+				else {
 					error_msg = "Inaccessible Mindmap";
-				App.ERROR_MESSAGE = error_msg;
-				console.log(App.ERROR_MESSAGE)
-				self.render("error_page");
+					if(!Meteor.user()) {
+						self.render("login_loading_page");
+
+					}else{
+						self.render("error_page");
+					}
+
+				}
+
 			})
 		}
 		else {
+			//var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+
 			self.render("create");
 		}
 	},
@@ -93,6 +107,11 @@ Router.route('/create/:_id', {
 	waitOn: function () {
 		Meteor.subscribe("userdata");
 		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+		Meteor.call("isWritable", this.params._id, user, function(error, value) {
+			App.editable = value;
+			console.log(" in router renderd:",App.editable);
+
+		});
 		return Meteor.subscribe("mindmap", this.params._id, user);
 	}
 
@@ -102,7 +121,7 @@ Router.route('/create/:_id', {
 Router.route('(/404)|/(.*)', {
 	name: 'error_page',
 	template: 'error_page',
-	waitOn: function () {
-		return Meteor.subscribe("userdata", Meteor.userId());
-	}
+	//waitOn: function () {
+	//	return Meteor.subscribe("userdata", Meteor.userId());
+	//}
 });
