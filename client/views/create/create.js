@@ -75,23 +75,12 @@ Template.create.helpers({
 })
 
 Template.create.rendered = function rendered() {
-
-    var templateData =this.data;
-
-
-
-    setTimeout(function () {
-        console.log("setting this .data:",App.isSharedMindmap);
-        if(App.isSharedMindmap)
-            templateData=App.temp;
-        console.log("in rendered......", templateData);
-        //
-        this.data= templateData;
-        if (this.data.data.length == 0) {
-            var message = "Invalid mindmap"
-            alert(message);
-            // Router.go("/404");
-        }
+    console.log("in rendered......",this.data.data);
+    if (this.data.data.length == 0) {
+        var message = "Invalid mindmap"
+        alert(message);
+        // Router.go("/404");
+    }
 
 
     App.currentMap = this.data.id;
@@ -111,7 +100,7 @@ Template.create.rendered = function rendered() {
         App.editable = true;
         //UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
     }
-    App.isSharedMindmap = null;
+    //App.isSharedMindmap = null;
     var tree = mindMapService.buildTree(this.data.id, this.data.data);
     update(tree);
     var rootNode = d3.selectAll('.node')[0].find(function (node) {
@@ -123,13 +112,12 @@ Template.create.rendered = function rendered() {
 
     App.retainCollapsed();
     d3.select("#help-link").on('click', enableHelpLink);
-    }, 200);
 
 //  App.setMapsCount();
 };
 Template.readOnly.helpers({
     statusmsg: function () {
-        //console.log("in helpers:", App.editable);
+        console.log("in helpers:", App.editable);
         if (App.editable)
             return "";
         else
@@ -147,5 +135,4 @@ Template.readOnly.helpers({
 //
 //}
 //
-
 
