@@ -76,6 +76,7 @@ Meteor.methods({
           generateData(AllNodes);
     },
   isWritable: function (mindMapId, emailId) {
+    console.log("mind map id:",mindMapId);
       var b = acl.find({mind_map_id: mindMapId, user_id: {$in: [emailId, "*"]}, permissions: {$in: ["w","o"]}}).count() > 0;
       return b;
   },
@@ -103,7 +104,7 @@ Meteor.methods({
   },
   getRootNodeFromLink: function(link){
     var doc = MindmapMetadata.findOne({$or:[{readOnlyLink:link},{readWriteLink:link}]});
-    console.log("doc::",doc);
+   // console.log("doc::",doc);
     return doc.rootId;
   }
 });
