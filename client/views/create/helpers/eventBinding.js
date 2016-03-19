@@ -888,3 +888,24 @@ var clearCmd = function(e) {
 
 Mousetrap.bind('mod', setCmd, 'keydown');
 Mousetrap.bind('mod', clearCmd, 'keyup');
+
+Mousetrap.bind('mod+shift+p', function() {
+    App.presentation.prepareArrayForNavigation()
+});
+
+Mousetrap.bind('mod+shift+b' , function() {
+    event = arguments[0];
+    event.preventDefault();
+
+    var nodeId = App.presentationArray[App.index++];
+
+    var d3Nodes = d3.selectAll(".node")[0];
+
+    for(var i = 0 ; i < d3Nodes.length; i++) {
+        if(d3Nodes[i].__data__._id == nodeId) {
+            d3.selectAll(".selected").classed("selected", false);
+            App.select(d3Nodes[i] , false);
+        }
+    }
+
+});
