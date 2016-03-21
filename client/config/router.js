@@ -139,8 +139,6 @@ Router.route('/sharedLink/:link',{
 			setTimeout(function(){
 				self.render("create");
 			},2000);
-
-			//Router.go('/create/'+doc.rootId);
 		}
 		else
 		{

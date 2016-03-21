@@ -32,7 +32,6 @@ Template.ModalBody.events({
     Meteor.call("addMapToUser", eMail, mindMapId, permission);
   }
 
-
 });
 
 Template.ModalPopUp.helpers({

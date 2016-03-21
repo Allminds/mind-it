@@ -74,9 +74,8 @@ Template.create.helpers({
 
 Template.create.rendered = function rendered() {
     if (this.data.data.length == 0) {
-        var message = "Invalid mindmap"
-        alert(message);
-        // Router.go("/404");
+        var message = "Invalid mindmap";
+        Router.go("/404");
     }
 
 
