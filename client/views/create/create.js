@@ -3,7 +3,7 @@ var mindMapService = App.MindMapService.getInstance();
 App.setEventBinding = function () {
     if (!App.editable) {
         App.eventBinding.unBindAllEvents();
-        console.log("App", App.editable);
+
     }
 }
 var nodeSelector = {
@@ -61,6 +61,7 @@ Template.create.helpers({
         if (App.isSharedMindmap == App.Constants.Mode.READ) {
             return "";
         }
+
 
         else
             return "Share read only link";

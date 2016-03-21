@@ -70,14 +70,15 @@ var IS_IPAD = navigator.userAgent.match(/iPad/i) != null,
 	IS_IPHONE = !IS_IPAD && ((navigator.userAgent.match(/iPhone/i) != null) || (navigator.userAgent.match(/iPod/i) != null)),
 	IS_IOS = IS_IPAD || IS_IPHONE;
 
-var checkPlatform = function() {
-	if(IS_IOS) {
-		var address = window.location.href
-		var elements = address.split('/')
-		var id = elements[elements.length - 1]
 
-		window.location.assign("mindit.xyz://create/" + id)
-	}
+var checkPlatform = function () {
+    if (IS_IOS) {
+        var address = window.location.href
+        var elements = address.split('/')
+        var id = elements[elements.length - 1]
+
+        window.location.assign("mindit.xyz://create/" + id)
+    }
 }
 
 checkPlatform()
@@ -154,8 +155,19 @@ Router.route('/create/:_id', {
 
 });
 
+        //App.abc= Meteor.subscribe("onlineusers",this.params._id);
+
+
+        var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+        return Meteor.subscribe("mindmap", this.params._id, user);
+    },
+    data: function () {
+        return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
+    }
+});
 
 Router.route('(/404)|/(.*)', {
+<<<<<<< HEAD
 	name: 'error_page',
 	template: 'error_page',
 	onBeforeAction: function () {
@@ -216,5 +228,6 @@ Router.route('/sharedLink/:link',{
 		console.log("in share",App.currentMap);
 		return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};
 	}
+
 
 });
