@@ -1,53 +1,73 @@
 <!-- Create template -->
 <template name='create'>
-  <h2>{{name}}</h2>
 
-  <div class="top-margin" style="position: fixed">
+    <h2>{{name}}</h2>
+
+    <!--share button and readonly message is commented below-->
+
+    <div class="top-margin" style="width: 100% ; position: fixed; margin-top: 6%">
+    {{> readOnly }}
+    </div>
+
+    <div class="top-margin" style="width: 100% ; position: fixed">
+    <button id="Share_btn" style="float: left">Share MindMap</button>
+    <!--<img src="/shareIcon.png" id="Share_btn" style="float: right">-->
+    </div>
+
+    <!--<div class="top-margin" style="width: 100% ; position: fixed ;">-->
+        <!--<button id="getSharableReadLink" style="float: right">{{ shareReadLink }}</button>-->
+        <!--&lt;!&ndash;<img src="/shareIcon.png" id="getSharableReadLink" style="float: left">&ndash;&gt;-->
+
+    <!--</div>-->
+    <div  style="width: 100% ; position: fixed; margin-top: 10%">
+        <button id="getSharableWriteLink" style="float: left">{{  shareWriteLink }}</button>
+    </div>
+
+    <div id='mindmap'>
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="960" height="6000">
+        </svg>
+    </div>
+
+    <div id="prompt">
+        {{> ModalPopUp modalHeaderText="Enter text here" modalId="myModalHorizontal" requireFooter="true"
+        isFullWidth="false"}}
+    </div>
+
+    <div>
+        {{> ModalPopUp modalHeaderText="Help" modalId="help-modal" path="/shortcuts.png" isFullWidth="true"}}
+    </div>
+
+    <div>
+        {{> ModalPopUp modalHeaderText="Share Mindmap" modalId="share-modal" isModalForShare="true" }}
+    </div>
+
+    {{> TopBar topbarText="Help" linkId="help-link" requireExport=true requireHelp=true sideLogo=true
+    requireFeedback=true notError=true}}
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-71673347-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+</template>
+
+<template name="readOnly">
 
 
-    <!--Uncomment this button when need shareoptions-->
-  <button id="Share_btn" >Share MindMap</button>
+    <h4>{{ statusmsg }}</h4>
 
-   <!--<div id="shareblock">-->
-
-   <!--</div>-->
-  </div>
-
-  <div id='mindmap'>
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="960" height="6000">
-    </svg>
-  </div>
-
-  <div id="prompt">
-    {{> ModalPopUp modalHeaderText="Enter text here" modalId="myModalHorizontal" requireFooter="true" isFullWidth="false"}}
-  </div>
-
-  <div>
-    {{> ModalPopUp modalHeaderText="Help" modalId="help-modal" path="/shortcuts.png" isFullWidth="true"}}
-  </div>
-
-  <div>
-    {{> ModalPopUp modalHeaderText="Share Mindmap" modalId="share-modal" isModalForShare="true" }}
-  </div>
-
-  {{> TopBar topbarText="Help" linkId="help-link" requireExport=true requireHelp=true sideLogo=true requireFeedback=true}}
-
-  <script>
-    (function (i, s, o, g, r, a, m) {
-      i['GoogleAnalyticsObject'] = r;
-      i[r] = i[r] || function () {
-          (i[r].q = i[r].q || []).push(arguments)
-        }, i[r].l = 1 * new Date();
-      a = s.createElement(o),
-        m = s.getElementsByTagName(o)[0];
-      a.async = 1;
-      a.src = g;
-      m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-    ga('create', 'UA-71673347-1', 'auto');
-    ga('send', 'pageview');
-  </script>
 
 </template>
 

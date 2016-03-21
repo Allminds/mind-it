@@ -1,5 +1,6 @@
 <template name='error_page'>
-    {{> TopBar linkId="help-link" sideLogoSmall=true}}
+
+    {{> TopBar currentUser=false sideLogoSmall=true notError=false }}
 
     <div class="errorPage">
         <h2>{{ error_title }}</h2>

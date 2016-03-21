@@ -8,10 +8,11 @@
 
             <div class="navbar-header">
                 <button type="button" class=" nav navbar-nav navbar-right navbar-toggle" data-toggle="collapse"
-                        data-target="#myNavbar" >
-                    <span class="icon-bar" ></span>
-                    <span class="icon-bar" ></span>
-                    <span class="icon-bar" ></span>
+
+                        data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
                 <ul class="nav navbar-nav navbar-left " style="float: left">
                     {{#if sideLogo}}
@@ -45,9 +46,8 @@
 
                 <ul class="nav navbar-nav navbar-right " style="float: left">
                     {{#if requireExport}}
-                    <li><a href="#" target="new">
-                        Export
-                    </a></li>
+
+                    <li>{{> Export}}</li>
                     {{/if}}
 
 
@@ -63,11 +63,12 @@
 
                     {{#if currentUser}}
 
-                    <li  style="display: inline-block">
+                    {{#if notError}}
+                    <li style="display: inline-block">
                         <a style=" float: left;  pointer-events: none;">{{ name}}</a>
 
                         <!--<h4 style="display: inline-block;padding-right: 15px">{{ name}} </h4>-->
-                        <li class="dropdown" style="display: inline-block">
+                    <li class="dropdown" style="display: inline-block">
                         <img src={{ picture}} class="img-circle dropdown-toggle" alt="Cinque Terre"
                              style="float: right; margin-top: 5px; margin-left: -10px; margin-right: 15px;"
                              width="35" height="35"
@@ -80,17 +81,21 @@
                             </li>
                         </ul>
 
-                        </li>
-                    </li>
 
+                    </li>
+                    </li>
+                    {{/if}}
                     {{/if}}
 
 
                     {{#if currentUser}}
                     {{else}}
-                    <li><a href="" data-action="login" >
+
+                    {{#if notError}}
+                    <li><a href="" data-action="login" style="color: #000000">
                         Log In
                     </a></li>
+                    {{/if}}
                     {{/if}}
                 </ul>
             </div>

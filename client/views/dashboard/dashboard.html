@@ -1,6 +1,7 @@
 <template name='dashboard'>
-    {{> TopBar sideLogo=true requireFeedback=true isDashboard=true}}
-    <div class="dashboardButtons" style="margin-top: 10%; margin-bottom: 2%">
+
+    {{> TopBar sideLogo=true requireFeedback=true isDashboard=true notError=true}}
+    <div class="dashboardButtons" style="margin-top: 12%; ">
         {{> MyButton}}
     </div>
 
@@ -20,7 +21,8 @@
                 <table id="allMapsTable" class="display" cellspacing="0" width="100%" >
                     <thead>
                         <tr>
-                            <th style="'Lucida Grande', Verdana, Helvetica, Arial, sans-serif;">Name</th>
+
+                            <th style="'Lucida Grande', Verdana, Helvetica, Arial, sans-serif;"></th>
                             <!--<th>Owner</th>-->
                         </tr>
                     </thead>
