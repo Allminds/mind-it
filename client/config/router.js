@@ -155,19 +155,10 @@ Router.route('/create/:_id', {
 
 });
 
-        //App.abc= Meteor.subscribe("onlineusers",this.params._id);
 
 
-        var user = Meteor.user() ? Meteor.user().services.google.email : "*";
-        return Meteor.subscribe("mindmap", this.params._id, user);
-    },
-    data: function () {
-        return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
-    }
-});
 
 Router.route('(/404)|/(.*)', {
-<<<<<<< HEAD
 	name: 'error_page',
 	template: 'error_page',
 	onBeforeAction: function () {
