@@ -893,13 +893,7 @@ Mousetrap.bind('mod+shift+p', function() {
     event = arguments[0];
     event.preventDefault();
 
-    if(App.presentationMode == true) {
-        App.presentationMode = false;
-    }
-    else {
-        App.presentation.prepareArrayForNavigation();
-        App.presentationMode = true;
-    }
+    App.presentation.prepareForPresentation();
 
     App.index = -1;
     moveCursor(true);
@@ -934,6 +928,7 @@ var moveCursor = function(isForward) {
 
     var d3Nodes = d3.selectAll(".node")[0];
     console.log("Id : " + nodeId);
+
 
     for(var i = 0 ; i < d3Nodes.length; i++) {
         if(d3Nodes[i].__data__._id == nodeId) {
