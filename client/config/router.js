@@ -136,12 +136,13 @@ Router.route('/create/:_id', {
 		}
 	},
 	data: function () {
-		console.log("in create;");
 		return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
 	},
 	waitOn: function () {
 		Meteor.subscribe("userdata");
 		App.currentMap = this.params._id;
+
+		Meteor.subscribe("onlineusers",this.params._id);
 
 		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
 		Meteor.call("isWritable", this.params._id, user, function (error, value) {
