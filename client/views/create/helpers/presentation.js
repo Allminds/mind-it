@@ -2,8 +2,12 @@ App.presentation = {};
 App.presentationArray = [];
 App.lenght = 0;
 App.index = 0;
+App.presentationMode = false;
 
 App.presentation.prepareArrayForNavigation = function() {
+
+    alert("Presentaion Mode");
+
     var rootNode = Mindmaps.findOne({rootId : null});
 
     App.presentation = [];
@@ -20,14 +24,7 @@ App.presentation.prepareArrayForNavigation = function() {
 
     rootNode.childSubTree = rootNodeChildSubTree;
 
-    alert("Hi")
-
     buildPresentationArray(rootNode);
-
-
-    //for (var index in App.presentationArray) {
-    //    alert("Node : " + App.presentationArray[index]);
-    //}
 
 };
 

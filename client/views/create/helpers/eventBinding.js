@@ -890,22 +890,59 @@ Mousetrap.bind('mod', setCmd, 'keydown');
 Mousetrap.bind('mod', clearCmd, 'keyup');
 
 Mousetrap.bind('mod+shift+p', function() {
-    App.presentation.prepareArrayForNavigation()
-});
-
-Mousetrap.bind('mod+shift+b' , function() {
     event = arguments[0];
     event.preventDefault();
 
-    var nodeId = App.presentationArray[App.index++];
+    if(App.presentationMode == true) {
+        App.presentationMode = false;
+    }
+    else {
+        App.presentation.prepareArrayForNavigation();
+        App.presentationMode = true;
+    }
+
+    App.index = -1;
+    moveCursor(true);
+
+});
+
+Mousetrap.bind("pageup" , function() {
+    e = arguments[0];
+    e.preventDefault();
+    moveCursor(false);
+});
+
+Mousetrap.bind('pagedown' , function() {
+    e = arguments[0];
+    e.preventDefault();
+    moveCursor(true);
+});
+
+
+var moveCursor = function(isForward) {
+
+    if(isForward == true) {
+        App.index = (App.index + 1) % App.presentationArray.length;
+    }
+    else {
+        App.index = (App.index + App.presentationArray.length - 1) % App.presentationArray.length;
+    }
+
+    console.log("Index : " + App.index);
+
+    var nodeId = App.presentationArray[App.index];
 
     var d3Nodes = d3.selectAll(".node")[0];
+    console.log("Id : " + nodeId);
 
     for(var i = 0 ; i < d3Nodes.length; i++) {
         if(d3Nodes[i].__data__._id == nodeId) {
-            d3.selectAll(".selected").classed("selected", false);
-            App.select(d3Nodes[i] , false);
+            console.log("Selected Data : " + d3Nodes[i].__data__.name);
+            App.deselectNode();
+            d3.select(d3Nodes[i]).classed("selected", true);
+            App.clearAllSelected();
+
+            break;
         }
     }
-
-});
+}
