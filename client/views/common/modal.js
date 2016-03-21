@@ -69,5 +69,29 @@ Template.ModalPopUp.events({
   },
   'hidden.bs.modal #myModalHorizontal': function(event){
     restoreNodeSelection();
+  },
+  'click [data-action=toggleOptions]': function (e, args) {
+    e.preventDefault();
+    $("div#userOptions").toggle();
+  },
+  'click #sharedLinkr': function () {
+    var text= document.getElementById("sharedLinkr");
+    var textBox= document.getElementById("linkTextBox");
+    console.log("text:",text.textContent);
+    textBox.value = text;
+    Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
+      textBox.value = value;
+    });
+
+  },
+  'click #sharedLinkw': function () {
+    var text= document.getElementById("sharedLinkw");
+    var textBox= document.getElementById("linkTextBox");
+    console.log("text:",text.textContent);
+    textBox.value = text;
+    Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
+      textBox.value=value;
+    });
+
   }
 });
