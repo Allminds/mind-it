@@ -2,7 +2,6 @@ var mindMapService = App.MindMapService.getInstance();
 App.setEventBinding = function () {
     if (!App.editable) {
         App.eventBinding.unBindAllEvents();
-        console.log("App", App.editable);
     }
 }
 var nodeSelector = {
@@ -46,7 +45,6 @@ Template.create.events({
 
     },
     'click #getSharableReadLink': function () {
-        console.log("call succes");
         Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
             var msg = value;
             alert(msg);
@@ -75,7 +73,6 @@ Template.create.helpers({
 })
 
 Template.create.rendered = function rendered() {
-    console.log("in rendered......",this.data.data);
     if (this.data.data.length == 0) {
         var message = "Invalid mindmap"
         alert(message);
@@ -87,10 +84,7 @@ Template.create.rendered = function rendered() {
     var email = Meteor.user() ? Meteor.user().services.google.email : null;
     if (App.isSharedMindmap != App.Constants.Mode.WRITE) {
         Meteor.call("isWritable", App.currentMap, email, function (error, value) {
-            console.log("ABC", error, value);
             App.editable = value;
-            console.log("renderd:", App.editable);
-            //console.log("error:",error,value);
             App.setEventBinding();
             UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
         });
@@ -117,7 +111,6 @@ Template.create.rendered = function rendered() {
 };
 Template.readOnly.helpers({
     statusmsg: function () {
-        console.log("in helpers:", App.editable);
         if (App.editable)
             return "";
         else
@@ -125,7 +118,6 @@ Template.readOnly.helpers({
     }
 });
 //Template.readOnly.rendered = function rendered() {
-//  console.log("in rendered",App.editable);
 //
 //  if (App.editable)
 //    statusmsg("prajakta");

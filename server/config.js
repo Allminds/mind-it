@@ -2,7 +2,7 @@ ServiceConfiguration.configurations.remove({
   service: "google"
 });
 ServiceConfiguration.configurations.insert({
-   service: process.env.service,
+   service: "google",
    clientId: process.env.clientId,
    secret: process.env.secret
 });

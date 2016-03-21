@@ -101,7 +101,6 @@ Router.route('/create/:_id', {
 		}
 	},
 	data: function () {
-		console.log("in create;");
 		return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
 	},
 	waitOn: function () {
@@ -134,10 +133,8 @@ Router.route('/sharedLink/:link',{
 	onBeforeAction: function(){
 		var self = this;
 		//App.currentMap = this.data();
-		console.log("In onBeforAction:",App.currentMap);
 		var doc=MindmapMetadata.findOne({readOnlyLink:"www.mindit.xyz/sharedLink/"+this.params.link});
 		if(doc){
-			console.log("in read....");
 			App.isSharedMindmap = App.Constants.Mode.READ;
 			setTimeout(function(){
 				self.render("create");
@@ -149,7 +146,6 @@ Router.route('/sharedLink/:link',{
 		{
 			doc = MindmapMetadata.findOne({readWriteLink:"www.mindit.xyz/sharedLink/"+this.params.link});
 			if(doc){
-				console.log("in write......");
 				App.isSharedMindmap = App.Constants.Mode.WRITE;
 				App.editable = true;
 				setTimeout(function(){
@@ -162,12 +158,10 @@ Router.route('/sharedLink/:link',{
 		}
 	},
 	waitOn :function(){
-		console.log("in waiton........");
 		Meteor.subscribe("userdata");
 		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
 		var isSharedMindmap = true;
 		Meteor.call("getRootNodeFromLink","www.mindit.xyz/sharedLink/"+this.params.link, function(error, value) {
-			console.log("in the call..");
 			App.currentMap = value;
 			Meteor.subscribe("mindmap", value, user,true);
 		});
@@ -177,7 +171,6 @@ Router.route('/sharedLink/:link',{
 	data: function () {
 
 
-		console.log("in share",App.currentMap);
 		return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};
 	}
 
