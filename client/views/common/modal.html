@@ -1,3 +1,11 @@
+<head>
+    <script src="/javascripts/jquery.js" type="text/javascript"></script>
+    <script src="/javascripts/jquery.hashchange.js" type="text/javascript"></script>
+    <script src="/javascripts/jquery.easytabs.js" type="text/javascript"></script>
+</head>
+<body>
+
+</body>
 <template name="ModalHeader">
     <div class="modal-header">
         <button type="button" class="close"
@@ -20,23 +28,73 @@
                 {{/if}}
                 {{#if isModalForShare}}
                 <div>
+                    <!--<form>-->
+                    <!--<div>-->
+
+                    <!--<input type="email" placeholder="   Email Address" id="e_mail" style="width: 60%; padding:3px; margin-top: 5%" >-->
+                    <!--</div>-->
+                    <!--<div style="width: 100%; padding: 5%">-->
+                    <!--<select id="permission" style="margin-right: 20%;">-->
+
+                    <!--{{#each permissions}}-->
+                    <!--<option value="{{this.name}}">{{this.value}}</option>-->
+                    <!--{{/each}}-->
+                    <!--</select>-->
+
+                    <!--<input type="submit" value="Share" data-action="share" style="margin-left: 20%" >-->
+
+                    <!--</div>-->
+                    <!--</form>-->
+
                     <form>
+                        <ul class="in-line nav nav-tabs">
+                            <li class="active"><a href="#link" data-toggle="tab">link</a></li>
+                            <li><a href="#email" data-toggle="tab">Email</a></li>
+                        </ul>
                         <div>
+                            <div id="link" class="tab-pane fade in active ">
 
-                            <input type="email" placeholder="   Email Address" id="e_mail" style="width: 60%; padding:3px; margin-top: 5%" >
-                        </div>
-                        <div style="width: 100%; padding: 5%">
-                            <select id="permission" style="margin-right: 20%;">
+                                <div class="row">
+                                    <h3 class="col-6" style="float: left">Get sharable link</h3>
+                                    <h2 class="col-6"></h2>
+                                </div>
+                                <div class="col-12">
+                                    <!--<p class="col-4" style="margin-left: 40px;font-size:medium">Anyone with this link-->
+                                        <!--can</p>-->
+                                    <!--<select class = "col-6" style="float: left;display:inline-block;margin-left: 40px;margin-top: 8px;height:50px">-->
+                                        <!--&lt;!&ndash;<option value="read"> read </option>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<option value="write"> write </option>&ndash;&gt;-->
+                                        <!--{{#each permissions}}-->
+                                        <!--<option value="{{this.name}}">Anyone with this link can {{this.value}}</option>-->
+                                        <!--{{/each}}-->
+                                    <!--</select>-->
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" id = "sharableLinkButton" style="width: 70%; background-color:#FFFFFF;  " type="button" data-action="toggleOptions" data-toggle="dropdown">Anyone with this link can
+                                            <span class="caret"></span></button>
 
-                                {{#each permissions}}
-                                <option value="{{this.name}}">{{this.value}}</option>
-                                {{/each}}
-                            </select>
+                                        <ul class="dropdown-menu">
+                                            {{#each permissions}}
 
-                            <input type="submit" value="Share" data-action="share" style="margin-left: 20%" >
+                                            <li id="sharedLink{{this.name}}">Anyone with this link can {{this.value}}</li>
 
+                                            {{/each}}
+
+                                        </ul>
+                                    </div>
+
+                                </div>
+                                <div class="col-12">
+                                    <span class="col-1"></span>
+                                    <input id = "linkTextBox" class="col-8" type="text" readonly="readonly" style="width:80%">
+                                </div>
+                            </div>
+                            <div id="email" class="tab-pane fade ">
+                                <h3> this is menu</h3>
+                            </div>
                         </div>
                     </form>
+
+
                 </div>
 
 
