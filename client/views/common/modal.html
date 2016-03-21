@@ -68,25 +68,29 @@
                                         <!--<option value="{{this.name}}">Anyone with this link can {{this.value}}</option>-->
                                         <!--{{/each}}-->
                                     <!--</select>-->
-                                    <div class="dropdown">
-                                        <button class="btn btn-primary dropdown-toggle" id = "sharableLinkButton" style="width: 70%; background-color:#FFFFFF;  " type="button" data-action="toggleOptions" data-toggle="dropdown">Anyone with this link can
+
+                                    <div class="dropdown row">
+                                        <span class="col-1"></span>
+                                        <button class=" btn-primary dropdown-toggle col-8" id = "sharableLinkButton" style="width: 80%;height:40px;color:#000000;font-size:medium ;background-color:#FFFFFF;border-width: thin;border-color: #f1f1f1;float: left " type="button" data-action="toggleOptions" data-toggle="dropdown">Anyone with this link can
                                             <span class="caret"></span></button>
+                                            <ul class="dropdown-menu col-8" style="position:absolute;margin-left:52px;width: 80%;justify-content: space-between">
+                                                <li id="sharedLinkr"  style="height: 30px;text-align: center;border-bottom: 2px;border-bottom-color: #0c0c0c">Anyone with this link can read the mindmap</li>
+                                                <li class = "divider"></li>
+                                                <li id="sharedLinkw"  style="height: 30px;text-align: center;border-bottom: 2px;border-bottom-color: #0c0c0c">Anyone with this link can read and write the mindmap</li>
 
-                                        <ul class="dropdown-menu">
-                                            {{#each permissions}}
+                                            </ul>
 
-                                            <li id="sharedLink{{this.name}}">Anyone with this link can {{this.value}}</li>
-
-                                            {{/each}}
-
-                                        </ul>
+                                    </div>
+                                    <div class="row">
+                                    <span class="col-1"></span>
+                                    <input id = "linkTextBox" class="col-8" type="text" readonly="readonly" style="width:80%;">
                                     </div>
 
                                 </div>
-                                <div class="col-12">
-                                    <span class="col-1"></span>
-                                    <input id = "linkTextBox" class="col-8" type="text" readonly="readonly" style="width:80%">
-                                </div>
+                                <!--<div class="col-12">-->
+                                    <!--<span class="col-1"></span>-->
+                                    <!--<input id = "linkTextBox" class="col-8" type="text" readonly="readonly" style="width:80%">-->
+                                <!--</div>-->
                             </div>
                             <div id="email" class="tab-pane fade ">
                                 <h3> this is menu</h3>
