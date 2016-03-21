@@ -1,6 +1,5 @@
 App.tracker = {
     added: function (id, fields) {
-        console.log("on Added:",fields,id);
         var newNode = App.map.getNodeDataWithNodeId(id);
         if (newNode) {
             newNode.name = fields.name;
@@ -94,7 +93,6 @@ App.tracker = {
 
 
     changed: function (id, fields) {
-        console.log("on changed:",fields,id);
 
         var updatedNode = App.map.getNodeDataWithNodeId(id);
         if (!updatedNode) return;

@@ -73,7 +73,6 @@ Template.create.helpers({
 })
 
 Template.create.rendered = function rendered() {
-    console.log("in rendered......",this.data.data);
     if (this.data.data.length == 0) {
         var message = "Invalid mindmap";
         Router.go("/404");
@@ -118,7 +117,6 @@ Template.readOnly.helpers({
     }
 });
 //Template.readOnly.rendered = function rendered() {
-//  console.log("in rendered",App.editable);
 //
 //  if (App.editable)
 //    statusmsg("prajakta");

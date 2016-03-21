@@ -13,7 +13,6 @@ Template.ModalBody.helpers({
   },
 
   permissions : function() {
-    console.log("EDIT :" + App.editable);
     if(App.editable) {
       return [{name: 'r' , value: 'Read Only'} , {name: 'w' , value: 'Read-Write'}];
     }
@@ -77,7 +76,6 @@ Template.ModalPopUp.events({
   'click #sharedLinkr': function () {
     var text= document.getElementById("sharedLinkr");
     var textBox= document.getElementById("linkTextBox");
-    console.log("text:",text.textContent);
     textBox.value = text;
     Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
       textBox.value = value;
@@ -87,7 +85,6 @@ Template.ModalPopUp.events({
   'click #sharedLinkw': function () {
     var text= document.getElementById("sharedLinkw");
     var textBox= document.getElementById("linkTextBox");
-    console.log("text:",text.textContent);
     textBox.value = text;
     Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
       textBox.value=value;
