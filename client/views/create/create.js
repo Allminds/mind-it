@@ -124,7 +124,7 @@ Template.readOnly.helpers({
         if (App.editable)
             return "";
         else
-            return "Read-Only";
+            return "View Only";
     }
 });
 //Template.readOnly.rendered = function rendered() {
