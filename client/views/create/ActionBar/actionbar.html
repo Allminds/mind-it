@@ -6,9 +6,9 @@
         <div class="container-fluid">
 
             <div>
-                {{#each userimages}}
+                {{#each ui in userimages}}
                     <div>
-                        {{>UserImage this}}
+                        {{>UserImage profile_picture = ui}}
                     </div>
                 {{/each}}
 
@@ -23,7 +23,7 @@
 </template>
 
 <template name="UserImage">
-    <img src={{ userimage}} class="img-circle dropdown-toggle" alt="Cinque Terre"
+    <img src={{ profile_picture }} class="img-circle dropdown-toggle" alt="Cinque Terre"
          style="float: right; margin-top: 5px; margin-left: -10px; margin-right: 15px;"
-         width="32" height="32">
+         width="30" height="30">
 </template>
