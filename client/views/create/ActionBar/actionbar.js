@@ -12,7 +12,6 @@ Template.ActionBar.helpers({
         {
             return typeof y === 'string';s
         });
-        console.log("IMAGES: ",imageSrcs);
         return imageSrcs;
     }
 });

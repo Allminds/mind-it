@@ -135,6 +135,9 @@ Meteor.methods({
     var doc = MindmapMetadata.findOne({$or:[{readOnlyLink:link},{readWriteLink:link}]});
    // console.log("doc::",doc);
     return doc.rootId;
+  },
+  updateUserStatus: function(email_id,mindMapId){
+    App.usersStatusService.updateUserStatus(email_id,mindMapId);
   }
 
 });
