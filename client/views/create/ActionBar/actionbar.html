@@ -8,7 +8,8 @@
             <div>
                 {{#each ui in userimages}}
                     <div>
-                        {{>UserImage profile_picture = ui}}
+                      <!--  <b>ui</b>   -->
+                        {{>UserImage profile = ui}}
                     </div>
                 {{/each}}
 
@@ -23,7 +24,7 @@
 </template>
 
 <template name="UserImage">
-    <img src={{ profile_picture }} class="img-circle dropdown-toggle" alt="Cinque Terre"
+    <img src={{ profile.picture }} class="img-circle dropdown-toggle" title={{ profile.name }} alt="Cinque Terre"
          style="float: right; margin-top: 5px; margin-left: -10px; margin-right: 15px;"
          width="30" height="30">
 </template>
