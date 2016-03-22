@@ -1,18 +1,16 @@
 <template name="LoginMenu">
     {{#if currentUser}}
-    <a href="" class="navbar-element navbar-nav navbar-brand brand" data-action="logout" onMouseOver="this.style.color='#ED8233'"
-       onMouseOut="this.style.color='#FFFFFF'" style="color: #FFFFFF;">
-        Logout
-    </a>
+    <!--<a href="" class="navbar-element navbar-nav navbar-brand" data-action="logout" >-->
+        <!--Logout-->
+    <!--</a>-->
+    {{> UserInfo}}
     {{else}}
     {{#if loggingIn}}
-    <a href="" class="navbar-element navbar-nav navbar-brand brand" onMouseOver="this.style.color='#ED8233'"
-       onMouseOut="this.style.color='#FFFFFF'" style="color: #FFFFFF;">
+    <a href="" class="navbar-element navbar-nav navbar-brand">
         Logging In..
     </a>
     {{else}}
-    <a href="" class="navbar-element navbar-nav navbar-brand brand" onMouseOver="this.style.color='#ED8233'"
-       onMouseOut="this.style.color='#FFFFFF'" data-action="login" style="color: #FFFFFF;">
+    <a href="" class="navbar-element navbar-nav navbar-brand" data-action="login">
         Log In
     </a>
     {{/if}}
@@ -24,25 +22,17 @@
       <span class="navbar-nav userInfo">
 
       <img src={{ picture}} class="img-circle" alt="Cinque Terre" width="35" height="35">
-     Hi {{ name}}
+      <span>{{ name}}</span>
       </span>
     {{/if}}
     {{#if requireExport}}
         {{#if currentUser}}
 
         {{else}}
-    <span class="navbar-nav userInfo brand" style ="margin-top :24px" >
-            Hi Guest
+    <span class="navbar-nav userInfo" style ="margin-top :24px" >
+            Guest
             </span>
     {{/if}}
     {{/if}}
-
-
-
-
-
-
-
-
 </template>
 

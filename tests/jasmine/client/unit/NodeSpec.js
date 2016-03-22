@@ -53,7 +53,7 @@ describe('lib.Node.js', function () {
       mindMapService = App.MindMapService.getInstance();
     });
 
-    
+
     it("should return root for root node on getDirection]", function() {
       var data = new App.Node('root');
       var direction = App.getDirection(data);
@@ -67,7 +67,7 @@ describe('lib.Node.js', function () {
       right1._id = "right1";
       right1.parent = root;
       root.right = [right1];
-      
+
       var direction = App.getDirection(right1);
       expect(direction).toBe('right');
     });
@@ -98,7 +98,7 @@ describe('lib.Node.js', function () {
       var root, parent, child1, child2, child3;
       beforeEach(function () {
         root = new App.Node("root");
-        root._id = "root";    
+        root._id = "root";
         parent = new App.Node("parent", "left", root, 0);
         parent._id = "parent";
         parent.parent = root;
@@ -162,7 +162,7 @@ describe('lib.Node.js', function () {
       var root, parent, child1, child2, child3;
       beforeEach(function () {
         root = new App.Node("root");
-        root._id = "root";    
+        root._id = "root";
         parent = new App.Node("parent", "right", root, 0);
         parent._id = "parent";
         parent.parent = root;
@@ -367,7 +367,7 @@ describe('lib.Node.js', function () {
         App.Node.horizontalReposition([child2child1], App.Constants.KeyPressed.RIGHT);
         expect(App.Node.reposition).toHaveBeenCalledWith(child2child1, left1, left1.childSubTree, 2);
       });
-      
+
       it("should call updateChildTree twice, followed by updateParentIdofNode", function(){
         spyOn(App.Node, "updateChildTree");
         spyOn(App.Node, "updateParentIdOfNode");

@@ -84,7 +84,6 @@ h1 {
 	padding-top: 27%;
 	font-size: 150%;
 	color: #FFFFFF;
-	font-weight: 100;
 }
 
 .navbar-right-element {
@@ -94,11 +93,14 @@ h1 {
 	font-size: 150%;
 }
 .userInfo{
-	margin-top:15%;
-	font-family: Helvetica, sans-serif;
-	font-size: 150%;
-	color: white;
-	font-weight: 100;
-	float: right;
+	margin-top:20%;
+	font-family: 'Trebuchet MS', Tahoma, Verdana, Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+	color: #000000;
+}
+
+.top-margin {
+	margin-top: 100px;
 }
 

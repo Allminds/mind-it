@@ -223,7 +223,7 @@ describe('eventBinding.js', function () {
 
       it("should add new child on tab keypress", function () {
         event.keyCode = 9;
-
+        App.editable = true;
         spyOn(App.eventBinding, "newNodeAddAction");
         document.getElementsByClassName("node level-0")[0].dispatchEvent(event);
 

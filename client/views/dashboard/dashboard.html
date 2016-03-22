@@ -1,0 +1,54 @@
+<template name='dashboard'>
+
+    {{> TopBar sideLogo=true requireFeedback=true isDashboard=true notError=true}}
+    <div class="dashboardButtons" style="margin-top: 12%; ">
+        {{> MyButton}}
+    </div>
+
+    <div>
+        <div id="tabbedPanel" class="dashboard">
+            <div class="col-3">
+                <!--<ul>-->
+                    <!--<li><a href="#allMaps">All Maps</a></li>-->
+                    <!--<li><a href="#ownedMaps">Owned Maps</a></li>-->
+                    <!--<li><a href="#sharedMaps">Shared Maps</a></li>-->
+                <!--</ul>-->
+            </div>
+            <div id="allMaps" class="col-6" style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19); padding: 3%">
+                <div>
+                    <h4 style="text-align: center;font-family:Georgia, 'Times New Roman', Times, serif; margin-bottom: 5%">My MindMaps</h4>
+                </div>
+                <table id="allMapsTable" class="display" cellspacing="0" width="100%" >
+                    <thead>
+                        <tr>
+
+                            <th style="'Lucida Grande', Verdana, Helvetica, Arial, sans-serif;"></th>
+                            <!--<th>Owner</th>-->
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <!--<div id="ownedMaps" class="col-10">-->
+                <!--<table id="ownedMapsTable" class="display" cellspacing="0" width="100%">-->
+                    <!--<thead>-->
+                        <!--<tr>-->
+                            <!--<th>Name</th>-->
+                            <!--<th>Owner</th>-->
+                        <!--</tr>-->
+                    <!--</thead>-->
+                <!--</table>-->
+            <!--</div>-->
+            <!--<div id="sharedMaps" class="col-10">-->
+                <!--<table id="sharedMapsTable" class="display" cellspacing="0" width="100%">-->
+                    <!--<thead>-->
+                        <!--<tr>-->
+                            <!--<th>Name</th>-->
+                            <!--<th>Owner</th>-->
+                        <!--</tr>-->
+                    <!--</thead>-->
+                <!--</table>-->
+            <!--</div>-->
+        </div>
+    </div>
+
+</template>

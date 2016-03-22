@@ -156,6 +156,8 @@ MindMap = function MindMap() {
         .style("fill-opacity", 1e-6);
     };
 
+
+
   Meteor.call('countMaps', function (error, count) {
     mapsCount = count;
   });
