@@ -1,49 +1,74 @@
 App.presentation = {};
 App.presentationArray = [];
-App.lenght = 0;
+App.presentation.length = 0
 App.index = 0;
 App.presentation.previousNode = null;
 
 App.presentation.prepareForPresentation = function() {
     alert("In presentation.");
-    prepareArrayForNavigation();
+    App.presentation.expandAll();
+    App.presentationArray = [];
+    App.presentation.length = 0;
+    App.presentation.collapseAll();
 };
 
-var prepareArrayForNavigation = function() {
+
+App.presentation.expandAll = function () {
+    prepareArrayForNavigation(true);
+};
+
+
+App.presentation.collapseAll = function () {
+    prepareArrayForNavigation(false);
+};
+
+
+var prepareArrayForNavigation = function(ExpandTree) {
 
     var rootNode = Mindmaps.findOne({rootId : null});
 
-    App.presentationArray = [];
-    App.lenght = 0;
-
-    App.presentation.previousNode = rootNode;
-    App.presentationArray[App.lenght++] = rootNode._id;
+    if(ExpandTree == false) {
+        App.presentationArray = [];
+        App.presentation.length = 0;
+        App.presentation.previousNode = rootNode;
+        App.presentationArray[App.presentation.length++] = rootNode._id;
+    }
 
     for(var i = 0; i < rootNode.right.length; i++) {
         var node = Mindmaps.findOne({_id : rootNode.right[i]});
-        buildPresentationArray(node);
+        if(ExpandTree == true) {
+            expandSubTree(node);
+        }
+        else {
+            collapseSubTree(node);
+        }
+
     }
 
     for(var i = 0; i < rootNode.left.length; i++) {
         var node = Mindmaps.findOne({_id : rootNode.left[i]});
-        buildPresentationArray(node);
+        if(ExpandTree == true) {
+            expandSubTree(node);
+        }
+        else {
+            collapseSubTree(node);
+        }
     }
 
 };
 
-var buildPresentationArray = function(node) {
+var collapseSubTree = function(node) {
 
     if(node == null) {
         return;
     }
     else {
-
-        App.presentationArray[App.lenght++] = node._id;
+        App.presentationArray[App.presentation.length++] = node._id;
         var childSubTree = node.childSubTree;
 
         for (var index in childSubTree) {
             var nextChildNode = Mindmaps.findOne({_id : childSubTree[index]});
-            buildPresentationArray(nextChildNode);
+            collapseSubTree(nextChildNode);
         }
 
         if(isChildNode(node) == false) {
@@ -51,6 +76,30 @@ var buildPresentationArray = function(node) {
         }
     }
 };
+
+var expandSubTree = function(node) {
+
+    if(node == null) {
+        return;
+    }
+    else {
+
+        if(isChildNode(node) == false) {
+            var d3Node = App.presentation.getD3Node(node._id);
+            if(d3Node.__data__.isCollapsed == true) {
+                App.toggleCollapsedNode(App.presentation.getD3Node(node._id).__data__);
+            }
+        }
+
+        var childSubTree = node.childSubTree;
+
+        for (var index in childSubTree) {
+            var nextChildNode = Mindmaps.findOne({_id : childSubTree[index]});
+            expandSubTree(nextChildNode);
+        }
+    }
+};
+
 
 
 App.presentation.getD3Node = function(nodeId) {

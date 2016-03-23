@@ -896,37 +896,68 @@ Mousetrap.bind('mod+shift+p', function() {
     App.presentation.prepareForPresentation();
 
     App.index = -1;
-    moveCursor(true);
+    moveCursorToNextNode();
 
 });
 
-Mousetrap.bind("mod+shift+m" , function() {
+Mousetrap.bind("pageup" , function() {
     e = arguments[0];
     e.preventDefault();
-    moveCursor(false);
+    moveCursorToPreviousNode();
 });
 
-Mousetrap.bind('mod+shift+l' , function() {
+Mousetrap.bind('pagedown' , function() {
     e = arguments[0];
     e.preventDefault();
-    moveCursor(true);
+    moveCursorToNextNode();
 });
 
 
-var moveCursor = function(isForward) {
+var moveCursorToNextNode = function() {
 
-    if(isForward == true) {
-        App.index = (App.index + 1) % App.presentationArray.length;
-    }
-    else {
-        App.index = (App.index + App.presentationArray.length - 1) % App.presentationArray.length;
-    }
+    App.index = (App.index + 1) % App.presentationArray.length;
+
 
     console.log("Index : " + App.index);
 
     var d3Node = App.presentation.getD3Node(App.presentationArray[App.index]);
 
-    console.log(d3Node.__data__.isCollapsed);
+
+    App.deselectNode();
+    d3.select(d3Node).classed("selected", true);
+    App.clearAllSelected();
+
+    console.log("D3 node :");
+    console.log(d3Node);
+
+    if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
+        console.log("Position");
+        console.log(App.presentation.previousNode.parent);
+        var difference = App.presentation.previousNode.depth - d3Node.__data__.depth;
+        for(var i = 0 ; i < difference ; i++) {
+            App.toggleCollapsedNode(App.presentation.previousNode.parent);
+            App.presentation.previousNode = App.presentation.previousNode.parent;
+        }
+    }
+
+    if(d3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(d3Node.__data__);
+    }
+
+    App.presentation.previousNode = d3Node.__data__;
+};
+
+
+var moveCursorToPreviousNode = function() {
+
+    App.index = (App.index + App.presentationArray.length - 1) % App.presentationArray.length;
+
+    console.log("Index : " + App.index);
+
+    var dbNode = Mindmaps.findNode(App.presentationArray[App.index]);
+
+
+    var d3Node = App.presentation.getD3Node(App.presentationArray[App.index]);
 
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
@@ -934,10 +965,11 @@ var moveCursor = function(isForward) {
 
     if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
         console.log("Position");
-        console.log(d3Node.__data__);
+        console.log(App.presentation.previousNode.parent);
         App.toggleCollapsedNode(App.presentation.previousNode.parent);
     }
-    else {
+
+    if(d3Node.__data__.isCollapsed == true) {
         App.toggleCollapsedNode(d3Node.__data__);
     }
 
