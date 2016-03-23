@@ -152,7 +152,6 @@ Router.route('/create/:_id', {
 		Meteor.call("isWritable", this.params._id, user, function (error, value) {
 			App.editable = value;
 		});
-		Meteor.call("updateUserStatus",user,this.params._id);
 		return Meteor.subscribe("mindmap", this.params._id, user);
 	}
 

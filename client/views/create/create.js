@@ -101,6 +101,7 @@ Template.create.rendered = function rendered() {
         App.editable = true;
         //UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
     }
+
     //App.isSharedMindmap = null;
     var tree = mindMapService.buildTree(this.data.id, this.data.data);
     update(tree);
@@ -113,12 +114,12 @@ Template.create.rendered = function rendered() {
 
     App.retainCollapsed();
     d3.select("#help-link").on('click', enableHelpLink);
-
+    Meteor.call("updateUserStatus",user,this.params._id,"$$");
 //  App.setMapsCount();
 };
 Template.readOnly.helpers({
     statusmsg: function () {
-        console.log("in helpers:", App.editable);
+     //   console.log("in helpers:", App.editable);
         if (App.editable)
             return "";
         else

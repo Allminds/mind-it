@@ -5,7 +5,7 @@ Template.ActionBar.helpers({
         var Srcs= usersAvailable.map(function(x){
                 var user_object;
 
-        if(x.status.online && App.currentMap == x.mindmap_id)
+        if(x.status.online && d3.select(".node.level-0")[0][0].__data__._id == x.mindmap_id)
           {
         //console.log("status",x.status.online);
 //        user_object.name=x.services.google.name;
@@ -13,7 +13,7 @@ Template.ActionBar.helpers({
             return { name: x.services.google.name, picture: x.services.google.picture};
           }
         });
-        console.log("before filter: ", Srcs);
+      //  console.log("before filter: ", Srcs);
         var imageSrcs=Srcs.filter(function(y)
         {
             if (y === undefined || y === null) {
@@ -22,7 +22,7 @@ Template.ActionBar.helpers({
             else
             return y;
         });
-        console.log("RETURNED: ", imageSrcs);
+    //    console.log("RETURNED: ", imageSrcs);
         return imageSrcs;
     }
 });
