@@ -895,8 +895,13 @@ Mousetrap.bind('mod+shift+p', function() {
 
     App.presentation.prepareForPresentation();
 
-    App.index = -1;
-    moveCursorToNextNode();
+    var rootNode = Mindmaps.findOne({rootId : null});
+    var d3Node = App.presentation.getD3Node(rootNode._id);
+
+    App.deselectNode();
+    d3.select(d3Node).classed("selected", true);
+    App.clearAllSelected();
+    App.presentation.index = 0;
 
 });
 
@@ -914,13 +919,20 @@ Mousetrap.bind('pagedown' , function() {
 
 
 var moveCursorToNextNode = function() {
+    //Not called only for first time.
+    setIndexValue();
 
-    App.index = (App.index + 1) % App.presentationArray.length;
+    var currentD3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
 
+    if(currentD3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(currentD3Node.__data__);
+    }
 
-    console.log("Index : " + App.index);
+    App.presentation.index = (App.presentation.index + 1) % App.presentationArray.length;
 
-    var d3Node = App.presentation.getD3Node(App.presentationArray[App.index]);
+    console.log("Index : " + App.presentation.index);
+
+    var d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
 
 
     App.deselectNode();
@@ -929,6 +941,7 @@ var moveCursorToNextNode = function() {
 
     console.log("D3 node :");
     console.log(d3Node);
+
 
     if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
         console.log("Position");
@@ -940,24 +953,28 @@ var moveCursorToNextNode = function() {
         }
     }
 
-    if(d3Node.__data__.isCollapsed == true) {
-        App.toggleCollapsedNode(d3Node.__data__);
-    }
 
     App.presentation.previousNode = d3Node.__data__;
 };
 
 
+var setIndexValue = function () {
+    var id = d3.select(".selected")[0][0].__data__._id;
+
+    App.presentation.index = App.presentationArray.indexOf(id);
+};
+
+
 var moveCursorToPreviousNode = function() {
 
-    App.index = (App.index + App.presentationArray.length - 1) % App.presentationArray.length;
+    App.presentation.index = (App.presentation.index + App.presentationArray.length - 1) % App.presentationArray.length;
 
-    console.log("Index : " + App.index);
+    console.log("Index : " + App.presentation.index);
 
-    var dbNode = Mindmaps.findNode(App.presentationArray[App.index]);
+    var dbNode = Mindmaps.findNode(App.presentationArray[App.presentation.index]);
 
 
-    var d3Node = App.presentation.getD3Node(App.presentationArray[App.index]);
+    var d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
 
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);

@@ -1,7 +1,7 @@
 App.presentation = {};
 App.presentationArray = [];
 App.presentation.length = 0
-App.index = 0;
+App.presentation.index = 0;
 App.presentation.previousNode = null;
 
 App.presentation.prepareForPresentation = function() {
