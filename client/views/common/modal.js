@@ -32,6 +32,7 @@ Template.ModalBody.events({
     Meteor.call("addMapToUser", eMail, mindMapId, permission);
   }
 
+
 });
 
 Template.ModalPopUp.helpers({
@@ -69,26 +70,68 @@ Template.ModalPopUp.events({
   'hidden.bs.modal #myModalHorizontal': function(event){
     restoreNodeSelection();
   },
-  'click [data-action=toggleOptions]': function (e, args) {
+  'click #sharableLinkButton': function (e, args) {
     e.preventDefault();
     $("div#userOptions").toggle();
   },
   'click #sharedLinkr': function () {
     var text= document.getElementById("sharedLinkr");
     var textBox= document.getElementById("linkTextBox");
+    var button = document.getElementById("sharableLinkButtonMessage");
     textBox.value = text;
+
+
     Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
       textBox.value = value;
+      button.innerHTML= "read";
     });
+
 
   },
   'click #sharedLinkw': function () {
     var text= document.getElementById("sharedLinkw");
     var textBox= document.getElementById("linkTextBox");
     textBox.value = text;
+    var button = document.getElementById("sharableLinkButtonMessage");
+    console.log("button",button.innerHTML);
     Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
       textBox.value=value;
+      button.innerHTML= "read and write";
+
     });
 
-  }
+  },
+  'click [data-action=link]' : function(){
+     this.select();
+    this.focus();
+  },
+  'click #secondTab' : function(){
+    var temp = document.getElementById("linkToShow");
+    temp.className="hidden";
+  },
+  'click #firstTab' : function(){
+    var temp = document.getElementById("linkToShow");
+    temp.className="";
+  },
+
+
+
 });
+
+
+Template.ModalBody.rendered = function rendered(){
+
+  var textBox= document.getElementById("linkTextBox");
+  textBox.disabled = false;
+  textBox.value = "welcome";
+  Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
+    textBox.value = value;
+  });
+}
+
+function selectText()
+{ var id = "e_mail";
+  console.log("in text box");
+  document.getElementById(id).focus();
+  document.getElementById(id).select();
+}

@@ -1,0 +1,34 @@
+#sharableLinkButton{
+    display:block;
+    width: 65%;
+    height:35px;
+    color:black;
+    background-color:#f1f1f1;
+    border-width: 2px;
+    border-color: black;
+    float: left;
+    align-content:center;
+    font: 15px arial,sans-serif;
+    border-bottom-color: white;
+    border-right-color: white;
+    text-align: left;
+    padding-left: 20px;
+    padding-top: 8px;
+}
+
+#sharableLinkButton:hover{
+    cursor: pointer;
+
+}
+
+#linkTextBox{
+    width:65%;
+    padding: 8px;
+    font: 13px arial,sans-serif;
+    margin-top: -20px;
+
+}
+
+.hidden{
+    visibility:hidden;
+}
