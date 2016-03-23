@@ -121,5 +121,9 @@ circle.indicator.unfilled {
 .divider{
     height:30px;
     margin:5px 10px 0 10px;
+}
+
+.divider{
+    height:38px;
     border-left:1px solid black;
 }
