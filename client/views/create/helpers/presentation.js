@@ -1,6 +1,6 @@
 App.presentation = {};
 App.presentationArray = [];
-App.presentation.length = 0
+App.presentation.length = 0;
 App.presentation.index = 0;
 App.presentation.previousNode = null;
 
@@ -104,8 +104,6 @@ var expandSubTree = function(node) {
 
 App.presentation.getD3Node = function(nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
-
-    console.log("D3 Count : " + d3Nodes.length);
 
     for(var i = 0 ; i < d3Nodes.length; i++) {
         if(d3Nodes[i].__data__._id == nodeId) {

@@ -168,42 +168,36 @@ App.eventBinding.copyAction = function() {
 };
 var finalNodes = function(nodes)
 {
-var mapNodes = new Map();
+    var mapNodes = new Map();
 
-var descendants=[];
-for(var i=0;i<nodes.length;i++)
-{
-App.allDescendants=[];
-App.indexDescendants=0;
-selectAllDescendants(nodes[i].__data__);
-descendants=App.allDescendants;
-for(var j=0;j<nodes.length;j++)
-{
-    if(descendants.indexOf(nodes[j].__data__) > -1)
+    var descendants=[];
+    for(var i=0;i<nodes.length;i++)
     {
-        mapNodes.set(nodes[j],true);
+        App.allDescendants=[];
+        App.indexDescendants=0;
+        selectAllDescendants(nodes[i].__data__);
+        descendants=App.allDescendants;
+        for(var j=0;j<nodes.length;j++)
+        {
+            if(descendants.indexOf(nodes[j].__data__) > -1)
+            {
+                mapNodes.set(nodes[j],true);
+            }
+        }
     }
-
-
-
-}
-
-
-}
-var nodes1=[];
-for(var k=0;k<nodes.length;k++)
-{
-    if(mapNodes.get(nodes[k]))
-    {}
-    else
+    var nodes1=[];
+    for(var k=0;k<nodes.length;k++)
     {
-        nodes1.push(nodes[k]);
+        if(mapNodes.get(nodes[k]))
+        {}
+        else
+        {
+            nodes1.push(nodes[k]);
+        }
+
     }
-
-}
-
-return nodes1;
-}
+    return nodes1;
+};
 
 Mousetrap.bind('mod+c', function() {
     App.eventBinding.copyAction();
@@ -241,9 +235,8 @@ var getNextSiblingForShift = function(currentNode, keyPressed) {
 
     } else {
         return nextNode.__data__;
-
     }
-}
+};
 
 
 var sortNodesAccToUi = function(nodes) {
@@ -919,7 +912,6 @@ Mousetrap.bind('pagedown' , function() {
 
 
 var moveCursorToNextNode = function() {
-    //Not called only for first time.
     setIndexValue();
 
     var currentD3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
@@ -930,8 +922,6 @@ var moveCursorToNextNode = function() {
 
     App.presentation.index = (App.presentation.index + 1) % App.presentationArray.length;
 
-    console.log("Index : " + App.presentation.index);
-
     var d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
 
 
@@ -939,13 +929,8 @@ var moveCursorToNextNode = function() {
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
 
-    console.log("D3 node :");
-    console.log(d3Node);
-
 
     if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
-        console.log("Position");
-        console.log(App.presentation.previousNode.parent);
         var difference = App.presentation.previousNode.depth - d3Node.__data__.depth;
         for(var i = 0 ; i < difference ; i++) {
             App.toggleCollapsedNode(App.presentation.previousNode.parent);
@@ -967,22 +952,26 @@ var setIndexValue = function () {
 
 var moveCursorToPreviousNode = function() {
 
+    var d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
+
+    if(d3Node.__data__.childSubTree != null && d3Node.__data__.isCollapsed == false) {
+        App.toggleCollapsedNode(d3Node.__data__);
+    }
+
     App.presentation.index = (App.presentation.index + App.presentationArray.length - 1) % App.presentationArray.length;
 
-    console.log("Index : " + App.presentation.index);
+    var dbNode = Mindmaps.findOne(App.presentationArray[App.presentation.index]);
 
-    var dbNode = Mindmaps.findNode(App.presentationArray[App.presentation.index]);
+    expandParentRecursively(dbNode._id);
 
+    d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
 
-    var d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
 
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
 
     if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
-        console.log("Position");
-        console.log(App.presentation.previousNode.parent);
         App.toggleCollapsedNode(App.presentation.previousNode.parent);
     }
 
@@ -991,4 +980,20 @@ var moveCursorToPreviousNode = function() {
     }
 
     App.presentation.previousNode = d3Node.__data__;
+};
+
+var expandParentRecursively = function (nodeId) {
+
+    var d3Node = App.presentation.getD3Node(nodeId);
+
+    if(d3Node == null) {
+        var dbNode = Mindmaps.findOne({_id : nodeId});
+        expandParentRecursively(dbNode.parentId);
+    }
+
+    d3Node = App.presentation.getD3Node(nodeId);
+
+    if(d3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(d3Node.__data__);
+    }
 };
