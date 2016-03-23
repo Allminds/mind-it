@@ -17,17 +17,14 @@
                 <ul class="nav navbar-nav navbar-left " style="float: left">
                     {{#if sideLogo}}
                     <li>
-                        <a href="/">
-                            <img src="/Minditlogo.png">
-                        </a>
-
+                        <img href="/" src="/Minditlogo.png">
                     </li>
                     {{/if}}
 
                     {{#if sideLogoSmall}}
                     <li>
                         <a href="/">
-                            <img src="/smalllogomindit.png" height="40" width="43">
+                            <img src="/smalllogomindit.png" height="36px" width="37px">
                         </a>
 
                     </li>
@@ -46,26 +43,47 @@
 
                 <ul class="nav navbar-nav navbar-right " style="float: left">
                     {{#if requireExport}}
-
+                    {{#if requireExportImageButton}}
+                    <li>{{> ExportImageButton}}</li>
+                    {{else}}
                     <li>{{> Export}}</li>
+                    {{/if}}
                     {{/if}}
 
 
                     {{#if requireFeedback}}
-                    <li>
-                        {{> Feedback }}
-                    </li>
+                    {{#if requireFeedbackImageButton}}
+                    <li>{{> FeedbackImageButton}}</li>
+                    {{else}}
+                    <li>{{> Feedback }}</li>
                     {{/if}}
+                    {{/if}}
+
+
+                    {{#if requireHelp}}
+                    {{#if requireHelpImageButton}}
+                    <li> {{> HelpImageButton}}</li>
+                    {{else}}
+                    <li>{{> Help}}</li>
+                    {{/if}}
+                    {{/if}}
+
                     {{#if topbarText}}
                     <li><a href="#"
                            id={{topbarTagID linkId}}>{{topbarText}}</a></li>
+                    {{/if}}
+
+                    {{#if forCreate}}
+                    <li>
+                        <div class="divider"></div>
+                    </li>
                     {{/if}}
 
                     {{#if currentUser}}
 
                     {{#if notError}}
                     <li style="display: inline-block">
-                        <a style=" float: left;  pointer-events: none;">{{ name}}</a>
+                        <a style=" float: left; pointer-events: none;">{{ name}}</a>
 
                         <!--<h4 style="display: inline-block;padding-right: 15px">{{ name}} </h4>-->
                     <li class="dropdown" style="display: inline-block">
@@ -87,17 +105,18 @@
                     {{/if}}
                     {{/if}}
 
-
                     {{#if currentUser}}
                     {{else}}
-
                     {{#if notError}}
                     <li><a href="" data-action="login" style="color: #000000">
                         Log In
-                    </a></li>
+                    </a>
+                    </li>
                     {{/if}}
                     {{/if}}
                 </ul>
+
+
             </div>
 
         </div>

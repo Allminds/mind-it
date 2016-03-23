@@ -112,3 +112,11 @@ circle.indicator.unfilled {
     float: right;
 }
 
+.menuicons{
+    margin: 0 10px 0 10px;
+}
+
+.divider{
+    height:38px;
+    border-left:1px solid black;
+}
