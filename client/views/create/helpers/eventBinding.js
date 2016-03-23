@@ -900,13 +900,13 @@ Mousetrap.bind('mod+shift+p', function() {
 
 });
 
-Mousetrap.bind("mod+shift+m" , function() {
+Mousetrap.bind("pageup" , function() {
     e = arguments[0];
     e.preventDefault();
     moveCursorToPreviousNode();
 });
 
-Mousetrap.bind('mod+shift+l' , function() {
+Mousetrap.bind('pagedown' , function() {
     e = arguments[0];
     e.preventDefault();
     moveCursorToNextNode();
@@ -926,6 +926,9 @@ var moveCursorToNextNode = function() {
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
+
+    console.log("D3 node :");
+    console.log(d3Node);
 
     if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
         console.log("Position");
