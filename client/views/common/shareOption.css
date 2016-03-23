@@ -1,7 +1,7 @@
 #sharableLinkButton{
     display:block;
-    width: 65%;
-    height:35px;
+    width: 64%;
+    height:40px;
     color:black;
     background-color:#f1f1f1;
     border-width: 2px;
@@ -14,6 +14,7 @@
     text-align: left;
     padding-left: 20px;
     padding-top: 8px;
+    margin-left: 16.66%;
 }
 
 #sharableLinkButton:hover{
@@ -22,10 +23,11 @@
 }
 
 #linkTextBox{
-    width:65%;
+    width:70%;
+    /*margin-left: 16.66%;*/
     padding: 8px;
     font: 13px arial,sans-serif;
-    margin-top: -20px;
+    /*margin-top: -20px;*/
 
 }
 
