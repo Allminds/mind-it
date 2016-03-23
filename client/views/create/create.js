@@ -28,7 +28,6 @@ var update = function (data) {
 };
 
 var enableHelpLink = function () {
-
     $('#help-modal').modal('show');
 };
 
@@ -78,7 +77,6 @@ Template.create.helpers({
 })
 
 Template.create.rendered = function rendered() {
-    console.log("in rendered......",this.data.data);
     if (this.data.data.length == 0) {
         var message = "Invalid mindmap"
         alert(message);

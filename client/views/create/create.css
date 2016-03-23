@@ -112,3 +112,14 @@ circle.indicator.unfilled {
     float: right;
 }
 
+.menuicons{
+    margin: 5px 10px 0 10px;
+    height: 32px;
+    width: 32px;
+}
+
+.divider{
+    height:30px;
+    margin:5px 10px 0 10px;
+    border-left:1px solid black;
+}
