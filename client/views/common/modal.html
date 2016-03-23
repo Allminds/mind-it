@@ -1,4 +1,3 @@
-
 <template name="ModalHeader">
     <div class="modal-header">
         <button type="button" class="close"
@@ -24,7 +23,7 @@
                     <!--<form>-->
                     <!--<div>-->
 
-                    <!--<input type="email" placeholder="   Email Address" id="e_mail" style="width: 60%; padding:3px; margin-top: 5%" >-->
+                    <!--<input type="email" placeholder="   Email Address" id="e_mail" style="width: 60%; padding:3px; margin-top: 5%" onclick="console.log('hi');" >-->
                     <!--</div>-->
                     <!--<div style="width: 100%; padding: 5%">-->
                     <!--<select id="permission" style="margin-right: 20%;">-->
@@ -34,63 +33,79 @@
                     <!--{{/each}}-->
                     <!--</select>-->
 
-                    <!--<input type="submit" value="Share" data-action="share" style="margin-left: 20%" >-->
+                    <!--&lt;!&ndash;<input type="submit" value="Share" data-action="share" style="margin-left: 20%" >&ndash;&gt;-->
 
                     <!--</div>-->
                     <!--</form>-->
 
                     <form>
-                        <ul class="in-line nav nav-tabs">
-                            <li class="active"><a href="#link" data-toggle="tab">link</a></li>
-                            <li><a href="#email" data-toggle="tab">Email</a></li>
-                        </ul>
-                        <div>
-                            <div id="link" class="tab-pane fade in active ">
+                        <!--<ul class="in-line nav nav-tabs">-->
+                            <!--<li class="active"><a href="#link" data-toggle="tab" id="firstTab">link</a></li>-->
+                            <!--<li><a href="#email" data-toggle="tab" id="secondTab">Email</a></li>-->
+                        <!--</ul>-->
+                        <!--<div>-->
+                            <!--<div id="link" class="tab-pane fade in  active ">-->
 
-                                <div class="row">
-                                    <h3 class="col-6" style="float: left">Get sharable link</h3>
-                                    <h2 class="col-6"></h2>
-                                </div>
+                                <!--<div class="row">-->
+                                    <!--<h4 class="col-12">Get sharable link</h4>-->
+                                <!--</div>-->
+                                <div style="height:20px;"> </div>
                                 <div class="col-12">
                                     <!--<p class="col-4" style="margin-left: 40px;font-size:medium">Anyone with this link-->
-                                        <!--can</p>-->
+                                    <!--can</p>-->
                                     <!--<select class = "col-6" style="float: left;display:inline-block;margin-left: 40px;margin-top: 8px;height:50px">-->
-                                        <!--&lt;!&ndash;<option value="read"> read </option>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<option value="write"> write </option>&ndash;&gt;-->
-                                        <!--{{#each permissions}}-->
-                                        <!--<option value="{{this.name}}">Anyone with this link can {{this.value}}</option>-->
-                                        <!--{{/each}}-->
+                                    <!--&lt;!&ndash;<option value="read"> read </option>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<option value="write"> write </option>&ndash;&gt;-->
+                                    <!--{{#each permissions}}-->
+                                    <!--<option value="{{this.name}}">Anyone with this link can {{this.value}}</option>-->
+                                    <!--{{/each}}-->
                                     <!--</select>-->
 
                                     <div class="dropdown row">
-                                        <span class="col-1"></span>
-                                        <button class=" btn-primary dropdown-toggle col-8" id = "sharableLinkButton" style="width: 80%;height:40px;color:#000000;font-size:medium ;background-color:#FFFFFF;border-width: thin;border-color: #f1f1f1;float: left " type="button" data-action="toggleOptions" data-toggle="dropdown">Anyone with this link can
-                                            <span class="caret"></span></button>
-                                            <ul class="dropdown-menu col-8" style="position:absolute;margin-left:52px;width: 80%;justify-content: space-between">
-                                                <li id="sharedLinkr"  style="height: 30px;text-align: center;border-bottom: 2px;border-bottom-color: #0c0c0c">Anyone with this link can read the mindmap</li>
-                                                <li class = "divider"></li>
-                                                <li id="sharedLinkw"  style="height: 30px;text-align: center;border-bottom: 2px;border-bottom-color: #0c0c0c">Anyone with this link can read and write the mindmap</li>
+                                        <!--<span class="col-2"></span>-->
+                                        <!--<a href="">-->
+                                            <div class=" dropdown-toggle " id="sharableLinkButton" role="button"  data-action="toggleOptions" data-toggle="dropdown">
+                                                Anyone with this link can
+                                                <span id="sharableLinkButtonMessage" style="font-weight: bold">read</span>
+                                                <span class="caret"></span></div>
+                                        <!--</a>-->
 
-                                            </ul>
+                                        <!--<div class=" dropdown-toggle col-8" id = "sharableLinkButton" data-action="toggleOptions" data-toggle="dropdown" role="button">-->
+                                        <!--Anyone with this link can read the mindmap-->
+                                        <!--</div>-->
+                                        <ul class="dropdown-menu"
+                                            style=" margin-left:16.66%;width: 64%;justify-content: space-between">
+                                            <li id="sharedLinkr"
+                                                style="height: 30px;text-align: center;border-bottom: 2px;border-bottom-color: #0c0c0c">
+                                                Anyone with this link can read the mindmap
+                                            </li>
+                                            <li class="divider"></li>
+                                            <li id="sharedLinkw"
+                                                style="height: 30px;text-align: center;border-bottom: 2px;border-bottom-color: #0c0c0c">
+                                                Anyone with this link can read and write the mindmap
+                                            </li>
 
+                                        </ul>
                                     </div>
-                                    <div class="row">
-                                    <span class="col-1"></span>
-                                    <input id = "linkTextBox" class="col-8" type="text" readonly="readonly" style="width:80%;">
-                                    </div>
+
 
                                 </div>
                                 <!--<div class="col-12">-->
-                                    <!--<span class="col-1"></span>-->
-                                    <!--<input id = "linkTextBox" class="col-8" type="text" readonly="readonly" style="width:80%">-->
+                                <!--<span class="col-1"></span>-->
+                                <!--<input id = "linkTextBox" class="col-8" type="text" onclick="console.log('hi');" style="width:80%">-->
                                 <!--</div>-->
-                            </div>
-                            <div id="email" class="tab-pane fade ">
-                                <h3> this is menu</h3>
-                            </div>
+                            <!--</div>-->
+                            <!--<div id="email" class="tab-pane fade ">-->
+                                <!--<h3> this is menu</h3>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="row" style="height: 80px"></div>-->
+                        <div class="col-12" style="height: 50%"></div>
+                        <div class="col-12" style="align-content: center" id="linkToShow">
+                            <input id="linkTextBox" readonly="readonly" onclick="this.select();"
+                                   onfocus="console.log('hello');">
                         </div>
                     </form>
-
 
                 </div>
 
@@ -137,5 +152,3 @@
         </div>
     </div>
 </template>
-
-
