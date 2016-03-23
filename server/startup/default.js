@@ -1,7 +1,34 @@
 mindMapService = App.MindMapService.getInstance();
-
+App.sharedMindmapUsers = [];
 Meteor.publish('mindmap', function (id, user_email_id,isSharedMindmap) {
+  console.log("IsShaa", isSharedMindmap);
+
+  var userInfo = {emailId:user_email_id,mindmapId:id};
+  if(isSharedMindmap == App.Constants.Mode.WRITE){
+
+    var i;
+    for( i =0;i<App.sharedMindmapUsers.length;i++){
+      if(userInfo.emailId == App.sharedMindmapUsers[i].emailId && userInfo.mindmapId == App.sharedMindmapUsers[i].mindmapId){
+        break;
+      }
+    }
+    if(i == App.sharedMindmapUsers.length ){
+      App.sharedMindmapUsers.push(userInfo);
+    }
+
+  }
+  this._session.socket.on("close", Meteor.bindEnvironment(function()
+  {
+    for(var i =0;i<App.sharedMindmapUsers.length;i++){
+      if(userInfo.emailId == App.sharedMindmapUsers[i].emailId && userInfo.mindmapId == App.sharedMindmapUsers[i].mindmapId){
+        App.sharedMindmapUsers.splice(i,1);
+        break;
+      }
+    }
+  }, function(e){}));
+
   var readPermitted = acl.findOne({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id});
+
   if(readPermitted || isSharedMindmap ){
     return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
 
@@ -126,7 +153,8 @@ Meteor.methods({
   },
   getRootNodeFromLink: function(link){
     var doc = MindmapMetadata.findOne({$or:[{readOnlyLink:link},{readWriteLink:link}]});
-    return doc.rootId;
+
+    return doc;
   }
 });
 function randomString(length, chars) {

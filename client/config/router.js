@@ -159,9 +159,14 @@ Router.route('/sharedLink/:link', {
         Meteor.subscribe("userdata");
         var user = Meteor.user() ? Meteor.user().services.google.email : "*";
         var isSharedMindmap = true;
+        var link = this.params.link;
         Meteor.call("getRootNodeFromLink", "www.mindit.xyz/sharedLink/" + this.params.link, function (error, value) {
-            App.currentMap = value;
-            Meteor.subscribe("mindmap", value, user, true);
+            App.currentMap = value.rootId;
+            var mode = App.Constants.Mode.READ;
+            if(value.readWriteLink == "www.mindit.xyz/sharedLink/" + link){
+                mode = App.Constants.Mode.WRITE;
+            }
+            Meteor.subscribe("mindmap", App.currentMap, user, mode);
         });
         return Meteor.subscribe("MindmapMetadata", "www.mindit.xyz/sharedLink/" + this.params.link);
 

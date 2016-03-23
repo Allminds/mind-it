@@ -91,9 +91,7 @@ Template.create.rendered = function rendered() {
     }
     else {
         App.editable = true;
-        //UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
     }
-    //App.isSharedMindmap = null;
     var tree = mindMapService.buildTree(this.data.id, this.data.data);
     update(tree);
     var rootNode = d3.selectAll('.node')[0].find(function (node) {
@@ -116,14 +114,4 @@ Template.readOnly.helpers({
             return "Read-Only";
     }
 });
-//Template.readOnly.rendered = function rendered() {
-//
-//  if (App.editable)
-//    statusmsg("prajakta");
-//  else
-//    statusmsg("Read-only");
-//
-//
-//}
-//
 
