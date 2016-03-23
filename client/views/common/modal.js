@@ -127,6 +127,7 @@ Template.ModalBody.rendered = function rendered(){
   Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
     textBox.value = value;
   });
+
 }
 
 function selectText()

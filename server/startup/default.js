@@ -105,10 +105,23 @@ Meteor.methods({
   },
   getSharableReadLink: function(id){
     var doc = MindmapMetadata.findOne({rootId:id});
+    console.log("doc is here");
+
+    if(!doc){
+      console.log("doc is undefined");
+      var document = {rootId:id, owner:'*',readOnlyLink:generateSharableLink(),readWriteLink:generateSharableLink()};
+      MindmapMetadata.insert(document);
+      doc=MindmapMetadata.findOne({rootId:id});
+    }
     return doc.readOnlyLink;
   },
   getSharableWriteLink: function (id) {
     var doc = MindmapMetadata.findOne({rootId:id});
+    if(!doc){
+      var document = {rootId:id, owner:'*',readOnlyLink:generateSharableLink(),readWriteLink:generateSharableLink()};
+      MindmapMetadata.insert(document);
+      doc=MindmapMetadata.findOne({rootId:id});
+    }
     return doc.readWriteLink;
   },
   getRootNodeFromLink: function(link){
