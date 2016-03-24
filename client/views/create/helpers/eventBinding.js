@@ -4,6 +4,8 @@ App.nodeCutToPaste = null;
 App.isIndicatorActive = false;
 App.allDescendants = [];
 App.indexDescendants = 0;
+//userStatusService = App.usersStatusService.getInstance();
+
 App.eventBinding.focusAfterDelete = function(removedNode, removedNodeIndex) {
     var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
@@ -656,6 +658,7 @@ App.eventBinding.caseAction = function(data, left, right, root, keyPressed) {
             break;
         case ('left'):
             left(data, keyPressed);
+            console.log("hey moving",data);
             break;
         case ('right'):
             right(data, keyPressed);
@@ -674,6 +677,10 @@ App.eventBinding.bindEventAction = function(event, left, right, root, keyPressed
 Mousetrap.bind('up', function() {
     var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function() {}, App.Constants.KeyPressed.UP);
     App.clearAllSelected();
+        		Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
+
+        console.log("moving to -->up",d3.select('.selected').node().__data__);
+
     return a;
 });
 
@@ -681,6 +688,9 @@ Mousetrap.bind('down', function() {
 
     var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function() {}, App.Constants.KeyPressed.DOWN);
     App.clearAllSelected();
+        console.log("moving to -->down",d3.select('.selected').node().__data__);
+    		Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
+
     return a;
 });
 
@@ -703,12 +713,21 @@ Mousetrap.bind('left', function() {
 
     var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.LEFT);
     App.clearAllSelected();
+   console.log("moving to -->left",d3.select('.selected').node().__data__);
+       //userStatusService.updateUserNode(Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);s
+//Meteor.users.update({"services.google.email":Meteor.user().services.google.email},{$set :  {mindmap:{id: d3.select(".node.level-0")[0][0].__data__._id,node :d3.select('.selected').node().__data__._id}}});
+    		Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
+
     return a;
 });
 
 Mousetrap.bind('right', function() {
     var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.RIGHT);
     App.clearAllSelected();
+       console.log("moving to -->right",d3.select('.selected').node().__data__);
+
+        		Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
+
     return a;
 });
 

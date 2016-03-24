@@ -29,7 +29,6 @@ Template.dashboard.rendered = function rendered() {
     d3.select("#help-link").on('click', enableHelpLink);
     $("#tabbedPanel").tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
     $( "#tabbedPanel li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
-
     Meteor.subscribe('Mindmaps',Meteor.user().services.google.email ,function( ){
         if(!($("#ownedMapsTable").hasClass("dataTable"))){
             var dt = $("#ownedMapsTable").dataTable({

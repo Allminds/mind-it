@@ -58,6 +58,7 @@ Template.create.helpers({
             return "";
         }
 
+
         else
             return "Share read only link";
     },
@@ -103,7 +104,7 @@ Template.create.rendered = function rendered() {
 
     App.retainCollapsed();
     d3.select("#help-link").on('click', enableHelpLink);
-
+    Meteor.call("updateUserStatus",email,App.currentMap,App.currentMap);
 //  App.setMapsCount();
 };
 Template.readOnly.helpers({
@@ -111,7 +112,7 @@ Template.readOnly.helpers({
         if (App.editable)
             return "";
         else
-            return "Read-Only";
+            return "View Only";
     }
 });
 
