@@ -1,5 +1,5 @@
 App.presentation = {};
-App.presentationArray = [];
+App.presentation.presentationArray = [];
 App.presentation.length = 0;
 App.presentation.index = 0;
 App.presentation.previousNode = null;
@@ -7,7 +7,7 @@ App.presentation.previousNode = null;
 App.presentation.prepareForPresentation = function() {
     alert("In presentation.");
     App.presentation.expandAll();
-    App.presentationArray = [];
+    App.presentation.presentationArray = [];
     App.presentation.length = 0;
     App.presentation.collapseAll();
 };
@@ -28,10 +28,10 @@ var prepareArrayForNavigation = function(ExpandTree) {
     var rootNode = Mindmaps.findOne({rootId : null});
 
     if(ExpandTree == false) {
-        App.presentationArray = [];
+        App.presentation.presentationArray = [];
         App.presentation.length = 0;
         App.presentation.previousNode = rootNode;
-        App.presentationArray[App.presentation.length++] = rootNode._id;
+        App.presentation.presentationArray[App.presentation.length++] = rootNode._id;
     }
 
     for(var i = 0; i < rootNode.right.length; i++) {
@@ -63,7 +63,7 @@ var collapseSubTree = function(node) {
         return;
     }
     else {
-        App.presentationArray[App.presentation.length++] = node._id;
+        App.presentation.presentationArray[App.presentation.length++] = node._id;
         var childSubTree = node.childSubTree;
 
         for (var index in childSubTree) {
@@ -109,6 +109,94 @@ App.presentation.getD3Node = function(nodeId) {
         if(d3Nodes[i].__data__._id == nodeId) {
             return d3Nodes[i];
         }
+    }
+};
+
+
+App.presentation.moveCursorToNextNode = function() {
+    setIndexValue();
+
+    var currentD3Node = App.presentation.getD3Node(App.presentation.presentationArray[App.presentation.index]);
+
+    if(currentD3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(currentD3Node.__data__);
+    }
+
+    App.presentation.index = (App.presentation.index + 1) % App.presentation.presentationArray.length;
+
+    var d3Node = App.presentation.getD3Node(App.presentation.presentationArray[App.presentation.index]);
+
+
+    App.deselectNode();
+    d3.select(d3Node).classed("selected", true);
+    App.clearAllSelected();
+
+
+    if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
+        var difference = App.presentation.previousNode.depth - d3Node.__data__.depth;
+        for(var i = 0 ; i < difference ; i++) {
+            App.toggleCollapsedNode(App.presentation.previousNode.parent);
+            App.presentation.previousNode = App.presentation.previousNode.parent;
+        }
+    }
+
+
+    App.presentation.previousNode = d3Node.__data__;
+};
+
+
+App.presentation.moveCursorToPreviousNode = function() {
+
+    var d3Node = App.presentation.getD3Node(App.presentation.presentationArray[App.presentation.index]);
+
+    if(d3Node.__data__.childSubTree != null && d3Node.__data__.isCollapsed == false) {
+        App.toggleCollapsedNode(d3Node.__data__);
+    }
+
+    App.presentation.index = (App.presentation.index + App.presentation.presentationArray.length - 1) % App.presentation.presentationArray.length;
+
+    var dbNode = Mindmaps.findOne(App.presentation.presentationArray[App.presentation.index]);
+
+    expandParentRecursively(dbNode._id);
+
+    d3Node = App.presentation.getD3Node(App.presentation.presentationArray[App.presentation.index]);
+
+
+    App.deselectNode();
+    d3.select(d3Node).classed("selected", true);
+    App.clearAllSelected();
+
+    if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
+        App.toggleCollapsedNode(App.presentation.previousNode.parent);
+    }
+
+    if(d3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(d3Node.__data__);
+    }
+
+    App.presentation.previousNode = d3Node.__data__;
+};
+
+
+var setIndexValue = function () {
+    var id = d3.select(".selected")[0][0].__data__._id;
+
+    App.presentation.index = App.presentation.presentationArray.indexOf(id);
+};
+
+var expandParentRecursively = function (nodeId) {
+
+    var d3Node = App.presentation.getD3Node(nodeId);
+
+    if(d3Node == null) {
+        var dbNode = Mindmaps.findOne({_id : nodeId});
+        expandParentRecursively(dbNode.parentId);
+    }
+
+    d3Node = App.presentation.getD3Node(nodeId);
+
+    if(d3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(d3Node.__data__);
     }
 };
 
