@@ -93,7 +93,6 @@ App.tracker = {
 
 
     changed: function (id, fields) {
-
         var updatedNode = App.map.getNodeDataWithNodeId(id);
         if (!updatedNode) return;
         if (fields.hasOwnProperty('name')) {

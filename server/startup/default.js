@@ -1,7 +1,33 @@
 mindMapService = App.MindMapService.getInstance();
-
+App.sharedMindmapUsers = [];
 Meteor.publish('mindmap', function (id, user_email_id,isSharedMindmap) {
+
+  var userInfo = {emailId:user_email_id,mindmapId:id};
+  if(isSharedMindmap == App.Constants.Mode.WRITE){
+
+    var i;
+    for( i =0;i<App.sharedMindmapUsers.length;i++){
+      if(userInfo.emailId == App.sharedMindmapUsers[i].emailId && userInfo.mindmapId == App.sharedMindmapUsers[i].mindmapId){
+        break;
+      }
+    }
+    if(i == App.sharedMindmapUsers.length ){
+      App.sharedMindmapUsers.push(userInfo);
+    }
+
+  }
+  this._session.socket.on("close", Meteor.bindEnvironment(function()
+  {
+    for(var i =0;i<App.sharedMindmapUsers.length;i++){
+      if(userInfo.emailId == App.sharedMindmapUsers[i].emailId && userInfo.mindmapId == App.sharedMindmapUsers[i].mindmapId){
+        App.sharedMindmapUsers.splice(i,1);
+        break;
+      }
+    }
+  }, function(e){}));
+
   var readPermitted = acl.findOne({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id});
+
   if(readPermitted || isSharedMindmap ){
     return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
 
@@ -15,6 +41,7 @@ Meteor.publish('mindmap', function (id, user_email_id,isSharedMindmap) {
     }
   }
 
+
 });
 Meteor.publish('mindmapForSharedLink',function(id){
   return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
@@ -22,10 +49,25 @@ Meteor.publish('mindmapForSharedLink',function(id){
 
 
 Meteor.publish('userdata', function () {
-  return Meteor.users.find(this.userId);
+    return Meteor.users.find(this.userId);
 });
 Meteor.publish('myRootNodes', function(emailId) {
   return rootNodesOfMyMaps(emailId);
+});
+
+Meteor.publish('onlineusers', function (mindmap) {
+    var results = acl.find({mind_map_id: mindmap}).fetch();
+    console.log("RESULTS::::::", results,mindmap);
+    user_ids = results.map(function (obj) {
+        return obj.user_id;
+    });
+  for(var i =0;i<App.sharedMindmapUsers.length;i++){
+    if( mindmap == App.sharedMindmapUsers[i].mindmapId){
+      user_ids.push(App.sharedMindmapUsers[i].emailId);
+    }
+  }
+    return Meteor.users.find({'services.google.email': {$in: user_ids}});
+
 });
 Meteor.publish('acl',function(user_id){
   return acl.find({user_id:user_id});
@@ -48,21 +90,22 @@ var rootNodesOfMyMaps = function(emailId) {
   var permissions = acl.find({ user_id: emailId }).fetch();
   var myMapIds = permissions.map(function(element) { return element.mind_map_id });
   return Mindmaps.find({_id: { $in: myMapIds }});
+
 };
 
 Meteor.methods({
-  //Only Meteor can delete the documents - Not permitted for client
-  deleteNode: function (id) {
-    mindMapService.deleteNode(id);
-  },
+    //Only Meteor can delete the documents - Not permitted for client
+    deleteNode: function (id) {
+        mindMapService.deleteNode(id);
+    },
 
-  countMaps: function () {
-    return Mindmaps.find({parentId: null}).count();
-  },
+    countMaps: function () {
+        return Mindmaps.find({parentId: null}).count();
+    },
 
-  addMapToUser: function(emailId, mindMapId, permisson) {
-    App.DbService.addUser(emailId, mindMapId, permisson);
-  },
+    addMapToUser: function (emailId, mindMapId, permisson) {
+        App.DbService.addUser(emailId, mindMapId, permisson);
+    },
 
   findTree: function (id, user_email_id,isSharedMindmap) {
     console.log("In FindTree");
@@ -105,16 +148,31 @@ Meteor.methods({
   },
   getSharableReadLink: function(id){
     var doc = MindmapMetadata.findOne({rootId:id});
+
+    if(!doc){
+      var document = {rootId:id, owner:'*',readOnlyLink:generateSharableLink(),readWriteLink:generateSharableLink()};
+      MindmapMetadata.insert(document);
+      doc=MindmapMetadata.findOne({rootId:id});
+    }
     return doc.readOnlyLink;
   },
   getSharableWriteLink: function (id) {
     var doc = MindmapMetadata.findOne({rootId:id});
+    if(!doc){
+      var document = {rootId:id, owner:'*',readOnlyLink:generateSharableLink(),readWriteLink:generateSharableLink()};
+      MindmapMetadata.insert(document);
+      doc=MindmapMetadata.findOne({rootId:id});
+    }
     return doc.readWriteLink;
   },
   getRootNodeFromLink: function(link){
     var doc = MindmapMetadata.findOne({$or:[{readOnlyLink:link},{readWriteLink:link}]});
-    return doc.rootId;
+    return doc;
+  },
+  updateUserStatus: function(email_id,mindMapId,nodeId){
+    App.usersStatusService.updateUserStatus(email_id,mindMapId,nodeId);
   }
+
 });
 function randomString(length, chars) {
   var result = '';

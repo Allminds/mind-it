@@ -31,6 +31,7 @@
 .dashboardButtons .btn-text{
     text-align: left;
     padding: 12px 40px;
+
     /*float: none;*/
 }
 
@@ -142,6 +143,7 @@ table.dataTable tbody tr{
 .col-11 {width: 91.66%;}
 .col-12 {width: 100%;}
 
+
 m-col-6{}
 
 @media(max-width: 660px){
@@ -153,6 +155,7 @@ m-col-6{}
         m-col-6{
             width: 100%;
         }
+
 
         .dashboardButtons{
             margin-left:10%;

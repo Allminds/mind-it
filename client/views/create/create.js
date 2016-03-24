@@ -58,6 +58,7 @@ Template.create.helpers({
             return "";
         }
 
+
         else
             return "Share read only link";
     },
@@ -91,9 +92,7 @@ Template.create.rendered = function rendered() {
     }
     else {
         App.editable = true;
-        //UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
     }
-    //App.isSharedMindmap = null;
     var tree = mindMapService.buildTree(this.data.id, this.data.data);
     update(tree);
     var rootNode = d3.selectAll('.node')[0].find(function (node) {
@@ -105,7 +104,7 @@ Template.create.rendered = function rendered() {
 
     App.retainCollapsed();
     d3.select("#help-link").on('click', enableHelpLink);
-
+    Meteor.call("updateUserStatus",email,App.currentMap,App.currentMap);
 //  App.setMapsCount();
 };
 Template.readOnly.helpers({
@@ -113,17 +112,7 @@ Template.readOnly.helpers({
         if (App.editable)
             return "";
         else
-            return "Read-Only";
+            return "View Only";
     }
 });
-//Template.readOnly.rendered = function rendered() {
-//
-//  if (App.editable)
-//    statusmsg("prajakta");
-//  else
-//    statusmsg("Read-only");
-//
-//
-//}
-//
 
