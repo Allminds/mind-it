@@ -210,6 +210,7 @@ App.selectShiftVertical = function(node) {
 
 App.select = function(node, softSelect) {
     // Find previously selected and deselect
+
     if (App.cmdDown || softSelect) {
 
         if (App.multiSelectedNodes.indexOf(node) >= 0) {
@@ -235,6 +236,9 @@ App.select = function(node, softSelect) {
         App.clearAllSelected();
 
     }
+    console.log("selected noe",node.__data__);
+
+    Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,node.__data__._id);
 
 };
 
@@ -261,6 +265,7 @@ App.selectNode = function(target) {
         })[0][0];
         if (sel) {
             App.select(sel);
+          //  console.log("selected mnode",sel.)
             return true;
         }
     }
