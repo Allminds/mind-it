@@ -903,6 +903,12 @@ Mousetrap.bind('mod', clearCmd, 'keyup');
 
 Mousetrap.bind('mod+shift+p', function() {
     event = arguments[0];
+    var div = document.getElementById("topBarDiv"); //remove topbar in presentation mode.
+    div.innerHTML= "";
+    if (screenfull.enabled) {
+        screenfull.request();
+    }
+    App.presentation.presentationMode  = true;
     event.preventDefault();
 
     App.presentation.prepareForPresentation();
@@ -916,7 +922,6 @@ Mousetrap.bind('mod+shift+p', function() {
     App.presentation.index = 0;
 
 });
-
 Mousetrap.bind("pageup" , function() {
     e = arguments[0];
     e.preventDefault();
@@ -929,3 +934,89 @@ Mousetrap.bind('pagedown' , function() {
     App.presentation.moveCursorToNextNode();
 });
 
+var moveCursorToNextNode = function() {
+    setIndexValue();
+
+    var currentD3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
+
+    if(currentD3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(currentD3Node.__data__);
+    }
+
+    App.presentation.index = (App.presentation.index + 1) % App.presentationArray.length;
+
+    var d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
+
+
+    App.deselectNode();
+    d3.select(d3Node).classed("selected", true);
+    App.clearAllSelected();
+
+
+    if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
+        var difference = App.presentation.previousNode.depth - d3Node.__data__.depth;
+        for(var i = 0 ; i < difference ; i++) {
+            App.toggleCollapsedNode(App.presentation.previousNode.parent);
+            App.presentation.previousNode = App.presentation.previousNode.parent;
+        }
+    }
+
+
+    App.presentation.previousNode = d3Node.__data__;
+};
+
+
+var setIndexValue = function () {
+    var id = d3.select(".selected")[0][0].__data__._id;
+
+    App.presentation.index = App.presentationArray.indexOf(id);
+};
+
+
+var moveCursorToPreviousNode = function() {
+
+    var d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
+
+    if(d3Node.__data__.childSubTree != null && d3Node.__data__.isCollapsed == false) {
+        App.toggleCollapsedNode(d3Node.__data__);
+    }
+
+    App.presentation.index = (App.presentation.index + App.presentationArray.length - 1) % App.presentationArray.length;
+
+    var dbNode = Mindmaps.findOne(App.presentationArray[App.presentation.index]);
+
+    expandParentRecursively(dbNode._id);
+
+    d3Node = App.presentation.getD3Node(App.presentationArray[App.presentation.index]);
+
+
+    App.deselectNode();
+    d3.select(d3Node).classed("selected", true);
+    App.clearAllSelected();
+
+    if(App.presentation.previousNode.depth > d3Node.__data__.depth) {
+        App.toggleCollapsedNode(App.presentation.previousNode.parent);
+    }
+
+    if(d3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(d3Node.__data__);
+    }
+
+    App.presentation.previousNode = d3Node.__data__;
+};
+
+var expandParentRecursively = function (nodeId) {
+
+    var d3Node = App.presentation.getD3Node(nodeId);
+
+    if(d3Node == null) {
+        var dbNode = Mindmaps.findOne({_id : nodeId});
+        expandParentRecursively(dbNode.parentId);
+    }
+
+    d3Node = App.presentation.getD3Node(nodeId);
+
+    if(d3Node.__data__.isCollapsed == true) {
+        App.toggleCollapsedNode(d3Node.__data__);
+    }
+};

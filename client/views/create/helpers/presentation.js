@@ -3,7 +3,7 @@ App.presentation.presentationArray = [];
 App.presentation.length = 0;
 App.presentation.index = 0;
 App.presentation.previousNode = null;
-
+App.presentation.presentationMode = false;
 App.presentation.prepareForPresentation = function() {
     alert("In presentation.");
     App.presentation.expandAll();
@@ -112,7 +112,6 @@ App.presentation.getD3Node = function(nodeId) {
     }
 };
 
-
 App.presentation.moveCursorToNextNode = function() {
     setIndexValue();
 
@@ -199,7 +198,6 @@ var expandParentRecursively = function (nodeId) {
         App.toggleCollapsedNode(d3Node.__data__);
     }
 };
-
 
 var isChildNode = function(node) {
     return node.childSubTree.length == 0;
