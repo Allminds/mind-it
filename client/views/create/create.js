@@ -29,49 +29,49 @@ var enableHelpLink = function () {
     $('#help-modal').modal('show');
 };
 
-Template.create.events({
-    'click #Share_btn': function () {
-        $('#share-modal').modal('show');
+//Template.create.events({
+//    'click #Share_btn': function () {
+//        $('#share-modal').modal('show');
+//
+//    },
+//
+//    'click #getSharableWriteLink': function () {
+//
+//        Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
+//            var msg = value;
+//            alert(msg);
+//        });
+//
+//
+//    },
+//    'click #getSharableReadLink': function () {
+//        Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
+//            var msg = value;
+//            alert(msg);
+//        });
+//    }
+//});
 
-    },
-
-    'click #getSharableWriteLink': function () {
-
-        Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-            var msg = value;
-            alert(msg);
-        });
-
-
-    },
-    'click #getSharableReadLink': function () {
-        Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-            var msg = value;
-            alert(msg);
-        });
-    }
-});
-
-Template.create.helpers({
-    shareReadLink: function () {
-        if (App.isSharedMindmap == App.Constants.Mode.READ) {
-            return "";
-        }
-
-
-        else
-            return "Share read only link";
-    },
-    shareWriteLink: function () {
-        if (App.isSharedMindmap == App.Constants.Mode.WRITE) {
-            return "";
-        }
-
-        else
-            return "Share read-write link";
-    }
-
-})
+//Template.create.helpers({
+//    shareReadLink: function () {
+//        if (App.isSharedMindmap == App.Constants.Mode.READ) {
+//            return "";
+//        }
+//
+//
+//        else
+//            return "Share read only link";
+//    },
+//    shareWriteLink: function () {
+//        if (App.isSharedMindmap == App.Constants.Mode.WRITE) {
+//            return "";
+//        }
+//
+//        else
+//            return "Share read-write link";
+//    }
+//
+//})
 
 Template.create.rendered = function rendered() {
     if (this.data.data.length == 0) {

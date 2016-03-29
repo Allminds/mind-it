@@ -1,15 +1,56 @@
+Template.PresentImageButton.events({
+    'click #PresentationImageButton': function(){
+        App.presentation.preparePresentationUI();
+    }
+});
+
+
 App.presentation = {};
 App.presentation.presentationArray = [];
 App.presentation.length = 0;
 App.presentation.index = 0;
 App.presentation.previousNode = null;
+App.presentation.presentationMode = false;
+App.presentation.topbarHTML  = "";
+
+App.presentation.preparePresentationUI = function(){
+    var div = document.getElementById("topBarDiv"); //remove topbar in presentation mode.
+    App.presentation.topbarHTML = $("div#topBarDiv").html();
+    div.innerHTML= "";
+    if (screenfull.enabled) {
+        screenfull.request();
+    }
+    App.presentation.prepareForPresentation();
+    var rootNode = Mindmaps.findOne({rootId : null});
+    var d3Node = App.presentation.getD3Node(rootNode._id);
+
+    App.deselectNode();
+    d3.select(d3Node).classed("selected", true);
+    App.clearAllSelected();
+    App.presentation.index = 0;
+};
+$( document ).ready(function() {
+    $(document).on(screenfull.raw.fullscreenchange, function () {
+        if(App.presentation.presentationMode == true){
+            //update UI add topbar
+            var div = document.getElementById("topBarDiv");
+            console.log("inner",App.presentation.topbarHTML);
+            div.innerHTML = App.presentation.topbarHTML;
+            App.presentation.expandAll();
+            App.presentation.presentationMode = false;
+        }else{
+            App.presentation.presentationMode = true;
+        }
+    });
+});
 
 App.presentation.prepareForPresentation = function() {
-    alert("In presentation.");
     App.presentation.expandAll();
     App.presentation.presentationArray = [];
     App.presentation.length = 0;
     App.presentation.collapseAll();
+    alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
+    //App.presentation.presentationMode = true;
 };
 
 
@@ -112,7 +153,6 @@ App.presentation.getD3Node = function(nodeId) {
     }
 };
 
-
 App.presentation.moveCursorToNextNode = function() {
     setIndexValue();
 
@@ -199,7 +239,6 @@ var expandParentRecursively = function (nodeId) {
         App.toggleCollapsedNode(d3Node.__data__);
     }
 };
-
 
 var isChildNode = function(node) {
     return node.childSubTree.length == 0;

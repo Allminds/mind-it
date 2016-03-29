@@ -3,7 +3,7 @@
 </head>
 <template name="TopBar">
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation"
-         style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19); color: #00b439">
+         style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19); color: #00b439" id="topBarDiv">
         <div class="container-fluid">
 
             <div class="navbar-header">
@@ -53,9 +53,21 @@
                     {{/if}}
 
 
+                    {{#if requireShare}}
+                    {{#if requireShareImageButton}}
+                    <li>{{> ShareImageButton}}</li>
+                    {{else}}
+                    <li>{{> Share}}</li>
+                    {{/if}}
+                    {{/if}}
+
+                    <!--{{#if requirePresent}}-->
+                    <!--<li>{{> PresentImageButton}}</li>-->
+                    <!--{{/if}}-->
+
                     {{#if requireFeedback}}
                     {{#if requireFeedbackImageButton}}
-                    <li>{{> FeedbackImageButton}}</li>
+                    <li>{{> PresentImageButton}}</li>
                     {{else}}
                     <li>{{> Feedback }}</li>
                     {{/if}}
