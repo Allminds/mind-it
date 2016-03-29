@@ -53,9 +53,21 @@
                     {{/if}}
 
 
+                    {{#if requireShare}}
+                    {{#if requireShareImageButton}}
+                    <li>{{> ShareImageButton}}</li>
+                    {{else}}
+                    <li>{{> Share}}</li>
+                    {{/if}}
+                    {{/if}}
+
+                    <!--{{#if requirePresent}}-->
+                    <!--<li>{{> PresentImageButton}}</li>-->
+                    <!--{{/if}}-->
+
                     {{#if requireFeedback}}
                     {{#if requireFeedbackImageButton}}
-                    <li>{{> FeedbackImageButton}}</li>
+                    <li>{{> PresentImageButton}}</li>
                     {{else}}
                     <li>{{> Feedback }}</li>
                     {{/if}}

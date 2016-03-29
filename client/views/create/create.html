@@ -8,11 +8,10 @@
     {{> readOnly }}
     </div>
 
-    <div class="top-margin" style="width: 100% ; position: fixed">
-    <!--<button id="Share_btn" style="float: left">Share MindMap</button>-->
-    <img class="menuicon" src="/shareico38.png" id="Share_btn" style="float: right">
-
+    <div class="top-margin" style="width: 100% ; position:fixed">
+        {{> FeedbackImageButton}}
     </div>
+
     <!--<div class="top-margin" style="width: 100% ; position: fixed ;">-->
         <!--<button id="getSharableReadLink" style="float: right">{{ shareReadLink }}</button>-->
         <!--&lt;!&ndash;<img src="/feedbackico38.png" id="getSharableReadLink" style="float: left">&ndash;&gt;-->
@@ -43,7 +42,7 @@
 
 
  {{>ActionBar}}
-    {{> TopBar forCreate=true sideLogoSmall=true requireHelp=true requireHelpImageButton=true requireExport=true requireExportImageButton=true requireFeedbackImageButton=true requireHelp=true requireFeedback=true notError=true}}
+    {{> TopBar forCreate=true sideLogoSmall=true requireHelp=true requireShare=true requireShareImageButton=true requireHelpImageButton=true requireExport=true requireExportImageButton=true requireFeedbackImageButton=true requireHelp=true requireFeedback=true notError=true}}
     <!--{{> TopBar sideLogoSmall=true topbarText="Help" linkId="help-link" requireExport=true requireFeedback=true notError=true}}-->
 
 
