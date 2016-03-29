@@ -27,7 +27,6 @@ Meteor.publish('mindmap', function (id, user_email_id,isSharedMindmap) {
   }, function(e){}));
 
   var readPermitted = acl.findOne({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id});
-
   if(readPermitted || isSharedMindmap ){
     return Mindmaps.find({$or:[{_id:id},{rootId:id}]});
 
@@ -141,8 +140,7 @@ Meteor.methods({
     return Mindmaps.find({_id:id}).fetch().length == 0;
   },
   addMaptoMindmapMetadata: function(emailId,mindmapId){
-    var document = {rootId:mindmapId, owner:emailId,readOnlyLink:generateSharableLink(),readWriteLink:generateSharableLink()};
-    MindmapMetadata.insert(document);
+    addToMindmapMetaData(mindmapId, emailId);
 
   },
   getSharableReadLink: function(id){
@@ -203,9 +201,13 @@ Meteor.methods({
       return user;
     }
   },
-  createRootNode : function(){
-
-    return mindMapService.createRootNode("New Node","*");
+  createRootNode : function(emailId){
+    var mindMapId = mindMapService.createRootNode("New Node",emailId);
+    if(emailId != "*") {
+      App.DbService.addUser(emailId, mindMapId, "o");
+    }
+    addToMindmapMetaData(emailId, mindMapId);
+    return mindMapId;
   },
   createNode : function(name,parentId,rootId,position){
     var newNode = new App.Node(name);
@@ -231,5 +233,14 @@ var generateSharableLink = function (){
   url += date.substring(date.length/2+1,date.length-1);
   url += randomString(10, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
   return "www.mindit.xyz/sharedLink/"+url;
+}
+function addToMindmapMetaData(mindmapId, emailId) {
+  var document = {
+    rootId: mindmapId,
+    owner: emailId,
+    readOnlyLink: generateSharableLink(),
+    readWriteLink: generateSharableLink()
+  };
+  MindmapMetadata.insert(document);
 }
 
