@@ -903,23 +903,8 @@ Mousetrap.bind('mod', clearCmd, 'keyup');
 
 Mousetrap.bind('mod+shift+p', function() {
     event = arguments[0];
-    var div = document.getElementById("topBarDiv"); //remove topbar in presentation mode.
-    div.innerHTML= "";
-    if (screenfull.enabled) {
-        screenfull.request();
-    }
-    App.presentation.presentationMode  = true;
     event.preventDefault();
-
-    App.presentation.prepareForPresentation();
-
-    var rootNode = Mindmaps.findOne({rootId : null});
-    var d3Node = App.presentation.getD3Node(rootNode._id);
-
-    App.deselectNode();
-    d3.select(d3Node).classed("selected", true);
-    App.clearAllSelected();
-    App.presentation.index = 0;
+    App.presentation.preparePresentationUI();
 
 });
 Mousetrap.bind("pageup" , function() {

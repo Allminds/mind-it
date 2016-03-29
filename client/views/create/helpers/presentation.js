@@ -1,15 +1,42 @@
+Template.PresentImageButton.events({
+    'click #PresentationImageButton': function(){
+        App.presentation.preparePresentationUI();
+    }
+});
+
+
 App.presentation = {};
 App.presentation.presentationArray = [];
 App.presentation.length = 0;
 App.presentation.index = 0;
 App.presentation.previousNode = null;
 App.presentation.presentationMode = false;
+
+App.presentation.preparePresentationUI = function(){
+    var div = document.getElementById("topBarDiv"); //remove topbar in presentation mode.
+    div.innerHTML= "";
+    if (screenfull.enabled) {
+        screenfull.request();
+    }
+    App.presentation.presentationMode  = true;
+
+    App.presentation.prepareForPresentation();
+
+    var rootNode = Mindmaps.findOne({rootId : null});
+    var d3Node = App.presentation.getD3Node(rootNode._id);
+
+    App.deselectNode();
+    d3.select(d3Node).classed("selected", true);
+    App.clearAllSelected();
+    App.presentation.index = 0;
+};
+
 App.presentation.prepareForPresentation = function() {
-    alert("In presentation.");
     App.presentation.expandAll();
     App.presentation.presentationArray = [];
     App.presentation.length = 0;
     App.presentation.collapseAll();
+    alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
 };
 
 
