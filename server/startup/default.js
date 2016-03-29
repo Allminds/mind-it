@@ -57,7 +57,6 @@ Meteor.publish('myRootNodes', function(emailId) {
 
 Meteor.publish('onlineusers', function (mindmap) {
     var results = acl.find({mind_map_id: mindmap}).fetch();
-    console.log("RESULTS::::::", results,mindmap);
     user_ids = results.map(function (obj) {
         return obj.user_id;
     });
@@ -108,7 +107,6 @@ Meteor.methods({
     },
 
   findTree: function (id, user_email_id,isSharedMindmap) {
-    console.log("In FindTree");
     var readPermitted = acl.findOne({user_id: { $in: [user_email_id, "*"] }, mind_map_id: id});
     if(readPermitted || isSharedMindmap ){
       return mindMapService.findTree(id);
@@ -119,7 +117,8 @@ Meteor.methods({
         return mindMapService.findTree(id);
       } else {
 
-        return mindMapService.findTree(null);
+         throw new Meteor.Error(
+            801, "Inaccessible Mindmap");
       }
     }
     return ;
@@ -171,6 +170,52 @@ Meteor.methods({
   },
   updateUserStatus: function(email_id,mindMapId,nodeId){
     App.usersStatusService.updateUserStatus(email_id,mindMapId,nodeId);
+  },
+  createUserFromAdmin: function (username, profile, services) {
+    var content = JSON.parse(username);
+    var item = Meteor.users.findOne({
+      '$or': [
+        {'services.google.id': content.services.google.id},
+        {'emails.address': content.services.google.email},
+        {'services.google.email': content.services.google.email}
+      ]
+    });
+    if(typeof item == 'undefined'){
+      var user_id = Accounts.createUser({email: content.services.google.email, profile: content.services.profile, services: services})
+      Meteor.users.update({
+        _id: user_id
+      }, {
+        $set: {
+          services:{google:content.services.google}
+        }
+      });
+      var user = Meteor.users.find({"_id": user_id}).fetch();;
+      return user;
+    }
+    else{
+      var user = Meteor.users.findOne({
+        '$or': [
+          {'services.google.id': content.services.google.id},
+          {'emails.address': content.services.google.email},
+          {'services.google.email': content.services.google.email}
+        ]
+      });
+      return user;
+    }
+  },
+  createRootNode : function(){
+
+    return mindMapService.createRootNode("New Node","*");
+  },
+  createNode : function(name,parentId,rootId,position){
+    var newNode = new App.Node(name);
+    newNode.parentId = parentId;
+    newNode.position = position;
+    newNode.rootId = rootId;
+    return mindMapService.addNode(newNode);
+  },
+  updateNode : function(id, data){
+    mindMapService.updateNode(id, data);
   }
 
 });
