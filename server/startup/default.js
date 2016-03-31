@@ -226,12 +226,12 @@ function randomString(length, chars) {
   for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return result;
 };
-var generateSharableLink = function (){
+function generateSharableLink (){
   var date = ""+new Date().getTime();
   var  url=date.substring(0,date.length/2);
-  url += randomString(10, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  url += randomString(10, App.Constants.CharacterSet);
   url += date.substring(date.length/2+1,date.length-1);
-  url += randomString(10, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  url += randomString(10, App.Constants.CharacterSet);
   return "www.mindit.xyz/sharedLink/"+url;
 }
 function addToMindmapMetaData(mindmapId, emailId) {
