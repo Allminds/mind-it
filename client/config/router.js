@@ -1,38 +1,6 @@
 
 Router.configure({layoutTemplate: 'main', notFoundTemplate: 'error_page'});
 
-//Router.route('/', {
-// name: 'downtimeNotify',
-// template: 'downtimeNotify'
-//});
-
-//Router.route('/asdfghhome/', {
-// template: 'home',
-// waitOn: function () {
-//    return Meteor.subscribe("userdata", Meteor.userId());
-// }
-//});
-
-//Router.route('/create/:_id', {
-// template: 'downtimeNotify',
-// waitOn: function () {
-//    return Meteor.subscribe("userdata", Meteor.userId());
-// }
-//});
-//
-//Router.route('/createMindmap/:_id', {
-// name: "create",
-// template: "create",
-// waitOn: function () {
-//    Meteor.subscribe("userdata");
-//    return Meteor.subscribe("mindmap", this.params._id);
-// }, 
-// data: function () {
-//    return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
-// }
-//});
-
-
 var IS_IPAD = navigator.userAgent.match(/iPad/i) != null,
     IS_IPHONE = !IS_IPAD && ((navigator.userAgent.match(/iPhone/i) != null) || (navigator.userAgent.match(/iPod/i) != null)),
     IS_IOS = IS_IPAD || IS_IPHONE;
@@ -91,14 +59,11 @@ Router.route('/create/:_id', {
 					}else{
 						self.render("error_page");
 					}
-
 				}
-
 			})
 		}
 		else {
 			//var user = Meteor.user() ? Meteor.user().services.google.email : "*";
-
 			self.render("create");
 		}
 	},
@@ -108,9 +73,7 @@ Router.route('/create/:_id', {
 	waitOn: function () {
 		Meteor.subscribe("userdata");
 		App.currentMap = this.params._id;
-
 		Meteor.subscribe("onlineusers",this.params._id);
-
 		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
 		Meteor.call("isWritable", this.params._id, user, function (error, value) {
 			App.editable = value;

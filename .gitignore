@@ -2,6 +2,7 @@
 typings
 local
 .idea/**
+.idea/
 node_modules/**
 *.log
 TAGS

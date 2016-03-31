@@ -3,7 +3,7 @@ describe('Presentation.js',function(){
     it('should return null if node id passed to function does not exists on UI',function(){
         var randomId = "randomId123";
         var d3Node = App.presentation.getD3Node(randomId);
-        expect(d3Node.toBeNull());
+        expect(d3Node).toBe(undefined);
     });
     });
 });
