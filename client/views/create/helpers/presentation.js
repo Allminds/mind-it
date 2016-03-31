@@ -15,11 +15,16 @@ App.presentation.topbarHTML  = "";
 
 App.presentation.preparePresentationUI = function(){
     var div = document.getElementById("topBarDiv"); //remove topbar in presentation mode.
+    var onlineUsers = document.getElementById("onlineUsers");
+    var feedbackButton = document.getElementById("feedbackImageButton");
     App.presentation.topbarHTML = $("div#topBarDiv").html();
-    div.innerHTML= "";
+
     if (screenfull.enabled) {
         screenfull.request();
     }
+    div.style.display='none';
+    onlineUsers.style.display='none';
+    feedbackButton.style.display='none';
     App.presentation.prepareForPresentation();
     var rootNode = Mindmaps.findOne({rootId : null});
     var d3Node = App.presentation.getD3Node(rootNode._id);
@@ -34,8 +39,13 @@ $( document ).ready(function() {
         if(App.presentation.presentationMode == true){
             //update UI add topbar
             var div = document.getElementById("topBarDiv");
+            var onlineUsers = document.getElementById("onlineUsers");
+            var feedbackButton = document.getElementById("feedbackImageButton");
+            div.style.display='block';
+            onlineUsers.style.display='block';
+            feedbackButton.style.display='block';
             console.log("inner",App.presentation.topbarHTML);
-            div.innerHTML = App.presentation.topbarHTML;
+            //div.innerHTML = App.presentation.topbarHTML;
             App.presentation.expandAll();
             App.presentation.presentationMode = false;
         }else{
