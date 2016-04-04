@@ -128,7 +128,7 @@ var collapseSubTree = function(node) {
     }
 };
 
-var expandSubTree = function(node) {
+App.presentation.expandSubTree = function(node) {
 
     if(node == null) {
         return;
@@ -146,7 +146,7 @@ var expandSubTree = function(node) {
 
         for (var index in childSubTree) {
             var nextChildNode = Mindmaps.findOne({_id : childSubTree[index]});
-            expandSubTree(nextChildNode);
+            App.presentation.expandSubTree(nextChildNode);
         }
     }
 };
@@ -155,7 +155,7 @@ var expandSubTree = function(node) {
 
 App.presentation.getD3Node = function(nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
-
+    console.log("d3 log,",d3Nodes);
     for(var i = 0 ; i < d3Nodes.length; i++) {
         if(d3Nodes[i].__data__._id == nodeId) {
             return d3Nodes[i];

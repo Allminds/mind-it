@@ -6112,7 +6112,7 @@ var packageMetadata = {
             },
             "fibersCreated": {
               "type": "constant",
-              "value": 26
+              "value": 23
             },
             "prototype": {
               "type": "object",
@@ -7241,7 +7241,7 @@ var packageMetadata = {
                 },
                 "version": {
                   "type": "constant",
-                  "value": "3a7d0a56f92928866b378510a5e192a074366125"
+                  "value": "5400dabf60bbf9278fd35386d313ae199725a820"
                 },
                 "PUBLIC_SETTINGS": {
                   "type": "object"
@@ -7365,7 +7365,7 @@ var packageMetadata = {
             },
             "connections": {
               "type": "constant",
-              "value": 4
+              "value": 1
             },
             "timeout": {
               "type": "constant",
@@ -9242,7 +9242,7 @@ var packageMetadata = {
             "cache": {
               "type": "object",
               "members": {
-                "1459423937981undefined": {
+                "1459771311822undefined": {
                   "type": "constant",
                   "value": "/Users/prajaktadesai/Allminds/mind-it"
                 }
@@ -9591,7 +9591,84 @@ var packageMetadata = {
                 },
                 "pid": {
                   "type": "constant",
-                  "value": 31423
+                  "value": 12637
+                },
+                "fout": {
+                  "type": "constant",
+                  "value": 29
+                },
+                "child": {
+                  "type": "object",
+                  "members": {
+                    "domain": {
+                      "type": "null",
+                      "value": null
+                    },
+                    "signalCode": {
+                      "type": "null",
+                      "value": null
+                    },
+                    "exitCode": {
+                      "type": "null",
+                      "value": null
+                    },
+                    "pid": {
+                      "type": "constant",
+                      "value": 12637
+                    },
+                    "stdin": {
+                      "type": "null",
+                      "value": null
+                    },
+                    "stdout": {
+                      "type": "null",
+                      "value": null
+                    },
+                    "stderr": {
+                      "type": "null",
+                      "value": null
+                    },
+                    "stdio": {
+                      "type": "array"
+                    },
+                    "spawn": {
+                      "type": "function"
+                    },
+                    "kill": {
+                      "type": "function"
+                    },
+                    "ref": {
+                      "type": "function"
+                    },
+                    "unref": {
+                      "type": "function"
+                    },
+                    "setMaxListeners": {
+                      "type": "function"
+                    },
+                    "emit": {
+                      "type": "function"
+                    },
+                    "addListener": {
+                      "type": "function",
+                      "refID": 17
+                    },
+                    "on": {
+                      "ref": 17
+                    },
+                    "once": {
+                      "type": "function"
+                    },
+                    "removeListener": {
+                      "type": "function"
+                    },
+                    "removeAllListeners": {
+                      "type": "function"
+                    },
+                    "listeners": {
+                      "type": "function"
+                    }
+                  }
                 },
                 "getTaskName": {
                   "type": "function"
@@ -11877,7 +11954,7 @@ var packageMetadata = {
       "members": {
         "autoupdateVersion": {
           "type": "constant",
-          "value": "94aaaf60debe44ef57a3ac7d079908742bb3a929"
+          "value": "a8a9817c54291aded24131a85a8e8fc81e342619"
         },
         "autoupdateVersionRefreshable": {
           "type": "constant",
