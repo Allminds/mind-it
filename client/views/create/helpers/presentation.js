@@ -1,5 +1,6 @@
 Template.PresentImageButton.events({
     'click #PresentationImageButton': function(){
+        console.log("hello");
         App.presentation.preparePresentationUI();
     }
 });
@@ -27,12 +28,13 @@ App.presentation.preparePresentationUI = function(){
     feedbackButton.style.display='none';
     App.presentation.prepareForPresentation();
     var rootNode = Mindmaps.findOne({rootId : null});
-    var d3Node = App.presentation.getD3Node(rootNode._id);
 
+    var d3Node = App.presentation.getD3Node(rootNode._id);
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
     App.presentation.index = 0;
+
 };
 $( document ).ready(function() {
     $(document).on(screenfull.raw.fullscreenchange, function () {
@@ -44,11 +46,11 @@ $( document ).ready(function() {
             div.style.display='block';
             onlineUsers.style.display='block';
             feedbackButton.style.display='block';
-            console.log("inner",App.presentation.topbarHTML);
             //div.innerHTML = App.presentation.topbarHTML;
             App.presentation.expandAll();
             App.presentation.presentationMode = false;
         }else{
+            App.getChartInFocus();
             App.presentation.presentationMode = true;
         }
     });
@@ -59,7 +61,7 @@ App.presentation.prepareForPresentation = function() {
     App.presentation.presentationArray = [];
     App.presentation.length = 0;
     App.presentation.collapseAll();
-    alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
+   // alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
     //App.presentation.presentationMode = true;
 };
 
@@ -78,6 +80,7 @@ var prepareArrayForNavigation = function(ExpandTree) {
 
     var rootNode = Mindmaps.findOne({rootId : null});
 
+    console.log("rootnode",rootNode);
     if(ExpandTree == false) {
         App.presentation.presentationArray = [];
         App.presentation.length = 0;
@@ -128,7 +131,7 @@ var collapseSubTree = function(node) {
     }
 };
 
-var expandSubTree = function(node) {
+expandSubTree = function(node) {
 
     if(node == null) {
         return;
@@ -155,9 +158,10 @@ var expandSubTree = function(node) {
 
 App.presentation.getD3Node = function(nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
-
+    console.log("before",d3Nodes.length);
     for(var i = 0 ; i < d3Nodes.length; i++) {
         if(d3Nodes[i].__data__._id == nodeId) {
+            console.log("d3 log,",d3Nodes[i].__data__.name);
             return d3Nodes[i];
         }
     }

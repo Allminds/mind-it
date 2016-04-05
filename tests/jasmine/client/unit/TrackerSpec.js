@@ -24,6 +24,4 @@ fdescribe('Tracker.js', function () {
         App.tracker.updateNameOfNode(node, {name: "updatedName"},"dummyId");
         expect(node.name).toBe("updatedName");
     });
-
-
 });
