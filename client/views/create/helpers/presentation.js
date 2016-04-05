@@ -1,5 +1,6 @@
 Template.PresentImageButton.events({
     'click #PresentationImageButton': function(){
+        console.log("hello");
         App.presentation.preparePresentationUI();
     }
 });
@@ -33,6 +34,7 @@ App.presentation.preparePresentationUI = function(){
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
     App.presentation.index = 0;
+    App.getChartInFocus();
 };
 $( document ).ready(function() {
     $(document).on(screenfull.raw.fullscreenchange, function () {
@@ -44,7 +46,6 @@ $( document ).ready(function() {
             div.style.display='block';
             onlineUsers.style.display='block';
             feedbackButton.style.display='block';
-            console.log("inner",App.presentation.topbarHTML);
             //div.innerHTML = App.presentation.topbarHTML;
             App.presentation.expandAll();
             App.presentation.presentationMode = false;
@@ -59,7 +60,7 @@ App.presentation.prepareForPresentation = function() {
     App.presentation.presentationArray = [];
     App.presentation.length = 0;
     App.presentation.collapseAll();
-    alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
+   // alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
     //App.presentation.presentationMode = true;
 };
 
@@ -128,7 +129,7 @@ var collapseSubTree = function(node) {
     }
 };
 
-App.presentation.expandSubTree = function(node) {
+expandSubTree = function(node) {
 
     if(node == null) {
         return;
@@ -146,7 +147,7 @@ App.presentation.expandSubTree = function(node) {
 
         for (var index in childSubTree) {
             var nextChildNode = Mindmaps.findOne({_id : childSubTree[index]});
-            App.presentation.expandSubTree(nextChildNode);
+            expandSubTree(nextChildNode);
         }
     }
 };
@@ -155,9 +156,9 @@ App.presentation.expandSubTree = function(node) {
 
 App.presentation.getD3Node = function(nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
-    console.log("d3 log,",d3Nodes);
     for(var i = 0 ; i < d3Nodes.length; i++) {
         if(d3Nodes[i].__data__._id == nodeId) {
+            console.log("d3 log,",d3Nodes[i].__data__.name);
             return d3Nodes[i];
         }
     }
