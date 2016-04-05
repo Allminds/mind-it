@@ -5,7 +5,7 @@ Meteor.publish('mindmap', function (id, user_email_id, isSharedMindmap) {
 
     var userInfo = {emailId: user_email_id, mindmapId: id};
     if (isSharedMindmap == App.Constants.Mode.WRITE) {
-        addToSharedMindmapUsers();
+        addToSharedMindmapUsers(userInfo);
 
     }
     this._session.socket.on("close", Meteor.bindEnvironment(function () {
@@ -257,7 +257,7 @@ function addToMindmapMetaData(mindmapId, emailId) {
     MindmapMetadata.insert(document);
 }
 
-function addToSharedMindmapUsers() {
+function addToSharedMindmapUsers(userInfo) {
     var i;
     for (i = 0; i < App.sharedMindmapUsers.length; i++) {
         if (userInfo.emailId == App.sharedMindmapUsers[i].emailId && userInfo.mindmapId == App.sharedMindmapUsers[i].mindmapId) {
