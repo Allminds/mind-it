@@ -7242,7 +7242,7 @@ var packageMetadata = {
                 },
                 "version": {
                   "type": "constant",
-                  "value": "5400dabf60bbf9278fd35386d313ae199725a820"
+                  "value": "99f9b78169b8368481cbd5015109d8fb715b62ca"
                 },
                 "PUBLIC_SETTINGS": {
                   "type": "object"
@@ -7366,7 +7366,7 @@ var packageMetadata = {
             },
             "connections": {
               "type": "constant",
-              "value": 1
+              "value": 0
             },
             "timeout": {
               "type": "constant",
@@ -9243,7 +9243,7 @@ var packageMetadata = {
             "cache": {
               "type": "object",
               "members": {
-                "1459771311822undefined": {
+                "1459833291361undefined": {
                   "type": "constant",
                   "value": "/Users/prajaktadesai/Allminds/mind-it"
                 }
@@ -9592,11 +9592,11 @@ var packageMetadata = {
                 },
                 "pid": {
                   "type": "constant",
-                  "value": 12637
+                  "value": 21252
                 },
                 "fout": {
                   "type": "constant",
-                  "value": 29
+                  "value": 30
                 },
                 "child": {
                   "type": "object",
@@ -9615,7 +9615,7 @@ var packageMetadata = {
                     },
                     "pid": {
                       "type": "constant",
-                      "value": 12637
+                      "value": 21252
                     },
                     "stdin": {
                       "type": "null",
@@ -11955,7 +11955,7 @@ var packageMetadata = {
       "members": {
         "autoupdateVersion": {
           "type": "constant",
-          "value": "a8a9817c54291aded24131a85a8e8fc81e342619"
+          "value": "73330c7b89b45441f606a44000d0918adf61a3c7"
         },
         "autoupdateVersionRefreshable": {
           "type": "constant",

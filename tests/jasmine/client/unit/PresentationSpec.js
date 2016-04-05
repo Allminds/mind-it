@@ -35,11 +35,8 @@ fdescribe('Presentation.js', function () {
         var child1;
         var child2;
         var Rchild2;
-        beforeEach(function () {
-            //var rectWidth = 150;
-            //var fixture = createFixture("New Mindmap", rectWidth);
-            //setFixtures(fixture);
 
+        beforeEach(function () {
 
             rootNode = new App.Node("root", null, null, 0);
             rootNode._id = "0";
@@ -50,24 +47,14 @@ fdescribe('Presentation.js', function () {
             Rchild2 = new App.Node("Rchild2", "right", child2, 0);
             Rchild2._id="2.1";
             rootNode.left[0]=child1._id;
-            rootNode.right[0]=child2;
-            child2.childSubTree[0]=Rchild2;
+            rootNode.right[0]=child2._id;
+            child2.childSubTree[0]=Rchild2._id;
 
             Mindmaps.insert(rootNode);
             Mindmaps.insert(child1);
             Mindmaps.insert(child2);
 
-
         });
-
-        //it("dummy test", function () {
-        //    var rectWidth = 150;
-        //    var fixture = createFixture(rootNode.name, rectWidth);
-        //    setFixtures(fixture);
-        //    var element = d3.selectAll(".node")[0];
-        //    element.__data__ = rootNode;
-        //    expect(element.__data__._id).toBe("12345");
-        //});
 
         it('should return undefined if node id passed to function does not exists on UI', function () {
             var randomId = "randomId123";
@@ -76,21 +63,35 @@ fdescribe('Presentation.js', function () {
         });
 
         it('should return d3 element if passed node id is valid', function () {
-            spyOn(d3, "selectAll").and.returnValue(createD3Node(rootNode));
+            var rectWidth = 150;
+            var fixture = createFixture(rootNode.name, rectWidth);
+            setFixtures(fixture);
+            var d3Node=d3.selectAll(".node");
+            d3Node[0][0].__data__=rootNode;
+            spyOn(d3, "selectAll").and.returnValue(d3Node);
             var result = App.presentation.getD3Node(rootNode._id);
             expect(result).toBe(d3Node[0][0]);
         });
 
-        fit("should call App.toggleCollapsedNode when collapsed non root node is passed to expandSubtree function ", function(){
+        it("should call App.toggleCollapsedNode when collapsed non root node is passed to expandSubtree function ", function(){
             spyOn(App.presentation, 'getD3Node').and.callFake(function(nodeId){
                 return createD3Node(nodeId);
             });
             spyOn(App,'toggleCollapsedNode');
             expect(App.presentation.getD3Node(child1._id).__data__.name).toBe("child1");
-            App.presentation.expandSubTree(child2);
+            App.presentation.expandAll();
             expect( App.toggleCollapsedNode).toHaveBeenCalledWith(createD3Node(child2._id).__data__);
 
         });
+
+        it("should call App.toggleCollapsedNode when collapseAll is called ", function(){
+            spyOn(App.presentation, 'getD3Node').and.callFake(function(nodeId){
+                return createD3Node(nodeId);
+            });
+            spyOn(App,'toggleCollapsedNode');
+            App.presentation.collapseAll();
+            expect( App.toggleCollapsedNode).toHaveBeenCalledWith(createD3Node(child2._id).__data__);
+        })
 
     });
 });
