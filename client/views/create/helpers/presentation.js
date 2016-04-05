@@ -61,8 +61,7 @@ App.presentation.prepareForPresentation = function() {
     App.presentation.presentationArray = [];
     App.presentation.length = 0;
     App.presentation.collapseAll();
-
-    // alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
+   // alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
     //App.presentation.presentationMode = true;
 };
 
