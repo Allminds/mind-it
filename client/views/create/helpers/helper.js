@@ -199,9 +199,6 @@ App.selectShiftVertical = function(node) {
         d3.select(node).classed("selected", true);
         if (App.multiSelectedNodes.indexOf(node) < 0)
             App.multiSelectedNodes.push(node);
-
-
-
     }
 
 

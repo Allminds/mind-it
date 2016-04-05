@@ -19,21 +19,10 @@ checkPlatform()
 App.ERROR_MESSAGE = "Page Not Found";
 
 
+
 Router.route('/', {
 	onBeforeAction: function () {
-		var self = this;
-		App.isSharedMindmap = null;
-		if (!Meteor.user()) {
-			self.render("home");
-		}
-		else {
-			Meteor.subscribe("userdata", Meteor.userId());
-			Meteor.subscribe("myRootNodes", Meteor.user().services.google.email);
-			Meteor.subscribe("acl",Meteor.user().services.google.email);
-            //Changing current mindmap id to "*", since user isnt on any specific mindmap.
-            self.render("dashboard");
-            Meteor.call("updateUserStatus",Meteor.user().services.google.email,"*");
-		}
+		renderHomePage.call(this);
 	}
 });
 
@@ -78,7 +67,6 @@ Router.route('/create/:_id', {
 		Meteor.call("isWritable", this.params._id, user, function (error, value) {
 			App.editable = value;
 		});
-        console.log("user",user);
 		return Meteor.subscribe("mindmap", this.params._id, user);
 	}
 
@@ -102,7 +90,7 @@ Router.route('/sharedLink/:link', {
         if (doc) {
             App.isSharedMindmap = App.Constants.Mode.READ;
             setTimeout(function () {
-                self.render("create");
+                    self.render("create");
             }, 2000);
         }
         else {
@@ -149,3 +137,19 @@ Router.route('/sharedLink/:link', {
     }
 
 });
+
+function renderHomePage() {
+    var self = this;
+    App.isSharedMindmap = null;
+    if (!Meteor.user()) {
+        self.render("home");
+    }
+    else {
+        Meteor.subscribe("userdata", Meteor.userId());
+        Meteor.subscribe("myRootNodes", Meteor.user().services.google.email);
+        Meteor.subscribe("acl", Meteor.user().services.google.email);
+        //Changing current mindmap id to "*", since user isnt on any specific mindmap.
+        self.render("dashboard");
+        Meteor.call("updateUserStatus", Meteor.user().services.google.email, "*");
+    }
+}

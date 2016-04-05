@@ -468,8 +468,6 @@ App.eventBinding.afterNewNodeAddition = function(newNode, selectedNode) {
     App.deselectNode();
     App.map.makeEditable(newNode._id);
     App.eventBinding.escapeOnNewNode(newNode, selectedNode);
-
-
 };
 
 App.eventBinding.newNodeAddAction = function(action) {
