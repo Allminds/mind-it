@@ -1,4 +1,4 @@
-fdescribe('Presentation.js', function () {
+describe('Presentation.js', function () {
 
 
     var createFixture = function (nodeText, rectWidth) {
@@ -77,6 +77,9 @@ fdescribe('Presentation.js', function () {
             spyOn(App.presentation, 'getD3Node').and.callFake(function(nodeId){
                 return createD3Node(nodeId);
             });
+            spyOn(App.presentation, 'getRootNode').and.callFake(function(){
+                return rootNode;
+            });
             spyOn(App,'toggleCollapsedNode');
             expect(App.presentation.getD3Node(child1._id).__data__.name).toBe("child1");
             App.presentation.expandAll();
@@ -87,6 +90,9 @@ fdescribe('Presentation.js', function () {
         it("should call App.toggleCollapsedNode when collapseAll is called ", function(){
             spyOn(App.presentation, 'getD3Node').and.callFake(function(nodeId){
                 return createD3Node(nodeId);
+            });
+            spyOn(App.presentation, 'getRootNode').and.callFake(function(){
+                return rootNode;
             });
             spyOn(App,'toggleCollapsedNode');
             App.presentation.collapseAll();

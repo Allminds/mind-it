@@ -58,7 +58,7 @@ $( document ).ready(function() {
             App.presentation.presentationMode = false;
         }else{
             console.log("in else part");
-           // App.getChartInFocus();
+           App.getChartInFocus();
             App.presentation.presentationMode = true;
         }
     });
