@@ -14,6 +14,13 @@ App.presentation.previousNode = null;
 App.presentation.presentationMode = false;
 App.presentation.topbarHTML  = "";
 
+
+App.presentation.getRootNode = function(){
+    var root = d3.select(".node.level-0")[0][0].__data__._id;
+    console.log("root id:",root);
+    var rootNode = Mindmaps.findOne({rootId : null, _id:root});
+    return rootNode;
+}
 App.presentation.preparePresentationUI = function(){
     var div = document.getElementById("topBarDiv"); //remove topbar in presentation mode.
     var onlineUsers = document.getElementById("onlineUsers");
@@ -27,7 +34,7 @@ App.presentation.preparePresentationUI = function(){
     onlineUsers.style.display='none';
     feedbackButton.style.display='none';
     App.presentation.prepareForPresentation();
-    var rootNode = Mindmaps.findOne({rootId : null});
+    var rootNode =App.presentation.getRootNode();
 
     var d3Node = App.presentation.getD3Node(rootNode._id);
     App.deselectNode();
@@ -50,7 +57,8 @@ $( document ).ready(function() {
             App.presentation.expandAll();
             App.presentation.presentationMode = false;
         }else{
-            App.getChartInFocus();
+            console.log("in else part");
+           // App.getChartInFocus();
             App.presentation.presentationMode = true;
         }
     });
@@ -78,7 +86,7 @@ App.presentation.collapseAll = function () {
 
 var prepareArrayForNavigation = function(ExpandTree) {
 
-    var rootNode = Mindmaps.findOne({rootId : null});
+    var rootNode=App.presentation.getRootNode();
 
     console.log("rootnode",rootNode);
     if(ExpandTree == false) {
@@ -89,6 +97,8 @@ var prepareArrayForNavigation = function(ExpandTree) {
     }
 
     for(var i = 0; i < rootNode.right.length; i++) {
+
+
         var node = Mindmaps.findOne({_id : rootNode.right[i]});
         if(ExpandTree == true) {
             expandSubTree(node);
@@ -158,8 +168,8 @@ expandSubTree = function(node) {
 
 App.presentation.getD3Node = function(nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
-    console.log("before",d3Nodes.length);
     for(var i = 0 ; i < d3Nodes.length; i++) {
+        console.log("before",d3Nodes[i].__data__._id,nodeId);
         if(d3Nodes[i].__data__._id == nodeId) {
             console.log("d3 log,",d3Nodes[i].__data__.name);
             return d3Nodes[i];
