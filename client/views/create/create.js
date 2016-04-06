@@ -79,14 +79,13 @@ Template.create.rendered = function rendered() {
         Router.go("/404");
     }
 
-
     App.currentMap = this.data.id;
     var email = Meteor.user() ? Meteor.user().services.google.email : null;
     if (App.isSharedMindmap != App.Constants.Mode.WRITE) {
         Meteor.call("isWritable", App.currentMap, email, function (error, value) {
             App.editable = value;
             App.setEventBinding();
-            UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
+            //  UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
         });
 
     }
@@ -101,10 +100,11 @@ Template.create.rendered = function rendered() {
 
     App.select(rootNode);
     Mindmaps.find({$or: [{_id: this.data.id}, {rootId: this.data.id}]}).observeChanges(App.tracker);
+    console.log("start rendering...");
 
     App.retainCollapsed();
     d3.select("#help-link").on('click', enableHelpLink);
-    Meteor.call("updateUserStatus",email,App.currentMap,App.currentMap);
+    Meteor.call("updateUserStatus", email, App.currentMap, App.currentMap);
 //  App.setMapsCount();
 };
 Template.readOnly.helpers({

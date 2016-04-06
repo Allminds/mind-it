@@ -2,9 +2,9 @@ describe('default.js', function () {
 
     describe('generateSharableLink', function () {
 
-        it("should return string of length 32", function () {
+        it("should return string of length 42", function () {
             var url = generateSharableLink();
-            expect(url.length).toBe(25 + 32);
+            expect(url.length).toBe(42);
         });
     });
 
