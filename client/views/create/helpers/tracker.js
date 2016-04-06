@@ -3,7 +3,8 @@ App.tracker = {
         var newNode = App.map.getNodeDataWithNodeId(id);
         if (newNode) {
             newNode.name = fields.name;
-            App.chart.update();
+            if (newNode.name != fields.name)
+                App.chart.update();
             var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
             // redraw gray box
             if (selectedNode && selectedNode._id === id) {
@@ -22,7 +23,7 @@ App.tracker = {
         App.nodeSelector.setPrevDepth(newNode.depth);
     },
 
-    updateSubtree: function (id, fields,key) {
+    updateSubtree: function (id, fields, key) {
         var parent = App.map.getNodeDataWithNodeId(id),
             isCollapsed = parent.isCollapsed;
         // var key = Object.keys(fields)[0],
@@ -37,7 +38,7 @@ App.tracker = {
             }
         }
 
-        if (newlyAddedId == null ) {
+        if (newlyAddedId == null) {
             newSubTree = childIds.map(
                 function (childid) {
                     return App.map.getNodeDataWithNodeId(childid);
@@ -75,16 +76,16 @@ App.tracker = {
                 App.tracker.added(newlyAddedId, tempFields);
             }
             subTree = App.Node.getSubTree(parent, key),
-            newSubTree = childIds.map(
-                function (childid) {
-                    return subTree.find(
-                        function (node) {
-                            return node._id === childid;
-                        });
-                });
+                newSubTree = childIds.map(
+                    function (childid) {
+                        return subTree.find(
+                            function (node) {
+                                return node._id === childid;
+                            });
+                    });
 
             var movedNode = App.map.getNodeDataWithNodeId(newlyAddedId);
-            if(subTree.indexOf(movedNode)==-1)
+            if (subTree.indexOf(movedNode) == -1)
                 subTree.splice(childIds.indexOf(newlyAddedId), 0, movedNode);
             newlyAddedId = null;
         }
@@ -108,16 +109,16 @@ App.tracker = {
             }
 
         }
-        if (fields.hasOwnProperty('childSubTree') )  {
+        if (fields.hasOwnProperty('childSubTree')) {
 
-            var node = App.tracker.updateSubtree(id, fields,'childSubTree');
+            var node = App.tracker.updateSubtree(id, fields, 'childSubTree');
         }
-        if(fields.hasOwnProperty('left')){
-            var node = App.tracker.updateSubtree(id, fields,'left');
+        if (fields.hasOwnProperty('left')) {
+            var node = App.tracker.updateSubtree(id, fields, 'left');
 
         }
-        if(fields.hasOwnProperty('right')){
-            var node = App.tracker.updateSubtree(id, fields,'right');
+        if (fields.hasOwnProperty('right')) {
+            var node = App.tracker.updateSubtree(id, fields, 'right');
         }
         if (fields.hasOwnProperty('parentId')) {
             if (!fields.parentId) return;
