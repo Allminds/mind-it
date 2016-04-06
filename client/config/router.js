@@ -53,7 +53,8 @@ Router.route('/create/:_id', {
 		}
 		else {
 			//var user = Meteor.user() ? Meteor.user().services.google.email : "*";
-			self.render("create");
+            console.log("before rendering");
+            self.render("create");
 		}
 	},
 	data: function () {
@@ -67,7 +68,9 @@ Router.route('/create/:_id', {
 		Meteor.call("isWritable", this.params._id, user, function (error, value) {
 			App.editable = value;
 		});
+        console.log("before subscription");
 		return Meteor.subscribe("mindmap", this.params._id, user);
+
 	}
 
 });
