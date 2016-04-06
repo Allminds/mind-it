@@ -82,7 +82,7 @@ Template.ModalPopUp.events({
 
 
     Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-      textBox.value = value;
+      textBox.value = location.hostname+(location.port ? ':'+location.port: '') + "/" + value;
       button.innerHTML= "read";
     });
 
@@ -95,7 +95,7 @@ Template.ModalPopUp.events({
     var button = document.getElementById("sharableLinkButtonMessage");
     console.log("button",button.innerHTML);
     Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-      textBox.value=value;
+      textBox.value = location.hostname+(location.port ? ':'+location.port: '') + "/" + value;
       button.innerHTML= "read and write";
 
     });
@@ -125,7 +125,7 @@ Template.ModalBody.rendered = function rendered(){
   textBox.disabled = false;
   textBox.value = "welcome";
   Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-    textBox.value = value;
+    textBox.value = location.hostname+(location.port ? ':'+location.port: '') + "/" + value;
   });
 
 }

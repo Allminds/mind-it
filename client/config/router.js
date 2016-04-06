@@ -86,7 +86,7 @@ Router.route('/sharedLink/:link', {
     onBeforeAction: function () {
         var self = this;
         //App.currentMap = this.data();
-        var doc = MindmapMetadata.findOne({readOnlyLink: "www.mindit.xyz/sharedLink/" + this.params.link});
+        var doc = MindmapMetadata.findOne({readOnlyLink: "sharedLink/" + this.params.link});
         if (doc) {
             App.isSharedMindmap = App.Constants.Mode.READ;
             setTimeout(function () {
@@ -94,7 +94,7 @@ Router.route('/sharedLink/:link', {
             }, 2000);
         }
         else {
-            doc = MindmapMetadata.findOne({readWriteLink: "www.mindit.xyz/sharedLink/" + this.params.link});
+            doc = MindmapMetadata.findOne({readWriteLink: "sharedLink/" + this.params.link});
             if (doc) {
                 App.isSharedMindmap = App.Constants.Mode.WRITE;
                 App.editable = true;
@@ -117,17 +117,17 @@ Router.route('/sharedLink/:link', {
         var isSharedMindmap = true;
         var link = this.params.link;
 
-        Meteor.call("getRootNodeFromLink", "www.mindit.xyz/sharedLink/" + this.params.link, function (error, value) {
+        Meteor.call("getRootNodeFromLink", "sharedLink/" + this.params.link, function (error, value) {
             App.currentMap = value.rootId;
             var mode = App.Constants.Mode.READ;
-            if(value.readWriteLink == "www.mindit.xyz/sharedLink/" + link){
+            if(value.readWriteLink == "sharedLink/" + link){
                 mode = App.Constants.Mode.WRITE;
             }
             Meteor.subscribe("mindmap", App.currentMap, user, mode);
             Meteor.subscribe("onlineusers", App.currentMap);
 
         });
-        return Meteor.subscribe("MindmapMetadata", "www.mindit.xyz/sharedLink/" + this.params.link);
+        return Meteor.subscribe("MindmapMetadata", "sharedLink/" + this.params.link);
 
     },
     data: function () {
