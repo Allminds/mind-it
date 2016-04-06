@@ -1,12 +1,12 @@
 Template.ActionBar.helpers({
-    userimages: function(){
+    userimages: function () {
 
 
         return extractUserImage();
     }
 });
 
-extractUserImage= function() {
+extractUserImage = function () {
     var usersAvailable = Meteor.users.find().fetch();
     var Srcs = usersAvailable.map(function (x) {
         var user_object;
