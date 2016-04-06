@@ -1,14 +1,14 @@
-#sharableLinkButton{
-    display:block;
+#sharableLinkButton {
+    display: block;
     width: 64%;
-    height:40px;
-    color:black;
-    background-color:#f1f1f1;
+    height: 40px;
+    color: black;
+    background-color: #f1f1f1;
     border-width: 2px;
     border-color: black;
     float: left;
-    align-content:center;
-    font: 15px arial,sans-serif;
+    align-content: center;
+    font: 15px arial, sans-serif;
     border-bottom-color: white;
     border-right-color: white;
     text-align: left;
@@ -17,20 +17,30 @@
     margin-left: 16.66%;
 }
 
-#sharableLinkButton:hover{
+#sharableLinkButton:hover {
     cursor: pointer;
 
 }
 
-#linkTextBox{
-    width:70%;
+#linkTextBox {
+    width: 70%;
     /*margin-left: 16.66%;*/
     padding: 8px;
-    font: 13px arial,sans-serif;
+    font: 13px arial, sans-serif;
     /*margin-top: -20px;*/
 
 }
 
-.hidden{
-    visibility:hidden;
+.hidden {
+    visibility: hidden;
+}
+
+#sharedLinkr, #sharedLinkw {
+    height: 40px;
+    text-align: left;
+    border-bottom: 2px;
+    border-bottom-color: #0c0c0c;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-bottom: 10px;
 }

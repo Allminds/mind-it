@@ -6,4 +6,7 @@ local
 node_modules/**
 *.log
 TAGS
+tests/jasmine/server/unit/package-stubs.js
+tests/jasmine/server/unit/packageMocksSpec.js
+
 *#*
