@@ -154,6 +154,10 @@ Meteor.methods({
             MindmapMetadata.insert(document);
             doc = MindmapMetadata.findOne({rootId: id});
         }
+        if(doc.readOnlyLink.indexOf("www.mindit.xyz") != -1){
+           doc.readOnlyLink = doc.readOnlyLink.slice(15);
+            MindmapMetadata.update({rootId : id},{$set:{readOnlyLink:doc.readOnlyLink}});
+        }
         return doc.readOnlyLink;
     },
     getSharableWriteLink: function (id) {
@@ -167,6 +171,10 @@ Meteor.methods({
             };
             MindmapMetadata.insert(document);
             doc = MindmapMetadata.findOne({rootId: id});
+        }
+        if(doc.readWriteLink.indexOf("www.mindit.xyz") != -1){
+            doc.readWriteLink = doc.readWriteLink.slice(15);
+            MindmapMetadata.update({rootId : id},{$set:{readWriteLink:doc.readWriteLink}});
         }
         return doc.readWriteLink;
     },
@@ -245,7 +253,6 @@ function generateSharableLink() {
     url += randomString(10, App.Constants.CharacterSet);
     url += date.substring(date.length / 2 + 1, date.length - 1);
     url += randomString(10, App.Constants.CharacterSet);
-    console.log("sharedLink/" + url);
     return "sharedLink/" + url;
 }
 function addToMindmapMetaData(mindmapId, emailId) {
