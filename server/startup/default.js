@@ -245,7 +245,8 @@ function generateSharableLink() {
     url += randomString(10, App.Constants.CharacterSet);
     url += date.substring(date.length / 2 + 1, date.length - 1);
     url += randomString(10, App.Constants.CharacterSet);
-    return "www.mindit.xyz/sharedLink/" + url;
+    console.log("sharedLink/" + url);
+    return "sharedLink/" + url;
 }
 function addToMindmapMetaData(mindmapId, emailId) {
     var document = {
