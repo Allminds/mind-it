@@ -19,6 +19,14 @@ Template.ModalBody.helpers({
     else {
       return [{name: 'r' , value: 'Read Only'}];
     }
+  },
+
+  isWriteUser : function() {
+    if(App.editable){
+      return true;
+    }
+    else
+      return false;
   }
 });
 
@@ -94,11 +102,12 @@ Template.ModalPopUp.events({
     textBox.value = text;
     var button = document.getElementById("sharableLinkButtonMessage");
     console.log("button",button.innerHTML);
-    Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-      textBox.value=value;
-      button.innerHTML= "read and write";
-
-    });
+    if(Meteor.user()){
+      Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
+        textBox.value=value;
+        button.innerHTML= "read and write";
+      });
+    }
 
   },
   'click [data-action=link]' : function(){

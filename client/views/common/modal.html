@@ -61,35 +61,42 @@
                             <!--{{/each}}-->
                             <!--</select>-->
 
-                            <div class="dropdown row">
-                                <!--<span class="col-2"></span>-->
-                                <!--<a href="">-->
-                                <div class=" dropdown-toggle " id="sharableLinkButton" role="button"
-                                     data-action="toggleOptions" data-toggle="dropdown">
-                                    Anyone with this link can
-                                    <span id="sharableLinkButtonMessage" style="font-weight: bold">read</span>
-                                    <span class="caret"></span></div>
-                                <!--</a>-->
+                            {{#if isWriteUser}}
+                                <div class="dropdown row">
+                                    <!--<span class="col-2"></span>-->
+                                    <!--<a href="">-->
+                                    <div class=" dropdown-toggle " id="sharableLinkButton" role="button"
+                                         data-action="toggleOptions" data-toggle="dropdown">
+                                        Anyone with this link can
+                                        <span id="sharableLinkButtonMessage" style="font-weight: bold">read</span>
+                                        <span class="caret"></span></div>
+                                    <!--</a>-->
 
-                                <!--<div class=" dropdown-toggle col-8" id = "sharableLinkButton" data-action="toggleOptions" data-toggle="dropdown" role="button">-->
-                                <!--Anyone with this link can read the mindmap-->
-                                <!--</div>-->
-                                <ul class="dropdown-menu"
-                                    style=" margin-left:16.66%;width: 64%;justify-content: space-between; padding-top: 0px; padding-bottom: 0px">
-                                    <li id="sharedLinkr"
-                                        onMouseOver="this.style.backgroundColor='#F1F1F1'"
-                                        onMouseOut="this.style.backgroundColor= '#FFFFFF'">
-                                        Anyone with this link can read the mindmap
-                                    </li>
-                                    <li class="divider" style="margin-top: 0px; margin-bottom: 0px"></li>
-                                    <li id="sharedLinkw"
-                                        onMouseOver="this.style.backgroundColor='#F1F1F1'"
-                                        onMouseOut="this.style.backgroundColor= '#FFFFFF'">
-                                        Anyone with this link can read and write the mindmap
-                                    </li>
+                                    <!--<div class=" dropdown-toggle col-8" id = "sharableLinkButton" data-action="toggleOptions" data-toggle="dropdown" role="button">-->
+                                    <!--Anyone with this link can read the mindmap-->
+                                    <!--</div>-->
+                                    <ul class="dropdown-menu"
+                                        style=" margin-left:16.66%;width: 64%;justify-content: space-between; padding-top: 0px; padding-bottom: 0px">
+                                        <li id="sharedLinkr"
+                                            onMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                            onMouseOut="this.style.backgroundColor= '#FFFFFF'">
+                                            Anyone with this link can read the mindmap
+                                        </li>
+                                        <li class="divider" style="margin-top: 0px; margin-bottom: 0px"></li>
+                                        <li id="sharedLinkw"
+                                            onMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                            onMouseOut="this.style.backgroundColor= '#FFFFFF'">
+                                            Anyone with this link can read and write the mindmap
+                                        </li>
 
-                                </ul>
+                                    </ul>
+                                </div>
+                            {{else}}
+                            <div style="float:left; padding-left:15%">
+                                Anyone with this link can
+                                <span style="font-weight: bold">read</span>
                             </div>
+                            {{/if}}
 
 
                         </div>
