@@ -1,4 +1,3 @@
-
 Router.configure({layoutTemplate: 'main', notFoundTemplate: 'error_page'});
 
 var IS_IPAD = navigator.userAgent.match(/iPad/i) != null,
@@ -19,59 +18,59 @@ checkPlatform()
 App.ERROR_MESSAGE = "Page Not Found";
 
 
-
 Router.route('/', {
-	onBeforeAction: function () {
-		renderHomePage.call(this);
-	}
+    onBeforeAction: function () {
+        renderHomePage.call(this);
+    }
 });
 
 Router.route('/create/:_id', {
-	name: "create",
-	template: "create",
-	onBeforeAction: function () {
-		var self = this;
-		var error_msg;
-		if(mindMapService.findTree(this.params._id).length == 0) {
-			Meteor.call("isInvalidMindmap",this.params._id , function(error , result) {
-				if(result == true) {
-					error_msg = "Invalid Mindmap";
-					App.ERROR_MESSAGE = error_msg;
-					self.render("error_page");
-				}
-				else {
-					error_msg = "Inaccessible Mindmap";
-					App.ERROR_MESSAGE = error_msg;
-					if(!Meteor.user()) {
-						self.render("login_loading_page");
+    name: "create",
+    template: "create",
+    onBeforeAction: function () {
+        var self = this;
+        var error_msg;
+        if (mindMapService.findTree(this.params._id).length == 0) {
+            Meteor.call("isInvalidMindmap", this.params._id, function (error, result) {
+                if (result == true) {
+                    error_msg = "Invalid Mindmap";
+                    App.ERROR_MESSAGE = error_msg;
+                    self.render("error_page");
+                }
+                else {
+                    error_msg = "Inaccessible Mindmap";
+                    App.ERROR_MESSAGE = error_msg;
+                    if (!Meteor.user()) {
+                        self.render("login_loading_page");
 
-					}else{
-						self.render("error_page");
-					}
-				}
-			})
-		}
-		else {
-			//var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+                    } else {
+                        self.render("error_page");
+                    }
+                }
+            })
+        }
+        else {
+            //var user = Meteor.user() ? Meteor.user().services.google.email : "*";
             console.log("before rendering");
             self.render("create");
-		}
-	},
-	data: function () {
-		return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
-	},
-	waitOn: function () {
-		Meteor.subscribe("userdata");
-		App.currentMap = this.params._id;
-		Meteor.subscribe("onlineusers",this.params._id);
-		var user = Meteor.user() ? Meteor.user().services.google.email : "*";
-		Meteor.call("isWritable", this.params._id, user, function (error, value) {
-			App.editable = value;
-		});
-        console.log("before subscription");
-		return Meteor.subscribe("mindmap", this.params._id, user);
+        }
+    },
+    data: function () {
+        return {id: this.params._id, data: mindMapService.findTree(this.params._id)};
+    },
+    waitOn: function () {
+        Meteor.subscribe("userdata");
+        App.currentMap = this.params._id;
+        Meteor.subscribe("onlineusers", this.params._id);
+        var user= getMeteorUser();
 
-	}
+        Meteor.call("isWritable", this.params._id, user, function (error, value) {
+            App.editable = value;
+        });
+        console.log("before subscription");
+        return Meteor.subscribe("mindmap", this.params._id, user);
+
+    }
 
 });
 
@@ -93,7 +92,7 @@ Router.route('/sharedLink/:link', {
         if (doc) {
             App.isSharedMindmap = App.Constants.Mode.READ;
             setTimeout(function () {
-                    self.render("create");
+                self.render("create");
             }, 2000);
         }
         else {
@@ -116,14 +115,14 @@ Router.route('/sharedLink/:link', {
     },
     waitOn: function () {
         Meteor.subscribe("userdata");
-        var user = Meteor.user() ? Meteor.user().services.google.email : "*";
+        var user = getMeteorUser();
         var isSharedMindmap = true;
         var link = this.params.link;
 
         Meteor.call("getRootNodeFromLink", "sharedLink/" + this.params.link, function (error, value) {
             App.currentMap = value.rootId;
             var mode = App.Constants.Mode.READ;
-            if(value.readWriteLink == "sharedLink/" + link){
+            if (value.readWriteLink == "sharedLink/" + link) {
                 mode = App.Constants.Mode.WRITE;
             }
             Meteor.subscribe("mindmap", App.currentMap, user, mode);
@@ -155,4 +154,14 @@ function renderHomePage() {
         self.render("dashboard");
         Meteor.call("updateUserStatus", Meteor.user().services.google.email, "*");
     }
+}
+
+function getMeteorUser(){
+   var user = "*";
+    if (Meteor.user()) {
+        var temp = Meteor.user().services;
+        if (temp)
+            user = temp.google.email;
+    }
+    return user;
 }

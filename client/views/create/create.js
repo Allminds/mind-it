@@ -85,7 +85,7 @@ Template.create.rendered = function rendered() {
         Meteor.call("isWritable", App.currentMap, email, function (error, value) {
             App.editable = value;
             App.setEventBinding();
-            UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
+            //  UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
         });
 
     }
@@ -104,7 +104,7 @@ Template.create.rendered = function rendered() {
 
     App.retainCollapsed();
     d3.select("#help-link").on('click', enableHelpLink);
-    Meteor.call("updateUserStatus",email,App.currentMap,App.currentMap);
+    Meteor.call("updateUserStatus", email, App.currentMap, App.currentMap);
 //  App.setMapsCount();
 };
 Template.readOnly.helpers({

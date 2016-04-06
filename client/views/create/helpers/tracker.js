@@ -1,14 +1,14 @@
 App.tracker = {
     added: function (id, fields) {
-        console.log("in Added",id,fields);
+        console.log("in Added", id, fields);
         var newNode = App.map.getNodeDataWithNodeId(id);
         if (newNode) {
 
             newNode.name = fields.name;
-            if(newNode.name != fields.name)
+            if (newNode.name != fields.name)
                 App.chart.update();
             var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
-             //redraw gray box
+            //redraw gray box
             if (selectedNode && selectedNode._id === id) {
                 setTimeout(function () {
                     App.selectNode(selectedNode);
@@ -100,7 +100,7 @@ App.tracker = {
 
     updateNameOfNode: function (updatedNode, fields, id) {
         updatedNode.name = fields.name;
-        if(updatedNode.hasOwnProperty("left")) {
+        if (updatedNode.hasOwnProperty("left")) {
             App.chart.update();
         }
         var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
@@ -111,7 +111,7 @@ App.tracker = {
             }, 10);
         }
     }, changed: function (id, fields) {
-        console.log("in changed",id,fields);
+        console.log("in changed", id, fields);
 
         var updatedNode = App.map.getNodeDataWithNodeId(id);
         if (!updatedNode) return;
