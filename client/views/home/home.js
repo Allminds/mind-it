@@ -20,17 +20,7 @@ Template.MyButton.events({
     }
 });
 
-Template.home.onRendered(function () {
-    $('.home-bg').slick({
-        dots: true,
-        infinite: true,
-        speed: 300,
-        slidesToShow: 1
-    });
-
-    $("#about-us").click(function () {
-        $('#aboutUs-modal').modal('show');
-    });
+Template.MyButton.onRendered(function () {
 
     $('#fileID').change(function (evt) {
         var fileName = this.value;
@@ -63,6 +53,20 @@ Template.home.onRendered(function () {
 
         reader.readAsText(file);
         this.value = "";
+    });
+
+});
+
+Template.home.onRendered(function () {
+    $('.home-bg').slick({
+        dots: true,
+        infinite: true,
+        speed: 300,
+        slidesToShow: 1
+    });
+
+    $("#about-us").click(function () {
+        $('#aboutUs-modal').modal('show');
     });
 
 });
