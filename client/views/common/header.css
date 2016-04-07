@@ -1,6 +1,7 @@
 .dropButtons {
     font-weight: bold;
     font-size: 10px;
+    cursor:pointer;
 }
 
 .dropButtons:hover, .dropButtons:focus {
@@ -14,7 +15,7 @@
 
 .dropdown-content {
     display: none;
-    position: absolute;
+    position: fixed;
     background-color: #f9f9f9;
     min-width: 160px;
     overflow: auto;
