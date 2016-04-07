@@ -24,7 +24,7 @@ App.presentation.getRootNode = function(){
 App.presentation.preparePresentationUI = function(){
     var div = document.getElementById("topBarDiv"); //remove topbar in presentation mode.
     var onlineUsers = document.getElementById("onlineUsers");
-    var feedbackButton = document.getElementById("feedbackImageButton");
+    //var feedbackButton = document.getElementById("feedbackImageButton");
     App.presentation.topbarHTML = $("div#topBarDiv").html();
 
     if (screenfull.enabled) {
@@ -32,7 +32,7 @@ App.presentation.preparePresentationUI = function(){
     }
     div.style.display='none';
     onlineUsers.style.display='none';
-    feedbackButton.style.display='none';
+    //feedbackButton.style.display='none';
     App.presentation.prepareForPresentation();
     var rootNode =App.presentation.getRootNode();
 
@@ -49,15 +49,15 @@ $( document ).ready(function() {
             //update UI add topbar
             var div = document.getElementById("topBarDiv");
             var onlineUsers = document.getElementById("onlineUsers");
-            var feedbackButton = document.getElementById("feedbackImageButton");
+            //var feedbackButton = document.getElementById("feedbackImageButton");
+
             div.style.display='block';
             onlineUsers.style.display='block';
-            feedbackButton.style.display='block';
+            //feedbackButton.style.display='block';
             //div.innerHTML = App.presentation.topbarHTML;
             App.presentation.expandAll();
             App.presentation.presentationMode = false;
         }else{
-            console.log("in else part");
            App.getChartInFocus();
             App.presentation.presentationMode = true;
         }
@@ -87,8 +87,6 @@ App.presentation.collapseAll = function () {
 var prepareArrayForNavigation = function(ExpandTree) {
 
     var rootNode=App.presentation.getRootNode();
-
-    console.log("rootnode",rootNode);
     if(ExpandTree == false) {
         App.presentation.presentationArray = [];
         App.presentation.length = 0;

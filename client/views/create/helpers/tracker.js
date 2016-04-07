@@ -1,12 +1,12 @@
 App.tracker = {
     added: function (id, fields) {
-        console.log("in Added", id, fields);
         var newNode = App.map.getNodeDataWithNodeId(id);
         if (newNode) {
 
-            newNode.name = fields.name;
-            if (newNode.name != fields.name)
+            if (newNode.name != fields.name) {
+                newNode.name = fields.name;
                 App.chart.update();
+            }
             var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
             //redraw gray box
             if (selectedNode && selectedNode._id === id) {

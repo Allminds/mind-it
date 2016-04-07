@@ -68,6 +68,21 @@ describe('default.js', function () {
                     expect(MindmapMetadata.findOne).toHaveBeenCalled();
                 })
             })
+
+            it("Should remove www.mindit.xyz from sharable read link and return modified link", function(){
+                var document = {
+                    rootId: "abcDW122Mxk",
+                    owner: '*',
+                    readOnlyLink: "www.mindit.xyz/sharedLink/a123snnn",
+                    readWriteLink: "www.mindit.xyz/sharedLink/adsdsvsdv"
+                };
+                spyOn(MindmapMetadata, 'findOne').and.returnValue(document);
+                var modifiedLink = "abc";
+                Meteor.call("getSharableReadLink","abcDW122Mxk",function(error, value){
+                    modifiedLink = value;
+                    expect(modifiedLink).toBe("sharedLink/a123snnn");
+                });
+            })
         })
 
         describe('getSharableWriteLink', function () {
@@ -76,6 +91,21 @@ describe('default.js', function () {
                 Meteor.call("getSharableWriteLink", "dummyId", function () {
                     expect(MindmapMetadata.findOne).toHaveBeenCalled();
                 })
+            })
+
+            it("Should remove www.mindit.xyz from sharable read-write link and return modified link", function(){
+                var document = {
+                    rootId: "abcDW122Mxk",
+                    owner: '*',
+                    readOnlyLink: "www.mindit.xyz/sharedLink/a123snnn",
+                    readWriteLink: "www.mindit.xyz/sharedLink/adsdsvsdv"
+                };
+                spyOn(MindmapMetadata, 'findOne').and.returnValue(document);
+                var modifiedLink = "abc";
+                Meteor.call("getSharableWriteLink","abcDW122Mxk",function(error, value){
+                    modifiedLink = value;
+                    expect(modifiedLink).toBe("sharedLink/adsdsvsdv");
+                });
             })
         })
 

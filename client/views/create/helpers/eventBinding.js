@@ -881,9 +881,6 @@ Mousetrap.bind('mod+down', debounce(0, true, function() {
 Mousetrap.bind("esc", function goToRootNode() {
     App.select(d3.select('.node.level-0')[0][0]);
     App.getChartInFocus();
-    if(App.presentation.presentationMode == true){
-
-    }
 });
 
 Mousetrap.bind('?', function showHelp() {

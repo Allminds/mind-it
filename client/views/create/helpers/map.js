@@ -6,8 +6,6 @@ App.map.getDataOfNodeWithClassNamesString = function (classNames) {
 };
 
 App.map.addNodeToUI = function (parent, newNode) {
-  console.log("App.map.addNodeToUI");
-
   var subTree = parent ? (App.Node.isRoot(parent) ? parent[newNode.position] : parent.childSubTree) : null;
   if(subTree)
     subTree.splice(newNode.index, 0, newNode);
