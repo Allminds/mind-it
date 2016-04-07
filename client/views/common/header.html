@@ -30,12 +30,6 @@
 
                     </li>
                     {{/if}}
-
-                    <!--{{#if isDashboard}}-->
-                    <!--<li>-->
-                    <!--<input type="search" placeholder="Search Mindmap" class="searchMM">-->
-                    <!--</li>-->
-                    <!--{{/if}}-->
                 </ul>
 
             </div>
@@ -96,24 +90,17 @@
                     {{#if currentUser}}
 
                     {{#if notError}}
-                    <li style="display: inline-block">
-                        <a style=" float: left; pointer-events: none;">{{ name}}</a>
 
-                        <!--<h4 style="display: inline-block;padding-right: 15px">{{ name}} </h4>-->
-                    <li class="dropdown" style="display: inline-block">
-                        <img src={{ picture}} class="img-circle dropdown-toggle" alt="Cinque Terre"
-                             style="float: right; margin-top: 5px; margin-left: -10px; margin-right: 15px;"
-                             width="35" height="35"
-                             data-action="toggleOptions" data-toggle="dropdown">
-                        <ul class="dropdown-menu" >
-                            <li>
-                                <a href="" data-action="logout">
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    </li>
+                    <div class="dropdown">
+                        <div class="dropButtons" style="padding-top:10px" data-action="toggleOptions" data-toggle="dropdown">
+                            <a class="brand dropButtons" onMouseOver="this.style.color='#ED8233'" onMouseOut="this.style.color='#000000'" style="font-family: 'Trebuchet MS', Tahoma, Verdana, Arial, sans-serif; color:#000000" data-action="toggleOptions" data-toggle="dropdown">{{name}}</a>
+                            <img style="border-radius:50% " class="dropButtons" src={{ picture}} alt="Cinque Terre" width="32" height="32" data-action="toggleOptions" data-toggle="dropdown">
+                        </div>
+                        <div id="myDropdown" class="dropdown-content">
+                            <a href="" data-action="logout">Logout</a>
+                        </div>
+                    </div>
+
                     {{/if}}
                     {{/if}}
 
