@@ -1,10 +1,13 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
 <template name="ActionBar">
     <div class="navbar navbar-fixed-top" role="navigation" style="margin-top: 71px; color: #00b439">
+        <div style="width: 100% ; position: fixed">
+            {{> readOnly }}
+        </div>
         <div class="container-fluid" id="onlineUsers">
-
             <div>
                 {{#each ui in userimages}}
                     <div>

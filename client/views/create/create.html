@@ -1,15 +1,8 @@
 <!-- Create template -->
 <template name='create'>
     <h2>{{name}}</h2>
-
-    <!--share button and readonly message is commented below-->
-
-    <div class="top-margin" style="width: 100% ; position: fixed; margin-top: 6%">
-    {{> readOnly }}
-    </div>
-
     <!--<div class="top-margin" style="width: 100% ; position:fixed">-->
-        <!--{{> FeedbackImageButton}}-->
+    <!--{{> FeedbackImageButton}}-->
     <!--</div>-->
 
     <div id='mindmap'>
@@ -31,8 +24,10 @@
     </div>
 
 
- {{>ActionBar}}
-    {{> TopBar forCreate=true sideLogoSmall=true requireHelp=true requireShare=true requireShareImageButton=true requireHelpImageButton=true requireExport=true requireExportImageButton=true requireFeedbackImageButton=true requireHelp=true requireFeedback=true notError=true}}
+    {{>ActionBar}}
+    {{> TopBar forCreate=true sideLogoSmall=true requireHelp=true requireShare=true requireShareImageButton=true
+    requireHelpImageButton=true requireExport=true requireExportImageButton=true requireFeedbackImageButton=true
+    requireHelp=true requireFeedback=true notError=true}}
     <!--{{> TopBar sideLogoSmall=true topbarText="Help" linkId="help-link" requireExport=true requireFeedback=true notError=true}}-->
 
 
