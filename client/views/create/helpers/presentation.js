@@ -54,9 +54,9 @@ $( document ).ready(function() {
             onlineUsers.style.display='block';
             //feedbackButton.style.display='block';
             //div.innerHTML = App.presentation.topbarHTML;
-            App.presentation.expandAll();
             App.presentation.presentationMode = false;
         }else{
+            App.getChartInFocus();
             App.presentation.presentationMode = true;
         }
     });
