@@ -1,4 +1,9 @@
-App.exportParser={};
+App.exportParser = {};
+
+App.exportParser.positions = {
+    LEFT: "left",
+    RIGHT: "right"
+};
 
 App.exportParser.export = function (rootNodeName) {
     var XMLString = App.JSONConverter();
@@ -9,62 +14,63 @@ App.exportParser.export = function (rootNodeName) {
 var XMLString = [];
 App.JSONConverter = function () {
     XMLString = "<map version=\"1.0.1\">\n";
-    var rootNode = Mindmaps.findOne({position: null , rootId: null});
-    XMLString += "<node ID=\"" + rootNode._id + "\" TEXT=\"" + parseSymbols(rootNode.name) + "\" >\n";
+    var rootNode = Mindmaps.findOne({position: null, rootId: null});
+    XMLString += App.exportParser.nodeString(rootNode._id, rootNode.name);
+
     var leftChildren = rootNode.left;
     var rightChildren = rootNode.right;
 
-    leftChildren.forEach(function (nodePassed) {
-        var id = "" + nodePassed;
-        var name = Mindmaps.find({_id: id}).fetch()[0].name;
-        XMLString += "<node ID=\"" + id + "\" TEXT=\"" + parseSymbols(name) + "\" POSITION=\"left\"" + " >\n";
-        App.exportParser.children_recurse(id);
+    leftChildren.forEach(function (leftChildId) {
+        var leftChildName = Mindmaps.findOne({_id: leftChildId}).name;
+        XMLString += App.exportParser.nodeString(leftChildId, leftChildName, App.exportParser.positions.LEFT);
+
+        App.exportParser.children_recurse(leftChildId);
         XMLString += "</node>\n";
     });
-    rightChildren.forEach(function (nodePassed) {
-        var id = "" + nodePassed;
-        var name = Mindmaps.find({_id: id}).fetch()[0].name;
-        XMLString += "<node ID=\"" + id + "\" TEXT=\"" + parseSymbols(name) + "\" POSITION=\"right\"" + " >\n";
-        App.exportParser.children_recurse(id);
+
+    rightChildren.forEach(function (rightChildId) {
+        var rightChildName = Mindmaps.findOne({_id: rightChildId}).name;
+        XMLString += App.exportParser.nodeString(rightChildId, rightChildName, App.exportParser.positions.RIGHT);
+
+        App.exportParser.children_recurse(rightChildId);
         XMLString += "</node>\n";
     });
 
     XMLString += "</node>\n";
     XMLString += "</map>";
     return XMLString;
-
-    //<map version="1.0.1">\n<node ID="qRbTTPjHzfoGAmW3b" TEXT="testtxt" >\n</node>\n</map>
-    //"<map version=\"1.0.1\">\n<node ID=\"" + rootNode._id + "\" TEXT=\"" + parseSymbols(rootNode.name) + "\" >\n
 };
 
-var parseSymbols = function(name){
-    return name.replace('&', '&amp;').replace('"', "&quot;").replace("'", '&apos;').replace('<', '&lt;').replace('>', '&gt;');
-};
+App.exportParser.children_recurse = function (childNodeId) {
+    var childNode = Mindmaps.findOne({_id: childNodeId});
+    var children = childNode.childSubTree;
 
+    children.forEach(function (nodeId) {
+        var name = Mindmaps.findOne({_id: nodeId}).name;
+        XMLString += App.exportParser.nodeString(nodeId, name);
 
-//var children_recurse = function (id) {
-//    var node = Mindmaps.find({_id: id}).fetch()[0];
-//    var children = node.childSubTree;
-//
-//    children.forEach(function (_) {
-//        var id = "" + _;
-//        var name = Mindmaps.find({_id: id}).fetch()[0].name;
-//        XMLString += "<node ID=\"" + id + "\" TEXT=\"" + name + "\" >\n";
-//        children_recurse(id);
-//        XMLString += "</node>\n";
-//    });
-//
-//};
-App.exportParser.children_recurse = function (id) {
-    var node = Mindmaps.find({_id: id}).fetch()[0];
-    var children = node.childSubTree;
-
-    children.forEach(function (_) {
-        var id = "" + _;
-        var name = Mindmaps.findOne({_id: id}).name;
-        XMLString += "<node ID=\"" + id + "\" TEXT=\"" + name + "\" >\n";
-        children_recurse(id);
+        App.exportParser.children_recurse(nodeId);
         XMLString += "</node>\n";
     });
+};
 
+App.exportParser.parseSymbols = function (nodeTextValue) {
+    if (!Boolean(nodeTextValue)){
+        return "";
+    }
+
+    String.prototype.replaceAll = function (search, replacement) {
+        var target = this;
+        return target.split(search).join(replacement);
+    };
+
+    return nodeTextValue.replaceAll('&', '&amp;').replaceAll('"', "&quot;").replaceAll("'", '&apos;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+};
+
+App.exportParser.nodeString = function (nodeId, nodeText, nodePosition) {
+    if (Boolean(nodePosition)) {
+        return "<node ID=\"" + nodeId + "\" TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
+    }
+
+    return "<node ID=\"" + nodeId + "\" TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\">";
 };
