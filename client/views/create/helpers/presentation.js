@@ -1,6 +1,6 @@
 Template.PresentImageButton.events({
-    'click #PresentationImageButton': function () {
-        console.log("hello");
+
+    'click #PresentationImageButton': function(){
         App.presentation.preparePresentationUI();
     }
 });
@@ -40,9 +40,7 @@ App.presentation.preparePresentationUI = function () {
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
-
     App.getChartInFocus();
-
     App.presentation.index = 0;
 
 };
