@@ -40,6 +40,9 @@ App.presentation.preparePresentationUI = function(){
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
+
+    App.getChartInFocus();
+
     App.presentation.index = 0;
 
 };
@@ -55,10 +58,9 @@ $( document ).ready(function() {
             onlineUsers.style.display='block';
             //feedbackButton.style.display='block';
             //div.innerHTML = App.presentation.topbarHTML;
-            App.presentation.expandAll();
             App.presentation.presentationMode = false;
         }else{
-           App.getChartInFocus();
+            App.getChartInFocus();
             App.presentation.presentationMode = true;
         }
     });
