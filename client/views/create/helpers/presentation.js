@@ -1,6 +1,5 @@
 Template.PresentImageButton.events({
     'click #PresentationImageButton': function(){
-        console.log("hello");
         App.presentation.preparePresentationUI();
     }
 });
@@ -17,7 +16,6 @@ App.presentation.topbarHTML  = "";
 
 App.presentation.getRootNode = function(){
     var root = d3.select(".node.level-0")[0][0].__data__._id;
-    console.log("root id:",root);
     var rootNode = Mindmaps.findOne({rootId : null, _id:root});
     return rootNode;
 }
@@ -40,6 +38,7 @@ App.presentation.preparePresentationUI = function(){
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
+    App.getChartInFocus();
     App.presentation.index = 0;
 
 };
@@ -58,7 +57,6 @@ $( document ).ready(function() {
             App.presentation.expandAll();
             App.presentation.presentationMode = false;
         }else{
-           App.getChartInFocus();
             App.presentation.presentationMode = true;
         }
     });
@@ -167,9 +165,7 @@ expandSubTree = function(node) {
 App.presentation.getD3Node = function(nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
     for(var i = 0 ; i < d3Nodes.length; i++) {
-        console.log("before",d3Nodes[i].__data__._id,nodeId);
         if(d3Nodes[i].__data__._id == nodeId) {
-            console.log("d3 log,",d3Nodes[i].__data__.name);
             return d3Nodes[i];
         }
     }

@@ -63,7 +63,7 @@ App.exportParser.children_recurse = function (id) {
         var id = "" + _;
         var name = Mindmaps.findOne({_id: id}).name;
         XMLString += "<node ID=\"" + id + "\" TEXT=\"" + name + "\" >\n";
-        children_recurse(id);
+        App.exportParser.children_recurse(id);
         XMLString += "</node>\n";
     });
 

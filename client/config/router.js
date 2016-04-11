@@ -51,7 +51,6 @@ Router.route('/create/:_id', {
         }
         else {
             //var user = Meteor.user() ? Meteor.user().services.google.email : "*";
-            console.log("before rendering");
             self.render("create");
         }
     },
@@ -67,7 +66,6 @@ Router.route('/create/:_id', {
         Meteor.call("isWritable", this.params._id, user, function (error, value) {
             App.editable = value;
         });
-        console.log("before subscription");
         return Meteor.subscribe("mindmap", this.params._id, user);
 
     }
@@ -88,17 +86,14 @@ Router.route('/sharedLink/:link', {
     onBeforeAction: function () {
         var self = this;
         //App.currentMap = this.data();
-        var doc = MindmapMetadata.findOne({readOnlyLink: "sharedLink/" + this.params.link});
-        if (doc) {
+        if (App.isSharedMindmap == App.Constants.Mode.READ) {
             App.isSharedMindmap = App.Constants.Mode.READ;
             setTimeout(function () {
                 self.render("create");
             }, 2000);
         }
         else {
-            doc = MindmapMetadata.findOne({readWriteLink: "sharedLink/" + this.params.link});
-            if (doc) {
-                App.isSharedMindmap = App.Constants.Mode.WRITE;
+            if (App.isSharedMindmap == App.Constants.Mode.WRITE) {
                 App.editable = true;
                 if (!Meteor.user()) {
                     self.render("login_loading_page");
@@ -121,15 +116,19 @@ Router.route('/sharedLink/:link', {
 
         Meteor.call("getRootNodeFromLink", "sharedLink/" + this.params.link, function (error, value) {
             App.currentMap = value.rootId;
-            var mode = App.Constants.Mode.READ;
-            if (value.readWriteLink == "sharedLink/" + link) {
-                mode = App.Constants.Mode.WRITE;
+            if (value.mode == App.Constants.Mode.WRITE) {
+                App.isSharedMindmap = App.Constants.Mode.WRITE;
             }
-            Meteor.subscribe("mindmap", App.currentMap, user, mode);
-            Meteor.subscribe("onlineusers", App.currentMap);
+            else{
+                if(value.mode == App.Constants.Mode.READ){
+                    App.isSharedMindmap = App.Constants.Mode.READ;
+                }
+            }
+            Meteor.subscribe("mindmap", App.currentMap, user, value.mode);
 
         });
-        return Meteor.subscribe("MindmapMetadata", "sharedLink/" + this.params.link);
+        return Meteor.subscribe("onlineusers", App.currentMap);
+
 
     },
     data: function () {
