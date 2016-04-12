@@ -199,8 +199,8 @@ var clone = function(stackData, newAction) {
             else {
                       if(multipleUndo[0].operationData=="cutNode")
                       {
-                          var multipleUndo2=this.stack[stackName].pop();
-                              if(multipleUndo2[0].operationData=="addNodeAfterCut")
+                          //var multipleUndo2=this.stack[stackName].pop();
+                              if(multipleUndo[1].operationData=="addNodeAfterCut")
                               {
                                  multipleUndo.forEach(function (stackData) {
 
@@ -209,7 +209,7 @@ var clone = function(stackData, newAction) {
                                                     multipleRedo.push(reverseStackData);
                                                 });
 
-                                 multipleUndo2.forEach(function (stackData) {
+                                 multipleUndo.forEach(function (stackData) {
 
                                                 var reverseStackData = UndoRedo.actions[stackData.operationData](stackData);
                                                 if (reverseStackData != null)
