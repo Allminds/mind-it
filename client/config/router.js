@@ -106,6 +106,7 @@ Router.route('/sharedLink/:link', {
                 setTimeout(function () {
 
                     if (!Meteor.user() && App.isPublicMindMap == false) {
+
                     self.render("login_loading_page");
 
                 } else {
