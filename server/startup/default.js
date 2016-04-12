@@ -222,6 +222,11 @@ Meteor.methods({
             return user;
         }
     },
+    myRootNodes : function(emailId){
+        var result = rootNodesOfMyMaps(emailId).fetch();
+        console.log("In myRootNodes",result,emailId);
+        return result;
+    },
     createRootNode: function (emailId) {
         var mindMapId = mindMapService.createRootNode("New Node", emailId);
         if (emailId != "*") {
