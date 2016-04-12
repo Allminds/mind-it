@@ -575,18 +575,19 @@ Mousetrap.bind('del', function () {
 
 App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
     var index;
+    var depthToVisit=depth.__data__.depth;
     if (keyPressed === App.Constants.KeyPressed.DOWN)
         index = 0;
     if (!node.children)
         return node;
-    if (node.depth == depth) {
+    if (node.depth == depthToVisit) {
         return node;
     }
     while (node.children) {
         if (!(keyPressed === App.Constants.KeyPressed.DOWN))
             index = node.children.length - 1;
         node = node.children[index];
-        if (node.depth == depth) {
+        if (node.depth == depthToVisit) {
             return node;
         }
     }
@@ -650,7 +651,6 @@ App.eventBinding.caseAction = function (data, left, right, root, keyPressed) {
             break;
         case ('left'):
             left(data, keyPressed);
-            console.log("hey moving", data);
             break;
         case ('right'):
             right(data, keyPressed);

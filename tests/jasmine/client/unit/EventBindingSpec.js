@@ -38,12 +38,12 @@ describe('eventBinding.js', function () {
     describe('App.eventBinding.findSameLevelChild', function () {
       it("should return passed node as sameLevelChild if it does not have children", function () {
         var node = {};
-        expect(App.eventBinding.findSameLevelChild(node, 2, 0)).toBe(node);
+        expect(App.eventBinding.findSameLevelChild(node, {__data__:{depth:2}}, 0)).toBe(node);
       });
       it("should return passed node as sameLevelChild if it has same depth", function () {
         var node = {children: []};
         node.depth = 2;
-        expect(App.eventBinding.findSameLevelChild(node, 2, 0)).toBe(node);
+        expect(App.eventBinding.findSameLevelChild(node, {__data__:{depth:2}}, 0)).toBe(node);
       });
     });
     describe('App.eventBinding.performLogicalVerticalMovement', function () {
@@ -106,7 +106,7 @@ describe('eventBinding.js', function () {
     });
   });
 
-   describe('App.cutNode', function () {
+   fdescribe('App.cutNode', function () {
 
      var root, parent, child1, child2, child3;
      beforeEach(function () {
@@ -164,6 +164,13 @@ describe('eventBinding.js', function () {
   //     expect(App.map.storeSourceNode).toHaveBeenCalledWith(node);
   //     expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
   //   });
+     it("Should have only one node selected after cut",function(){
+       App.multiSelectedNodes = [ {__data__:{_id: "node", position: "right", parent: parent,childSubTree:[],left:[],right:[]}}];
+       spyOn(App,"clearAllSelected");
+       spyOn(App.CopyParser,"populateBulletedFromObject").and.callFake(function(){return "child"});
+       App.eventBinding.copyAction();
+       expect(App.clearAllSelected).toHaveBeenCalled();
+     })
   });
 
   describe("Node Add/Delete/Edit/Collapse events", function () {
