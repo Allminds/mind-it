@@ -106,7 +106,7 @@ describe('eventBinding.js', function () {
     });
   });
 
-   fdescribe('App.cutNode', function () {
+   describe('App.cutNode', function () {
 
      var root, parent, child1, child2, child3;
      beforeEach(function () {
