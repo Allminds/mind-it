@@ -2,7 +2,6 @@ mindMapService = App.MindMapService.getInstance();
 App.sharedMindmapUsers = [];
 
 Meteor.publish('mindmap', function (id, user_email_id, isSharedMindmap) {
-
     var userInfo = {emailId: user_email_id, mindmapId: id};
     if (isSharedMindmap == App.Constants.Mode.WRITE) {
         addToSharedMindmapUsers(userInfo);
@@ -55,7 +54,7 @@ Meteor.publish('onlineusers', function (mindmap) {
 
 });
 Meteor.publish('acl', function (user_id) {
-    return acl.find({user_id:user_id});
+    return acl.find({user_id: user_id});
 });
 
 Meteor.publish('MindmapMetadata', function (link) {
@@ -106,10 +105,10 @@ Meteor.methods({
             if (acl.find({mind_map_id: id}).count() == 0) {
                 return mindMapService.findTree(id);
             } else {
-                 if(!readPermitted && user_email_id != '*') {
-                     throw new Meteor.Error(
-                         802, "Inaccessible Private Mindmap");
-                 }
+                if (!readPermitted && user_email_id != '*') {
+                    throw new Meteor.Error(
+                        802, "Inaccessible Private Mindmap");
+                }
                 throw new Meteor.Error(
                     801, "Not A Public Mindmap");
             }
@@ -154,9 +153,9 @@ Meteor.methods({
             MindmapMetadata.insert(document);
             doc = MindmapMetadata.findOne({rootId: id});
         }
-        if(doc.readOnlyLink.indexOf("www.mindit.xyz") != -1){
-           doc.readOnlyLink = doc.readOnlyLink.slice(15);
-            MindmapMetadata.update({rootId : id},{$set:{readOnlyLink:doc.readOnlyLink}});
+        if (doc.readOnlyLink.indexOf("www.mindit.xyz") != -1) {
+            doc.readOnlyLink = doc.readOnlyLink.slice(15);
+            MindmapMetadata.update({rootId: id}, {$set: {readOnlyLink: doc.readOnlyLink}});
         }
         return doc.readOnlyLink;
     },
@@ -172,9 +171,9 @@ Meteor.methods({
             MindmapMetadata.insert(document);
             doc = MindmapMetadata.findOne({rootId: id});
         }
-        if(doc.readWriteLink.indexOf("www.mindit.xyz") != -1){
+        if (doc.readWriteLink.indexOf("www.mindit.xyz") != -1) {
             doc.readWriteLink = doc.readWriteLink.slice(15);
-            MindmapMetadata.update({rootId : id},{$set:{readWriteLink:doc.readWriteLink}});
+            MindmapMetadata.update({rootId: id}, {$set: {readWriteLink: doc.readWriteLink}});
         }
         return doc.readWriteLink;
     },
@@ -239,6 +238,13 @@ Meteor.methods({
     },
     updateNode: function (id, data) {
         mindMapService.updateNode(id, data);
+    },
+    isPublicMindmap: function (id) {
+        var results = acl.find({mind_map_id: id}).fetch();
+        if (results.length != 0)
+            return false;
+        else
+            return true;
     }
 
 });

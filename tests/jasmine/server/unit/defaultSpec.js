@@ -156,7 +156,41 @@ describe('default.js', function () {
 
         })
 
+        describe('isPublicMindmap', function () {
+            it("Should return true if given mindmap is public", function () {
+                var DUMMY_PUBLIC_MINDMAPID = "QHYW2owkLbjbNnE4H";
+                var result=[];
+                var obj={
+                    fetch: function(){
+                        //some dummy functionality.
+                    }
+                }
+                spyOn(acl,'find').and.returnValue(obj);
+                spyOn(obj,'fetch').and.returnValue(result);
+                Meteor.call("isPublicMindmap", DUMMY_PUBLIC_MINDMAPID, function (error, value) {
+                    expect(value).toBe(true);
+                })
+
+            });
+            it("Should return false if given mindmap is private", function () {
+                var DUMMY_PRIVATE_MINDMAPID = "QHYW2owkLbjbNnE4H";
+                var result=["some enrty"];
+                var obj={
+                    fetch: function(){
+                        //some dummy functionality.
+                    }
+                }
+                spyOn(acl,'find').and.returnValue(obj);
+                spyOn(obj,'fetch').and.returnValue(result);
+                Meteor.call("isPublicMindmap", DUMMY_PRIVATE_MINDMAPID, function (error, value) {
+                    expect(value).toBe(false);
+                })
+
+            });
+
+        })
+
+
+
     })
-
-
 });

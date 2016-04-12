@@ -16,7 +16,7 @@ var checkPlatform = function () {
 checkPlatform()
 
 App.ERROR_MESSAGE = "Page Not Found";
-
+App.isPublicMindMap;
 
 Router.route('/', {
     onBeforeAction: function () {
@@ -68,6 +68,9 @@ Router.route('/create/:_id', {
             App.editable = value;
         });
         console.log("before subscription");
+        Meteor.call("isPublicMindmap",App.currentMap, function(error, value){
+            App.isPublicMindMap =value;
+        } );
         return Meteor.subscribe("mindmap", this.params._id, user);
 
     }
@@ -129,6 +132,9 @@ Router.route('/sharedLink/:link', {
             Meteor.subscribe("onlineusers", App.currentMap);
 
         });
+        Meteor.call("isPublicMindmap",App.currentMap, function(error, value){
+            App.isPublicMindMap =value;
+        } );
         return Meteor.subscribe("MindmapMetadata", "sharedLink/" + this.params.link);
 
     },

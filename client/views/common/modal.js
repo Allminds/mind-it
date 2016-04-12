@@ -27,6 +27,10 @@ Template.ModalBody.helpers({
         }
         else
             return false;
+    },
+    isPublicMindmap: function(){
+        return App.isPublicMindMap;
+
     }
 });
 
@@ -131,9 +135,18 @@ Template.ModalBody.rendered = function rendered() {
     var textBox = document.getElementById("linkTextBox");
     textBox.disabled = false;
     textBox.value = "welcome";
-    Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-        textBox.value = location.hostname + (location.port ? ':' + location.port : '') + "/" + value;
-    });
+    if(App.isPublicMindMap){
+        Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
+            textBox.value = location.hostname + (location.port ? ':' + location.port : '') + "/" + value;
+        });
+    }
+    else
+    {
+        Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
+            textBox.value = location.hostname + (location.port ? ':' + location.port : '') + "/" + value;
+        });
+    }
+
 
 }
 
