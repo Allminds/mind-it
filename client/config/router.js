@@ -103,7 +103,7 @@ Router.route('/sharedLink/:link', {
             if (doc) {
                 App.isSharedMindmap = App.Constants.Mode.WRITE;
                 App.editable = true;
-                if (!Meteor.user()) {
+                if (!Meteor.user() && !App.isPublicMindMap) {
                     self.render("login_loading_page");
 
                 } else {
