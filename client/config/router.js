@@ -103,14 +103,16 @@ Router.route('/sharedLink/:link', {
             if (doc) {
                 App.isSharedMindmap = App.Constants.Mode.WRITE;
                 App.editable = true;
-                if (!Meteor.user()) {
+                setTimeout(function () {
+
+                    if (!Meteor.user() && App.isPublicMindMap == false) {
                     self.render("login_loading_page");
 
                 } else {
-                    setTimeout(function () {
                         self.render("create");
-                    }, 2000);
                 }
+                }, 2000);
+
             }
             else
                 this.render("error_page");
@@ -130,11 +132,14 @@ Router.route('/sharedLink/:link', {
             }
             Meteor.subscribe("mindmap", App.currentMap, user, mode);
             Meteor.subscribe("onlineusers", App.currentMap);
+            Meteor.call("isPublicMindmap",App.currentMap, function(error, value){
+                console.log("IsPublic Mindmap::::",value);
+                App.isPublicMindMap =value;
+            } );
 
         });
-        Meteor.call("isPublicMindmap",App.currentMap, function(error, value){
-            App.isPublicMindMap =value;
-        } );
+
+
         return Meteor.subscribe("MindmapMetadata", "sharedLink/" + this.params.link);
 
     },
