@@ -1,5 +1,7 @@
 Template.ActionBar.helpers({
     userimages: function () {
+
+
         return extractUserImage();
     }
 });
@@ -16,6 +18,7 @@ extractUserImage = function () {
             return {name: x.services.google.name, picture: x.services.google.picture};
         }
     });
+    console.log("before filter: ", Srcs);
     var imageSrcs = Srcs.filter(function (y) {
         if (y === undefined || y === null) {
             // do something

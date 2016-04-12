@@ -111,6 +111,7 @@ App.tracker = {
             }, 10);
         }
     }, changed: function (id, fields) {
+        console.log("in changed", id, fields);
 
         var updatedNode = App.map.getNodeDataWithNodeId(id);
         if (!updatedNode) return;

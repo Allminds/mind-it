@@ -180,14 +180,7 @@ Meteor.methods({
     },
     getRootNodeFromLink: function (link) {
         var doc = MindmapMetadata.findOne({$or: [{readOnlyLink: link}, {readWriteLink: link}]});
-        var mode = null;
-        if(doc.readWriteLink == link){
-            mode = App.Constants.Mode.WRITE;
-        }
-        else if(doc.readOnlyLink == link){
-            mode = App.Constants.Mode.READ;
-        }
-        return {rootId:doc.rootId, mode:mode};
+        return doc;
     },
     updateUserStatus: function (email_id, mindMapId, nodeId) {
         App.usersStatusService.updateUserStatus(email_id, mindMapId, nodeId);
