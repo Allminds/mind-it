@@ -151,7 +151,7 @@ expandSubTree = function(node) {
         if(isChildNode(node) == false) {
             var d3Node = App.presentation.getD3Node(node._id);
             if(d3Node.__data__.isCollapsed == true) {
-                App.toggleCollapsedNode(App.presentation.getD3Node(node._id).__data__);
+                App.toggleCollapsedNode(d3Node.__data__);
             }
         }
 
@@ -234,9 +234,9 @@ App.presentation.moveCursorToPreviousNode = function() {
         App.toggleCollapsedNode(App.presentation.previousNode.parent);
     }
 
-    if(d3Node.__data__.isCollapsed == true) {
-        App.toggleCollapsedNode(d3Node.__data__);
-    }
+    // if(d3Node.__data__.isCollapsed == true) {
+    //     App.toggleCollapsedNode(d3Node.__data__);
+    // }
 
     App.presentation.previousNode = d3Node.__data__;
 };
