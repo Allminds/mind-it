@@ -824,7 +824,7 @@ App.eventBinding.horizontalRepositionAction = function (repositionDirection) {
             });
             var flag = true;
             for (var i = 0; i < oldParents.length; i++) {
-                if (oldParents[i] == newParents[i]) {
+                if (oldParents[i] == newParents[i] && !App.Node.isRoot(oldParents[i])) {
                     flag = false;
                     break;
                 }
