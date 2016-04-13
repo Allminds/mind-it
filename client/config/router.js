@@ -62,15 +62,15 @@ Router.route('/create/:_id', {
         Meteor.subscribe("userdata");
         App.currentMap = this.params._id;
         Meteor.subscribe("onlineusers", this.params._id);
-        var user= getMeteorUser();
+        var user = getMeteorUser();
 
         Meteor.call("isWritable", this.params._id, user, function (error, value) {
             App.editable = value;
         });
         console.log("before subscription");
-        Meteor.call("isPublicMindmap",App.currentMap, function(error, value){
-            App.isPublicMindMap =value;
-        } );
+        Meteor.call("isPublicMindmap", App.currentMap, function (error, value) {
+            App.isPublicMindMap = value;
+        });
         return Meteor.subscribe("mindmap", this.params._id, user);
 
     }
@@ -90,34 +90,29 @@ Router.route('/sharedLink/:link', {
     template: 'create',
     onBeforeAction: function () {
         var self = this;
-        //App.currentMap = this.data();
-        var doc = MindmapMetadata.findOne({readOnlyLink: "sharedLink/" + this.params.link});
-        if (doc) {
-            App.isSharedMindmap = App.Constants.Mode.READ;
-            setTimeout(function () {
+        setTimeout(function () {
+            if (App.isSharedMindmap == App.Constants.Mode.READ) {
                 self.render("create");
-            }, 2000);
-        }
-        else {
-            doc = MindmapMetadata.findOne({readWriteLink: "sharedLink/" + this.params.link});
-            if (doc) {
-                App.isSharedMindmap = App.Constants.Mode.WRITE;
-                App.editable = true;
-                setTimeout(function () {
+            }
+            else {
+                if (App.isSharedMindmap == App.Constants.Mode.WRITE) {
+                    App.editable = true;
 
                     if (!Meteor.user() && App.isPublicMindMap == false) {
 
-                    self.render("login_loading_page");
+                        self.render("login_loading_page");
 
-                } else {
+                    } else {
                         self.render("create");
+                    }
+
                 }
-                }, 2000);
+                else
+                    this.render("error_page");
 
             }
-            else
-                this.render("error_page");
-        }
+        }, 2000);
+
     },
     waitOn: function () {
         Meteor.subscribe("userdata");
@@ -127,21 +122,23 @@ Router.route('/sharedLink/:link', {
 
         Meteor.call("getRootNodeFromLink", "sharedLink/" + this.params.link, function (error, value) {
             App.currentMap = value.rootId;
-            var mode = App.Constants.Mode.READ;
+            App.isSharedMindmap = App.Constants.Mode.READ;
+
             if (value.readWriteLink == "sharedLink/" + link) {
-                mode = App.Constants.Mode.WRITE;
+                App.isSharedMindmap = App.Constants.Mode.WRITE;
             }
-            Meteor.subscribe("mindmap", App.currentMap, user, mode);
+            Meteor.subscribe("mindmap", App.currentMap, user, App.isSharedMindmap);
             Meteor.subscribe("onlineusers", App.currentMap);
-            Meteor.call("isPublicMindmap",App.currentMap, function(error, value){
-                console.log("IsPublic Mindmap::::",value);
-                App.isPublicMindMap =value;
-            } );
+            Meteor.call("isPublicMindmap", App.currentMap, function (error, value) {
+                console.log("IsPublic Mindmap::::", value);
+                App.isPublicMindMap = value;
+            });
 
         });
 
 
-        return Meteor.subscribe("MindmapMetadata", "sharedLink/" + this.params.link);
+        return Meteor.subscribe("mindmap", App.currentMap);
+
 
     },
     data: function () {
@@ -168,8 +165,8 @@ function renderHomePage() {
     }
 }
 
-function getMeteorUser(){
-   var user = "*";
+function getMeteorUser() {
+    var user = "*";
     if (Meteor.user()) {
         var temp = Meteor.user().services;
         if (temp)

@@ -57,10 +57,6 @@ Meteor.publish('acl', function (user_id) {
     return acl.find({user_id: user_id});
 });
 
-Meteor.publish('MindmapMetadata', function (link) {
-    return MindmapMetadata.find({$or: [{readOnlyLink: link}, {readWriteLink: link}]});
-})
-
 Meteor.publish('Mindmaps', function (emailId) {
     //return Mindmaps.find();
     //var user = Meteor.user() ? Meteor.user().services.google.email : "*";
@@ -179,6 +175,12 @@ Meteor.methods({
     },
     getRootNodeFromLink: function (link) {
         var doc = MindmapMetadata.findOne({$or: [{readOnlyLink: link}, {readWriteLink: link}]});
+        if(doc && doc.readOnlyLink == link){
+            doc.readWriteLink = "";
+        }
+        if(doc && doc.readWriteLink == link){
+            doc.readOnlyLink = "";
+        }
         return doc;
     },
     updateUserStatus: function (email_id, mindMapId, nodeId) {
