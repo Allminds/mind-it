@@ -126,11 +126,14 @@ App.ImportParser.createMindmapFromXML = function(xmlString, mindmapService) {
         App.ImportParser.errorMessage = "Internal Error";
         return null;
     }
+    var user = Meteor.user() ? Meteor.user().services.google.email : "*";
     if(Meteor.user()){
         //Add mindmap To Users Dashboard..
         Meteor.call("addMapToUser",Meteor.user().services.google.email,mindMapId,'o',function (error,value){
             // console.log("Mindmap Added to Acl,",value, "Mindmap Id",mindMapId);
         })
     }
+    Meteor.call("addMaptoMindmapMetadata", user, mindMapId);
+
     return mindMapId;
 };
