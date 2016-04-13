@@ -1,6 +1,5 @@
 Template.PresentImageButton.events({
     'click #PresentationImageButton': function(){
-        console.log("hello");
         App.presentation.preparePresentationUI();
     }
 });
@@ -13,14 +12,15 @@ App.presentation.index = 0;
 App.presentation.previousNode = null;
 App.presentation.presentationMode = false;
 App.presentation.topbarHTML  = "";
+App.presentation.initialSetup = false;
 
 
-App.presentation.getRootNode = function(){
+App.presentation.getRootNode = function() {
     var root = d3.select(".node.level-0")[0][0].__data__._id;
-    console.log("root id:",root);
     var rootNode = Mindmaps.findOne({rootId : null, _id:root});
     return rootNode;
-}
+};
+
 App.presentation.preparePresentationUI = function(){
     var div = document.getElementById("topBarDiv"); //remove topbar in presentation mode.
     var onlineUsers = document.getElementById("onlineUsers");
@@ -67,12 +67,18 @@ $( document ).ready(function() {
 });
 
 App.presentation.prepareForPresentation = function() {
+
+    //Expand code.
     App.presentation.expandAll();
     App.presentation.presentationArray = [];
     App.presentation.length = 0;
+
+    //Collapse code.
+    App.presentation.initialSetup = true;
     App.presentation.collapseAll();
-   // alert("MindIt is In presentation Mode..Use Presentation remote for Node Navigation");
-    //App.presentation.presentationMode = true;
+    App.chart.update();
+
+    App.presentation.initialSetup = false;
 };
 
 
@@ -118,7 +124,6 @@ var prepareArrayForNavigation = function(ExpandTree) {
             collapseSubTree(node);
         }
     }
-
 };
 
 var collapseSubTree = function(node) {
@@ -141,7 +146,7 @@ var collapseSubTree = function(node) {
     }
 };
 
-expandSubTree = function(node) {
+var expandSubTree = function(node) {
 
     if(node == null) {
         return;
@@ -169,9 +174,7 @@ expandSubTree = function(node) {
 App.presentation.getD3Node = function(nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
     for(var i = 0 ; i < d3Nodes.length; i++) {
-        console.log("before",d3Nodes[i].__data__._id,nodeId);
         if(d3Nodes[i].__data__._id == nodeId) {
-            console.log("d3 log,",d3Nodes[i].__data__.name);
             return d3Nodes[i];
         }
     }
