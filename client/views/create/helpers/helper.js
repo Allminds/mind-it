@@ -386,7 +386,9 @@ var collapseRecursive = function(d, id) {
 
 App.collapse = function(d, id) {
     collapseRecursive(d, id);
-    App.chart.update();
+    if (App.presentation.initialSetup == false) {
+        App.chart.update();
+    }
 };
 
 App.expandRecursive = function(d, id) {
