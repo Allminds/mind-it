@@ -1,4 +1,4 @@
-describe('eventBinding.js', function () {
+fdescribe('eventBinding.js', function () {
 
     describe('App.eventBinding scoped functions', function () {
         describe('App.eventBinding.focusAfterDelete', function () {
@@ -126,6 +126,7 @@ describe('eventBinding.js', function () {
             child3.parent = parent;
             parent.childSubTree = [child1, child2, child3];
             root.left.push(parent);
+
         });
 
 
@@ -135,31 +136,13 @@ describe('eventBinding.js', function () {
             expect(window.alert).toHaveBeenCalled();
         });
 
-        //it("should delete node if I click yes on confirm dialog", function() {
-        //  App.chart = jasmine.createSpyObj('App.chart', [ 'update' ]);
-        //
-        //  App.chart.update.and.callFake(function() {
-        //    //throw 'an-exception';
-        //  });
-        //
-        //  spyOn(window, "confirm").and.returnValue(true);
-        //  spyOn(App.eventBinding,'focusAfterDelete');
-        //
-        //  App.cutNode(parent);
-        //  expect(root.left[0]).not.toBe(parent);
-        //
-        //
-        //});
-
         //   it("should call all internal methods on cutNode call for node other than root", function () {
         //     var parent = {_id: "parent"},
         //       node = {_id: "node", position: "right", parent: parent};
         //     spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
         //     spyOn(App.map, "storeSourceNode");
         //     spyOn(Meteor, "call");
-
         //     App.cutNode();
-
         //     expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".selected");
         //     expect(App.map.storeSourceNode).toHaveBeenCalledWith(node);
         //     expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
@@ -183,6 +166,87 @@ describe('eventBinding.js', function () {
             expect(App.clearAllSelected).toHaveBeenCalled();
         })
     });
+
+    describe("Mousetrap ModX bindings", function(){
+        var root, parent, child1, child2, child3;
+        beforeEach(function () {
+            root = new App.Node("root");
+            root._id = "root";
+            parent = new App.Node("parent", "right", root, 0);
+            parent._id = "parent";
+            parent.parent = root;
+            child1 = new App.Node("child1", "right", parent, 0);
+            child1._id = "child1";
+            child2 = new App.Node("child2", "right", parent, 1);
+            child2._id = "child2";
+            child3 = new App.Node("child3", "right", parent, 1);
+            child2._id = "child3";
+            child1.parent = parent;
+            child2.parent = parent;
+            child3.parent = parent;
+            parent.childSubTree = [child1, child2, child3];
+            root.left.push(parent);
+
+            var fixture = '<div id="mindmap">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="43240" height="24860">' +
+                '<g transform="translate(21620,12430)">' +
+                '<path class="thick-link" d="M20.671875,0C45.671875,0 45.671875,0 70.671875,0"></path>' +
+                '<path class="link" d="M20.671875,0C45.671875,0 45.671875,0 70.671875,0L133.046875,0"></path>' +
+                '<path class="link" d="M133.046875,0C148.046875,-23 148.046875,-23 163.046875,-23L215.296875,-23"></path>' +
+                '<path class="link" d="M133.046875,0C148.046875,0 148.046875,0 163.046875,0L215.296875,0"></path>'+
+                '<path class="link" d="M133.046875,0C148.046875,23 148.046875,23 163.046875,23L215.296875,23"></path>'+
+                '<path class="link" d="M133.046875,0C148.046875,-23 148.046875,-23 163.046875,-23"></path>'+
+                '<path class="link" d="M133.046875,0C148.046875,0 148.046875,0 163.046875,0"></path>'+
+                '<path class="link" d="M133.046875,0C148.046875,23 148.046875,23 163.046875,23"></path>'+
+                '<g transform="translate(0,0)" class="node level-0">'+
+                '<ellipse rx="50.671875" ry="25.826875" class="root-ellipse"></ellipse>'+
+                '<rect x="-20.671875" y="-13" width="41.34375" height="23"></rect>'+
+                '<text cols="60" rows="4" y="9" visibility="">'+
+                '<tspan x="0" dy="0">root</tspan>'+
+                '</text><circle class="indicator unfilled" r="0" cx="20.671875"></circle>'+
+                '</g><g transform="translate(101.859375,0)" class="node level-1">'+
+                '<rect x="-31.1875" y="-22" width="62.375" height="20"></rect>'+
+                '<text cols="60" rows="4" y="-2" visibility="">'+
+                '<tspan x="0" dy="0">parent</tspan>'+
+                '</text><circle class="indicator unfilled" r="7" cx="31.1875"></circle>'+
+                '</g><g transform="translate(189.171875,-23)" class="node level-2">'+
+                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>'+
+                '<text cols="60" rows="4" y="-2" visibility="">'+
+                '<tspan x="0" dy="0">child1</tspan>'+
+                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>'+
+                '</g><g transform="translate(189.171875,0)" class="node level-2">'+
+                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>'+
+                '<text cols="60" rows="4" y="-2" visibility="">'+
+                '<tspan x="0" dy="0">child2</tspan>'+
+                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>'+
+                '</g><g transform="translate(189.171875,23)" class="node level-2 selected softSelected">'+
+                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>'+
+                '<text cols="60" rows="4" y="-2" visibility="">'+
+                '<tspan x="0" dy="0">child3</tspan>'+
+                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>'+
+                '</g></g></svg>'+
+                '</div>';
+            setFixtures(fixture);
+
+            App.multiSelectedNodes=[];
+            var node = d3.select(".selected")[0][0];
+
+            parent.childSubTree = [child1, child2, child3];
+            node.__data__=child3;
+            d3.select(node).classed("softSelected", true);
+            App.multiSelectedNodes.push(node);
+        });
+        it("should clear all selected nodes after mapping selectedNodes", function () {
+            spyOn(App,"selectNode");
+            spyOn(App,"clearAllSelected");
+            Mousetrap.trigger('mod+x');
+            expect(App.clearAllSelected).toHaveBeenCalled();
+            expect(App.selectNode).toHaveBeenCalled();
+        });
+
+
+    });
+
 
     describe("Node Add/Delete/Edit/Collapse events", function () {
         var event, node, newNode, parent, fixture;
