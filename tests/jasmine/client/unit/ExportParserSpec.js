@@ -30,7 +30,7 @@ describe('App.exportParser', function () {
         expect(expectedString).toBe(actualString);
     });
 
-    xit('should ensure left child node text have special character like greater than sign', function () {
+    it('should ensure left child node text have special character like greater than sign', function () {
         var rootNode = {
             _id: "rootNodeId",
             name: "root node text ",
