@@ -1,14 +1,8 @@
 var mindMapService = App.MindMapService.getInstance();
+
 App.setEventBinding = function () {
     if (!App.editable) {
         App.eventBinding.unBindAllEvents();
-    }
-}
-var nodeSelector = {
-    prevDepthVisited: 0,
-
-    setPrevDepth: function (depth) {
-        this.prevDepthVisited = depth;
     }
 };
 
