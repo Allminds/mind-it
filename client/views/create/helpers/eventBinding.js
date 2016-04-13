@@ -92,7 +92,6 @@ Mousetrap.bind('mod+x', function () {
     var selectedNodes = [];
     selectedNodes = App.multiSelectedNodes.map(function (elem) {
         return elem.__data__;
-
     });
     App.multiSelectedNodes = [];
     App.clearAllSelected();
@@ -116,8 +115,6 @@ Mousetrap.bind('mod+x', function () {
         var node = element;
         selectedNodesArray.push(node);
         parent = element.parent;
-        //  var node = element;
-        //  var parent = node.parent;
         var direction = App.getDirection(element);
         var indexOfNode = App.Node.getIndexOfNode(node);
         selectedNode = node;
@@ -130,7 +127,6 @@ Mousetrap.bind('mod+x', function () {
         // selectedNodes = App.multiSelectedNodes;
         return new App.stackData(node, "addNodeAfterCut", direction, indexOfNode, parent);
     });
-
     var areSiblings = App.checkIfSiblings(selectedNodes);
     if (areSiblings) {
         var nodeToFocus = null;
