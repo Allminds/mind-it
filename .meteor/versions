@@ -1,6 +1,7 @@
 accounts-base@1.2.2
 accounts-google@1.0.6
 accounts-oauth@1.1.8
+accounts-password@1.1.4
 amplify@1.0.0
 autoupdate@1.2.4
 babel-compiler@5.8.24_1
@@ -28,6 +29,7 @@ diff-sequence@1.0.1
 ecmascript@0.1.6
 ecmascript-runtime@0.2.6
 ejson@1.0.7
+email@1.0.8
 fastclick@1.0.7
 geojson-utils@1.0.4
 google@1.1.7
@@ -67,6 +69,7 @@ mongo-id@1.0.1
 mousetrap:mousetrap@1.4.6_1
 mrt:reactive-store@0.0.1
 naxio:flash@0.2.4
+npm-bcrypt@0.7.8_2
 npm-mongo@1.4.39_1
 oauth@1.1.6
 oauth2@1.1.5
@@ -90,8 +93,10 @@ sanjo:meteor-files-helpers@1.2.0_1
 sanjo:meteor-version@1.0.0
 service-configuration@1.0.5
 session@1.1.1
+sha@1.0.4
 spacebars@1.0.7
 spacebars-compiler@1.0.7
+srp@1.0.4
 standard-minifiers@1.0.2
 templating@1.1.5
 templating-tools@1.0.0
