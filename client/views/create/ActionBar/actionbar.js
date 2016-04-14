@@ -1,8 +1,11 @@
 Template.ActionBar.helpers({
     userimages: function () {
 
-
-        return extractUserImage();
+        if(Meteor.settings.public.onlineUsers == true) {
+            return extractUserImage();
+        } else{
+            return [];
+        }
     }
 });
 

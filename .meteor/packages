@@ -31,3 +31,4 @@ twbs:bootstrap
 mrt:reactive-store
 naxio:flash
 mizzao:user-status
+accounts-password
