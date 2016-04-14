@@ -52,7 +52,7 @@ App.chart = MindMap()
 //              return;
 //          }
 
-          App.nodeSelector.setPrevDepth(this);
+          App.nodeSelector.setPrevDepth(this.__data__.depth);
           App.select(this);
           lastClick = newClickTime;
       }
