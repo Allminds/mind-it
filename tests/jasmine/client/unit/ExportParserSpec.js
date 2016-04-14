@@ -39,17 +39,17 @@ describe('App.exportParser', function () {
         };
 
         var leftNode = {
-            _id: "leftNodeId1",
+            _id: "leftNodeId",
             name: "left node text with > sign",
             childSubTree: []
         };
 
-        spyOn(Mindmaps, 'findOne').and.returnValue(rootNode, leftNode);
-        spyOn(Mindmaps.findOne(), 'name').and.returnValue("left node text with > sign");
 
-        var expectedString = "<map version=\"1.0.1\">\n<node ID=\"rootNodeId\" TEXT=\"root node text \"></node>\n<node ID=\"leftNodeId\" TEXT=\"left node text with &gt; sign\"></node>\n</map>";
+        spyOn(Mindmaps, 'findOne').and.returnValues(rootNode,leftNode,leftNode);
+        spyOn(console,'log');
+        var expectedString = "<map version=\"1.0.1\">\n<node ID=\"rootNodeId\" TEXT=\"root node text \"><node ID=\"leftNodeId\" TEXT=\"left node text with &gt; sign\" POSITION=\"left\"></node>\n</node>\n</map>";
         var actualString = App.JSONConverter();
-
+        expect(console.log).toHaveBeenCalledWith(leftNode);
         expect(expectedString).toBe(actualString);
     });
 

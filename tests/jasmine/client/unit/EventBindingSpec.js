@@ -1,4 +1,4 @@
-fdescribe('eventBinding.js', function () {
+describe('eventBinding.js', function () {
 
     describe('App.eventBinding scoped functions', function () {
         describe('App.eventBinding.focusAfterDelete', function () {
