@@ -2,7 +2,7 @@ describe('App.exportParser', function () {
     it('should call Mindmaps.findOne() for getting rootnode data', function () {
         spyOn(Mindmaps, 'findOne').and.returnValue({_id: "qRbTTPjHzfoGAmW3b", name: "testtxt", left: [], right: []});
         var returnedString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node ID=\"qRbTTPjHzfoGAmW3b\" TEXT=\"testtxt\"></node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"testtxt\"></node>\n</map>";
 
         expect(Mindmaps.findOne).toHaveBeenCalled();
         expect(returnedString).toBe(expectedString);
@@ -24,7 +24,7 @@ describe('App.exportParser', function () {
             right: []
         });
 
-        var expectedString = "<map version=\"1.0.1\">\n<node ID=\"rootNodeId\" TEXT=\"root node text with &lt; symbol\"></node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text with &lt; symbol\"></node>\n</map>";
         var actualString = App.JSONConverter();
 
         expect(expectedString).toBe(actualString);
@@ -46,10 +46,8 @@ describe('App.exportParser', function () {
 
 
         spyOn(Mindmaps, 'findOne').and.returnValues(rootNode,leftNode,leftNode);
-        spyOn(console,'log');
-        var expectedString = "<map version=\"1.0.1\">\n<node ID=\"rootNodeId\" TEXT=\"root node text \"><node ID=\"leftNodeId\" TEXT=\"left node text with &gt; sign\" POSITION=\"left\"></node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text with &gt; sign\" POSITION=\"left\"></node>\n</node>\n</map>";
         var actualString = App.JSONConverter();
-        expect(console.log).toHaveBeenCalledWith(leftNode);
         expect(expectedString).toBe(actualString);
     });
 
