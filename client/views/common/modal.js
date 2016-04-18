@@ -78,7 +78,6 @@ Template.ModalPopUp.events({
     },
 
     'shown.bs.modal #share-modal': function (event) {
-        alert("In Share Modal");
         App.modal_shown=true;
         removeNodeSelection();
     },
