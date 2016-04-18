@@ -69,8 +69,8 @@ App.exportParser.parseSymbols = function (nodeTextValue) {
 
 App.exportParser.nodeString = function (nodeId, nodeText, nodePosition) {
     if (Boolean(nodePosition)) {
-        return "<node ID=\"" + nodeId + "\" TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
+        return "<node TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
     }
 
-    return "<node ID=\"" + nodeId + "\" TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\">";
+    return "<node TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\">";
 };

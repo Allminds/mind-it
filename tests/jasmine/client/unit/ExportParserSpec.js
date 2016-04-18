@@ -157,7 +157,7 @@ describe('App.exportParser', function () {
             var nodeId = "nodeId";
             var nodeText = "nodeText";
 
-            var expectedValue = "<node ID=\"nodeId\" TEXT=\"nodeText\">";
+            var expectedValue = "<node TEXT=\"nodeText\">";
             var actualValue = App.exportParser.nodeString(nodeId, nodeText);
 
             expect(expectedValue).toBe(actualValue);
@@ -168,7 +168,7 @@ describe('App.exportParser', function () {
             var nodeText = "nodeText";
             var nodePosition = App.exportParser.positions.LEFT;
 
-            var expectedValue = "<node ID=\"nodeId\" TEXT=\"nodeText\" POSITION=\"left\">";
+            var expectedValue = "<node TEXT=\"nodeText\" POSITION=\"left\">";
             var actualValue = App.exportParser.nodeString(nodeId, nodeText, nodePosition);
 
             expect(expectedValue).toBe(actualValue);
@@ -179,7 +179,7 @@ describe('App.exportParser', function () {
             var nodeText = "nodeText";
             var nodePosition = App.exportParser.positions.RIGHT;
 
-            var expectedValue = "<node ID=\"nodeId\" TEXT=\"nodeText\" POSITION=\"right\">";
+            var expectedValue = "<node TEXT=\"nodeText\" POSITION=\"right\">";
             var actualValue = App.exportParser.nodeString(nodeId, nodeText, nodePosition);
 
             expect(expectedValue).toBe(actualValue);
@@ -190,7 +190,7 @@ describe('App.exportParser', function () {
             var nodeText = "nodeText";
             var nodePosition = null;
 
-            var expectedValue = "<node ID=\"nodeId\" TEXT=\"nodeText\">";
+            var expectedValue = "<node TEXT=\"nodeText\">";
             var actualValue = App.exportParser.nodeString(nodeId, nodeText, nodePosition);
 
             expect(expectedValue).toBe(actualValue);
@@ -201,7 +201,7 @@ describe('App.exportParser', function () {
             var nodeText = "nodeText";
             var nodePosition = "";
 
-            var expectedValue = "<node ID=\"nodeId\" TEXT=\"nodeText\">";
+            var expectedValue = "<node TEXT=\"nodeText\">";
             var actualValue = App.exportParser.nodeString(nodeId, nodeText, nodePosition);
 
             expect(expectedValue).toBe(actualValue);
@@ -212,7 +212,7 @@ describe('App.exportParser', function () {
             var nodeText = "nodeText";
             var nodePosition = "nodePosition";
 
-            var expectedValue = "<node ID=\"nodeId\" TEXT=\"nodeText\" POSITION=\"nodePosition\">";
+            var expectedValue = "<node TEXT=\"nodeText\" POSITION=\"nodePosition\">";
             var actualValue = App.exportParser.nodeString(nodeId, nodeText, nodePosition);
 
             expect(expectedValue).toBe(actualValue);
@@ -223,7 +223,7 @@ describe('App.exportParser', function () {
             var nodeText = "nodeText";
             var nodePosition = " ";
 
-            var expectedValue = "<node ID=\"nodeId\" TEXT=\"nodeText\" POSITION=\" \">";
+            var expectedValue = "<node TEXT=\"nodeText\" POSITION=\" \">";
             var actualValue = App.exportParser.nodeString(nodeId, nodeText, nodePosition);
 
             expect(expectedValue).toBe(actualValue);
