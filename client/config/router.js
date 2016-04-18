@@ -30,7 +30,7 @@ Router.route('/create/:_id', {
     onBeforeAction: function () {
         var self = this;
         var error_msg;
-        if (mindMapService.findTree(this.params._id).length == 0) {
+        if (mindMapService.findTree(this.params._id).length == 0 || Mindmaps.find({rootId:null}).count() == 0) {
             Meteor.call("isInvalidMindmap", this.params._id, function (error, result) {
                 if (result == true) {
                     error_msg = "Invalid Mindmap";
@@ -51,7 +51,6 @@ Router.route('/create/:_id', {
         }
         else {
             //var user = Meteor.user() ? Meteor.user().services.google.email : "*";
-            console.log("before rendering");
             self.render("create");
         }
     },
@@ -142,8 +141,6 @@ Router.route('/sharedLink/:link', {
 
     },
     data: function () {
-
-
         return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};
     }
 

@@ -130,7 +130,7 @@ Meteor.methods({
         return Mindmaps.find({}).count();
     },
     isInvalidMindmap: function (id) {
-        return Mindmaps.find({_id: id}).fetch().length == 0;
+        return Mindmaps.find( {$and:[{_id: id}, {rootId:null}]}).fetch().length == 0;
     },
     addMaptoMindmapMetadata: function (emailId, mindmapId) {
         addToMindmapMetaData(mindmapId, emailId);
