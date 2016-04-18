@@ -69,9 +69,21 @@ var restoreNodeSelection = function () {
 
 Template.ModalPopUp.events({
     'shown.bs.modal #help-modal': function (event) {
+        App.modal_shown=true;
         removeNodeSelection();
     },
     'hidden.bs.modal #help-modal': function (event) {
+        App.modal_shown = false;
+        restoreNodeSelection();
+    },
+
+    'shown.bs.modal #share-modal': function (event) {
+        alert("In Share Modal");
+        App.modal_shown=true;
+        removeNodeSelection();
+    },
+    'hidden.bs.modal #share-modal': function (event) {
+        App.modal_shown = false;
         restoreNodeSelection();
     },
     'shown.bs.modal #myModalHorizontal': function (event) {
