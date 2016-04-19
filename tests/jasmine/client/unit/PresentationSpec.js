@@ -53,6 +53,7 @@ describe('Presentation.js', function () {
             Mindmaps.insert(rootNode);
             Mindmaps.insert(child1);
             Mindmaps.insert(child2);
+            Mindmaps.insert(Rchild2);
 
         });
 
@@ -98,6 +99,30 @@ describe('Presentation.js', function () {
             App.presentation.collapseAll();
             expect( App.toggleCollapsedNode).toHaveBeenCalledWith(createD3Node(child2._id).__data__);
         })
+
+        it("should call toggleCollapseNode with collpased non root node i.e. child2  in this case, as an argument when expandAll is called", function(){
+            spyOn(App.presentation,'getRootNode').and.returnValue(rootNode);
+            spyOn(App.presentation, 'getD3Node').and.callFake(function(nodeId){
+                return createD3Node(nodeId);
+            });
+            spyOn(App,'toggleCollapsedNode');
+            App.presentation.expandAll();
+            var d3NodeOfChild2= createD3Node(child2._id);
+            expect(App.toggleCollapsedNode).toHaveBeenCalledWith(d3NodeOfChild2.__data__);
+        });
+
+        it("should call toggleCollapseNode with expaneded non root node i.e. child2  in this case, as an argument when collapseAll is called", function(){
+            spyOn(App.presentation,'getRootNode').and.returnValue(rootNode);
+            spyOn(App.presentation, 'getD3Node').and.callFake(function(nodeId){
+                return createD3Node(nodeId);
+            });
+            spyOn(App,'toggleCollapsedNode');
+            App.presentation.collapseAll();
+            var d3NodeOfChild2= createD3Node(child2._id);
+            expect(App.toggleCollapsedNode).toHaveBeenCalledWith(d3NodeOfChild2.__data__);
+        });
+
+
 
     });
 });

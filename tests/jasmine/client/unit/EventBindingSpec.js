@@ -546,4 +546,39 @@ describe('eventBinding.js', function () {
             expect(App.nodeToPasteBulleted.length).toBe(2);
         })
     });
+
+    describe("expandAll collapseAll", function(){
+        //var event, node, newNode, parent, fixture;
+        //beforeEach(function () {
+        //    fixture = '<div id="mindmap"> ' +
+        //        '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
+        //        '<g transform="translate(14400,4650)"><g transform="translate(0,0)" class="node level-0 selected">' +
+        //        '<ellipse rx="125.859375" ry="28.834375" class="root-ellipse"></ellipse>' +
+        //        '<rect x="-95.859375" y="-18.5" width="191.71875" height="29.5"></rect>' +
+        //        '<text cols="60" rows="4" y="9">' +
+        //        '<tspan x="0" dy="0">New Mindmap</tspan>' +
+        //        '</text></g></g></svg> ' +
+        //        '</div>';
+        //    setFixtures(fixture);
+        //
+        //    event = document.createEvent("Events");
+        //    event.initEvent("keydown", true, true);
+        //
+        //    node = {_id: "node", position: "right"};
+        //    parent = {_id: "parent", position: "right", children: [node]};
+        //    newNode = {_id: "newNode"};
+        //    node.parent = parent;
+        //});
+        it("should call expandAll function when cmd+L is pressed ", function(){
+            spyOn(App.presentation, 'expandAll');
+            Mousetrap.trigger('mod+l');
+            expect(App.presentation.expandAll).toHaveBeenCalled();
+        });
+
+        it("should call collapseAllMindmap function when cmd+shift+l is pressed ", function(){
+            spyOn(App.presentation, 'collapseAllMindmap');
+            Mousetrap.trigger('mod+shift+l');
+            expect(App.presentation.collapseAllMindmap).toHaveBeenCalled();
+        });
+    });
 });
