@@ -125,3 +125,12 @@ Template.readOnly.helpers({
     }
 });
 
+App.getEmbedCode = function () {
+   Meteor.call("getSharableReadLink",App.currentMap,function (error, value){
+       var link = value;
+       link = link.replace("sharedLink","embed");
+       var url = location.hostname + (location.port ? ':' + location.port : '') + "/" + link;
+       console.log(ur);
+       return url;
+   })
+};
