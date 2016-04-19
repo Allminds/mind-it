@@ -1,4 +1,4 @@
-describe('actionbar.js', function () {
+fdescribe('actionbar.js', function () {
 
     beforeEach(function(){
         $.ajax({
@@ -6,20 +6,27 @@ describe('actionbar.js', function () {
 
         });
 
-
+        spyOn(Meteor, 'user').and.returnValue({services:{google:{email:"dummy@mail.com"}}});
     });
+
     it("should fetch images if user is logged in",function(){
        // Meteor.loginWithGoogle();
-            var imageResource = extractUserImage();
-            expect(imageResource).not.toBe(undefined);
-
+        spyOn(MindmapMetadata,'findOne').and.returnValue({ onlineUsers : []});
+        var imageResource = extractUserImage();
+        expect(imageResource).not.toBe(undefined);
     });
 
     it("should mock Meteor.users.find()", function () {
-        spyOn(Meteor.users,'find').and.callThrough();
+        spyOn(MindmapMetadata,'findOne').and.returnValue({ onlineUsers : []});
         var image = extractUserImage();
-        expect(Meteor.users.find).toHaveBeenCalled();
+        expect(MindmapMetadata.findOne).toHaveBeenCalled();
 
+    });
+
+    it("Should return valid image url if present" , function() {
+        spyOn(MindmapMetadata , 'findOne').and.returnValue({_id : "1" , onlineUsers : [{profile: {name : "user 1"} , picture: "www.dummyimage.com"} , {profile: {name : "user 2"} , picture: "www.dummyimage1.com"}]});
+        var imageUrl = extractUserImage();
+        expect(imageUrl.length).toBe(2);
     });
 
 
