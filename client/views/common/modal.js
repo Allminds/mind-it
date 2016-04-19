@@ -69,6 +69,7 @@ var restoreNodeSelection = function () {
 
 Template.ModalPopUp.events({
     'shown.bs.modal #help-modal': function (event) {
+        document.getElementById("help-img").scrollIntoView();
         App.modal_shown=true;
         removeNodeSelection();
     },
@@ -78,6 +79,7 @@ Template.ModalPopUp.events({
     },
 
     'shown.bs.modal #share-modal': function (event) {
+        $("#linkTextBox").focus();
         App.modal_shown=true;
         removeNodeSelection();
     },

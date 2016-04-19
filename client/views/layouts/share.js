@@ -1,6 +1,5 @@
 Template.ShareImageButton.events({
-    'click #shareImageButton': function (e) {
-        //App.modal_shown = true;
+    'click #shareImageButton': function () {
         $('#share-modal').modal('show');
     },
     'click #getSharableWriteLink': function () {
@@ -35,7 +34,6 @@ Template.ShareImageButton.helpers({
 
 Template.Share.events({
     'click #shareImageButton': function () {
-        //App.modal_shown = true;
         $('#share-modal').modal('show');
 
     },
