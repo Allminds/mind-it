@@ -6,6 +6,22 @@ App.setEventBinding = function () {
     }
 };
 
+$(window).on('popstate', function () {
+    //$('#share-modal').on('shown.bs.modal', function () {
+    //    alert("hi there!");
+    //    location.reload(true);
+    //});
+
+    //location.reload(true);
+
+    if (App.modal_shown == true) {
+        App.modal_shown = false;
+        location.reload(true);
+    }
+
+});
+
+
 var update = function (data) {
     window.data = data;
     d3.select('#mindmap svg')
@@ -19,9 +35,10 @@ var update = function (data) {
 
 };
 
-var enableHelpLink = function () {
+/*var enableHelpLink = function () {
+    alert("In Help Modal");
     $('#help-modal').modal('show');
-};
+};*/
 
 //Template.create.events({
 //    'click #Share_btn': function () {
@@ -94,10 +111,8 @@ Template.create.rendered = function rendered() {
 
     App.select(rootNode);
     Mindmaps.find({$or: [{_id: this.data.id}, {rootId: this.data.id}]}).observeChanges(App.tracker);
-    console.log("start rendering...");
 
     App.retainCollapsed();
-    d3.select("#help-link").on('click', enableHelpLink);
     Meteor.call("updateUserStatus", email, App.currentMap, App.currentMap);
 //  App.setMapsCount();
 };

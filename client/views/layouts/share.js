@@ -1,20 +1,17 @@
 Template.ShareImageButton.events({
-    'click #shareImageButton': function () {
-        console.log("BUTTON CLICKED");
+    'click #shareImageButton': function (e) {
+        //App.modal_shown = true;
         $('#share-modal').modal('show');
-
     },
     'click #getSharableWriteLink': function () {
 
         Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
             var msg = value;
-            alert(msg);
         });
     },
     'click #getSharableReadLink': function () {
         Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
             var msg = value;
-            alert(msg);
         });
     }
 });
@@ -38,7 +35,7 @@ Template.ShareImageButton.helpers({
 
 Template.Share.events({
     'click #shareImageButton': function () {
-        console.log("BUTTON CLICKED");
+        //App.modal_shown = true;
         $('#share-modal').modal('show');
 
     },
@@ -46,13 +43,11 @@ Template.Share.events({
 
         Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
             var msg = value;
-            alert(msg);
         });
     },
     'click #getSharableReadLink': function () {
         Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
             var msg = value;
-            alert(msg);
         });
     }
 });
