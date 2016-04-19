@@ -7,18 +7,10 @@ App.setEventBinding = function () {
 };
 
 $(window).on('popstate', function () {
-    //$('#share-modal').on('shown.bs.modal', function () {
-    //    alert("hi there!");
-    //    location.reload(true);
-    //});
-
-    //location.reload(true);
-
     if (App.modal_shown == true) {
         App.modal_shown = false;
         location.reload(true);
     }
-
 });
 
 
@@ -114,7 +106,6 @@ Template.create.rendered = function rendered() {
 
     App.retainCollapsed();
     Meteor.call("updateUserStatus", email, App.currentMap, App.currentMap);
-//  App.setMapsCount();
 };
 Template.readOnly.helpers({
     statusmsg: function () {
