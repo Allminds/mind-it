@@ -145,6 +145,29 @@ Router.route('/sharedLink/:link', {
     }
 
 });
+Router.route('/embed/:link', {
+    name: 'embed',
+    template: 'create',
+    onBeforeAction: function () {
+        var self = this;
+        setTimeout(function () {
+            self.render("create");
+        }, 2000);
+
+    },
+    waitOn: function () {
+        var self = this;
+        Meteor.call("getRootNodeFromLink", "sharedLink/" + self.params.link, function (error, value) {
+            App.currentMap = value.rootId;
+            App.isSharedMindmap = App.Constants.Mode.READ;
+            Meteor.subscribe("mindmap", App.currentMap, getMeteorUser(), App.isSharedMindmap);
+        });
+        return Meteor.subscribe("mindmap", App.currentMap);
+    },
+    data: function () {
+        return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};
+    }
+});
 
 function renderHomePage() {
     var self = this;

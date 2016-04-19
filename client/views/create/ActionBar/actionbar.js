@@ -6,6 +6,14 @@ Template.ActionBar.helpers({
         } else{
             return [];
         }
+    },
+    hideInEmbedMode:function () {
+        var location = window.location.href;
+        if(location.indexOf("/embed/") == -1){
+            return true;
+        }else {
+            return false;
+        }
     }
 });
 

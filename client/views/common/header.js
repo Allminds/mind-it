@@ -45,6 +45,14 @@ Template.TopBar.helpers({
   picture: function(){
     if(Meteor.user())
       return Meteor.user().services.google.picture;
+  },
+  hideInEmbedMode:function () {
+    var location = window.location.href;
+    if(location.indexOf("/embed/") == -1){
+      return true;
+    }else {
+      return false;
+    }
   }
 });
 

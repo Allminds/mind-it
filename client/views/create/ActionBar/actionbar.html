@@ -3,6 +3,7 @@
 </head>
 
 <template name="ActionBar">
+    {{#if hideInEmbedMode}}
     <div class="navbar navbar-fixed-top" role="navigation" style="margin-top: 71px; color: #00b439" id="onlineUsers">
         <div style="width: 100% ; position: fixed">
             {{> readOnly }}
@@ -24,6 +25,7 @@
 
         </div>
     </div>
+    {{/if}}
 </template>
 
 <template name="UserImage">
