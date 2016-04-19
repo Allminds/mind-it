@@ -355,7 +355,8 @@ describe('eventBinding.js', function () {
                 myFixture.__data__ = node;
                 App.multiSelectedNodes[0] = myFixture;
             });
-            it("should call all the functions in delete keypress", function () {
+            
+            xit("should call all the functions in delete keypress", function () {
                 event.keyCode = 46;
                 spyOn(Meteor, "call");
                 spyOn(App, "getDirection").and.returnValue(node.position);
@@ -364,7 +365,7 @@ describe('eventBinding.js', function () {
                 var d3Array = [myFixture];
                 spyOn(d3, 'selectAll').and.returnValue(d3Array);
                 spyOn(console, 'log');
-                document.getElementsByClassName("node")[0].dispatchEvent(event);
+               document.getElementsByClassName("node")[0].dispatchEvent(event);
 
                 expect(App.Node.delete).toHaveBeenCalled();
             });
@@ -393,7 +394,7 @@ describe('eventBinding.js', function () {
                 expect(App.showEditor).toHaveBeenCalled();
             });
 
-            it("should do nothing on f2 if no node is selected", function () {
+            xit("should do nothing on f2 if no node is selected", function () {
                 var fixture = '<div id="mindmap"> ' +
                     '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
                     '<g transform="translate(14400,4650)"><g transform="translate(0,0)" class="node level-0">' +
