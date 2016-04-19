@@ -546,4 +546,18 @@ describe('eventBinding.js', function () {
             expect(App.nodeToPasteBulleted.length).toBe(2);
         })
     });
+
+    describe("expandAll collapseAll", function(){
+        it("should call expandAll function when cmd+L is pressed ", function(){
+            spyOn(App.presentation, 'expandAll');
+            Mousetrap.trigger('mod+l');
+            expect(App.presentation.expandAll).toHaveBeenCalled();
+        });
+
+        it("should call collapseAllMindmap function when cmd+shift+l is pressed ", function(){
+            spyOn(App.presentation, 'collapseAllMindmap');
+            Mousetrap.trigger('mod+shift+l');
+            expect(App.presentation.collapseAllMindmap).toHaveBeenCalled();
+        });
+    });
 });

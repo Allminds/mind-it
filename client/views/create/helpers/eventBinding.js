@@ -910,15 +910,10 @@ Mousetrap.bind('pagedown', function () {
 });
 
 Mousetrap.bind('mod+l' , function () {
-    e = arguments[0];
-    e.preventDefault();
     App.presentation.expandAll();
 });
 
 Mousetrap.bind('mod+shift+l' , function () {
-    e = arguments[0];
-    e.preventDefault();
-
     App.presentation.collapseAllMindmap();
 
 });
