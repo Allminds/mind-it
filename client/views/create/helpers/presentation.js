@@ -33,7 +33,7 @@ App.presentation.preparePresentationUI = function(){
     div.style.display='none';
     onlineUsers.style.display='none';
     //feedbackButton.style.display='none';
-    App.presentation.prepareForPresentation();
+    App.presentation.collapseAllMindmap();
     var rootNode =App.presentation.getRootNode();
 
     var d3Node = App.presentation.getD3Node(rootNode._id);
@@ -66,7 +66,7 @@ $( document ).ready(function() {
     });
 });
 
-App.presentation.prepareForPresentation = function() {
+App.presentation.collapseAllMindmap = function() {
 
     //Expand code.
     App.presentation.expandAll();
@@ -83,46 +83,34 @@ App.presentation.prepareForPresentation = function() {
 
 
 App.presentation.expandAll = function () {
-    prepareArrayForNavigation(true);
+    performExpandAllCollapseAll(expandSubTree);
 };
 
 
 App.presentation.collapseAll = function () {
-    prepareArrayForNavigation(false);
+    var rootNode=App.presentation.getRootNode();
+
+    App.presentation.presentationArray = [];
+    App.presentation.length = 0;
+    App.presentation.previousNode = rootNode;
+    App.presentation.presentationArray[App.presentation.length++] = rootNode._id;
+
+    performExpandAllCollapseAll(collapseSubTree);
 };
 
 
-var prepareArrayForNavigation = function(ExpandTree) {
+var performExpandAllCollapseAll = function(operationToBePerformed) {
 
     var rootNode=App.presentation.getRootNode();
-    if(ExpandTree == false) {
-        App.presentation.presentationArray = [];
-        App.presentation.length = 0;
-        App.presentation.previousNode = rootNode;
-        App.presentation.presentationArray[App.presentation.length++] = rootNode._id;
-    }
 
     for(var i = 0; i < rootNode.right.length; i++) {
-
-
         var node = Mindmaps.findOne({_id : rootNode.right[i]});
-        if(ExpandTree == true) {
-            expandSubTree(node);
-        }
-        else {
-            collapseSubTree(node);
-        }
-
+        operationToBePerformed(node);
     }
 
     for(var i = 0; i < rootNode.left.length; i++) {
         var node = Mindmaps.findOne({_id : rootNode.left[i]});
-        if(ExpandTree == true) {
-            expandSubTree(node);
-        }
-        else {
-            collapseSubTree(node);
-        }
+        operationToBePerformed(node);
     }
 };
 
@@ -132,7 +120,10 @@ var collapseSubTree = function(node) {
         return;
     }
     else {
+
         App.presentation.presentationArray[App.presentation.length++] = node._id;
+
+
         var childSubTree = node.childSubTree;
 
         for (var index in childSubTree) {
