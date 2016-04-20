@@ -225,7 +225,6 @@ Meteor.methods({
     },
     myRootNodes : function(emailId){
         var result = rootNodesOfMyMaps(emailId).fetch();
-        console.log("In myRootNodes",result,emailId);
         return result;
     },
     createRootNode: function (emailId) {

@@ -549,14 +549,25 @@ describe('eventBinding.js', function () {
 
     describe("expandAll collapseAll", function(){
         it("should call expandAll function when cmd+L is pressed ", function(){
+            debugger;
             spyOn(App.presentation, 'expandAll');
-            Mousetrap.trigger('mod+l');
+           var  event1 = document.createEvent("Events");
+            event1.initEvent("keydown", true, true);
+            event1.keyCode=76;
+            event1.metaKey=true;
+            document.dispatchEvent(event1);
             expect(App.presentation.expandAll).toHaveBeenCalled();
+
         });
 
         it("should call collapseAllMindmap function when cmd+shift+l is pressed ", function(){
             spyOn(App.presentation, 'collapseAllMindmap');
-            Mousetrap.trigger('mod+shift+l');
+            var  event1 = document.createEvent("Events");
+            event1.initEvent("keydown", true, true);
+            event1.keyCode=76;
+            event1.metaKey=true;
+            event1.shiftKey=true;
+            document.dispatchEvent(event1);
             expect(App.presentation.collapseAllMindmap).toHaveBeenCalled();
         });
     });

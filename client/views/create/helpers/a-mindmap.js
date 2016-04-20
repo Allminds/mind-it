@@ -79,7 +79,6 @@ MindMap = function MindMap() {
           })
           .on('click', function (node) {
             App.toggleCollapsedNode(node);
-            console.log("clicked node",node);
             return false;
           });
       },
@@ -121,10 +120,32 @@ MindMap = function MindMap() {
       indicator.enter(node);
     },
     updateNode = function (node) {
+
+
       node.select("text")
         .call(text);
-      node.select("text").attr("y", -2);
-      node.select(".level-0 text").attr("y", 9);
+      node.select("text").attr("y", function(){
+        var noOfLines = d3.select(this.parentNode).select("text").selectAll("tspan")[0].length;
+        var reducedHeight = d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().height;
+        if(noOfLines>1){
+          return -reducedHeight+20;
+        }
+        else{
+          return -2;
+        }
+
+      });
+      node.select(".level-0 text").attr("y", function(){
+        var noOfLines = d3.select(this.parentNode).select("text").selectAll("tspan")[0].length;
+        var reducedHeight = d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().height;
+        if(noOfLines>1){
+          return -reducedHeight/2;
+        }
+        else{
+          return 9;
+
+        }
+      });
       node.select('rect')
         .attr('x', function () {
           var rect = d3.select(this.parentNode).select('text')[0][0].getBBox();
@@ -146,10 +167,20 @@ MindMap = function MindMap() {
       var rootNode = getRootNode(node);
       d3.select(rootNode).select("ellipse")
         .attr("rx", function () {
+          //return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width/3 + Constants.deltaEllipseXRadius;
+
           return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 2 + Constants.deltaEllipseXRadius;
         })
         .attr("ry", function () {
-          return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width / 50 + Constants.deltaEllipseYRadius;
+          var noOfLines = d3.select(this.parentNode).select("text").selectAll("tspan")[0].length;
+          if(noOfLines>1){
+
+            return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().height + Constants.deltaEllipseYRadius;
+          }
+          else {
+            return d3.select(this.parentNode).select("text")[0][0].getBoundingClientRect().width/50 + Constants.deltaEllipseYRadius;
+
+          }
         });
     },
     exitNode = function (node) {

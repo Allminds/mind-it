@@ -116,7 +116,6 @@ Template.ModalPopUp.events({
         var textBox = document.getElementById("linkTextBox");
         textBox.value = text;
         var button = document.getElementById("sharableLinkButtonMessage");
-        console.log("button", button.innerHTML);
         Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
             textBox.value = location.hostname + (location.port ? ':' + location.port : '') + "/" + value;
             button.innerHTML = "read and write";
@@ -163,7 +162,6 @@ Template.ModalBody.rendered = function rendered() {
 
 function selectText() {
     var id = "e_mail";
-    console.log("in text box");
     document.getElementById(id).focus();
     document.getElementById(id).select();
 }

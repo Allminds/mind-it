@@ -66,7 +66,6 @@ Router.route('/create/:_id', {
         Meteor.call("isWritable", this.params._id, user, function (error, value) {
             App.editable = value;
         });
-        console.log("before subscription");
         Meteor.call("isPublicMindmap", App.currentMap, function (error, value) {
             App.isPublicMindMap = value;
         });
@@ -129,7 +128,6 @@ Router.route('/sharedLink/:link', {
             Meteor.subscribe("mindmap", App.currentMap, user, App.isSharedMindmap);
             Meteor.subscribe("onlineusers", App.currentMap);
             Meteor.call("isPublicMindmap", App.currentMap, function (error, value) {
-                console.log("IsPublic Mindmap::::", value);
                 App.isPublicMindMap = value;
             });
 
