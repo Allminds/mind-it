@@ -59,9 +59,10 @@ Template.create.rendered = function rendered() {
 
     App.select(rootNode);
     Mindmaps.find({$or: [{_id: this.data.id}, {rootId: this.data.id}]}).observeChanges(App.tracker);
+    MindmapMetadata.find().observeChanges(App.cursorTracker);
 
     App.retainCollapsed();
-    Meteor.call("updateUserStatus", email, App.currentMap, App.currentMap);
+    //Meteor.call("updateUserStatus", App.currentMap, App.currentMap);
 };
 Template.readOnly.helpers({
     statusmsg: function () {

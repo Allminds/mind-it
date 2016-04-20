@@ -51,7 +51,6 @@ Meteor.publish('onlineusers', function (mindmap) {
     var userInfo = {};
     userInfo.email = currentUser.services.google.email;
     userInfo.profile = currentUser.profile;
-    userInfo.mindmap = currentUser.mindmap;
     userInfo.picture = currentUser.services.google.picture;
 
     this._session.socket.on("close", Meteor.bindEnvironment(function () {
@@ -81,7 +80,7 @@ Meteor.publish('onlineusers', function (mindmap) {
 
     MindmapMetadata.update({rootId: mindmap}, {$set: {onlineUsers: onlineUsers}});
 
-    return  MindmapMetadata.find({rootId: mindmap} , {fields : {onlineUsers : 1}});
+    return  MindmapMetadata.find({rootId: mindmap} , {fields : {onlineUsers : 1 , rootId : 1}});
 
 });
 Meteor.publish('acl', function (user_id) {
@@ -212,7 +211,11 @@ Meteor.methods({
         }
         return doc;
     },
-    updateUserStatus: function (email_id, mindMapId, nodeId) {
+    updateUserStatus: function (mindMapId, nodeId) {
+        if(!this.userId) {
+            return;
+        }
+        var email_id = Meteor.users.findOne({_id : this.userId}).services.google.email;
         App.usersStatusService.updateUserStatus(email_id, mindMapId, nodeId);
     },
     createUserFromAdmin: function (username, profile, services) {

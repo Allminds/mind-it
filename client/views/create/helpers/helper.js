@@ -234,7 +234,7 @@ App.select = function(node, softSelect) {
 
     }
     if(Meteor.user()) {
-        Meteor.call("updateUserStatus", Meteor.user().services.google.email, d3.select(".node.level-0")[0][0].__data__._id, node.__data__._id);
+        Meteor.call("updateUserStatus", d3.select(".node.level-0")[0][0].__data__._id, node.__data__._id);
     }
 };
 

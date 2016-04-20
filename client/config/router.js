@@ -175,9 +175,7 @@ function renderHomePage() {
         Meteor.subscribe("userdata", Meteor.userId());
         Meteor.subscribe("myRootNodes", Meteor.user().services.google.email);
         Meteor.subscribe("acl", Meteor.user().services.google.email);
-        //Changing current mindmap id to "*", since user isnt on any specific mindmap.
         self.render("dashboard");
-        Meteor.call("updateUserStatus", Meteor.user().services.google.email, "*");
     }
 }
 
