@@ -25,7 +25,6 @@ extractUserImage = function () {
     var usersAvailable = MindmapMetadata.findOne();
 
     usersAvailable = usersAvailable.onlineUsers.filter(function(user) {
-        console.log(user,Meteor.user());
         return user.email != Meteor.user().services.google.email;
     });
 

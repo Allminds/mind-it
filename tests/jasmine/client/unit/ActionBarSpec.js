@@ -1,4 +1,4 @@
-fdescribe('actionbar.js', function () {
+describe('actionbar.js', function () {
 
     beforeEach(function(){
         $.ajax({
