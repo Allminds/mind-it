@@ -69,11 +69,12 @@ var restoreNodeSelection = function () {
 
 Template.ModalPopUp.events({
     'shown.bs.modal #help-modal': function (event) {
-        document.getElementById("help-img").scrollIntoView();
+        App.eventBinding.unbindEditableEvents();
         App.modal_shown=true;
         removeNodeSelection();
     },
     'hidden.bs.modal #help-modal': function (event) {
+        App.eventBinding.bindAllEvents();
         App.modal_shown = false;
         restoreNodeSelection();
     },
