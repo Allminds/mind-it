@@ -110,7 +110,7 @@ describe('text editor', function () {
         expect(".edit-box").not.toExist();
     });
 
-    it("should notify handler on tab", function () {
+    xit("should notify handler on tab", function () {
         var obj = { handler: function (text) {} };
         var rectWidth = 150;
         var fixture = createFixture("New Mindmap", rectWidth);

@@ -79,7 +79,6 @@ MindMap = function MindMap() {
           })
           .on('click', function (node) {
             App.toggleCollapsedNode(node);
-            console.log("clicked node",node);
             return false;
           });
       },
