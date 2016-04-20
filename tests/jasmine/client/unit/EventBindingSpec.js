@@ -505,7 +505,6 @@ describe('eventBinding.js', function () {
         });
     });
 
-
     describe("multi select", function () {
         var parent, child1, child2, child3;
         beforeEach(function () {
@@ -547,7 +546,7 @@ describe('eventBinding.js', function () {
         })
     });
 
-    describe("expandAll collapseAll", function(){
+    describe("expandAll collapseAll", function () {
         //var event, node, newNode, parent, fixture;
         //beforeEach(function () {
         //    fixture = '<div id="mindmap"> ' +
@@ -569,16 +568,38 @@ describe('eventBinding.js', function () {
         //    newNode = {_id: "newNode"};
         //    node.parent = parent;
         //});
-        it("should call expandAll function when cmd+L is pressed ", function(){
+        it("should call expandAll function when cmd+L is pressed ", function () {
             spyOn(App.presentation, 'expandAll');
             Mousetrap.trigger('mod+l');
             expect(App.presentation.expandAll).toHaveBeenCalled();
         });
 
-        it("should call collapseAllMindmap function when cmd+shift+l is pressed ", function(){
+        it("should call collapseAllMindmap function when cmd+shift+l is pressed ", function () {
             spyOn(App.presentation, 'collapseAllMindmap');
             Mousetrap.trigger('mod+shift+l');
             expect(App.presentation.collapseAllMindmap).toHaveBeenCalled();
         });
+        describe("Bind and Unbind events", function () {
+            it("should bind all events which are in the events map", function () {
+                spyOn(Mousetrap, "bind");
+
+                App.eventBinding.bindAllEvents();
+                var eventsMap = App.eventBinding.EventsMap;
+                for (var event in eventsMap) {
+                    expect(Mousetrap.bind).toHaveBeenCalledWith(event, eventsMap[event].method);
+                }
+            });
+
+            it("should not unbind events which are allowed in read only mode", function () {
+                spyOn(Mousetrap, "unbind");
+                var allowedInReadOnlyModeEvents = ['shift+up', 'shift+down', 'shift+right', 'shift+left', 'mod+e', 'esc', '?', 'up',
+                    'down', 'right', 'left', 'space', 'mod+shift+p', 'pageup', 'pagedown'];
+
+                App.eventBinding.unbindEditableEvents();
+                for (var event of allowedInReadOnlyModeEvents) {
+                    expect(Mousetrap.unbind).not.toHaveBeenCalledWith(event);
+                }
+            });
+
+        });
     });
-});

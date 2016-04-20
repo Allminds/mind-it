@@ -2,7 +2,7 @@ var mindMapService = App.MindMapService.getInstance();
 
 App.setEventBinding = function () {
     if (!App.editable) {
-        App.eventBinding.unBindAllEvents();
+        App.eventBinding.unbindEditableEvents();
     }
 };
 
@@ -32,49 +32,6 @@ var update = function (data) {
     $('#help-modal').modal('show');
 };*/
 
-//Template.create.events({
-//    'click #Share_btn': function () {
-//        $('#share-modal').modal('show');
-//
-//    },
-//
-//    'click #getSharableWriteLink': function () {
-//
-//        Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-//            var msg = value;
-//            alert(msg);
-//        });
-//
-//
-//    },
-//    'click #getSharableReadLink': function () {
-//        Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-//            var msg = value;
-//            alert(msg);
-//        });
-//    }
-//});
-
-//Template.create.helpers({
-//    shareReadLink: function () {
-//        if (App.isSharedMindmap == App.Constants.Mode.READ) {
-//            return "";
-//        }
-//
-//
-//        else
-//            return "Share read only link";
-//    },
-//    shareWriteLink: function () {
-//        if (App.isSharedMindmap == App.Constants.Mode.WRITE) {
-//            return "";
-//        }
-//
-//        else
-//            return "Share read-write link";
-//    }
-//
-//})
 
 Template.create.rendered = function rendered() {
     if (this.data.data.length == 0) {
@@ -88,7 +45,6 @@ Template.create.rendered = function rendered() {
         Meteor.call("isWritable", App.currentMap, email, function (error, value) {
             App.editable = value;
             App.setEventBinding();
-            //  UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
         });
 
     }

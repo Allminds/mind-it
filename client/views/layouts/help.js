@@ -8,13 +8,12 @@ Template.HelpImageButton.events({
         e.preventDefault();
         //App.modal_shown = true;
         $('#help-modal').modal('show');
-    }
+        }
 });
 
 Template.Help.events({
    'click #help-link': function(e, args){
        e.preventDefault();
-       //App.modal_shown = true;
        $('#help-modal').modal('show');
 
    }
