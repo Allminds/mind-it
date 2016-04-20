@@ -9,7 +9,15 @@ Template.ActionBar.helpers({
     },
     hideInEmbedMode:function () {
         var location = window.location.href;
-        if(location.indexOf("/embed/") == -1){
+        if(isEmbedUrl()){
+            return false;
+        }else {
+            return true;
+        }
+    },
+    isEmbedUrl:function () {
+        var location = window.location.href;
+        if(location.indexOf("/embed/") != -1){
             return true;
         }else {
             return false;
@@ -36,3 +44,9 @@ extractUserImage = function () {
     });
     return imageSrcs;
 };
+App.viewFulScreen = function () {
+    var url = window.location.href;
+    url = url.replace("embed","sharedLink");
+    var win = window.open(url, '_blank');
+    win.focus();
+}

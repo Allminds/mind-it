@@ -83,4 +83,6 @@ App.getEmbedCode = function () {
    })
 };
 
-
+// window.onclick = function() {
+//     alert('test');
+// }
