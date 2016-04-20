@@ -129,8 +129,11 @@ App.getEmbedCode = function () {
    Meteor.call("getSharableReadLink",App.currentMap,function (error, value){
        var link = value;
        link = link.replace("sharedLink","embed");
-       var url = location.hostname + (location.port ? ':' + location.port : '') + "/" + link;
-       console.log(ur);
-       return url;
+       var url = "http://"+location.hostname + (location.port ? ':' + location.port : '') + "/" + link;
+      var code =  "<iframe width=" +"\"854\"" + " height= "+ "\"480\" src=\""+url+"\" frameborder= \"0\" allowfullscreen></iframe>";
+       console.log(code);
+       return code;
    })
 };
+
+
