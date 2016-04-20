@@ -3,9 +3,9 @@ describe('eventBinding.js', function () {
     describe('App.eventBinding scoped functions', function () {
         describe('App.eventBinding.focusAfterDelete', function () {
             it("should select next node of deleted node if it exists", function () {
-                var next = {_id: "next"},
-                    previous = {_id: "previous"},
-                    parent = {_id: "parent", children: [previous, next]},
+                var next        = {_id: "next"},
+                    previous    = {_id: "previous"},
+                    parent      = {_id: "parent", children: [previous, next]},
                     removedNode = {_id: "removed", parent: parent, next: next, previous: previous};
                 spyOn(App, 'selectNode');
 
@@ -15,8 +15,8 @@ describe('eventBinding.js', function () {
             });
 
             it("should select previous node of deleted node if it exists and next node does not exist", function () {
-                var previous = {_id: "previous"},
-                    parent = {_id: "parent", children: [previous]},
+                var previous    = {_id: "previous"},
+                    parent      = {_id: "parent", children: [previous]},
                     removedNode = {_id: "removed", parent: parent, previous: previous};
                 spyOn(App, 'selectNode');
 
@@ -26,7 +26,7 @@ describe('eventBinding.js', function () {
             });
 
             it("should select parent node of deleted node if it exists after and next & previous nodes do not exist", function () {
-                var parent = {_id: "parent", children: []},
+                var parent      = {_id: "parent", children: []},
                     removedNode = {_id: "removed", parent: parent};
                 spyOn(App, 'selectNode');
 
@@ -150,12 +150,12 @@ describe('eventBinding.js', function () {
         it("Should have only one node selected after cut", function () {
             App.multiSelectedNodes = [{
                 __data__: {
-                    _id: "node",
-                    position: "right",
-                    parent: parent,
+                    _id:          "node",
+                    position:     "right",
+                    parent:       parent,
                     childSubTree: [],
-                    left: [],
-                    right: []
+                    left:         [],
+                    right:        []
                 }
             }];
             spyOn(App, "clearAllSelected");
@@ -167,7 +167,7 @@ describe('eventBinding.js', function () {
         })
     });
 
-    describe("Mousetrap ModX bindings", function(){
+    describe("Mousetrap ModX bindings", function () {
         var root, parent, child1, child2, child3;
         beforeEach(function () {
             root = new App.Node("root");
@@ -193,52 +193,52 @@ describe('eventBinding.js', function () {
                 '<path class="thick-link" d="M20.671875,0C45.671875,0 45.671875,0 70.671875,0"></path>' +
                 '<path class="link" d="M20.671875,0C45.671875,0 45.671875,0 70.671875,0L133.046875,0"></path>' +
                 '<path class="link" d="M133.046875,0C148.046875,-23 148.046875,-23 163.046875,-23L215.296875,-23"></path>' +
-                '<path class="link" d="M133.046875,0C148.046875,0 148.046875,0 163.046875,0L215.296875,0"></path>'+
-                '<path class="link" d="M133.046875,0C148.046875,23 148.046875,23 163.046875,23L215.296875,23"></path>'+
-                '<path class="link" d="M133.046875,0C148.046875,-23 148.046875,-23 163.046875,-23"></path>'+
-                '<path class="link" d="M133.046875,0C148.046875,0 148.046875,0 163.046875,0"></path>'+
-                '<path class="link" d="M133.046875,0C148.046875,23 148.046875,23 163.046875,23"></path>'+
-                '<g transform="translate(0,0)" class="node level-0">'+
-                '<ellipse rx="50.671875" ry="25.826875" class="root-ellipse"></ellipse>'+
-                '<rect x="-20.671875" y="-13" width="41.34375" height="23"></rect>'+
-                '<text cols="60" rows="4" y="9" visibility="">'+
-                '<tspan x="0" dy="0">root</tspan>'+
-                '</text><circle class="indicator unfilled" r="0" cx="20.671875"></circle>'+
-                '</g><g transform="translate(101.859375,0)" class="node level-1">'+
-                '<rect x="-31.1875" y="-22" width="62.375" height="20"></rect>'+
-                '<text cols="60" rows="4" y="-2" visibility="">'+
-                '<tspan x="0" dy="0">parent</tspan>'+
-                '</text><circle class="indicator unfilled" r="7" cx="31.1875"></circle>'+
-                '</g><g transform="translate(189.171875,-23)" class="node level-2">'+
-                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>'+
-                '<text cols="60" rows="4" y="-2" visibility="">'+
-                '<tspan x="0" dy="0">child1</tspan>'+
-                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>'+
-                '</g><g transform="translate(189.171875,0)" class="node level-2">'+
-                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>'+
-                '<text cols="60" rows="4" y="-2" visibility="">'+
-                '<tspan x="0" dy="0">child2</tspan>'+
-                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>'+
-                '</g><g transform="translate(189.171875,23)" class="node level-2 selected softSelected">'+
-                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>'+
-                '<text cols="60" rows="4" y="-2" visibility="">'+
-                '<tspan x="0" dy="0">child3</tspan>'+
-                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>'+
-                '</g></g></svg>'+
+                '<path class="link" d="M133.046875,0C148.046875,0 148.046875,0 163.046875,0L215.296875,0"></path>' +
+                '<path class="link" d="M133.046875,0C148.046875,23 148.046875,23 163.046875,23L215.296875,23"></path>' +
+                '<path class="link" d="M133.046875,0C148.046875,-23 148.046875,-23 163.046875,-23"></path>' +
+                '<path class="link" d="M133.046875,0C148.046875,0 148.046875,0 163.046875,0"></path>' +
+                '<path class="link" d="M133.046875,0C148.046875,23 148.046875,23 163.046875,23"></path>' +
+                '<g transform="translate(0,0)" class="node level-0">' +
+                '<ellipse rx="50.671875" ry="25.826875" class="root-ellipse"></ellipse>' +
+                '<rect x="-20.671875" y="-13" width="41.34375" height="23"></rect>' +
+                '<text cols="60" rows="4" y="9" visibility="">' +
+                '<tspan x="0" dy="0">root</tspan>' +
+                '</text><circle class="indicator unfilled" r="0" cx="20.671875"></circle>' +
+                '</g><g transform="translate(101.859375,0)" class="node level-1">' +
+                '<rect x="-31.1875" y="-22" width="62.375" height="20"></rect>' +
+                '<text cols="60" rows="4" y="-2" visibility="">' +
+                '<tspan x="0" dy="0">parent</tspan>' +
+                '</text><circle class="indicator unfilled" r="7" cx="31.1875"></circle>' +
+                '</g><g transform="translate(189.171875,-23)" class="node level-2">' +
+                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>' +
+                '<text cols="60" rows="4" y="-2" visibility="">' +
+                '<tspan x="0" dy="0">child1</tspan>' +
+                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>' +
+                '</g><g transform="translate(189.171875,0)" class="node level-2">' +
+                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>' +
+                '<text cols="60" rows="4" y="-2" visibility="">' +
+                '<tspan x="0" dy="0">child2</tspan>' +
+                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>' +
+                '</g><g transform="translate(189.171875,23)" class="node level-2 selected softSelected">' +
+                '<rect x="-26.125" y="-20" width="52.25" height="18"></rect>' +
+                '<text cols="60" rows="4" y="-2" visibility="">' +
+                '<tspan x="0" dy="0">child3</tspan>' +
+                '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>' +
+                '</g></g></svg>' +
                 '</div>';
             setFixtures(fixture);
 
-            App.multiSelectedNodes=[];
+            App.multiSelectedNodes = [];
             var node = d3.select(".selected")[0][0];
 
             parent.childSubTree = [child1, child2, child3];
-            node.__data__=child3;
+            node.__data__ = child3;
             d3.select(node).classed("softSelected", true);
             App.multiSelectedNodes.push(node);
         });
         it("should clear all selected nodes after mapping selectedNodes", function () {
-            spyOn(App,"selectNode");
-            spyOn(App,"clearAllSelected");
+            spyOn(App, "selectNode");
+            spyOn(App, "clearAllSelected");
             Mousetrap.trigger('mod+x');
             expect(App.clearAllSelected).toHaveBeenCalled();
             expect(App.selectNode).toHaveBeenCalled();
@@ -355,7 +355,7 @@ describe('eventBinding.js', function () {
                 myFixture.__data__ = node;
                 App.multiSelectedNodes[0] = myFixture;
             });
-            
+
             xit("should call all the functions in delete keypress", function () {
                 event.keyCode = 46;
                 spyOn(Meteor, "call");
@@ -365,7 +365,7 @@ describe('eventBinding.js', function () {
                 var d3Array = [myFixture];
                 spyOn(d3, 'selectAll').and.returnValue(d3Array);
                 spyOn(console, 'log');
-               document.getElementsByClassName("node")[0].dispatchEvent(event);
+                document.getElementsByClassName("node")[0].dispatchEvent(event);
 
                 expect(App.Node.delete).toHaveBeenCalled();
             });
@@ -505,7 +505,6 @@ describe('eventBinding.js', function () {
         });
     });
 
-
     describe("multi select", function () {
         var parent, child1, child2, child3;
         beforeEach(function () {
@@ -569,6 +568,30 @@ describe('eventBinding.js', function () {
             event1.shiftKey=true;
             document.dispatchEvent(event1);
             expect(App.presentation.collapseAllMindmap).toHaveBeenCalled();
+        });
+
+        describe("Bind and Unbind events", function () {
+            it("should bind all events which are in the events map", function () {
+                spyOn(Mousetrap, "bind");
+
+                App.eventBinding.bindAllEvents();
+                var eventsMap = App.eventBinding.EventsMap;
+                for (var event in eventsMap) {
+                    expect(Mousetrap.bind).toHaveBeenCalledWith(event, eventsMap[event].method);
+                }
+            });
+
+            it("should not unbind events which are allowed in read only mode", function () {
+                spyOn(Mousetrap, "unbind");
+                var allowedInReadOnlyModeEvents = ['shift+up', 'shift+down', 'shift+right', 'shift+left', 'mod+e', 'esc', '?', 'up',
+                    'down', 'right', 'left', 'space', 'mod+shift+p', 'pageup', 'pagedown'];
+
+                App.eventBinding.unbindEditableEvents();
+                for (var event of allowedInReadOnlyModeEvents) {
+                    expect(Mousetrap.unbind).not.toHaveBeenCalledWith(event);
+                }
+            });
+
         });
     });
 });

@@ -69,15 +69,18 @@ var restoreNodeSelection = function () {
 
 Template.ModalPopUp.events({
     'shown.bs.modal #help-modal': function (event) {
+        App.eventBinding.unbindEditableEvents();
         App.modal_shown=true;
         removeNodeSelection();
     },
     'hidden.bs.modal #help-modal': function (event) {
+        App.eventBinding.bindAllEvents();
         App.modal_shown = false;
         restoreNodeSelection();
     },
 
     'shown.bs.modal #share-modal': function (event) {
+        $("#linkTextBox").focus();
         App.modal_shown=true;
         removeNodeSelection();
     },

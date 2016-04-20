@@ -50,7 +50,6 @@ Router.route('/create/:_id', {
             })
         }
         else {
-            //var user = Meteor.user() ? Meteor.user().services.google.email : "*";
             self.render("create");
         }
     },
@@ -82,7 +81,6 @@ Router.route('(/404)|/(.*)', {
         App.isSharedMindmap = null;
     }
 });
-
 Router.route('/sharedLink/:link', {
     name: 'share',
     template: 'create',
@@ -142,6 +140,29 @@ Router.route('/sharedLink/:link', {
         return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};
     }
 
+});
+Router.route('/embed/:link', {
+    name: 'embed',
+    template: 'create',
+    onBeforeAction: function () {
+        var self = this;
+        setTimeout(function () {
+            self.render("create");
+        }, 2000);
+
+    },
+    waitOn: function () {
+        var self = this;
+        Meteor.call("getRootNodeFromLink", "sharedLink/" + self.params.link, function (error, value) {
+            App.currentMap = value.rootId;
+            App.isSharedMindmap = App.Constants.Mode.READ;
+            Meteor.subscribe("mindmap", App.currentMap, getMeteorUser(), App.isSharedMindmap);
+        });
+        return Meteor.subscribe("mindmap", App.currentMap);
+    },
+    data: function () {
+        return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};
+    }
 });
 
 function renderHomePage() {

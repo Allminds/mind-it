@@ -4,10 +4,9 @@ App.nodeCutToPaste = null;
 App.isIndicatorActive = false;
 App.allDescendants = [];
 App.indexDescendants = 0;
-//userStatusService = App.usersStatusService.getInstance();
 
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
-    var parent = removedNode.parent,
+    var parent   = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
     var focusableNode = siblings[removedNodeIndex];
     if (siblings.length == 0) {
@@ -17,19 +16,7 @@ App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
     }
     App.selectNode(focusableNode);
 };
-App.eventBinding.unBindAllEvents = function () {
-    Mousetrap.unbind('mod+x');
-    Mousetrap.unbind('mod+c');
-    Mousetrap.unbind('mod+v');
-    Mousetrap.unbind('enter');
-    Mousetrap.unbind('tab');
-    Mousetrap.unbind('del');
-    Mousetrap.unbind('mod+left');
-    Mousetrap.unbind('mod+right');
-    Mousetrap.unbind('mod+up');
-    Mousetrap.unbind('mod+down');
-    Mousetrap.unbind('mod+x');
-};
+
 App.cutNode = function (selectedNode) {
     if (App.Node.isRoot(selectedNode) == true) {
         alert("The root node cannot be cut!");
@@ -38,10 +25,10 @@ App.cutNode = function (selectedNode) {
 
     App.nodeCutToPaste.push(selectedNode);
 
-    var dir = App.Node.getDirection(selectedNode),
-        parent = selectedNode.parent,
-        siblings = App.Node.getSubTree(parent, dir),
-        siblingsIDList = siblings.map(function (_) {
+    var dir               = App.Node.getDirection(selectedNode),
+        parent            = selectedNode.parent,
+        siblings          = App.Node.getSubTree(parent, dir),
+        siblingsIDList    = siblings.map(function (_) {
             return _._id;
         }),
         selectedNodeIndex = siblingsIDList.indexOf(selectedNode._id);
@@ -57,7 +44,6 @@ App.cutNode = function (selectedNode) {
 
 };
 
-
 App.eventBinding.f2Action = function (event) {
     (event.preventDefault || event.stop || event.stopPropagation || function () {
     }).call(event);
@@ -71,102 +57,93 @@ App.eventBinding.f2Action = function (event) {
     }
 };
 
-Mousetrap.bind('mod+z', function () {
-    App.RepeatHandler.undo();
-});
-
-Mousetrap.bind('command+shift+z', function () {
-    App.RepeatHandler.redo();
-});
-
-Mousetrap.bind('ctrl+y', function () {
-    App.RepeatHandler.redo();
-});
-
-Mousetrap.bind('f2', function (event) {
-    App.eventBinding.f2Action(event);
-});
-
-
-Mousetrap.bind('mod+x', function () {
-    var selectedNodes = [];
-    selectedNodes = App.multiSelectedNodes.map(function (elem) {
-        return elem.__data__;
-    });
-    App.multiSelectedNodes = [];
-    App.clearAllSelected();
-    App.nodeToPasteBulleted = [];
-    App.nodeCutToPaste = [];
-    for (var i = 0; i < selectedNodes.length; i++) {
-        if (App.Node.isRoot(selectedNodes[i])) {
-            alert("Selection Contains Root and the root node cannot be cut!");
-            return;
-        }
+var f2ActionEvent = {
+    allowedInReadOnlyMode: false,
+    method:                 function () {
+        App.eventBinding.f2Action(this.event);
     }
-    var nodeToBeFocussed = null;
-    var removedNodeIndex = null;
-    var parentOfSelectedNode = null;
-    var nodeToBeFocussedPosition = null;
-    var selectedNode = null;
-    var selectedNodesArray = [];
-    var parent = null;
-    var elementToBePushed = selectedNodes.map(function (element) {
-        //var node = element.__data__;
-        var node = element;
-        selectedNodesArray.push(node);
-        parent = element.parent;
-        var direction = App.getDirection(element);
-        var indexOfNode = App.Node.getIndexOfNode(node);
-        selectedNode = node;
-        parentOfSelectedNode = node.parent;
-        nodeToBeFocussed = selectedNode.parentId;
-        removedNodeIndex = indexOfNode;
-        nodeToBeFocussedPosition = parentOfSelectedNode.position;
-        App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
-        App.cutNode(node);
-        // selectedNodes = App.multiSelectedNodes;
-        return new App.stackData(node, "addNodeAfterCut", direction, indexOfNode, parent);
-    });
-    var areSiblings = App.checkIfSiblings(selectedNodes);
-    if (areSiblings) {
-        var nodeToFocus = null;
-        var siblings = (App.Node.isRoot(parent) ? parent[nodeToBeFocussedPosition] : parent.childSubTree) || [];
-        if (siblings.length == 0) {
-            nodeToFocus = parent;
-        } else if (removedNodeIndex <= siblings.length) {
-            nodeToFocus = siblings[removedNodeIndex - 1];
-        }
-        App.selectNode(nodeToFocus);
-    } else if (nodeToBeFocussed) {
-        var existingNodesInUI = d3.selectAll(".node")[0];
-        nodeToBeFocussed = existingNodesInUI.filter(
-            function (_) {
-                if (_.__data__._id == nodeToBeFocussed)
-                    return _;
-            }
-        );
-        App.select(nodeToBeFocussed[0]);
-    }
-
-    App.RepeatHandler.addToActionStack(elementToBePushed.reverse());
-});
-
-App.eventBinding.copyAction = function () {
-    var nodes = App.multiSelectedNodes;
-    App.multiSelectedNodes = [];
-    App.clearAllSelected();
-
-    App.nodeCutToPaste = [];
-
-
-    App.nodeToPasteBulleted = [];
-    nodes = finalNodes(nodes);
-
-    nodes.forEach(function (element) {
-        var node = element.__data__;
-        App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
-    });
 };
+
+var undoEvent = {
+    allowedInReadOnlyMode: false,
+    method:                 function () {
+        App.RepeatHandler.undo();
+    }
+};
+
+var redoEvent = {
+    allowedInReadOnlyMode: false,
+    method:                 function () {
+        App.RepeatHandler.redo();
+    }
+};
+
+var cutEvent = {
+    allowedInReadOnlyMode: false,
+    method:                 function () {
+        var selectedNodes = [];
+        selectedNodes = App.multiSelectedNodes.map(function (elem) {
+            return elem.__data__;
+        });
+        App.multiSelectedNodes = [];
+        App.clearAllSelected();
+        App.nodeToPasteBulleted = [];
+        App.nodeCutToPaste = [];
+        for (var i = 0; i < selectedNodes.length; i++) {
+            if (App.Node.isRoot(selectedNodes[i])) {
+                alert("Selection Contains Root and the root node cannot be cut!");
+                return;
+            }
+        }
+        var nodeToBeFocussed = null;
+        var removedNodeIndex = null;
+        var parentOfSelectedNode = null;
+        var nodeToBeFocussedPosition = null;
+        var selectedNode = null;
+        var selectedNodesArray = [];
+        var parent = null;
+        var elementToBePushed = selectedNodes.map(function (element) {
+            //var node = element.__data__;
+            var node = element;
+            selectedNodesArray.push(node);
+            parent = element.parent;
+            var direction = App.getDirection(element);
+            var indexOfNode = App.Node.getIndexOfNode(node);
+            selectedNode = node;
+            parentOfSelectedNode = node.parent;
+            nodeToBeFocussed = selectedNode.parentId;
+            removedNodeIndex = indexOfNode;
+            nodeToBeFocussedPosition = parentOfSelectedNode.position;
+            App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
+            App.cutNode(node);
+            // selectedNodes = App.multiSelectedNodes;
+            return new App.stackData(node, "addNodeAfterCut", direction, indexOfNode, parent);
+        });
+        var areSiblings = App.checkIfSiblings(selectedNodes);
+        if (areSiblings) {
+            var nodeToFocus = null;
+            var siblings = (App.Node.isRoot(parent) ? parent[nodeToBeFocussedPosition] : parent.childSubTree) || [];
+            if (siblings.length == 0) {
+                nodeToFocus = parent;
+            } else if (removedNodeIndex <= siblings.length) {
+                nodeToFocus = siblings[removedNodeIndex - 1];
+            }
+            App.selectNode(nodeToFocus);
+        } else if (nodeToBeFocussed) {
+            var existingNodesInUI = d3.selectAll(".node")[0];
+            nodeToBeFocussed = existingNodesInUI.filter(
+                function (_) {
+                    if (_.__data__._id == nodeToBeFocussed)
+                        return _;
+                }
+            );
+            App.select(nodeToBeFocussed[0]);
+        }
+
+        App.RepeatHandler.addToActionStack(elementToBePushed.reverse());
+    }
+};
+
 var finalNodes = function (nodes) {
     var mapNodes = new Map();
 
@@ -194,9 +171,29 @@ var finalNodes = function (nodes) {
     return nodes1;
 };
 
-Mousetrap.bind('mod+c', function () {
-    App.eventBinding.copyAction();
-});
+App.eventBinding.copyAction = function () {
+    var nodes = App.multiSelectedNodes;
+    App.multiSelectedNodes = [];
+    App.clearAllSelected();
+
+    App.nodeCutToPaste = [];
+
+
+    App.nodeToPasteBulleted = [];
+    nodes = finalNodes(nodes);
+
+    nodes.forEach(function (element) {
+        var node = element.__data__;
+        App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
+    });
+};
+
+var copyEvent = {
+    allowedInReadOnlyMode: false,
+    method:                 function () {
+        App.eventBinding.copyAction();
+    }
+};
 
 var getNextSiblingForShift = function (currentNode, keyPressed) {
     var nextNode = null;
@@ -233,7 +230,6 @@ var getNextSiblingForShift = function (currentNode, keyPressed) {
     }
 };
 
-
 var sortNodesAccToUi = function (nodes) {
     var temp;
     for (var i = 0; i < nodes.length; i++) {
@@ -250,193 +246,455 @@ var sortNodesAccToUi = function (nodes) {
     }
     return nodes;
 }
-Mousetrap.bind('shift+up', function () {
 
+var shiftUpEvent = {
+    allowedInReadOnlyMode: true,
+    method:                 function () {
 
-    var node = d3.select('.selected').node();
-    var nextNode = getNextSiblingForShift(node.__data__, App.Constants.KeyPressed.UP);
+        var node = d3.select('.selected').node();
+        var nextNode = getNextSiblingForShift(node.__data__, App.Constants.KeyPressed.UP);
 
-    if (!nextNode) {
-        return;
+        if (!nextNode) {
+            return;
+        }
+
+        nextNode = d3.selectAll('.node')[0].find(function (_) {
+            return _.__data__._id == nextNode._id;
+        });
+
+        if (d3.select(nextNode).attr("class").indexOf("softSelected") >= 0) {
+            App.select(node, true);
+            App.selectShiftVertical(nextNode);
+        } else {
+            App.select(nextNode, true);
+        }
     }
+};
 
-    nextNode = d3.selectAll('.node')[0].find(function (_) {
-        return _.__data__._id == nextNode._id;
-    });
+var shiftDownEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+        var node = d3.select('.selected').node().__data__;
+        var nextNode = getNextSiblingForShift(node, App.Constants.KeyPressed.DOWN);
+        if (!nextNode) {
+            return;
+        }
+        var node = d3.select('.selected').node();
+        nextNode = d3.selectAll('.node')[0].find(function (_) {
+            return _.__data__._id == nextNode._id;
+        });
+        if (d3.select(nextNode).attr("class").indexOf("softSelected") >= 0) {
+            App.select(node, true);
+            App.selectShiftVertical(nextNode);
 
-    if (d3.select(nextNode).attr("class").indexOf("softSelected") >= 0) {
-        App.select(node, true);
-        App.selectShiftVertical(nextNode);
-    } else {
-        App.select(nextNode, true);
+        } else {
+
+            App.select(nextNode, true);
+        }
+
+
     }
-});
+};
 
-Mousetrap.bind('shift+down', function () {
-    var node = d3.select('.selected').node().__data__;
-    var nextNode = getNextSiblingForShift(node, App.Constants.KeyPressed.DOWN);
-    if (!nextNode) {
-        return;
-    }
-    var node = d3.select('.selected').node();
-    nextNode = d3.selectAll('.node')[0].find(function (_) {
-        return _.__data__._id == nextNode._id;
-    });
-    if (d3.select(nextNode).attr("class").indexOf("softSelected") >= 0) {
-        App.select(node, true);
-        App.selectShiftVertical(nextNode);
-
-    } else {
-
-        App.select(nextNode, true);
-    }
-
-
-});
 var selectAllDescendants = function (selectedNode) {
-
     children = App.Node.isRoot(selectedNode) ? App.Node.getSubTree(selectedNode, "right").concat(App.Node.getSubTree(selectedNode, "left")) : selectedNode.childSubTree;
     if (children) {
         children.forEach(function (child) {
                 App.allDescendants[App.indexDescendants++] = child;
 
                 selectAllDescendants(child);
-
-
             }
         );
     }
-
 }
 
-Mousetrap.bind('shift+right', function () {
-    App.allDescendants = [];
+var shiftRightEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+        App.allDescendants = [];
 
-    d3.selectAll(".softSelected").classed("softSelected", false);
-    App.multiSelectedNodes = [];
+        d3.selectAll(".softSelected").classed("softSelected", false);
+        App.multiSelectedNodes = [];
 
-    var selectedNode = d3.select('.selected').node();
+        var selectedNode = d3.select('.selected').node();
 
-    parent = selectedNode.__data__.parentId ? selectedNode.__data__.parent : selectedNode.__data__;
-    dir = App.calculateDirection(parent);
-    if (dir == "right") {
-        selectAllDescendants(selectedNode.__data__);
-    } else if (dir == "left") {
-        selectAllDescendants(parent);
-    } else {
-        App.allDescendants[App.indexDescendants++] = parent;
-        selectAllDescendants(parent);
-    }
-
-    var currentNodeDepth = d3.select(".selected")[0][0].__data__.depth;
-    var allVisibleNodes = d3.selectAll(".node")[0];
-
-    allVisibleNodes.forEach(function (node) {
-        App.allDescendants.forEach(function (node1) {
-            if (node1._id == node.__data__._id) {
-                App.selectShiftHorizontal(node);
-            }
-            if (parent._id == node.__data__._id) {
-                parent = node;
-            }
-        });
-
-        if (selectedNode.__data__._id == node.__data__._id) {
-            App.selectShiftHorizontal(selectedNode);
+        parent = selectedNode.__data__.parentId ? selectedNode.__data__.parent : selectedNode.__data__;
+        dir = App.calculateDirection(parent);
+        if (dir == "right") {
+            selectAllDescendants(selectedNode.__data__);
+        } else if (dir == "left") {
+            selectAllDescendants(parent);
+        } else {
+            App.allDescendants[App.indexDescendants++] = parent;
+            selectAllDescendants(parent);
         }
-    });
 
-    if (dir == "left") {
-        d3.select(parent).classed("softSelected", true);
-        App.deselectNode();
-        d3.select(parent).classed("selected", true);
-        if (App.multiSelectedNodes.indexOf(parent) < 0)
-            App.multiSelectedNodes.push(parent);
-    }
+        var currentNodeDepth = d3.select(".selected")[0][0].__data__.depth;
+        var allVisibleNodes = d3.selectAll(".node")[0];
 
-});
+        allVisibleNodes.forEach(function (node) {
+            App.allDescendants.forEach(function (node1) {
+                if (node1._id == node.__data__._id) {
+                    App.selectShiftHorizontal(node);
+                }
+                if (parent._id == node.__data__._id) {
+                    parent = node;
+                }
+            });
 
-
-Mousetrap.bind('shift+left', function () {
-    App.allDescendants = [];
-
-    d3.selectAll(".softSelected").classed("softSelected", false);
-    App.multiSelectedNodes = [];
-
-    var selectedNode = d3.select('.selected').node();
-
-    //var dbNode = App.Node.d3NodeToDbNode(selectedNode),
-    parent = selectedNode.__data__.parentId ? selectedNode.__data__.parent : selectedNode.__data__;
-    dir = App.calculateDirection(parent);
-
-    if (dir == "left") {
-        selectAllDescendants(selectedNode.__data__);
-    } else if (dir == "right") {
-        selectAllDescendants(parent);
-    } else {
-        App.allDescendants[App.indexDescendants++] = parent;
-        selectAllDescendants(parent);
-    }
-
-    var currentNodeDepth = d3.select(".selected")[0][0].__data__.depth;
-    var allVisibleNodes = d3.selectAll(".node")[0];
-
-    allVisibleNodes.forEach(function (node) {
-        App.allDescendants.forEach(function (node1) {
-            if (node1._id == node.__data__._id) {
-                App.selectShiftHorizontal(node);
-            }
-            if (parent._id == node.__data__._id) {
-                parent = node;
+            if (selectedNode.__data__._id == node.__data__._id) {
+                App.selectShiftHorizontal(selectedNode);
             }
         });
-        if (selectedNode.__data__._id == node.__data__._id) {
-            App.selectShiftHorizontal(selectedNode);
+
+        if (dir == "left") {
+            d3.select(parent).classed("softSelected", true);
+            App.deselectNode();
+            d3.select(parent).classed("selected", true);
+            if (App.multiSelectedNodes.indexOf(parent) < 0)
+                App.multiSelectedNodes.push(parent);
         }
-    });
 
-    if (dir == "right") {
-        d3.select(parent).classed("softSelected", true);
+    }
+};
+
+var shiftLeftEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+        App.allDescendants = [];
+
+        d3.selectAll(".softSelected").classed("softSelected", false);
+        App.multiSelectedNodes = [];
+
+        var selectedNode = d3.select('.selected').node();
+
+        parent = selectedNode.__data__.parentId ? selectedNode.__data__.parent : selectedNode.__data__;
+        dir = App.calculateDirection(parent);
+
+        if (dir == "left") {
+            selectAllDescendants(selectedNode.__data__);
+        } else if (dir == "right") {
+            selectAllDescendants(parent);
+        } else {
+            App.allDescendants[App.indexDescendants++] = parent;
+            selectAllDescendants(parent);
+        }
+
+        var allVisibleNodes = d3.selectAll(".node")[0];
+
+        allVisibleNodes.forEach(function (node) {
+            App.allDescendants.forEach(function (node1) {
+                if (node1._id == node.__data__._id) {
+                    App.selectShiftHorizontal(node);
+                }
+                if (parent._id == node.__data__._id) {
+                    parent = node;
+                }
+            });
+            if (selectedNode.__data__._id == node.__data__._id) {
+                App.selectShiftHorizontal(selectedNode);
+            }
+        });
+
+        if (dir == "right") {
+            d3.select(parent).classed("softSelected", true);
+            App.deselectNode();
+            d3.select(parent).classed("selected", true);
+            if (App.multiSelectedNodes.indexOf(parent) < 0)
+                App.multiSelectedNodes.push(parent);
+        }
+    }
+};
+
+var pasteEvent = {
+    allowedInReadOnlyMode: false, method: function () {
+        var targetNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
+        var dir = App.calculateDirection(targetNode);
+        if (targetNode.isCollapsed)
+            App.expandRecursive(targetNode, targetNode._id);
+
+        if (App.nodeCutToPaste != null && App.nodeCutToPaste.length) {
+            var undoArray = App.nodeCutToPaste.map(function (element) {
+                App.Node.reposition(element, targetNode, null, null, dir);
+                var stackData = new App.stackData(element, "cutNode");
+                stackData.oldParentId = element.parentId;
+                return stackData;
+
+            });
+            App.RepeatHandler.addToActionStack(undoArray);
+            App.nodeCutToPaste = [];
+        } else {
+            var undoArray = App.nodeToPasteBulleted.map(function (sourceNodeBulleted) {
+                var headerNode = App.CopyParser.populateObjectFromBulletedList(sourceNodeBulleted, targetNode),
+                    index      = App.Node.getSubTree(App.map.getNodeDataWithNodeId(headerNode.parentId),
+                        App.getDirection(headerNode)).length;
+
+
+                var stackData = new App.stackData(headerNode, "deleteNode", App.getDirection(headerNode), index);
+                stackData.oldParentId = headerNode.parentId;
+                return stackData;
+            });
+            App.RepeatHandler.addToActionStack(undoArray.reverse());
+        }
+
+    }
+};
+
+var enterEvent = {
+    allowedInReadOnlyMode: false, method: function () {
+        App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
+        App.clearAllSelected();
+        return false;
+    }
+};
+
+var tabEvent = {
+    allowedInReadOnlyMode: false, method: function () {
+        App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
+        App.clearAllSelected();
+        return false;
+    }
+};
+
+var delEvent = {
+    allowedInReadOnlyMode: false, method: function () {
+        App.eventBinding.deleteAction();
+
+        App.getChartInFocus();
+
+    }
+};
+
+var exportEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+        var rootName = d3.select(".node.level-0")[0][0].__data__.name;
+        App.exportParser.export(rootName);
+    }
+};
+
+var modLeftEvent = {
+    allowedInReadOnlyMode: false, method: debounce(0, true,
+        function () {
+            App.eventBinding.horizontalRepositionAction(App.Constants.KeyPressed.LEFT);
+        })
+};
+
+var modRightEvent = {
+    allowedInReadOnlyMode: false, method: debounce(0, true,
+        function () {
+            App.eventBinding.horizontalRepositionAction(App.Constants.KeyPressed.RIGHT);
+        })
+};
+
+var modUpEvent = {
+    allowedInReadOnlyMode: false, method: debounce(0, true, function () {
+        App.eventBinding.verticalRepositionAction(App.Constants.KeyPressed.UP);
+    })
+};
+
+var modDownEvent = {
+    allowedInReadOnlyMode: false, method: debounce(0, true, function () {
+        App.eventBinding.verticalRepositionAction(App.Constants.KeyPressed.DOWN);
+    })
+};
+
+var escEvent = {
+    allowedInReadOnlyMode: true, method: function goToRootNode() {
+        App.select(d3.select('.node.level-0')[0][0]);
+        App.getChartInFocus();
+    }
+};
+
+var helpEvent = {
+    allowedInReadOnlyMode: true, method: function showHelp() {
+        $('#help-modal').modal('show');
+    }
+};
+
+var upEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+        var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function () {
+        }, App.Constants.KeyPressed.UP);
+        App.clearAllSelected();
+        //	Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
+
+        // console.log("moving to -->up",d3.select('.selected').node().__data__);
+
+        return a;
+    }
+};
+
+var downEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+
+        var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function () {
+        }, App.Constants.KeyPressed.DOWN);
+        App.clearAllSelected();
+        // console.log("moving to -->down",d3.select('.selected').node().__data__);
+        //	Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
+
+        return a;
+    }
+};
+
+var leftEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+
+        var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.LEFT);
+        App.clearAllSelected();
+        // console.log("moving to -->left",d3.select('.selected').node().__data__);
+        //userStatusService.updateUserNode(Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);s
+//Meteor.users.update({"services.google.email":Meteor.user().services.google.email},{$set :  {mindmap:{id: d3.select(".node.level-0")[0][0].__data__._id,node :d3.select('.selected').node().__data__._id}}});
+        //	Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
+
+        return a;
+    }
+};
+
+var rightEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+        var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.RIGHT);
+        App.clearAllSelected();
+        // console.log("moving to -->right",d3.select('.selected').node().__data__);
+
+        //		Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
+
+        return a;
+    }
+};
+
+var spaceEvent = {
+    allowedInReadOnlyMode: true, method: function () {
+
+        event = arguments[0];
+        (event.preventDefault || event.stop || event.stopPropagation || function () {
+        }).call(event);
+
+        var multiStackData = [];
+        for (var i = 0; i < App.multiSelectedNodes.length; i++) {
+            App.toggleCollapsedNode(App.multiSelectedNodes[i].__data__);
+            multiStackData.push(new App.stackData(App.multiSelectedNodes[i].__data__, "toggleCollapse"));
+        }
+        App.multiSelectedNodes = d3.selectAll(".softSelected")[0];
+
         App.deselectNode();
-        d3.select(parent).classed("selected", true);
-        if (App.multiSelectedNodes.indexOf(parent) < 0)
-            App.multiSelectedNodes.push(parent);
+        var node = App.multiSelectedNodes[App.multiSelectedNodes.length - 1];
+        d3.select(node).classed("selected", true);
+
+        App.RepeatHandler.addToActionStack(multiStackData.reverse());
+
     }
-});
+};
 
-
-Mousetrap.bind('mod+v', function () {
-    var targetNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
-    var dir = App.calculateDirection(targetNode);
-    if (targetNode.isCollapsed)
-        App.expandRecursive(targetNode, targetNode._id);
-
-    if (App.nodeCutToPaste != null && App.nodeCutToPaste.length) {
-        var undoArray = App.nodeCutToPaste.map(function (element) {
-            App.Node.reposition(element, targetNode, null, null, dir);
-            var stackData = new App.stackData(element, "cutNode");
-            stackData.oldParentId = element.parentId;
-            return stackData;
-
-        });
-        App.RepeatHandler.addToActionStack(undoArray);
-        App.nodeCutToPaste = [];
-    } else {
-        var undoArray = App.nodeToPasteBulleted.map(function (sourceNodeBulleted) {
-            var headerNode = App.CopyParser.populateObjectFromBulletedList(sourceNodeBulleted, targetNode),
-                index = App.Node.getSubTree(App.map.getNodeDataWithNodeId(headerNode.parentId),
-                    App.getDirection(headerNode)).length;
-
-
-            var stackData = new App.stackData(headerNode, "deleteNode", App.getDirection(headerNode), index);
-            stackData.oldParentId = headerNode.parentId;
-            return stackData;
-        });
-        App.RepeatHandler.addToActionStack(undoArray.reverse());
+var expandAllEvent = {
+    allowedInReadOnlyMode: true,
+    method:                function () {
+        e = arguments[0];
+        e.preventDefault();
+        App.presentation.expandAll();
     }
+};
 
-});
+var collapseAllEvent = {
+    allowedInReadOnlyMode: true,
+    method:                function () {
+        e = arguments[0];
+        e.preventDefault();
+        App.presentation.collapseAllMindmap();
+    }
+};
 
+var setCmd = function (e) {
+    App.cmdDown = true;
+};
+
+var clearCmd = function (e) {
+    App.cmdDown = false;
+};
+
+Mousetrap.bind('mod', setCmd, 'keydown');
+Mousetrap.bind('mod', clearCmd, 'keyup');
+
+var presentationModeEvent = {
+    allowedInReadOnlyMode: true,
+    method: function () {
+        event = arguments[0];
+        event.preventDefault();
+        App.presentation.preparePresentationUI();
+
+    }
+};
+
+var pageUpEvent = {
+    allowedInReadOnlyMode: true,
+    method:                function () {
+        e = arguments[0];
+        e.preventDefault();
+        if (App.presentation.presentationMode) {
+            App.presentation.moveCursorToPreviousNode();
+        }
+    }
+};
+
+var pageDownEvent = {
+    allowedInReadOnlyMode: true,
+    method:                function () {
+        e = arguments[0];
+        e.preventDefault();
+        if (App.presentation.presentationMode) {
+            App.presentation.moveCursorToNextNode();
+        }
+    }
+};
+
+App.eventBinding.EventsMap = {
+    'mod+z':       undoEvent,
+    'cmd+shift+z': redoEvent,
+    'ctrl+y':      redoEvent,
+    'mod+x':       cutEvent,
+    'mod+c':       copyEvent,
+    'shift+up':    shiftUpEvent,
+    'shift+down':  shiftDownEvent,
+    'shift+right': shiftRightEvent,
+    'shift+left':  shiftLeftEvent,
+    'mod+v':       pasteEvent,
+    'enter':       enterEvent,
+    'tab':         tabEvent,
+    'del':         delEvent,
+    'mod+e':       exportEvent,
+    'mod+left':    modLeftEvent,
+    'mod+right':   modRightEvent,
+    'mod+up':      modUpEvent,
+    'mod+down':    modDownEvent,
+    'esc':         escEvent,
+    '?':           helpEvent,
+    'f2':          f2ActionEvent,
+    'up':          upEvent,
+    'down':        downEvent,
+    'right':       rightEvent,
+    'left':        leftEvent,
+    'space':       spaceEvent,
+    'mod+shift+p': presentationModeEvent,
+    'pageup':      pageUpEvent,
+    'pagedown':    pageDownEvent,
+    'mod+l':       expandAllEvent,
+    'mod+shift+l': collapseAllEvent
+};
+
+App.eventBinding.bindAllEvents = function () {
+    var eventsMap = App.eventBinding.EventsMap;
+    for (var event in eventsMap) {
+        Mousetrap.bind(event, eventsMap[event].method);
+    }
+};
+
+App.eventBinding.bindAllEvents();
+
+App.eventBinding.unbindEditableEvents = function () {
+    var eventsMap = App.eventBinding.EventsMap;
+    for (var event in eventsMap) {
+        if (!eventsMap[event].allowedInReadOnlyMode) {
+            Mousetrap.unbind(event);
+        }
+    }
+};
 
 App.eventBinding.escapeOnNewNode = function (newNode) {
     var parentNode = App.map.getNodeDataWithNodeId(newNode.parentId);
@@ -476,9 +734,9 @@ App.eventBinding.newNodeAddAction = function (action) {
 };
 
 App.eventBinding.enterAction = function (selectedNode) {
-    var dbNode = App.Node.d3NodeToDbNode(selectedNode),
-        parent = dbNode.parentId ? dbNode.parent : dbNode,
-        dir = App.calculateDirection(parent),
+    var dbNode   = App.Node.d3NodeToDbNode(selectedNode),
+        parent   = dbNode.parentId ? dbNode.parent : dbNode,
+        dir      = App.calculateDirection(parent),
         siblings = App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree;
 
     var childIndex = App.Node.isRoot(dbNode) ? siblings.length : siblings.map(function (child) {
@@ -488,29 +746,17 @@ App.eventBinding.enterAction = function (selectedNode) {
     return App.map.addNewNode(parent, dir, childIndex);
 };
 
-Mousetrap.bind('enter', function () {
-    App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
-    App.clearAllSelected();
-    return false;
-});
-
 App.eventBinding.tabAction = function (selectedNode) {
     if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
         App.expand(selectedNode, selectedNode._id);
     }
-    var dbNode = App.Node.d3NodeToDbNode(selectedNode),
-        dir = App.calculateDirection(dbNode),
-        siblings = dbNode.position ? dbNode.childSubTree : dbNode[dir],
+    var dbNode     = App.Node.d3NodeToDbNode(selectedNode),
+        dir        = App.calculateDirection(dbNode),
+        siblings   = dbNode.position ? dbNode.childSubTree : dbNode[dir],
         childIndex = siblings.length;
 
     return App.map.addNewNode(dbNode, dir, childIndex);
 };
-
-Mousetrap.bind('tab', function () {
-    App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
-    App.clearAllSelected();
-    return false;
-});
 
 App.eventBinding.deleteAction = function () {
 
@@ -562,13 +808,6 @@ App.eventBinding.deleteAction = function () {
 
 };
 
-Mousetrap.bind('del', function () {
-    App.eventBinding.deleteAction();
-
-    App.getChartInFocus();
-
-});
-
 App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
     var index;
     if (keyPressed === App.Constants.KeyPressed.DOWN)
@@ -605,7 +844,7 @@ App.eventBinding.performLogicalVerticalMovement = function (node, keyPressed) {
     var direction = App.getDirection(node);
     if (direction === 'root') return;
 
-    var parent = node.parent,
+    var parent   = node.parent,
         siblings = (App.Node.isRoot(parent) ? parent[direction] : parent.childSubTree) || [],
         iterator = (keyPressed === App.Constants.KeyPressed.DOWN) ? 0 : 1;
 
@@ -661,28 +900,6 @@ App.eventBinding.bindEventAction = function (event, left, right, root, keyPresse
     return false;
 };
 
-Mousetrap.bind('up', function () {
-    var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function () {
-    }, App.Constants.KeyPressed.UP);
-    App.clearAllSelected();
-    //	Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
-
-    // console.log("moving to -->up",d3.select('.selected').node().__data__);
-
-    return a;
-});
-
-Mousetrap.bind('down', function () {
-
-    var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.performLogicalVerticalMovement, App.eventBinding.performLogicalVerticalMovement, function () {
-    }, App.Constants.KeyPressed.DOWN);
-    App.clearAllSelected();
-    // console.log("moving to -->down",d3.select('.selected').node().__data__);
-    //	Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
-
-    return a;
-});
-
 App.eventBinding.handleCollapsing = function (data) {
     var node;
     if (data.hasOwnProperty('isCollapsed') && data.isCollapsed) {
@@ -697,55 +914,6 @@ App.eventBinding.getParentForEventBinding = function (data, dir) {
     var node = data.parent || data[dir][0];
     App.eventBinding.afterBindEventAction(node);
 };
-
-Mousetrap.bind('left', function () {
-
-    var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.LEFT);
-    App.clearAllSelected();
-    // console.log("moving to -->left",d3.select('.selected').node().__data__);
-    //userStatusService.updateUserNode(Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);s
-//Meteor.users.update({"services.google.email":Meteor.user().services.google.email},{$set :  {mindmap:{id: d3.select(".node.level-0")[0][0].__data__._id,node :d3.select('.selected').node().__data__._id}}});
-    //	Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
-
-    return a;
-});
-
-Mousetrap.bind('right', function () {
-    var a = App.eventBinding.bindEventAction(arguments[0], App.eventBinding.getParentForEventBinding, App.eventBinding.handleCollapsing, App.eventBinding.getParentForEventBinding, App.Constants.KeyPressed.RIGHT);
-    App.clearAllSelected();
-    // console.log("moving to -->right",d3.select('.selected').node().__data__);
-
-    //		Meteor.call("updateUserStatus",Meteor.user().services.google.email,d3.select(".node.level-0")[0][0].__data__._id,d3.select('.selected').node().__data__._id);
-
-    return a;
-});
-
-Mousetrap.bind('space', function () {
-
-    event = arguments[0];
-    (event.preventDefault || event.stop || event.stopPropagation || function () {
-    }).call(event);
-
-    var multiStackData = [];
-    for (var i = 0; i < App.multiSelectedNodes.length; i++) {
-        App.toggleCollapsedNode(App.multiSelectedNodes[i].__data__);
-        multiStackData.push(new App.stackData(App.multiSelectedNodes[i].__data__, "toggleCollapse"));
-    }
-    App.multiSelectedNodes = d3.selectAll(".softSelected")[0];
-
-    App.deselectNode();
-    var node = App.multiSelectedNodes[App.multiSelectedNodes.length - 1];
-    d3.select(node).classed("selected", true);
-
-    App.RepeatHandler.addToActionStack(multiStackData.reverse());
-
-});
-
-Mousetrap.bind('mod+e', function () {
-    var rootName = d3.select(".node.level-0")[0][0].__data__.name;
-    App.exportParser.export(rootName);
-});
-
 
 App.getInOrderOfAppearance = function (multiSelectedNodes) {
     var firstSelection = multiSelectedNodes[0].__data__;
@@ -778,14 +946,13 @@ var getMultiSelectedNodes = function (inorder) {
 
 };
 
-
 App.eventBinding.horizontalRepositionAction = function (repositionDirection) {
     var nodes = getMultiSelectedNodes(true);
     if (nodes) {
         var indexOfDeletedNode = nodes.findIndex(function (node) {
                 return App.Node.isDeleted(node)
             }),
-            siblings = App.Node.getSubTree(nodes[0].parent, App.Node.getDirection(nodes[0]));
+            siblings           = App.Node.getSubTree(nodes[0].parent, App.Node.getDirection(nodes[0]));
 
         if (indexOfDeletedNode != -1) return;
 
@@ -830,16 +997,6 @@ App.eventBinding.horizontalRepositionAction = function (repositionDirection) {
     }
 };
 
-Mousetrap.bind('mod+left', debounce(0, true,
-    function () {
-        App.eventBinding.horizontalRepositionAction(App.Constants.KeyPressed.LEFT);
-    }));
-
-Mousetrap.bind('mod+right', debounce(0, true,
-    function () {
-        App.eventBinding.horizontalRepositionAction(App.Constants.KeyPressed.RIGHT);
-    }));
-
 App.eventBinding.verticalRepositionAction = function (repositionDirection) {
     var nodes = getMultiSelectedNodes();
     if (nodes) {
@@ -861,64 +1018,3 @@ App.eventBinding.verticalRepositionAction = function (repositionDirection) {
         App.RepeatHandler.addToActionStack(undoStackElement.reverse());
     }
 };
-
-Mousetrap.bind('mod+up', debounce(0, true, function () {
-    App.eventBinding.verticalRepositionAction(App.Constants.KeyPressed.UP);
-}));
-
-Mousetrap.bind('mod+down', debounce(0, true, function () {
-    App.eventBinding.verticalRepositionAction(App.Constants.KeyPressed.DOWN);
-}));
-
-Mousetrap.bind("esc", function goToRootNode() {
-    App.select(d3.select('.node.level-0')[0][0]);
-    App.getChartInFocus();
-});
-
-Mousetrap.bind('?', function showHelp() {
-    $('#help-modal').modal('show');
-});
-
-
-var setCmd = function (e) {
-    App.cmdDown = true;
-};
-
-var clearCmd = function (e) {
-    App.cmdDown = false;
-};
-
-Mousetrap.bind('mod', setCmd, 'keydown');
-Mousetrap.bind('mod', clearCmd, 'keyup');
-
-Mousetrap.bind('mod+shift+p', function () {
-    event = arguments[0];
-    event.preventDefault();
-    App.presentation.preparePresentationUI();
-
-});
-Mousetrap.bind("pageup", function () {
-    e = arguments[0];
-    e.preventDefault();
-    App.presentation.moveCursorToPreviousNode();
-});
-
-Mousetrap.bind('pagedown', function () {
-    e = arguments[0];
-    e.preventDefault();
-    App.presentation.moveCursorToNextNode();
-});
-
-Mousetrap.bind('mod+l' , function () {
-    debugger;
-    e = arguments[0];
-    e.preventDefault();
-    App.presentation.expandAll();
-});
-
-Mousetrap.bind('mod+shift+l' , function () {
-    e = arguments[0];
-    e.preventDefault();
-    App.presentation.collapseAllMindmap();
-
-});

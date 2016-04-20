@@ -2,23 +2,15 @@ var mindMapService = App.MindMapService.getInstance();
 
 App.setEventBinding = function () {
     if (!App.editable) {
-        App.eventBinding.unBindAllEvents();
+        App.eventBinding.unbindEditableEvents();
     }
 };
 
 $(window).on('popstate', function () {
-    //$('#share-modal').on('shown.bs.modal', function () {
-    //    alert("hi there!");
-    //    location.reload(true);
-    //});
-
-    //location.reload(true);
-
     if (App.modal_shown == true) {
         App.modal_shown = false;
         location.reload(true);
     }
-
 });
 
 
@@ -40,49 +32,6 @@ var update = function (data) {
     $('#help-modal').modal('show');
 };*/
 
-//Template.create.events({
-//    'click #Share_btn': function () {
-//        $('#share-modal').modal('show');
-//
-//    },
-//
-//    'click #getSharableWriteLink': function () {
-//
-//        Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-//            var msg = value;
-//            alert(msg);
-//        });
-//
-//
-//    },
-//    'click #getSharableReadLink': function () {
-//        Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-//            var msg = value;
-//            alert(msg);
-//        });
-//    }
-//});
-
-//Template.create.helpers({
-//    shareReadLink: function () {
-//        if (App.isSharedMindmap == App.Constants.Mode.READ) {
-//            return "";
-//        }
-//
-//
-//        else
-//            return "Share read only link";
-//    },
-//    shareWriteLink: function () {
-//        if (App.isSharedMindmap == App.Constants.Mode.WRITE) {
-//            return "";
-//        }
-//
-//        else
-//            return "Share read-write link";
-//    }
-//
-//})
 
 Template.create.rendered = function rendered() {
     if (this.data.data.length == 0) {
@@ -96,7 +45,6 @@ Template.create.rendered = function rendered() {
         Meteor.call("isWritable", App.currentMap, email, function (error, value) {
             App.editable = value;
             App.setEventBinding();
-            //  UI.insert(UI.render(Template.sharemap), document.getElementById('shareblock'));
         });
 
     }
@@ -114,7 +62,6 @@ Template.create.rendered = function rendered() {
 
     App.retainCollapsed();
     Meteor.call("updateUserStatus", email, App.currentMap, App.currentMap);
-//  App.setMapsCount();
 };
 Template.readOnly.helpers({
     statusmsg: function () {
@@ -124,4 +71,16 @@ Template.readOnly.helpers({
             return "View Only";
     }
 });
+
+App.getEmbedCode = function () {
+   Meteor.call("getSharableReadLink",App.currentMap,function (error, value){
+       var link = value;
+       link = link.replace("sharedLink","embed");
+       var url = "http://"+location.hostname + (location.port ? ':' + location.port : '') + "/" + link;
+      var code =  "<iframe width=" +"\"854\"" + " height= "+ "\"480\" src=\""+url+"\" frameborder= \"0\" allowfullscreen></iframe>";
+       console.log(code);
+       return code;
+   })
+};
+
 

@@ -3,6 +3,7 @@ App.sharedMindmapUsers = [];
 
 Meteor.publish('mindmap', function (id, user_email_id, isSharedMindmap) {
     var userInfo = {emailId: user_email_id, mindmapId: id};
+
     if (isSharedMindmap == App.Constants.Mode.WRITE) {
         addToSharedMindmapUsers(userInfo);
 
@@ -26,12 +27,7 @@ Meteor.publish('mindmap', function (id, user_email_id, isSharedMindmap) {
         }
     }
 
-
 });
-Meteor.publish('mindmapForSharedLink', function (id) {
-    return Mindmaps.find({$or: [{_id: id}, {rootId: id}]});
-});
-
 
 Meteor.publish('userdata', function () {
     return Meteor.users.find(this.userId);
@@ -41,16 +37,51 @@ Meteor.publish('myRootNodes', function (emailId) {
 });
 
 Meteor.publish('onlineusers', function (mindmap) {
-    var results = acl.find({mind_map_id: mindmap}).fetch();
-    user_ids = results.map(function (obj) {
-        return obj.user_id;
-    });
-    for (var i = 0; i < App.sharedMindmapUsers.length; i++) {
-        if (mindmap == App.sharedMindmapUsers[i].mindmapId) {
-            user_ids.push(App.sharedMindmapUsers[i].emailId);
+    if (!this.userId) {
+        return [];
+    }
+
+    var doc = MindmapMetadata.findOne({rootId: mindmap});
+    var onlineUsers = [];
+    if (doc && doc.hasOwnProperty("onlineUsers")) {
+        onlineUsers = doc.onlineUsers;
+    }
+
+    var currentUser = Meteor.users.findOne(this.userId);
+    var userInfo = {};
+    userInfo.email = currentUser.services.google.email;
+    userInfo.profile = currentUser.profile;
+    userInfo.mindmap = currentUser.mindmap;
+    userInfo.picture = currentUser.services.google.picture;
+
+    this._session.socket.on("close", Meteor.bindEnvironment(function () {
+        onlineUsers = MindmapMetadata.findOne({rootId: mindmap}).onlineUsers;
+
+        onlineUsers = onlineUsers.filter(function(user) {
+            return user.email != currentUser.services.google.email;
+        });
+
+        MindmapMetadata.update({rootId: mindmap}, {$set: {onlineUsers: onlineUsers}});
+
+    }, function (e) {
+        console.log("Error : " , e);
+    }));
+
+    var i = 0;
+    for (i = 0; i < onlineUsers.length; i++) {
+        if (currentUser.services.google.email == onlineUsers[i].email) {
+            break;
         }
     }
-    return Meteor.users.find({'services.google.email': {$in: user_ids}});
+
+    if (i == onlineUsers.length) {
+        onlineUsers.push(userInfo);
+    }
+
+
+    MindmapMetadata.update({rootId: mindmap}, {$set: {onlineUsers: onlineUsers}});
+
+    return  MindmapMetadata.find({rootId: mindmap} , {fields : {onlineUsers : 1}});
 
 });
 Meteor.publish('acl', function (user_id) {
@@ -58,8 +89,6 @@ Meteor.publish('acl', function (user_id) {
 });
 
 Meteor.publish('Mindmaps', function (emailId) {
-    //return Mindmaps.find();
-    //var user = Meteor.user() ? Meteor.user().services.google.email : "*";
     var allAclMaps = acl.find({user_id: emailId}).fetch();
     var mapIds = allAclMaps.map(function (element) {
         return element.mind_map_id
@@ -130,7 +159,7 @@ Meteor.methods({
         return Mindmaps.find({}).count();
     },
     isInvalidMindmap: function (id) {
-        return Mindmaps.find( {$and:[{_id: id}, {rootId:null}]}).fetch().length == 0;
+        return Mindmaps.find({$and: [{_id: id}, {rootId: null}]}).fetch().length == 0;
     },
     addMaptoMindmapMetadata: function (emailId, mindmapId) {
         addToMindmapMetaData(mindmapId, emailId);
@@ -175,10 +204,10 @@ Meteor.methods({
     },
     getRootNodeFromLink: function (link) {
         var doc = MindmapMetadata.findOne({$or: [{readOnlyLink: link}, {readWriteLink: link}]});
-        if(doc && doc.readOnlyLink == link){
+        if (doc && doc.readOnlyLink == link) {
             doc.readWriteLink = "";
         }
-        if(doc && doc.readWriteLink == link){
+        if (doc && doc.readWriteLink == link) {
             doc.readOnlyLink = "";
         }
         return doc;
@@ -223,7 +252,7 @@ Meteor.methods({
             return user;
         }
     },
-    myRootNodes : function(emailId){
+    myRootNodes: function (emailId) {
         var result = rootNodesOfMyMaps(emailId).fetch();
         return result;
     },
