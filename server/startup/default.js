@@ -212,11 +212,11 @@ Meteor.methods({
         return doc;
     },
     updateUserStatus: function (mindMapId, nodeId) {
-        if(!this.userId) {
+        if(!Meteor.userId()) {
             return;
         }
-        var email_id = Meteor.users.findOne({_id : this.userId}).services.google.email;
-        App.usersStatusService.updateUserStatus(email_id, mindMapId, nodeId);
+        var emailId = Meteor.users.findOne({_id : this.userId}).services.google.email;
+        App.usersStatusService.updateUserStatus(emailId, mindMapId, nodeId);
     },
     createUserFromAdmin: function (username, profile, services) {
         var content = JSON.parse(username);

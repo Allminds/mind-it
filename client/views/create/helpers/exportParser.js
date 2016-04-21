@@ -21,7 +21,11 @@ App.JSONConverter = function () {
     var rightChildren = rootNode.right;
 
     leftChildren.forEach(function (leftChildId) {
-        var leftChildName = Mindmaps.findOne({_id: leftChildId}).name;
+        var leftNode = Mindmaps.findOne({_id: leftChildId});
+        if(leftNode == null) {
+            console.log("LeftNode : "  , leftChildId);
+        }
+        var leftChildName = leftNode.name;
         XMLString += App.exportParser.nodeString(leftChildId, leftChildName, App.exportParser.positions.LEFT);
 
         App.exportParser.children_recurse(leftChildId);
@@ -29,7 +33,12 @@ App.JSONConverter = function () {
     });
 
     rightChildren.forEach(function (rightChildId) {
-        var rightChildName = Mindmaps.findOne({_id: rightChildId}).name;
+        var rightNode = Mindmaps.findOne({_id: rightChildId});
+        if(rightNode == null) {
+            console.log("RightNode : "  , rightChildId);
+        }
+
+        var rightChildName = rightNode.name;
         XMLString += App.exportParser.nodeString(rightChildId, rightChildName, App.exportParser.positions.RIGHT);
 
         App.exportParser.children_recurse(rightChildId);

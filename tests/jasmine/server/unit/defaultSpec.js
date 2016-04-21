@@ -15,7 +15,7 @@ describe('default.js', function () {
             var url2 = randomString(10, App.Constants.CharacterSet);
             expect(url1).not.toBe(url2);
         })
-    })
+    });
     describe('addToMindmapMetaData', function () {
 
         it("Should call MindmapMetadata.insert()", function () {
@@ -23,7 +23,7 @@ describe('default.js', function () {
             addToMindmapMetaData("dummyId", "dummy@gmail.com");
             expect(MindmapMetadata.insert).toHaveBeenCalled();
         })
-    })
+    });
     describe('Meteor Methods', function () {
         describe('deleteNode', function () {
             it("Should call mindMapService.deleteNode", function () {
@@ -32,7 +32,7 @@ describe('default.js', function () {
                     expect(mindMapService.deleteNode).toHaveBeenCalled();
                 })
             })
-        })
+        });
 
         describe('countMaps', function () {
             it("Should call Mindmaps.find()", function () {
@@ -41,7 +41,7 @@ describe('default.js', function () {
                     expect(Mindmaps.find).toHaveBeenCalled();
                 })
             })
-        })
+        });
 
         describe('addMapToUser', function () {
             it("Should call App.dbService.addUser and return true", function () {
@@ -50,7 +50,7 @@ describe('default.js', function () {
                     expect(App.DbService.addUser).toHaveBeenCalled();
                 })
             })
-        })
+        });
 
         describe('findTree', function () {
             it("Should call mindMapService.findTree ", function () {
@@ -59,7 +59,7 @@ describe('default.js', function () {
                     expect(acl.findOne).toHaveBeenCalled();
                 })
             })
-        })
+        });
 
         describe('getSharableReadLink', function () {
             it("Should call MindmapMetadata.findOne", function () {
@@ -92,7 +92,7 @@ describe('default.js', function () {
                 Meteor.call("getSharableWriteLink", "dummyId", function () {
                     expect(MindmapMetadata.findOne).toHaveBeenCalled();
                 })
-            })
+            });
 
             it("Should remove www.mindit.xyz from sharable read-write link and return modified link", function(){
                 var document = {
@@ -108,7 +108,7 @@ describe('default.js', function () {
                     expect(modifiedLink).toBe("sharedLink/adsdsvsdv");
                 });
             })
-        })
+        });
 
         describe('getRootNodeFromLink', function () {
             it("Should call MindmapMetadata.findOne", function () {
@@ -157,17 +157,31 @@ describe('default.js', function () {
                 });
 
             });
-        })
+        });
 
         describe('updateUserStatus', function () {
-            xit("Should call  App.usersStatusService.updateUserStatus", function () {
+            it("Should call  App.usersStatusService.updateUserStatus", function () {
+                spyOn(Meteor , "userId").and.returnValue("1_id");
+                spyOn(Meteor.users , 'findOne').and.returnValue({services: { google : { email : "dummy@mail.com" }}});
                 spyOn(App.usersStatusService, 'updateUserStatus');
-                Meteor.call("updateUserStatus", "dummy@gmail.com", "dummyId", function (error, value) {
-                    expect(App.usersStatusService.updateUserStatus).toHaveBeenCalled();
+                Meteor.call("updateUserStatus", "dummyMindmapId", "dummyNodeId", function (error, value) {
+                    if (!error) {
+                        expect(App.usersStatusService.updateUserStatus).toHaveBeenCalledWith("dummy@mail.com" , "dummyMindmapId" , "dummyNodeId");
+                    }
+                })
+            });
+
+            it("Should not call App.usersStatusService.updateUserStatus when user is not logged In", function () {
+                spyOn(Meteor , "userId").and.returnValue(null);
+                spyOn(App.usersStatusService, 'updateUserStatus');
+                Meteor.call("updateUserStatus", "dummyMindmapId", "dummyNodeId", function (error, value) {
+                    if (!error) {
+                        expect(App.usersStatusService.updateUserStatus).not.toHaveBeenCalled();
+                    }
                 })
             })
 
-        })
+        });
 
         describe('createRootNode', function () {
             it("Should call mindMapService.createRootNode", function () {
@@ -177,7 +191,7 @@ describe('default.js', function () {
                 })
             });
 
-        })
+        });
         describe('createNode', function () {
             it("Should call mindMapService.addNode", function () {
                 spyOn(mindMapService, 'addNode');
@@ -186,7 +200,7 @@ describe('default.js', function () {
                 })
             });
 
-        })
+        });
 
         describe('updateNode', function () {
             it("Should call mindMapService.updateNode", function () {
@@ -196,7 +210,7 @@ describe('default.js', function () {
                 })
             });
 
-        })
+        });
 
         describe('isPublicMindmap', function () {
             it("Should return true if given mindmap is public", function () {
@@ -206,7 +220,7 @@ describe('default.js', function () {
                     fetch: function(){
                         //some dummy functionality.
                     }
-                }
+                };
                 spyOn(acl,'find').and.returnValue(obj);
                 spyOn(obj,'fetch').and.returnValue(result);
                 Meteor.call("isPublicMindmap", DUMMY_PUBLIC_MINDMAPID, function (error, value) {
@@ -221,7 +235,7 @@ describe('default.js', function () {
                     fetch: function(){
                         //some dummy functionality.
                     }
-                }
+                };
                 spyOn(acl,'find').and.returnValue(obj);
                 spyOn(obj,'fetch').and.returnValue(result);
                 Meteor.call("isPublicMindmap", DUMMY_PRIVATE_MINDMAPID, function (error, value) {

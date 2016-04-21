@@ -21,15 +21,19 @@ Template.TopBar.events({
         e.preventDefault();
         e.stopPropagation();
 
-        var doc =  MindmapMetadata.findOne();
-        var onlineUsers = doc.onlineUsers;
+
 
         var currentUser = Meteor.user();
-        onlineUsers = onlineUsers.filter(function(user) {
-            return user.email != currentUser.services.google.email;
-        });
 
-        MindmapMetadata.update({_id:doc._id} , {$set: {onlineUsers: onlineUsers}});
+        if(currentUser) {
+          var doc =  MindmapMetadata.findOne();
+          var onlineUsers = doc.onlineUsers;
+          onlineUsers = onlineUsers.filter(function(user) {
+            return user.email != currentUser.services.google.email;
+          });
+
+          MindmapMetadata.update({_id:doc._id} , {$set: {onlineUsers: onlineUsers}});
+        }
         Router.go("/");
         //$("div#userOptions").toggle();
     }
