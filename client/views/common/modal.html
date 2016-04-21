@@ -24,9 +24,13 @@
 
 
                     <ul class="in-line nav nav-tabs">
-                        <li class="active" style="width:33%"><a href="#link" data-toggle="tab" id="firstTab"> <img src="/sharableLink.png">&nbsp;&nbsp;Link</a></li>
+                        <li class="active" style="width:50%"><a href="#link" data-toggle="tab" id="firstTab"> <img src="/sharableLink.png">&nbsp;&nbsp;Link</a></li>
+
+                       {{#if Meteor.settings.public.shareThroughtEmail}}
                         <li style="width:33%"><a href="#email" data-toggle="tab" id="secondTab"> <img src="/emailIcon.png">&nbsp;&nbsp;Email</a></li>
-                        <li style="width:34%"><a href="#embedCode" data-toggle="tab" id="thirdTab">
+                        {{/if}}
+
+                        <li style="width:50%"><a href="#embedCode" data-toggle="tab" id="thirdTab">
                             <img src="/embedIcon.png">&nbsp;&nbsp;Embed Code
                         </a></li>
 
