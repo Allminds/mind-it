@@ -30,3 +30,24 @@
 }
 
 .show {display:block;}
+
+div.item{
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+}
+
+.menuicons{
+    margin: 0 11px 0 11px;
+    height: 32px;
+    width: 32px;
+}
+
+.caption {
+    font-family: "Trebuchet MS";
+    margin-top: -4px;
+    cursor: pointer;
+    font-size: 11px;
+    color: black;
+    display: block;
+}

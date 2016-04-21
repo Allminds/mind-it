@@ -2,8 +2,10 @@ Template.ShareImageButton.events({
     'click #shareImageButton': function () {
         $('#share-modal').modal('show');
     },
+    'click #textBelowShareImageButton': function () {
+        $('#share-modal').modal('show');
+    },
     'click #getSharableWriteLink': function () {
-
         Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
             var msg = value;
         });
