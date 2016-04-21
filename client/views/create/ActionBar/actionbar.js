@@ -1,11 +1,6 @@
 Template.ActionBar.helpers({
     userimages: function () {
-
-        if(Meteor.settings.public.onlineUsers == true) {
-            return extractUserImage();
-        } else{
-            return [];
-        }
+        return extractUserImage();
     },
     hideInEmbedMode:function () {
         if(isEmbedUrl()){
