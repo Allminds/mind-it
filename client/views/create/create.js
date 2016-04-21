@@ -28,9 +28,9 @@ var update = function (data) {
 };
 
 /*var enableHelpLink = function () {
-    alert("In Help Modal");
-    $('#help-modal').modal('show');
-};*/
+ alert("In Help Modal");
+ $('#help-modal').modal('show');
+ };*/
 
 
 Template.create.rendered = function rendered() {
@@ -69,7 +69,6 @@ Template.create.rendered = function rendered() {
     MindmapMetadata.find().observeChanges(App.cursorTracker);
 
     App.retainCollapsed();
-    //Meteor.call("updateUserStatus", App.currentMap, App.currentMap);
 };
 Template.readOnly.helpers({
     statusmsg: function () {
@@ -80,16 +79,3 @@ Template.readOnly.helpers({
     }
 });
 
-App.getEmbedCode = function () {
-   Meteor.call("getSharableReadLink",App.currentMap,function (error, value){
-       var link = value;
-       link = link.replace("sharedLink","embed");
-       var url = "http://"+location.hostname + (location.port ? ':' + location.port : '') + "/" + link;
-      var code =  "<iframe width=" +"\"854\"" + " height= "+ "\"480\" src=\""+url+"\" frameborder= \"0\" allowfullscreen></iframe>";
-       return code;
-   })
-};
-
-// window.onclick = function() {
-//     alert('test');
-// }

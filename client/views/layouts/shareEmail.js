@@ -16,6 +16,4 @@ Template.shareEmail.events({
         var mindMapId = d3.select(".node.level-0")[0][0].__data__._id;
         Meteor.call("addMapToUser", eMail, mindMapId, permission);
     }
-
-
 });

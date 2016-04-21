@@ -1,5 +1,5 @@
 <template name="ModalHeader">
-    <div class="modal-header">
+    <div class="modal-header" style="border-bottom: 0px">
         <button type="button" class="close"
                 data-dismiss="modal">
             <span aria-hidden="true">&times;</span>
@@ -24,13 +24,13 @@
 
 
                     <ul class="in-line nav nav-tabs">
-                        <li class="active" style="width:50%"><a href="#link" data-toggle="tab" id="firstTab"> <img src="/sharableLink.png">&nbsp;&nbsp;Link</a></li>
+                        <li class="active"  id="LinkTab"><a href="#link" data-toggle="tab" > <img src="/sharableLink.png">&nbsp;&nbsp;Link</a></li>
 
-                       {{#if Meteor.settings.public.shareThroughtEmail}}
-                        <li style="width:33%"><a href="#email" data-toggle="tab" id="secondTab"> <img src="/emailIcon.png">&nbsp;&nbsp;Email</a></li>
-                        {{/if}}
+                        <!--{{#if Meteor.settings.public.shareThroughtEmail}}-->
+                        <li  id="emailTab" ><a href="#email" data-toggle="tab" > <img src="/emailIcon.png">&nbsp;&nbsp;Email</a></li>
+                        <!--{{/if}}-->
 
-                        <li style="width:50%"><a href="#embedCode" data-toggle="tab" id="thirdTab">
+                        <li id="embedCodeTab"><a href="#embedCode" data-toggle="tab" >
                             <img src="/embedIcon.png">&nbsp;&nbsp;Embed Code
                         </a></li>
 
@@ -135,7 +135,7 @@
                 <!-- Modal Header -->
                 {{> ModalHeader}}
                 <!-- Modal Body -->
-                {{> ModalBody}}
+                {{> ModalBody }}
 
                 {{#if requireFooter}}
                 <!-- conditional footer. Set requireFooter="true"-->

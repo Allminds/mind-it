@@ -19,7 +19,7 @@ Template.ModalBody.helpers({
         else
             return false;
     },
-    isPublicMindmap: function(){
+    isPublicMindmap: function () {
         return App.isPublicMindMap;
 
     }
@@ -48,7 +48,7 @@ var restoreNodeSelection = function () {
 Template.ModalPopUp.events({
     'shown.bs.modal #help-modal': function (event) {
         App.eventBinding.unbindEditableEvents();
-        App.modal_shown=true;
+        App.modal_shown = true;
         removeNodeSelection();
     },
     'hidden.bs.modal #help-modal': function (event) {
@@ -59,7 +59,7 @@ Template.ModalPopUp.events({
 
     'shown.bs.modal #share-modal': function (event) {
         $("#linkTextBox").focus();
-        App.modal_shown=true;
+        App.modal_shown = true;
         removeNodeSelection();
     },
     'hidden.bs.modal #share-modal': function (event) {
@@ -86,7 +86,7 @@ Template.ModalPopUp.events({
 
 
         Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-            textBox.value = location.hostname + (location.port ? ':' + location.port : '') + "/" + value;
+            textBox.value = getSharableLinkValue() + value;
             button.innerHTML = "read";
         });
 
@@ -98,7 +98,7 @@ Template.ModalPopUp.events({
         textBox.value = text;
         var button = document.getElementById("sharableLinkButtonMessage");
         Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-            textBox.value = location.hostname + (location.port ? ':' + location.port : '') + "/" + value;
+            textBox.value = getSharableLinkValue() + value;
             button.innerHTML = "read and write";
 
         });
@@ -116,24 +116,53 @@ Template.ModalBody.rendered = function rendered() {
 
     var textBox = document.getElementById("linkTextBox");
     textBox.disabled = false;
-    textBox.value = "welcome";
-    if(App.isPublicMindMap){
+    if (App.isPublicMindMap) {
         Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-            textBox.value = location.hostname + (location.port ? ':' + location.port : '') + "/" + value;
+            textBox.value = getSharableLinkValue() + value;
         });
+    }
+    else {
+        Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
+            textBox.value = getSharableLinkValue() + value;
+        });
+    }
+
+    if (!Meteor.settings.public.shareThroughEmail) {
+        var link = document.getElementById("LinkTab");
+        link.style.width = '50%';
+        //$('LinkTab').width('50%')
+        //$('embedCodeTab').width('50%')
+        var code = document.getElementById("embedCodeTab");
+        code.style.width = '50%';
+        $('#emailTab').remove();
     }
     else
     {
-        Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-            textBox.value = location.hostname + (location.port ? ':' + location.port : '') + "/" + value;
-        });
+        var link = document.getElementById("LinkTab");
+        link.style.width = '33%';
+        var code = document.getElementById("embedCodeTab");
+        code.style.width = '34%';
+        var mail = document.getElementById("emailTab");
+        mail.style.width = "33%";
+    //    $('LinkTab').width('33%')
+    //$('embedCodeTab').width('33%')
+    //$('emailTab').width('33%')
+
     }
+};
 
+function getSharableLinkValue() {
+    return App.Constants.HttpProtocol + "://" + location.hostname + (location.port ? ':' + location.port : '') + "/";
 
 }
 
-function selectText() {
-    var id = "e_mail";
-    document.getElementById(id).focus();
-    document.getElementById(id).select();
-}
+App.getEmbedCode = function () {
+    Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
+        var link = value;
+        link = link.replace("sharedLink", "embed");
+        var url = getSharableLinkValue() + link;
+        var code = "<iframe width=" + "\"854\"" + " height= " + "\"480\" src=\"" + url + "\" frameborder= \"0\" allowfullscreen></iframe>";
+        return code;
+    })
+};
+
