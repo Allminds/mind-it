@@ -5,7 +5,8 @@
             <span aria-hidden="true">&times;</span>
             <span class="sr-only">Close</span>
         </button>
-        <h4 class="modal-title" id={{modalTagID labelId}}>{{modalHeaderText}}</h4>
+        <!--<h4 class="modal-title" id={{modalTagID labelId}}>{{modalHeaderText}}</h4>-->
+        <h4 class="modal-title" id={{modalTagID labelId}}>Share Your MindMap</h4>
     </div>
 </template>
 
@@ -20,109 +21,96 @@
                 {{/if}}
                 {{#if isModalForShare}}
                 <div>
-                    <!--<form>-->
-                    <!--<div>-->
 
-                    <!--<input type="email" placeholder="   Email Address" id="e_mail" style="width: 60%; padding:3px; margin-top: 5%" onclick="console.log('hi');" >-->
-                    <!--</div>-->
-                    <!--<div style="width: 100%; padding: 5%">-->
-                    <!--<select id="permission" style="margin-right: 20%;">-->
 
-                    <!--{{#each permissions}}-->
-                    <!--<option value="{{this.name}}">{{this.value}}</option>-->
-                    <!--{{/each}}-->
-                    <!--</select>-->
+                    <ul class="in-line nav nav-tabs">
+                        <li class="active" style="width:33%"><a href="#link" data-toggle="tab" id="firstTab"> <img src="/sharableLink.png">&nbsp;&nbsp;Link</a></li>
+                        <li style="width:33%"><a href="#email" data-toggle="tab" id="secondTab"> <img src="/emailIcon.png">&nbsp;&nbsp;Email</a></li>
+                        <li style="width:34%"><a href="#embedCode" data-toggle="tab" id="thirdTab">
+                            <img src="/embedIcon.png">&nbsp;&nbsp;Embed Code
+                        </a></li>
 
-                    <!--<input type="submit" value="Share" data-action="share" style="margin-left: 20%" >-->
 
-                    <!--</div>-->
-                    <!--</form>-->
-
-                    <form>
-                        <!--<ul class="in-line nav nav-tabs">-->
-                        <!--<li class="active"><a href="#link" data-toggle="tab" id="firstTab">link</a></li>-->
-                        <!--<li><a href="#email" data-toggle="tab" id="secondTab">Email</a></li>-->
-                        <!--</ul>-->
-                        <!--<div>-->
-                        <!--<div id="link" class="tab-pane fade in  active ">-->
-
-                        <!--<div class="row">-->
-                        <!--<h4 class="col-12">Get sharable link</h4>-->
-                        <!--</div>-->
-                        <div style="height:20px;"></div>
-                        <div class="col-12">
-                            <!--<p class="col-4" style="margin-left: 40px;font-size:medium">Anyone with this link-->
-                            <!--can</p>-->
-                            <!--<select class = "col-6" style="float: left;display:inline-block;margin-left: 40px;margin-top: 8px;height:50px">-->
-                            <!--&lt;!&ndash;<option value="read"> read </option>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<option value="write"> write </option>&ndash;&gt;-->
-                            <!--{{#each permissions}}-->
-                            <!--<option value="{{this.name}}">Anyone with this link can {{this.value}}</option>-->
-                            <!--{{/each}}-->
-                            <!--</select>-->
-
-                            {{#if isWriteUser}}
+                        <li></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="link" class="tab-pane fade in  active ">
+                            <div style="height:10px;"></div>
+                            <div class="row" style="height: 50%">
+                                <h4 class="col-12">Get sharable link</h4>
+                            </div>
+                            <div class="col-12">
+                                {{#if isWriteUser}}
                                 {{#if isPublicMindmap}}
-                                    <div style="float:left; padding-left:15%">
-                                        Anyone with this link can
-                                        <span style="font-weight: bold">write</span>
-                                    </div>
+                                <div style="float:left; padding-left:15%">
+                                    Anyone with this link can
+                                    <span style="font-weight: bold">write</span>
+                                </div>
 
                                 {{else}}
-                                    <div class="dropdown row col-12">
-                                        <!--<span class="col-2"></span>-->
-                                        <!--<a href="">-->
-                                        <div class=" dropdown-toggle " id="sharableLinkButton" role="button"
-                                             data-action="toggleOptions" data-toggle="dropdown">
-                                            Anyone with this link can
-                                            <span id="sharableLinkButtonMessage" style="font-weight: bold">read</span>
-                                            <span class="caret"></span></div>
-                                        <!--</a>-->
-
-                                        <!--<div class=" dropdown-toggle col-8" id = "sharableLinkButton" data-action="toggleOptions" data-toggle="dropdown" role="button">-->
-                                        <!--Anyone with this link can read the mindmap-->
-                                        <!--</div>-->
-                                        <ul class="dropdown-menu"
-                                            style=" margin-left:16.66%;width: 64%; cursor: pointer ; justify-content: space-between; padding-top: 0px; padding-bottom: 0px">
-                                            <li id="sharedLinkr"
-                                                onMouseOver="this.style.backgroundColor='#F1F1F1'"
-                                                onMouseOut="this.style.backgroundColor= '#FFFFFF'">
-                                                Anyone with this link can read the mindmap
-                                            </li>
-                                            <li class="divider" style="margin-top: 0px; margin-bottom: 0px"></li>
-                                            <li id="sharedLinkw"
-                                                onMouseOver="this.style.backgroundColor='#F1F1F1'"
-                                                onMouseOut="this.style.backgroundColor= '#FFFFFF'">
-                                                Anyone with this link can read and write the mindmap
-                                            </li>
-
-                                        </ul>
-                                    </div>
+                                <div class="dropdown row col-12">
+                                    <div class=" dropdown-toggle " id="sharableLinkButton" role="button"
+                                         data-action="toggleOptions" data-toggle="dropdown">
+                                        Anyone with this link can
+                                        <span id="sharableLinkButtonMessage" style="font-weight: bold">read</span>
+                                        <span class="caret"></span></div>
+                                    <ul class="dropdown-menu"
+                                        style=" margin-left:16.66%;width: 64%; cursor: pointer ; justify-content: space-between; padding-top: 0px; padding-bottom: 0px">
+                                        <li id="sharedLinkr"
+                                            onMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                            onMouseOut="this.style.backgroundColor= '#FFFFFF'">
+                                            Anyone with this link can read the mindmap
+                                        </li>
+                                        <li class="divider" style="margin-top: 0px; margin-bottom: 0px"></li>
+                                        <li id="sharedLinkw"
+                                            onMouseOver="this.style.backgroundColor='#F1F1F1'"
+                                            onMouseOut="this.style.backgroundColor= '#FFFFFF'">
+                                            Anyone with this link can read and write the mindmap
+                                        </li>
+                                    </ul>
+                                </div>
                                 {{/if}}
-                            {{else}}
-                            <div style="float:left; padding-left:15%">
-                                Anyone with this link can
-                                <span style="font-weight: bold">read</span>
+                                {{else}}
+                                <div style="float:left; padding-left:15%">
+                                    Anyone with this link can
+                                    <span style="font-weight: bold">read</span>
+                                </div>
+                                {{/if}}
+                                <br>
+                                <br>
                             </div>
-                            {{/if}}
+
+                            <center>
+                                <input  class= "form-control" id="linkTextBox" readonly="readonly" onclick="this.select();" style="background-color: white">
+                            </center>
+                        </div>
 
 
+                        <div id="email" class="tab-pane fade ">
+                            <form>
+                                <div>
+
+                                    <input type="email" placeholder="   Email Address" id="e_mail"
+                                           style="width: 60%; padding:3px; margin-top: 5%" onclick="console.log('hi');">
+                                </div>
+                                <div style="width: 100%; padding: 5%">
+                                    <select id="permission" style="margin-right: 20%;">
+
+                                        {{#each permissions}}
+                                        <option value="{{this.name}}">{{this.value}}</option>
+                                        {{/each}}
+                                    </select>
+
+                                    <input type="submit" value="Share" data-action="share" style="margin-left: 20%">
+
+                                </div>
+                            </form>
                         </div>
-                        <!--<div class="col-12">-->
-                        <!--<span class="col-1"></span>-->
-                        <!--<input id = "linkTextBox" class="col-8" type="text" onclick="console.log('hi');" style="width:80%">-->
-                        <!--</div>-->
-                        <!--</div>-->
-                        <!--<div id="email" class="tab-pane fade ">-->
-                        <!--<h3> this is menu</h3>-->
-                        <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="row" style="height: 80px"></div>-->
-                        <div class="col-12" style="height: 50%"></div>
-                        <div class="col-12" style="align-content: center" id="linkToShow">
-                            <input id="linkTextBox" readonly="readonly" onclick="this.select();">
+                        <div id="embedCode" class="tab-pane fade " >
+                            {{> Embed}}
                         </div>
-                    </form>
+
+                    </div>
 
                 </div>
 

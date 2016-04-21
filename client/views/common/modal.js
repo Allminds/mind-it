@@ -130,15 +130,6 @@ Template.ModalPopUp.events({
         this.select();
         this.focus();
     },
-    'click #secondTab': function () {
-        var temp = document.getElementById("linkToShow");
-        temp.className = "hidden";
-    },
-    'click #firstTab': function () {
-        var temp = document.getElementById("linkToShow");
-        temp.className = "";
-    },
-
 
 });
 
