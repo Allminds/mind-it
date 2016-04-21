@@ -545,7 +545,7 @@ describe('eventBinding.js', function () {
     });
 
     describe("expandAll collapseAll", function(){
-        it("should call expandAll function when cmd+L is pressed ", function(){
+        xit("should call expandAll function when cmd+L is pressed ", function(){
             spyOn(App.presentation, 'expandAll');
             var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);
@@ -555,7 +555,7 @@ describe('eventBinding.js', function () {
             expect(App.presentation.expandAll).toHaveBeenCalled();
         });
 
-        it("should call collapseAllMindmap function when cmd+shift+l is pressed ", function () {
+        xit("should call collapseAllMindmap function when cmd+shift+l is pressed ", function () {
             spyOn(App.presentation, 'collapseAllMindmap');
             var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);
