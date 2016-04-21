@@ -3,7 +3,7 @@ Template.ActionBar.helpers({
         return extractUserImage();
     },
     hideInEmbedMode:function () {
-        if(isEmbedUrl()){
+        if(App.isEmbedUrl()){
             return false;
         }else {
             return true;
@@ -13,7 +13,7 @@ Template.ActionBar.helpers({
 });
 
 
-isEmbedUrl = function () {
+App.isEmbedUrl = function () {
     var location = window.location.href;
     if(location.indexOf("/embed/") != -1){
         return true;

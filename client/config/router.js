@@ -154,9 +154,11 @@ Router.route('/embed/:link', {
     waitOn: function () {
         var self = this;
         Meteor.call("getRootNodeFromLink", "sharedLink/" + self.params.link, function (error, value) {
+            console.log("Value",value);
             App.currentMap = value.rootId;
             App.isSharedMindmap = App.Constants.Mode.READ;
-            Meteor.subscribe("mindmap", App.currentMap, getMeteorUser(), App.isSharedMindmap);
+            App.isPublicMindMap = true;
+            Meteor.subscribe("mindmap", App.currentMap, "*", App.isSharedMindmap);
         });
         return Meteor.subscribe("mindmap", App.currentMap);
     },
