@@ -1,0 +1,20 @@
+<template name="shareEmail">
+    <form>
+        <div>
+
+            <input type="email" placeholder="   Email Address" id="e_mail2"
+                   style="width: 60%; padding:3px; margin-top: 5%" onclick="console.log('hi');">
+        </div>
+        <div style="width: 100%; padding: 5%">
+            <select id="permission" style="margin-right: 20%;">
+
+                {{#each permissions}}
+                <option value="{{this.name}}">{{this.value}}</option>
+                {{/each}}
+            </select>
+
+            <input type="submit" value="Share" data-action="share1" style="margin-left: 20%" id="submitButton">
+
+        </div>
+    </form>
+</template>

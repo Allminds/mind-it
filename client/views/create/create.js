@@ -79,7 +79,6 @@ App.getEmbedCode = function () {
        link = link.replace("sharedLink","embed");
        var url = "http://"+location.hostname + (location.port ? ':' + location.port : '') + "/" + link;
       var code =  "<iframe width=" +"\"854\"" + " height= "+ "\"480\" src=\""+url+"\" frameborder= \"0\" allowfullscreen></iframe>";
-       console.log(code);
        return code;
    })
 };
