@@ -3,10 +3,8 @@
 </head>
 <template name="TopBar">
     {{#if hideInEmbedMode}}
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation"
-         style="box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.19); color: #00b439" id="topBarDiv">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="topBarDiv">
         <div class="container-fluid">
-
             <div class="navbar-header">
                 <button type="button" class=" nav navbar-nav navbar-right navbar-toggle" data-toggle="collapse"
                         data-target="#myNavbar">
@@ -92,15 +90,22 @@
 
                     {{#if notError}}
                     <li>
-                    <div class="dropdown">
-                        <div class="dropButtons" style="padding-top:10px" data-action="toggleOptions" data-toggle="dropdown">
-                            <a class="brand dropButtons" onMouseOver="this.style.color='#ED8233'" onMouseOut="this.style.color='#000000'" style="font-family: 'Trebuchet MS', Tahoma, Verdana, Arial, sans-serif; color:#000000" data-action="toggleOptions" data-toggle="dropdown">{{name}}</a>
-                            <img style="border-radius:50%" onMouseOver="this.style.opacity='0.6'" onMouseOut="this.style.opacity='1'" class="dropButtons" src={{ picture}} alt="Cinque Terre" width="32" height="32" data-action="toggleOptions" data-toggle="dropdown">
+                        <div class="dropdown">
+                            <div class="dropButtons" style="padding-top:10px" data-action="toggleOptions"
+                                 data-toggle="dropdown">
+                                <a class="brand dropButtons" onMouseOver="this.style.color='#ED8233'"
+                                   onMouseOut="this.style.color='#000000'"
+                                   style="font-family: 'Trebuchet MS', Tahoma, Verdana, Arial, sans-serif; color:#000000"
+                                   data-action="toggleOptions" data-toggle="dropdown">{{name}}</a>
+                                <img style="border-radius:50%" onMouseOver="this.style.opacity='0.6'"
+                                     onMouseOut="this.style.opacity='1'" class="dropButtons" src={{ picture}}
+                                     alt="Cinque Terre" width="32" height="32" data-action="toggleOptions"
+                                     data-toggle="dropdown">
+                            </div>
+                            <div id="myDropdown" style="float: left" class="dropdown-content">
+                                <a href="" data-action="logout">Logout</a>
+                            </div>
                         </div>
-                        <div id="myDropdown" style="float: left" class="dropdown-content">
-                            <a href=""  data-action="logout">Logout</a>
-                        </div>
-                    </div>
                     </li>
                     {{/if}}
                     {{/if}}
@@ -121,6 +126,6 @@
 
         </div>
     </div>
-        {{/if}}
+    {{/if}}
 </template>
 
