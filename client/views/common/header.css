@@ -32,13 +32,12 @@
 .show {display:block;}
 
 div.item{
-    vertical-align: top;
+    vertical-align: bottom;
     display: inline-block;
-    text-align: center;
+    margin: 0 10px 0 10px;
 }
 
 .menuicons{
-    margin: 0 11px 0 11px;
     height: 32px;
     width: 32px;
 }
@@ -48,6 +47,6 @@ div.item{
     margin-top: -4px;
     cursor: pointer;
     font-size: 11px;
-    color: black;
+    color: #4d4d4d;
     display: block;
 }
