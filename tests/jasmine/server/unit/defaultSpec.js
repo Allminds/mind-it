@@ -160,12 +160,13 @@ describe('default.js', function () {
         })
 
         describe('updateUserStatus', function () {
-            it("Should call  App.usersStatusService.updateUserStatus", function () {
+            xit("Should call  App.usersStatusService.updateUserStatus", function () {
                 spyOn(App.usersStatusService, 'updateUserStatus');
                 Meteor.call("updateUserStatus", "dummy@gmail.com", "dummyId", function (error, value) {
                     expect(App.usersStatusService.updateUserStatus).toHaveBeenCalled();
                 })
             })
+
         })
 
         describe('createRootNode', function () {
