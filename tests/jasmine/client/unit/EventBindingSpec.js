@@ -1,11 +1,10 @@
 describe('eventBinding.js', function () {
-
     describe('App.eventBinding scoped functions', function () {
         describe('App.eventBinding.focusAfterDelete', function () {
             it("should select next node of deleted node if it exists", function () {
-                var next        = {_id: "next"},
-                    previous    = {_id: "previous"},
-                    parent      = {_id: "parent", children: [previous, next]},
+                var next = {_id: "next"},
+                    previous = {_id: "previous"},
+                    parent = {_id: "parent", children: [previous, next]},
                     removedNode = {_id: "removed", parent: parent, next: next, previous: previous};
                 spyOn(App, 'selectNode');
 
@@ -15,8 +14,8 @@ describe('eventBinding.js', function () {
             });
 
             it("should select previous node of deleted node if it exists and next node does not exist", function () {
-                var previous    = {_id: "previous"},
-                    parent      = {_id: "parent", children: [previous]},
+                var previous = {_id: "previous"},
+                    parent = {_id: "parent", children: [previous]},
                     removedNode = {_id: "removed", parent: parent, previous: previous};
                 spyOn(App, 'selectNode');
 
@@ -26,7 +25,7 @@ describe('eventBinding.js', function () {
             });
 
             it("should select parent node of deleted node if it exists after and next & previous nodes do not exist", function () {
-                var parent      = {_id: "parent", children: []},
+                var parent = {_id: "parent", children: []},
                     removedNode = {_id: "removed", parent: parent};
                 spyOn(App, 'selectNode');
 
@@ -35,6 +34,7 @@ describe('eventBinding.js', function () {
                 expect(App.selectNode).toHaveBeenCalledWith(parent);
             });
         });
+
         describe('App.eventBinding.findSameLevelChild', function () {
             it("should return passed node as sameLevelChild if it does not have children", function () {
                 var node = {};
@@ -46,30 +46,33 @@ describe('eventBinding.js', function () {
                 expect(App.eventBinding.findSameLevelChild(node, 2, 0)).toBe(node);
             });
         });
-        describe('App.eventBinding.performLogicalVerticalMovement', function () {
-            // it("should select downward node on performing vertical movement for down key press action", function () {
-            //   var first = {_id: "first", depth: 1, position: "right"},
-            //     second = {_id: "second", depth: 1, position: "right"},
-            //     parent = {_id: "parent", childSubTree: [first, second]};
-            //   first.parent = parent;
 
-            //   spyOn(App, "selectNode");
-            //   App.eventBinding.performLogicalVerticalMovement(first, App.Constants.KeyPressed.DOWN);
+        xdescribe('App.eventBinding.performLogicalVerticalMovement', function () {
+            it("should select downward node on performing vertical movement for down key press action", function () {
+                var first = {_id: "first", depth: 1, position: "right"},
+                    second = {_id: "second", depth: 1, position: "right"},
+                    parent = {_id: "parent", childSubTree: [first, second]};
+                first.parent = parent;
 
-            //   expect(App.selectNode).toHaveBeenCalledWith(second);
-            // });
-            // it("should select upward node on performing vertical movement for up key press action", function () {
-            //   var first = {_id: "first", depth: 1, position: "right"},
-            //     second = {_id: "second", depth: 1, position: "right"},
-            //     parent = {_id: "parent", children: [first, second]};
-            //   second.parent = parent;
+                spyOn(App, "selectNode");
+                App.eventBinding.performLogicalVerticalMovement(first, App.Constants.KeyPressed.DOWN);
 
-            //   spyOn(App, "selectNode");
-            //   App.eventBinding.performLogicalVerticalMovement(second, App.Constants.KeyPressed.UP);
+                expect(App.selectNode).toHaveBeenCalledWith(second);
+            });
 
-            //   expect(App.selectNode).toHaveBeenCalledWith(first);
-            // });
+            it("should select upward node on performing vertical movement for up key press action", function () {
+                var first = {_id: "first", depth: 1, position: "right"},
+                    second = {_id: "second", depth: 1, position: "right"},
+                    parent = {_id: "parent", children: [first, second]};
+                second.parent = parent;
+
+                spyOn(App, "selectNode");
+                App.eventBinding.performLogicalVerticalMovement(second, App.Constants.KeyPressed.UP);
+
+                expect(App.selectNode).toHaveBeenCalledWith(first);
+            });
         });
+
         describe('event binding helpers', function () {
             var first, second, parent;
             beforeEach(function () {
@@ -102,12 +105,10 @@ describe('eventBinding.js', function () {
                 expect(App.selectNode).toHaveBeenCalledWith(first);
                 expect(App.nodeSelector.setPrevDepth).toHaveBeenCalledWith(first.depth);
             });
-
         });
     });
 
     describe('App.cutNode', function () {
-
         var root, parent, child1, child2, child3;
         beforeEach(function () {
             root = new App.Node("root");
@@ -126,9 +127,7 @@ describe('eventBinding.js', function () {
             child3.parent = parent;
             parent.childSubTree = [child1, child2, child3];
             root.left.push(parent);
-
         });
-
 
         it("should show alert if I try to cut root node", function () {
             spyOn(window, "alert");
@@ -136,26 +135,27 @@ describe('eventBinding.js', function () {
             expect(window.alert).toHaveBeenCalled();
         });
 
-        //   it("should call all internal methods on cutNode call for node other than root", function () {
-        //     var parent = {_id: "parent"},
-        //       node = {_id: "node", position: "right", parent: parent};
-        //     spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-        //     spyOn(App.map, "storeSourceNode");
-        //     spyOn(Meteor, "call");
-        //     App.cutNode();
-        //     expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".selected");
-        //     expect(App.map.storeSourceNode).toHaveBeenCalledWith(node);
-        //     expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
-        //   });
+        xit("should call all internal methods on cutNode call for node other than root", function () {
+            var parent = {_id: "parent"},
+                node = {_id: "node", position: "right", parent: parent};
+            spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+            spyOn(App.map, "storeSourceNode");
+            spyOn(Meteor, "call");
+            App.cutNode();
+            expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".selected");
+            expect(App.map.storeSourceNode).toHaveBeenCalledWith(node);
+            expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
+        });
+
         it("Should have only one node selected after cut", function () {
             App.multiSelectedNodes = [{
                 __data__: {
-                    _id:          "node",
-                    position:     "right",
-                    parent:       parent,
+                    _id: "node",
+                    position: "right",
+                    parent: parent,
                     childSubTree: [],
-                    left:         [],
-                    right:        []
+                    left: [],
+                    right: []
                 }
             }];
             spyOn(App, "clearAllSelected");
@@ -226,6 +226,7 @@ describe('eventBinding.js', function () {
                 '</text><circle class="indicator unfilled" r="0" cx="26.125"></circle>' +
                 '</g></g></svg>' +
                 '</div>';
+
             setFixtures(fixture);
 
             App.multiSelectedNodes = [];
@@ -236,6 +237,7 @@ describe('eventBinding.js', function () {
             d3.select(node).classed("softSelected", true);
             App.multiSelectedNodes.push(node);
         });
+
         it("should clear all selected nodes after mapping selectedNodes", function () {
             spyOn(App, "selectNode");
             spyOn(App, "clearAllSelected");
@@ -243,10 +245,7 @@ describe('eventBinding.js', function () {
             expect(App.clearAllSelected).toHaveBeenCalled();
             expect(App.selectNode).toHaveBeenCalled();
         });
-
-
     });
-
 
     describe("Node Add/Delete/Edit/Collapse events", function () {
         var event, node, newNode, parent, fixture;
@@ -322,29 +321,29 @@ describe('eventBinding.js', function () {
                 expect(App.map.addNewNode).toHaveBeenCalled();
             });
 
-            //it("should call all the functions in newNodeAddAction function flow for enter action", function () {
-            //  spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-            //  spyOn(App.eventBinding, "enterAction").and.returnValue(newNode);
-            //  spyOn(App.eventBinding, "afterNewNodeAddition");
-            //
-            //  App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
-            //
-            //  expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
-            //  expect(App.eventBinding.enterAction).toHaveBeenCalled();
-            //  expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
-            //});
+            xit("should call all the functions in newNodeAddAction function flow for enter action", function () {
+                spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+                spyOn(App.eventBinding, "enterAction").and.returnValue(newNode);
+                spyOn(App.eventBinding, "afterNewNodeAddition");
 
-            //it("should call all the functions in newNodeAddAction function flow for tab action", function () {
-            //  spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
-            //  spyOn(App.eventBinding, "tabAction").and.returnValue(newNode);
-            //  spyOn(App.eventBinding, "afterNewNodeAddition");
-            //
-            //  App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
-            //
-            //  expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
-            //  expect(App.eventBinding.tabAction).toHaveBeenCalled();
-            //  expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
-            //});
+                App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
+
+                expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
+                expect(App.eventBinding.enterAction).toHaveBeenCalled();
+                expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
+            });
+
+            xit("should call all the functions in newNodeAddAction function flow for tab action", function () {
+                spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+                spyOn(App.eventBinding, "tabAction").and.returnValue(newNode);
+                spyOn(App.eventBinding, "afterNewNodeAddition");
+
+                App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
+
+                expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
+                expect(App.eventBinding.tabAction).toHaveBeenCalled();
+                expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
+            });
         });
 
         describe("Node deletion", function () {
@@ -489,7 +488,6 @@ describe('eventBinding.js', function () {
                 expect(App.eventBinding.bindEventAction.calls.mostRecent().args.length).toEqual(5);
             });
 
-
             it("should call bindEventAction with appropriate params on right key press", function () {
                 event.keyCode = 39;
                 spyOn(App.eventBinding, "bindEventAction");
@@ -549,21 +547,21 @@ describe('eventBinding.js', function () {
     describe("expandAll collapseAll", function(){
         it("should call expandAll function when cmd+L is pressed ", function(){
             spyOn(App.presentation, 'expandAll');
-            var  event1 = document.createEvent("Events");
+            var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);
-            event1.keyCode=76;
-            event1.metaKey=true;
+            event1.keyCode = 76;
+            event1.metaKey = true;
             document.dispatchEvent(event1);
             expect(App.presentation.expandAll).toHaveBeenCalled();
         });
 
-        it("should call collapseAllMindmap function when cmd+shift+l is pressed ", function(){
+        it("should call collapseAllMindmap function when cmd+shift+l is pressed ", function () {
             spyOn(App.presentation, 'collapseAllMindmap');
-            var  event1 = document.createEvent("Events");
+            var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);
-            event1.keyCode=76;
-            event1.metaKey=true;
-            event1.shiftKey=true;
+            event1.keyCode = 76;
+            event1.metaKey = true;
+            event1.shiftKey = true;
             document.dispatchEvent(event1);
             expect(App.presentation.collapseAllMindmap).toHaveBeenCalled();
         });
@@ -589,7 +587,6 @@ describe('eventBinding.js', function () {
                     expect(Mousetrap.unbind).not.toHaveBeenCalledWith(event);
                 }
             });
-
         });
     });
 });
