@@ -8,22 +8,24 @@ Template.ActionBar.helpers({
         }
     },
     hideInEmbedMode:function () {
-        var location = window.location.href;
         if(isEmbedUrl()){
             return false;
         }else {
             return true;
         }
     },
-    isEmbedUrl:function () {
-        var location = window.location.href;
-        if(location.indexOf("/embed/") != -1){
-            return true;
-        }else {
-            return false;
-        }
-    }
+
 });
+
+
+isEmbedUrl = function () {
+    var location = window.location.href;
+    if(location.indexOf("/embed/") != -1){
+        return true;
+    }else {
+        return false;
+    }
+}
 
 extractUserImage = function () {
     if(!Meteor.user()) {
