@@ -1,5 +1,5 @@
 Template.PresentImageButton.events({
-    'click #PresentationImageButton': function(){
+    'click': function(){
         App.presentation.preparePresentationUI();
     }
 });

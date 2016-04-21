@@ -1,5 +1,5 @@
 Template.HelpImageButton.events({
-    'click #helpImageButton': function (e ,args) {
+    'click': function (e ,args) {
         e.preventDefault();
         $('#help-modal').modal('show');
     },

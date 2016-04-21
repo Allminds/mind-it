@@ -16,4 +16,5 @@ Template.ExportImageButton.events({
         App.exportParser.export(rootName);
         //App.exportParser.export();
     }
+
 });
