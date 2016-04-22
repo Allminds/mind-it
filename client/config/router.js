@@ -158,9 +158,9 @@ Router.route('/embed/:link', {
             App.currentMap = value.rootId;
             App.isSharedMindmap = App.Constants.Mode.READ;
             App.isPublicMindMap = true;
-            Meteor.subscribe("mindmap", App.currentMap, "*", App.isSharedMindmap);
+           return Meteor.subscribe("mindmap", App.currentMap, "*", App.isSharedMindmap);
         });
-        return Meteor.subscribe("mindmap", App.currentMap);
+        //return Meteor.subscribe("mindmap", App.currentMap);
     },
     data: function () {
         return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};

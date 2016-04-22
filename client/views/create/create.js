@@ -39,8 +39,6 @@ Template.create.rendered = function rendered() {
         var message = "Invalid mindmap";
         Router.go("/404");
     }
-
-    debugger;
     App.currentMap = this.data.id;
     var email;
     if( App.isEmbedUrl() ){
