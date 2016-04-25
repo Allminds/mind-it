@@ -545,21 +545,21 @@ describe('eventBinding.js', function () {
     });
 
     describe("expandAll collapseAll", function(){
-        xit("should call expandAll function when cmd+L is pressed ", function(){
+        it("should call expandAll function when cmd+U is pressed ", function(){
             spyOn(App.presentation, 'expandAll');
             var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);
-            event1.keyCode = 76;
+            event1.keyCode = 85;
             event1.metaKey = true;
             document.dispatchEvent(event1);
             expect(App.presentation.expandAll).toHaveBeenCalled();
         });
 
-        xit("should call collapseAllMindmap function when cmd+shift+l is pressed ", function () {
+        it("should call collapseAllMindmap function when cmd+shift+U is pressed ", function () {
             spyOn(App.presentation, 'collapseAllMindmap');
             var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);
-            event1.keyCode = 76;
+            event1.keyCode = 85;
             event1.metaKey = true;
             event1.shiftKey = true;
             document.dispatchEvent(event1);
