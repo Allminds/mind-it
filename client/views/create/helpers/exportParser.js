@@ -14,7 +14,7 @@ App.exportParser.export = function (rootNodeName) {
 var XMLString = [];
 App.JSONConverter = function () {
     XMLString = "<map version=\"1.0.1\">\n";
-    var rootNode = Mindmaps.findOne({position: null, rootId: null});
+    var rootNode = App.presentation.getRootNode();
     XMLString += App.exportParser.nodeString(rootNode._id, rootNode.name);
 
     var leftChildren = rootNode.left;
@@ -22,26 +22,39 @@ App.JSONConverter = function () {
 
     leftChildren.forEach(function (leftChildId) {
         var leftNode = Mindmaps.findOne({_id: leftChildId});
-        if(leftNode == null) {
-            console.log("LeftNode : "  , leftChildId);
+
+        if (leftNode == null) {
+            console.log("NULL LeftNode : ", leftChildId);
         }
+
         var leftChildName = leftNode.name;
         XMLString += App.exportParser.nodeString(leftChildId, leftChildName, App.exportParser.positions.LEFT);
 
-        App.exportParser.children_recurse(leftChildId);
+        var leftNodeChildren = leftNode.childSubTree;
+
+        if (leftNodeChildren.length > 0) {
+            App.exportParser.children_recurse(leftChildId);
+        }
+
         XMLString += "</node>\n";
     });
 
     rightChildren.forEach(function (rightChildId) {
         var rightNode = Mindmaps.findOne({_id: rightChildId});
-        if(rightNode == null) {
-            console.log("RightNode : "  , rightChildId);
+
+        if (rightNode == null) {
+            console.log("NULL RightNode : ", rightChildId);
         }
 
         var rightChildName = rightNode.name;
         XMLString += App.exportParser.nodeString(rightChildId, rightChildName, App.exportParser.positions.RIGHT);
 
-        App.exportParser.children_recurse(rightChildId);
+        var rightNodeChildren = rightNode.childSubTree;
+
+        if (rightNodeChildren.length > 0) {
+            App.exportParser.children_recurse(rightChildId);
+        }
+
         XMLString += "</node>\n";
     });
 
@@ -52,19 +65,26 @@ App.JSONConverter = function () {
 
 App.exportParser.children_recurse = function (childNodeId) {
     var childNode = Mindmaps.findOne({_id: childNodeId});
+
+    if (!Boolean(childNode)){
+        return;
+    }
+
     var children = childNode.childSubTree;
 
     children.forEach(function (nodeId) {
         var name = Mindmaps.findOne({_id: nodeId}).name;
+
         XMLString += App.exportParser.nodeString(nodeId, name);
 
         App.exportParser.children_recurse(nodeId);
+
         XMLString += "</node>\n";
     });
 };
 
 App.exportParser.parseSymbols = function (nodeTextValue) {
-    if (!Boolean(nodeTextValue)){
+    if (!Boolean(nodeTextValue)) {
         return "";
     }
 

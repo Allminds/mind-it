@@ -1,15 +1,25 @@
 describe('App.exportParser', function () {
     it('should call Mindmaps.findOne() for getting rootnode data', function () {
-        spyOn(Mindmaps, 'findOne').and.returnValue({_id: "qRbTTPjHzfoGAmW3b", name: "testtxt", left: [], right: []});
+        spyOn(App.presentation, 'getRootNode').and.returnValue({
+            _id: "qRbTTPjHzfoGAmW3b",
+            name: "testtxt",
+            left: [],
+            right: []
+        });
         var returnedString = App.JSONConverter();
         var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"testtxt\"></node>\n</map>";
 
-        expect(Mindmaps.findOne).toHaveBeenCalled();
+        expect(App.presentation.getRootNode).toHaveBeenCalled();
         expect(returnedString).toBe(expectedString);
     });
 
     it('should call childrenRecurse in JSONConverter method if any of left/right of root has at least one child', function () {
-        spyOn(Mindmaps, 'findOne').and.returnValue({_id: "qRbTTPjHzfoGAmW3b", name: "testtxt", left: [], right: []});
+        spyOn(App.presentation, 'getRootNode').and.returnValue({
+            _id: "qRbTTPjHzfoGAmW3b",
+            name: "testtxt",
+            left: [],
+            right: []
+        });
         spyOn(App.exportParser, "children_recurse");
         App.exportParser.children_recurse("qRbTTPjHzfoGAmW3b");
 
@@ -17,7 +27,7 @@ describe('App.exportParser', function () {
     });
 
     it('should ensure root node text have special character like less than sign', function () {
-        spyOn(Mindmaps, 'findOne').and.returnValue({
+        spyOn(App.presentation, 'getRootNode').and.returnValue({
             _id: "rootNodeId",
             name: "root node text with < symbol",
             left: [],
@@ -44,9 +54,88 @@ describe('App.exportParser', function () {
             childSubTree: []
         };
 
+        spyOn(App.presentation, 'getRootNode').and.returnValues(rootNode);
+        spyOn(Mindmaps, 'findOne').and.returnValues(leftNode);
 
-        spyOn(Mindmaps, 'findOne').and.returnValues(rootNode,leftNode,leftNode);
         var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text with &gt; sign\" POSITION=\"left\"></node>\n</node>\n</map>";
+        var actualString = App.JSONConverter();
+        expect(expectedString).toBe(actualString);
+    });
+
+    it('should ensure right child node text have special character like ampersand sign', function () {
+        var rootNode = {
+            _id: "rootNodeId",
+            name: "root node text ",
+            left: [],
+            right: ["rightNodeId"]
+        };
+
+        var rightNode = {
+            _id: "rightNodeId",
+            name: "right node text with & sign",
+            childSubTree: []
+        };
+
+        spyOn(App.presentation, 'getRootNode').and.returnValues(rootNode);
+        spyOn(Mindmaps, 'findOne').and.returnValues(rightNode);
+
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"right node text with &amp; sign\" POSITION=\"right\"></node>\n</node>\n</map>";
+        var actualString = App.JSONConverter();
+        expect(expectedString).toBe(actualString);
+    });
+
+    it('should ensure left grand child node text have special character like double quote sign', function () {
+        var rootNode = {
+            _id: "rootNodeId",
+            name: "root node text ",
+            left: ["leftNodeId"],
+            right: []
+        };
+
+        var leftNode = {
+            _id: "leftNodeId",
+            name: "left node text",
+            childSubTree: ["leftNodeChildId"]
+        };
+
+        var leftNodeChild = {
+            _id: "leftNodeChildId",
+            name: "left node child text with \" sign",
+            childSubTree: []
+        };
+
+        spyOn(App.presentation, 'getRootNode').and.returnValues(rootNode);
+        spyOn(Mindmaps, 'findOne').and.returnValues(leftNode, leftNode, leftNodeChild);
+
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text\" POSITION=\"left\"><node TEXT=\"left node child text with &quot; sign\"></node>\n</node>\n</node>\n</map>";
+        var actualString = App.JSONConverter();
+        expect(expectedString).toBe(actualString);
+    });
+
+    it('should ensure right grand child node text have special character like apostrophe sign', function () {
+        var rootNode = {
+            _id: "rootNodeId",
+            name: "root node text ",
+            left: [],
+            right: ["rightNodeId"]
+        };
+
+        var rightNode = {
+            _id: "rightNodeId",
+            name: "right node text",
+            childSubTree: ["rightNodeChildId"]
+        };
+
+        var rightNodeChild = {
+            _id: "rightNodeChildId",
+            name: "right node child text with ' sign",
+            childSubTree: []
+        };
+
+        spyOn(App.presentation, 'getRootNode').and.returnValues(rootNode);
+        spyOn(Mindmaps, 'findOne').and.returnValues(rightNode, rightNode, rightNodeChild);
+
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"right node text\" POSITION=\"right\"><node TEXT=\"right node child text with &apos; sign\"></node>\n</node>\n</node>\n</map>";
         var actualString = App.JSONConverter();
         expect(expectedString).toBe(actualString);
     });
