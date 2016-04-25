@@ -10,10 +10,10 @@ var checkPlatform = function () {
         var id = "";
         var elements = address.split('/');
 
-        if(address.contains("create/")) {
+        if(address.indexOf("create") != -1) {
             id = "create/" + elements[elements.length - 1];
         }
-        else if(address.contains("sharedLink/")) {
+        else if(address.indexOf("sharedLink") != -1) {
             id = "sharedLink/" + elements[elements.length - 1];
         }
         window.location.assign("mindit.xyz://" + id);
