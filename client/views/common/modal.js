@@ -42,6 +42,8 @@ var removeNodeSelection = function () {
 var restoreNodeSelection = function () {
     App.deselectNode();
     d3.select('._selected').classed("selected", true);
+    App.clearAllSelected();
+    d3.select('._selected').classed("softSelected", true);
     d3.select('._selected').classed("_selected", false);
 };
 
