@@ -35,6 +35,7 @@ Template.TopBar.events({
           MindmapMetadata.update({_id:doc._id} , {$set: {onlineUsers: onlineUsers}});
         }
         Router.go("/");
+        window.scrollTo(0, 0);
         //$("div#userOptions").toggle();
     }
 });
