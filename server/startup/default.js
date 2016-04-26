@@ -121,7 +121,7 @@ Meteor.methods({
 
     findTree: function (id, user_email_id, isSharedMindmap) {
         var readPermitted = acl.findOne({user_id: {$in: [user_email_id, "*"]}, mind_map_id: id});
-        if (readPermitted || isSharedMindmap) {
+        if (readPermitted || isSharedMindmap == "read" || isSharedMindmap == "write") {
             return mindMapService.findTree(id);
 
         }
@@ -203,6 +203,11 @@ Meteor.methods({
     },
     getRootNodeFromLink: function (link) {
         var doc = MindmapMetadata.findOne({$or: [{readOnlyLink: link}, {readWriteLink: link}]});
+        if(!doc){
+             throw new Meteor.Error(
+                803, "Invalid Link");
+        }
+
         if (doc && doc.readOnlyLink == link) {
             doc.readWriteLink = "";
         }
