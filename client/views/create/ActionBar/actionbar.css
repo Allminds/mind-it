@@ -1,8 +1,10 @@
 .navbar {
 min-height:32px !important}
 
-
-
+.fullscreen-btn {
+    position: absolute;
+    right: 3%;
+}
 
 .arrow {
     background-size: contain;

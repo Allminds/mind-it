@@ -1,35 +1,41 @@
 Template.ActionBar.helpers({
-    userimages: function () {
+    userimages:      function () {
         return extractUserImage();
     },
-    hideInEmbedMode:function () {
-        if(App.isEmbedUrl()){
+    hideInEmbedMode: function () {
+        if (App.isEmbedUrl()) {
             return false;
-        }else {
+        } else {
             return true;
         }
     },
 
 });
 
+Template.ActionBar.events({
+    'click #fullscreen-btn': function (e, args) {
+        App.toggleFullscreen();
+    }
+});
+
 
 App.isEmbedUrl = function () {
     var location = window.location.href;
-    if(location.indexOf("/embed/") != -1){
+    if (location.indexOf("/embed/") != -1) {
         return true;
-    }else {
+    } else {
         return false;
     }
 }
 
 extractUserImage = function () {
-    if(!Meteor.user()) {
+    if (!Meteor.user()) {
         return [];
     }
 
     var usersAvailable = MindmapMetadata.findOne();
 
-    usersAvailable = usersAvailable.onlineUsers.filter(function(user) {
+    usersAvailable = usersAvailable.onlineUsers.filter(function (user) {
         return user.email != Meteor.user().services.google.email;
     });
 
@@ -37,13 +43,19 @@ extractUserImage = function () {
         return {name: x.profile.name, picture: x.picture};
     });
     var imageSrcs = Srcs.filter(function (y) {
-        return (y != undefined && y != null) ;
+        return (y != undefined && y != null);
     });
     return imageSrcs;
 };
-App.viewFulScreen = function () {
-    var url = window.location.href;
-    url = url.replace("embed","sharedLink");
-    var win = window.open(url, '_blank');
-    win.focus();
+App.toggleFullscreen = function () {
+    if (!screenfull.isFullscreen) {
+        screenfull.request();
+        $("#fullscreen-btn").hide();
+    }
+};
+var show_fullscreen_btn = function () {
+    if (!screenfull.isFullscreen) {
+        $("#fullscreen-btn").show();
+    }
 }
+document.addEventListener(screenfull.raw.fullscreenchange, show_fullscreen_btn);
