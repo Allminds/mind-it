@@ -16,6 +16,7 @@ describe('actionbar.js', function () {
 
     it("should mock Meteor.users.find()", function () {
         spyOn(MindmapMetadata, 'findOne').and.returnValue({onlineUsers: []});
+        extractUserImage();
         expect(MindmapMetadata.findOne).toHaveBeenCalled();
 
     });

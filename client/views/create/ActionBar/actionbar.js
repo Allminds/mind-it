@@ -1,4 +1,4 @@
-Template.ActionBar.helpers({
+    Template.ActionBar.helpers({
     userimages:      function () {
         return extractUserImage();
     },
