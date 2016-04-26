@@ -50,3 +50,10 @@ div.item{
     color: #4d4d4d;
     display: block;
 }
+
+.topbar-menu-textoption{
+    color:#000000;
+}
+.topbar-menu-textoption:hover{
+    color:#ed8233;
+}

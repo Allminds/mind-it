@@ -586,8 +586,6 @@ var spaceEvent = {
 var expandAllEvent = {
     allowedInReadOnlyMode: true,
     method:                function () {
-        e = arguments[0];
-        e.preventDefault();
         App.presentation.expandAll();
     }
 };
@@ -595,8 +593,6 @@ var expandAllEvent = {
 var collapseAllEvent = {
     allowedInReadOnlyMode: true,
     method:                function () {
-        e = arguments[0];
-        e.preventDefault();
         App.presentation.collapseAllMindmap();
     }
 };
@@ -674,8 +670,8 @@ App.eventBinding.EventsMap = {
     'mod+shift+p': presentationModeEvent,
     'pageup':      pageUpEvent,
     'pagedown':    pageDownEvent,
-    'mod+l':       expandAllEvent,
-    'mod+shift+l': collapseAllEvent
+    'mod+u':       expandAllEvent,
+    'mod+shift+u': collapseAllEvent
 };
 
 App.eventBinding.bindAllEvents = function () {

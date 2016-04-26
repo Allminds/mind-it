@@ -1,5 +1,6 @@
 {
   "public": {
-    "shareThroughEmail" : false
+    "shareThroughEmail" : false ,
+    "cursorMovement" : false
   }
 }

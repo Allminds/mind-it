@@ -8,11 +8,3 @@ Template.HelpImageButton.events({
         $('#help-modal').modal('show');
         }
 });
-
-Template.Help.events({
-   'click #help-link': function(e, args){
-       e.preventDefault();
-       $('#help-modal').modal('show');
-
-   }
-});

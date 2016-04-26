@@ -21,8 +21,6 @@ Template.TopBar.events({
         e.preventDefault();
         e.stopPropagation();
 
-
-
         var currentUser = Meteor.user();
 
         if(currentUser) {
@@ -35,6 +33,7 @@ Template.TopBar.events({
           MindmapMetadata.update({_id:doc._id} , {$set: {onlineUsers: onlineUsers}});
         }
         Router.go("/");
+        window.scrollTo(0, 0);
         //$("div#userOptions").toggle();
     }
 });

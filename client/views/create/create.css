@@ -60,6 +60,19 @@ path.link {
     fill: #ddd;
 }
 
+.node.cursorSelected-0 ellipse, .node.cursorSelected-0 rect {
+    fill: #ddbcdd;
+}
+
+.node.cursorSelected-1 ellipse, .node.cursorSelected-1 rect {
+    fill: #73cadd;
+}
+
+.node.cursorSelected-2 ellipse, .node.cursorSelected-2 rect {
+    fill: #ddd78a;
+}
+
+
 .node.softSelected rect {
     stroke: #ddd;
     stroke-width: 2px;

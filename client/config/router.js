@@ -6,14 +6,21 @@ var IS_IPAD = navigator.userAgent.match(/iPad/i) != null,
 
 var checkPlatform = function () {
     if (IS_IOS) {
-        var address = window.location.href
-        var elements = address.split('/')
-        var id = elements[elements.length - 1]
-        window.location.assign("mindit.xyz://create/" + id)
-    }
-}
+        var address = window.location.href;
+        var id = "";
+        var elements = address.split('/');
 
-checkPlatform()
+        if(address.indexOf("create") != -1) {
+            id = "create/" + elements[elements.length - 1];
+        }
+        else if(address.indexOf("sharedLink") != -1) {
+            id = "sharedLink/" + elements[elements.length - 1];
+        }
+        window.location.assign("mindit.xyz://" + id);
+    }
+};
+
+checkPlatform();
 
 App.ERROR_MESSAGE = "Page Not Found";
 App.isPublicMindMap;
@@ -160,7 +167,7 @@ Router.route('/embed/:link', {
             App.isPublicMindMap = true;
             Meteor.subscribe("mindmap", App.currentMap, "*", App.isSharedMindmap);
         });
-        return Meteor.subscribe("mindmap", App.currentMap);
+      return Meteor.subscribe("mindmap", App.currentMap);
     },
     data: function () {
         return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};

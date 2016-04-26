@@ -36,43 +36,20 @@
             <div class="collapse navbar-collapse" id="myNavbar">
 
                 <ul class="nav navbar-nav navbar-right " style="float: left">
-                    {{#if requireExport}}
-
                     {{#if requireExportImageButton}}
                     <li>{{> ExportImageButton}}</li>
-                    {{else}}
-                    <li>{{> Export}}</li>
-                    {{/if}}
                     {{/if}}
 
-
-                    {{#if requireShare}}
                     {{#if requireShareImageButton}}
                     <li>{{> ShareImageButton}}</li>
-                    {{else}}
-                    <li>{{> Share}}</li>
-                    {{/if}}
                     {{/if}}
 
-                    <!--{{#if requirePresent}}-->
-                    <!--<li>{{> PresentImageButton}}</li>-->
-                    <!--{{/if}}-->
-
-                    {{#if requirePresent}}
                     {{#if requirePresentImageButton}}
                     <li>{{> PresentImageButton}}</li>
-                    {{else}}
-                    <li>{{> Feedback }}</li>
-                    {{/if}}
                     {{/if}}
 
-
-                    {{#if requireHelp}}
                     {{#if requireHelpImageButton}}
                     <li> {{> HelpImageButton}}</li>
-                    {{else}}
-                    <li>{{> Help}}</li>
-                    {{/if}}
                     {{/if}}
 
                     {{#if topbarText}}
