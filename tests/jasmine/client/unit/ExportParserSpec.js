@@ -1,31 +1,4 @@
 describe('App.exportParser', function () {
-    it('should call Mindmaps.findOne() for getting rootnode data', function () {
-        spyOn(App.presentation, 'getRootNode').and.returnValue({
-            _id: "qRbTTPjHzfoGAmW3b",
-            name: "testtxt",
-            left: [],
-            right: []
-        });
-        var returnedString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"testtxt\"></node>\n</map>";
-
-        expect(App.presentation.getRootNode).toHaveBeenCalled();
-        expect(returnedString).toBe(expectedString);
-    });
-
-    it('should call childrenRecurse in JSONConverter method if any of left/right of root has at least one child', function () {
-        spyOn(App.presentation, 'getRootNode').and.returnValue({
-            _id: "qRbTTPjHzfoGAmW3b",
-            name: "testtxt",
-            left: [],
-            right: []
-        });
-        spyOn(App.exportParser, "children_recurse");
-        App.exportParser.children_recurse("qRbTTPjHzfoGAmW3b");
-
-        expect(App.exportParser.children_recurse).toHaveBeenCalled();
-    });
-
     it('should ensure root node text have special character like less than sign', function () {
         spyOn(App.presentation, 'getRootNode').and.returnValue({
             _id: "rootNodeId",

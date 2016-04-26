@@ -30,11 +30,7 @@ App.JSONConverter = function () {
         var leftChildName = leftNode.name;
         XMLString += App.exportParser.nodeString(leftChildId, leftChildName, App.exportParser.positions.LEFT);
 
-        var leftNodeChildren = leftNode.childSubTree;
-
-        if (leftNodeChildren.length > 0) {
-            App.exportParser.children_recurse(leftChildId);
-        }
+        App.exportParser.children_recurse(leftChildId);
 
         XMLString += "</node>\n";
     });
@@ -49,11 +45,7 @@ App.JSONConverter = function () {
         var rightChildName = rightNode.name;
         XMLString += App.exportParser.nodeString(rightChildId, rightChildName, App.exportParser.positions.RIGHT);
 
-        var rightNodeChildren = rightNode.childSubTree;
-
-        if (rightNodeChildren.length > 0) {
-            App.exportParser.children_recurse(rightChildId);
-        }
+        App.exportParser.children_recurse(rightChildId);
 
         XMLString += "</node>\n";
     });
@@ -66,7 +58,7 @@ App.JSONConverter = function () {
 App.exportParser.children_recurse = function (childNodeId) {
     var childNode = Mindmaps.findOne({_id: childNodeId});
 
-    if (!Boolean(childNode)){
+    if (!Boolean(childNode)) {
         return;
     }
 
