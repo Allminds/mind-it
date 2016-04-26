@@ -21,8 +21,6 @@ Template.TopBar.events({
         e.preventDefault();
         e.stopPropagation();
 
-
-
         var currentUser = Meteor.user();
 
         if(currentUser) {
