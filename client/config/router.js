@@ -10,7 +10,7 @@ var checkPlatform = function () {
         var address = window.location.href;
         var id = "";
         var elements = address.split('/');
-        console.log("Element  : " , elements);
+        alert("Element  : " , elements);
         if(address.indexOf("create") != -1) {
             id = "create/" + elements[elements.length - 1];
         }
@@ -18,8 +18,8 @@ var checkPlatform = function () {
             id = "sharedLink/" + elements[elements.length - 1];
         }
 
-        console.log("Id  : " , id);
-        console.log("Assign : " , "mindit.xyz://" + id);
+        alert("Id  : " , id);
+        alert("Assign : " , "mindit.xyz://" + id);
         window.location.assign("mindit.xyz://" + id);
     }
 };
