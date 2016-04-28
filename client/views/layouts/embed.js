@@ -9,3 +9,20 @@ Template.Embed.rendered= function () {
         textBox.value = code;
     })
 }
+
+Template.Embed.events({
+    'click #embedCodeTextBox': function (e, args) {
+        $("#embedCodeTextBox").select();
+    },
+    'click #copyEmbedCode': function (e, args) {
+        e.preventDefault();
+        var code = document.getElementById("embedCodeTextBox");
+        code.select();
+        try {
+            // Now that we've selected the anchor text, execute the copy command
+            var successful = document.execCommand('copy');
+        } catch(err) {
+            console.log('Oops, unable to copy');
+        }
+    }
+});

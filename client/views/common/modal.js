@@ -111,6 +111,19 @@ Template.ModalPopUp.events({
         this.focus();
     },
 
+    'click #copySharableLink' : function(e, args){
+        e.preventDefault();
+        var code = document.getElementById("linkTextBox");
+        code.select();
+        debugger;
+        try {
+            // Now that we've selected the anchor text, execute the copy command
+            var successful = document.execCommand('copy');
+        } catch(err) {
+            console.log('Oops, unable to copy');
+        }
+    }
+
 });
 
 

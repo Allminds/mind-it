@@ -24,13 +24,15 @@
 
 
                     <ul class="in-line nav nav-tabs">
-                        <li class="active"  id="LinkTab"><a href="#link" data-toggle="tab" > <img src="/sharableLink.png">&nbsp;&nbsp;Link</a></li>
+                        <li class="active" id="LinkTab"><a href="#link" data-toggle="tab"> <img src="/sharableLink.png">&nbsp;&nbsp;Link</a>
+                        </li>
 
                         <!--{{#if Meteor.settings.public.shareThroughtEmail}}-->
-                        <li  id="emailTab" ><a href="#email" data-toggle="tab" > <img src="/emailIcon.png">&nbsp;&nbsp;Email</a></li>
+                        <li id="emailTab"><a href="#email" data-toggle="tab"> <img src="/emailIcon.png">&nbsp;&nbsp;Email</a>
+                        </li>
                         <!--{{/if}}-->
 
-                        <li id="embedCodeTab"><a href="#embedCode" data-toggle="tab" >
+                        <li id="embedCodeTab"><a href="#embedCode" data-toggle="tab">
                             <img src="/embedIcon.png">&nbsp;&nbsp;Embed Code
                         </a></li>
 
@@ -85,7 +87,14 @@
                             </div>
 
                             <center>
-                                <input  class= "form-control" id="linkTextBox" readonly="readonly" onclick="this.select();" style="background-color: white">
+                                <input class="form-control" id="linkTextBox" readonly="readonly"
+                                       onclick="this.select();" style="background-color: white">
+                            </center>
+                            <center>
+                                <button id="copySharableLink"
+                                        style="background-color: white; color: black; width: 25%;margin-top:5%;padding:1%; border-radius:4px;    border-width:1px;">
+                                    Copy Link
+                                </button>
                             </center>
                         </div>
 
@@ -93,7 +102,7 @@
                         <div id="email" class="tab-pane fade ">
                             {{> shareEmail}}
                         </div>
-                        <div id="embedCode" class="tab-pane fade " >
+                        <div id="embedCode" class="tab-pane fade ">
                             {{> Embed}}
                         </div>
 
