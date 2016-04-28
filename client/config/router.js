@@ -5,17 +5,21 @@ var IS_IPAD = navigator.userAgent.match(/iPad/i) != null,
     IS_IOS = IS_IPAD || IS_IPHONE;
 
 var checkPlatform = function () {
+    console.log("I-Phone : " , IS_IOS);
     if (IS_IOS) {
         var address = window.location.href;
         var id = "";
         var elements = address.split('/');
-
+        console.log("Element  : " , elements);
         if(address.indexOf("create") != -1) {
             id = "create/" + elements[elements.length - 1];
         }
         else if(address.indexOf("sharedLink") != -1) {
             id = "sharedLink/" + elements[elements.length - 1];
         }
+
+        console.log("Id  : " , id);
+        console.log("Assign : " , "mindit.xyz://" + id);
         window.location.assign("mindit.xyz://" + id);
     }
 };
