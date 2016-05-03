@@ -86,98 +86,93 @@ Template.ModalPopUp.events({
         var button = document.getElementById("sharableLinkButtonMessage");
         textBox.value = text;
 
-
         Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-            textBox.value = getSharableLinkValue() + value;
+            textBox.value = App.getSharableLink() + value;
             button.innerHTML = "read";
         });
-
-
     },
     'click #sharedLinkw': function () {
         var text = document.getElementById("sharedLinkw");
+
         var textBox = document.getElementById("linkTextBox");
         textBox.value = text;
+
         var button = document.getElementById("sharableLinkButtonMessage");
+
         Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-            textBox.value = getSharableLinkValue() + value;
+            textBox.value = App.getSharableLink() + value;
             button.innerHTML = "read and write";
-
         });
-
     },
     'click [data-action=link]': function () {
         this.select();
         this.focus();
     },
 
-    'click #copySharableLink' : function(e, args){
+    'click #copySharableLink': function (e, args) {
         e.preventDefault();
+
         var code = document.getElementById("linkTextBox");
         code.select();
-        debugger;
+
         try {
-            // Now that we've selected the anchor text, execute the copy command
-            var successful = document.execCommand('copy');
-        } catch(err) {
+            document.execCommand('copy');
+        } catch (err) {
             console.log('Oops, unable to copy');
         }
     }
-
 });
 
 
 Template.ModalBody.rendered = function rendered() {
-
     var textBox = document.getElementById("linkTextBox");
-    textBox.disabled = false;
-    if (App.isPublicMindMap) {
-        Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
-            textBox.value = getSharableLinkValue() + value;
-        });
-    }
-    else {
-        Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-            textBox.value = getSharableLinkValue() + value;
-        });
+
+    if (Boolean(textBox)) {
+        textBox.disabled = false;
+
+        if (App.isPublicMindMap) {
+            Meteor.call("getSharableWriteLink", App.currentMap, function (error, value) {
+                textBox.value = App.getSharableLink() + value;
+            });
+        }
+        else {
+            Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
+                textBox.value = App.getSharableLink() + value;
+            });
+        }
     }
 
     if (!Meteor.settings.public.shareThroughEmail) {
         var link = document.getElementById("LinkTab");
-        link.style.width = '50%';
-        //$('LinkTab').width('50%')
-        //$('embedCodeTab').width('50%')
+        if (Boolean(link)) {
+            link.style.width = '50%';
+        }
+
         var code = document.getElementById("embedCodeTab");
-        code.style.width = '50%';
+        if (Boolean(code)) {
+            code.style.width = '50%';
+        }
+
         $('#emailTab').remove();
     }
-    else
-    {
+    else {
         var link = document.getElementById("LinkTab");
-        link.style.width = '33%';
-        var code = document.getElementById("embedCodeTab");
-        code.style.width = '34%';
-        var mail = document.getElementById("emailTab");
-        mail.style.width = "33%";
-    //    $('LinkTab').width('33%')
-    //$('embedCodeTab').width('33%')
-    //$('emailTab').width('33%')
+        if (Boolean(link)) {
+            link.style.width = '33%';
+        }
 
+        var code = document.getElementById("embedCodeTab");
+        if (Boolean(code)) {
+            code.style.width = '34%';
+        }
+
+        var mail = document.getElementById("emailTab");
+        if (Boolean(mail)) {
+            mail.style.width = "33%";
+        }
     }
 };
 
-function getSharableLinkValue() {
+App.getSharableLink = function getSharableLinkValue() {
     return App.Constants.HttpProtocol + "://" + location.hostname + (location.port ? ':' + location.port : '') + "/";
-
-}
-
-App.getEmbedCode = function () {
-    Meteor.call("getSharableReadLink", App.currentMap, function (error, value) {
-        var link = value;
-        link = link.replace("sharedLink", "embed");
-        var url = getSharableLinkValue() + link;
-        var code = "<iframe width=" + "\"854\"" + " height= " + "\"480\" src=\"" + url + "\" frameborder= \"0\" allowfullscreen></iframe>";
-        return code;
-    })
 };
-

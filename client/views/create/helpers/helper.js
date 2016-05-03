@@ -1,35 +1,35 @@
 App.previouslyVisitedNode = null;
 
-App.DirectionToggler = (function() {
+App.DirectionToggler = (function () {
     var instance;
 
     var currentDir = "left";
     var canToggle = false;
 
-    var init = function() {
+    var init = function () {
         return {
-            getCurrentDirection: function() {
+            getCurrentDirection: function () {
                 return currentDir;
             },
-            getCanToggle: function() {
+            getCanToggle: function () {
                 return canToggle;
             },
-            setCanToggle: function(toggle) {
+            setCanToggle: function (toggle) {
                 canToggle = toggle;
             },
-            changeDirection: function() {
+            changeDirection: function () {
                 currentDir = (currentDir == "right") ? "left" : "right";
             }
         }
     };
 
-    var createInstance = function() {
+    var createInstance = function () {
         var object = new init();
         return object;
     };
 
     return {
-        getInstance: function() {
+        getInstance: function () {
             if (!instance) {
                 instance = createInstance();
             }
@@ -39,7 +39,7 @@ App.DirectionToggler = (function() {
 
 })();
 
-App.applyLevelClass = function(d3Callable, depth) {
+App.applyLevelClass = function (d3Callable, depth) {
     if (d3Callable) {
         depth = depth ? depth : (d3Callable[0].length > 0 ? d3Callable[0][0].__data__.depth : null);
         if (depth) {
@@ -49,34 +49,34 @@ App.applyLevelClass = function(d3Callable, depth) {
     }
 };
 
-App.removeAllLevelClass = function(d3Callable) {
+App.removeAllLevelClass = function (d3Callable) {
     var levels = ['level-0', 'level-1', 'level-2', 'level-3', 'level-4', 'level-5'];
-    levels.forEach(function(level) {
+    levels.forEach(function (level) {
         d3Callable.classed(level, false);
     });
 };
 
-App.getNewlyAddedNodeId = function(parent, fields) {
+App.getNewlyAddedNodeId = function (parent, fields) {
     var key = Object.keys(fields)[0],
         subTree = App.Node.isRoot(parent) ? parent[key] : (parent.isCollapsed ? parent._childSubTree : parent.childSubTree),
         childIdTree = subTree.map(
-            function(child) {
+            function (child) {
                 return child._id;
             }),
         newlyAddedId = fields[key].find(
-            function(child) {
+            function (child) {
                 return childIdTree.indexOf(child) == -1;
             });
     return newlyAddedId;
 };
 
-App.checkRepositionUpdateOnRoot = function(root, updatedDirection, addedId) {
-    return root[updatedDirection == "right" ? "left" : "right"].map(function(child) {
-        return child._id;
-    }).indexOf(addedId) != -1;
+App.checkRepositionUpdateOnRoot = function (root, updatedDirection, addedId) {
+    return root[updatedDirection == "right" ? "left" : "right"].map(function (child) {
+            return child._id;
+        }).indexOf(addedId) != -1;
 };
 
-App.applyClassToSubTree = function(parentNodeData, className, classCallBack, callBackArgument, nodeList) {
+App.applyClassToSubTree = function (parentNodeData, className, classCallBack, callBackArgument, nodeList) {
 
     App.resetPathClassForCurrentNode(parentNodeData, null);
 
@@ -85,12 +85,12 @@ App.applyClassToSubTree = function(parentNodeData, className, classCallBack, cal
     if (!className && !classCallBack) return;
 
     var subTree = App.Node.getSubTree(parentNodeData);
-    var subTreeId = subTree.map(function(child) {
+    var subTreeId = subTree.map(function (child) {
         return child._id;
     });
     var tempD3Array = d3.select('thisClassDoesNotExist');
     tempD3Array[0].pop();
-    nodeList.forEach(function(node) {
+    nodeList.forEach(function (node) {
         if (subTreeId.indexOf(node.__data__._id) != -1)
             tempD3Array[0].push(node);
     });
@@ -101,25 +101,25 @@ App.applyClassToSubTree = function(parentNodeData, className, classCallBack, cal
         tempD3Array.classed(className, true);
     }
 
-    subTree.forEach(function(child) {
+    subTree.forEach(function (child) {
         App.applyClassToSubTree(child, className, classCallBack, callBackArgument, nodeList);
     });
 };
 
-App.resetPathClassForCurrentNode = function(parentNodeData, node) {
+App.resetPathClassForCurrentNode = function (parentNodeData, node) {
     var tempNode = d3.select('thisClassDoesNotExist'),
         depth;
     tempNode[0].pop();
     if (node) {
         depth = node.depth;
-        tempNode.push(d3.selectAll('path')[0].filter(function(_) {
+        tempNode.push(d3.selectAll('path')[0].filter(function (_) {
             return _.__data__.target._id == node._id
         }));
     } else {
         depth = parentNodeData.depth + 1;
         if (parentNodeData.childSubTree)
-            parentNodeData.childSubTree.forEach(function(child) {
-                tempNode.push(d3.selectAll('path')[0].filter(function(_) {
+            parentNodeData.childSubTree.forEach(function (child) {
+                tempNode.push(d3.selectAll('path')[0].filter(function (_) {
                     return _.__data__.target._id == child._id
                 }));
             });
@@ -129,7 +129,7 @@ App.resetPathClassForCurrentNode = function(parentNodeData, node) {
     tempNode.classed(App.getPathClassForNodeDepth(depth), true);
 };
 
-App.calculateNextIndex = function(initialIndex, length, keyPressed) {
+App.calculateNextIndex = function (initialIndex, length, keyPressed) {
     var newIndex = -1;
     if (keyPressed === App.Constants.KeyPressed.UP) {
         if (initialIndex == 0) return -1;
@@ -142,14 +142,14 @@ App.calculateNextIndex = function(initialIndex, length, keyPressed) {
     return newIndex
 };
 
-App.swapElements = function(list, firstIndex, secondIndex) {
+App.swapElements = function (list, firstIndex, secondIndex) {
     var temp = list[firstIndex];
     list[firstIndex] = list[secondIndex];
     list[secondIndex] = temp;
     return list;
 };
 
-App.circularReposition = function(list, keyPressed) {
+App.circularReposition = function (list, keyPressed) {
     var newArray = [];
     if (keyPressed === App.Constants.KeyPressed.UP) {
         var temp = list[0];
@@ -168,13 +168,12 @@ App.circularReposition = function(list, keyPressed) {
 App.nodeSelector = {
     prevDepthVisited: 0,
 
-    setPrevDepth: function(depth) {
+    setPrevDepth: function (depth) {
         App.nodeSelector.prevDepthVisited = depth;
     }
 };
 
-
-App.selectShiftHorizontal = function(node) {
+App.selectShiftHorizontal = function (node) {
 
     {
         d3.select(node).classed("softSelected", true);
@@ -184,14 +183,12 @@ App.selectShiftHorizontal = function(node) {
             App.multiSelectedNodes.push(node);
 
 
-
     }
-
 
 
 }
 
-App.selectShiftVertical = function(node) {
+App.selectShiftVertical = function (node) {
 
     if (App.multiSelectedNodes.indexOf(node) > 0) {
         d3.select(node).classed("softSelected", true);
@@ -202,10 +199,9 @@ App.selectShiftVertical = function(node) {
     }
 
 
-
 }
 
-App.select = function(node, softSelect) {
+App.select = function (node, softSelect) {
     // Find previously selected and deselect
 
     if (App.cmdDown || softSelect) {
@@ -233,16 +229,16 @@ App.select = function(node, softSelect) {
         App.clearAllSelected();
 
     }
-    if(Meteor.user()) {
+    if (Meteor.user()) {
         Meteor.call("updateUserStatus", d3.select(".node.level-0")[0][0].__data__._id, node.__data__._id);
     }
 };
 
-App.deselectNode = function() {
+App.deselectNode = function () {
     d3.selectAll(".selected").classed("selected", false);
 };
 
-App.clearAllSelected = function() {
+App.clearAllSelected = function () {
 
     App.multiSelectedNodes = [];
     d3.selectAll(".softSelected").classed("softSelected", false);
@@ -253,22 +249,21 @@ App.clearAllSelected = function() {
 
 }
 
-
-App.selectNode = function(target) {
+App.selectNode = function (target) {
     if (target) {
-        var sel = d3.selectAll('#mindmap svg .node').filter(function(d) {
+        var sel = d3.selectAll('#mindmap svg .node').filter(function (d) {
             return d._id == target._id
         })[0][0];
         if (sel) {
             App.select(sel);
-          //  console.log("selected mnode",sel.)
+            //  console.log("selected mnode",sel.)
             return true;
         }
     }
     return false;
 };
 
-var updateDbWithPromptInput = function(nodeData) {
+var updateDbWithPromptInput = function (nodeData) {
     $('#myModalHorizontal').modal('hide');
     var updatedText = $("#modal-text").val();
     if (updatedText != nodeData.name) {
@@ -277,37 +272,37 @@ var updateDbWithPromptInput = function(nodeData) {
             name: nodeData.name
         });
         App.chart.update();
-        setTimeout(function() {
+        setTimeout(function () {
             App.chart.update();
             App.selectNode(nodeData);
         }, 10);
     }
 };
 
-var showPrompt = function(nodeData) {
+var showPrompt = function (nodeData) {
     $("#modal-text").val(nodeData.name);
     $('#myModalHorizontal').modal('show');
 
-    $('#myModalHorizontal').on('shown.bs.modal', function() {
+    $('#myModalHorizontal').on('shown.bs.modal', function () {
         $("#modal-text").focus();
         $("#modal-text").select();
     });
-    $("#modal-save").click(function() {
+    $("#modal-save").click(function () {
         updateDbWithPromptInput(nodeData);
         $('#modal-save').off('click');
     });
 };
 
-var updateNode = function(nodeData) {
+var updateNode = function (nodeData) {
     mindMapService.updateNode(nodeData._id, {
         name: nodeData.name
     });
-    setTimeout(function() {
+    setTimeout(function () {
         App.selectNode(nodeData);
     }, 10);
 };
 
-App.showEditor = function(node) {
+App.showEditor = function (node) {
     var selectedNode = node || d3.select('.selected')[0][0];
     var nodeData = selectedNode.__data__;
 
@@ -322,11 +317,11 @@ App.showEditor = function(node) {
     editor.setupAttributes();
 };
 
-App.getDirection = function(data) {
+App.getDirection = function (data) {
     return App.Node.getDirection(data);
 };
 
-App.calculateDirection = function(parent) {
+App.calculateDirection = function (parent) {
     var dir = App.getDirection(parent);
     var selectedNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
     if (dir === 'root') {
@@ -342,56 +337,72 @@ App.calculateDirection = function(parent) {
     return dir;
 };
 
-App.storeLocally = function(node) {
+App.storeLocally = function (node) {
     var state = {
         isCollapsed: node.isCollapsed
     };
     store.set(node._id, state);
 };
 
-App.removeLocally = function(node) {
+App.removeLocally = function (node) {
     store.remove(node._id);
 };
 
-App.isLocallyCollapsed = function(id) {
+App.isLocallyCollapsed = function (key) {
     try {
-        var locallyCollapsed = store.get(id).isCollapsed;
-    } catch (e) {}
-    return locallyCollapsed ? true : false;
+        var value = store.get(key);
+
+        if (Boolean(value)) {
+            var isCollapsed = value.isCollapsed;
+
+            if (Boolean(isCollapsed)) {
+                return isCollapsed;
+            }
+        }
+    } catch (e) {
+        console.log("Error : ", e);
+    }
+
+    return false;
 };
 
-App.retainCollapsed = function() {
-    store.forEach(function(key) {
+App.retainCollapsed = function () {
+    store.forEach(function (key) {
         try {
             if (App.isLocallyCollapsed(key)) {
                 var nodeData = App.map.getNodeDataWithNodeId(key);
-                App.collapse(nodeData, key);
+
+                if (Boolean(nodeData)) {
+                    App.collapse(nodeData, key);
+                }
             }
-        } catch (e) {}
+        } catch (e) {
+            console.log("Error : ", e);
+        }
     });
 };
 
-var collapseRecursive = function(d, id) {
+var collapseRecursive = function (d, id) {
     if (d._id === id) {
         d.isCollapsed = true;
         App.storeLocally(d);
     }
+
     if (d.hasOwnProperty('childSubTree') && d.children) {
         d._childSubTree = [];
         d._childSubTree = d.childSubTree;
-        //d._childSubTree.forEach(collapseRecursive);
         d.childSubTree = null;
     }
 };
 
-App.collapse = function(d, id) {
+App.collapse = function (d, id) {
     collapseRecursive(d, id);
     if (App.presentation.initialSetup == false) {
         App.chart.update();
     }
 };
 
-App.expandRecursive = function(d, id) {
+App.expandRecursive = function (d, id) {
     if (d._id === id) {
         d.isCollapsed = false;
         App.removeLocally(d);
@@ -406,12 +417,12 @@ App.expandRecursive = function(d, id) {
     }
 };
 
-App.expand = function(d, id) {
+App.expand = function (d, id) {
     App.expandRecursive(d, id);
     App.chart.update();
 };
 
-App.toggleCollapsedNode = function(selected) {
+App.toggleCollapsedNode = function (selected) {
 
     var dir = App.getDirection(selected);
     if (dir !== 'root') {
@@ -423,8 +434,7 @@ App.toggleCollapsedNode = function(selected) {
     }
 };
 
-
-App.checkOverlap = function(rect1) {
+App.checkOverlap = function (rect1) {
     var rectList = d3.select('svg').select('g').selectAll('g');
     for (var i = 0; i < rectList[0].length; i++) {
 
@@ -444,11 +454,11 @@ App.checkOverlap = function(rect1) {
     }
 };
 
-App.dragAndDrop = function(draggedNode, droppedOnNode, toggleCallback) {
+App.dragAndDrop = function (draggedNode, droppedOnNode, toggleCallback) {
     if (droppedOnNode.isCollapsed) toggleCallback(droppedOnNode);
     var parent = draggedNode.parent,
         dir = App.getDirection(draggedNode),
-        siblingIds = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree).map(function(_) {
+        siblingIds = (App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree).map(function (_) {
             return _._id
         });
 
@@ -458,8 +468,7 @@ App.dragAndDrop = function(draggedNode, droppedOnNode, toggleCallback) {
 
 };
 
-
-App.getChartInFocus = function() {
+App.getChartInFocus = function () {
     var body = $('body')[0],
         scrollWidth = body.scrollWidth - body.clientWidth,
         scrollHeight = body.scrollHeight - body.clientHeight;
@@ -467,27 +476,26 @@ App.getChartInFocus = function() {
     $(window).scrollTop(scrollHeight / 2);
 };
 
-App.clone = function(node) {
+App.clone = function (node) {
     var clonedNode = {
         name: node.name,
         position: node.position
     };
-    clonedNode.children = (node.children || node._children || []).App.map(function(currentElem) {
+    clonedNode.children = (node.children || node._children || []).App.map(function (currentElem) {
         return clone(currentElem);
     });
     if (node.depth == 0) {
-        clonedNode.left = clonedNode.children.filter(function(x) {
+        clonedNode.left = clonedNode.children.filter(function (x) {
             return x.position == 'left'
         });
-        clonedNode.right = clonedNode.children.filter(function(x) {
+        clonedNode.right = clonedNode.children.filter(function (x) {
             return x.position == 'right'
         });
     }
     return clonedNode;
 };
 
-
-App.cloneObject = function(obj) {
+App.cloneObject = function (obj) {
     if (null == obj || "object" != typeof obj) return obj;
     var copy = obj.constructor();
     for (var attr in obj) {
@@ -502,7 +510,7 @@ App.KeyCodes = {
     tab: 9
 };
 
-App.getPathClassForNodeDepth = function(depth) {
+App.getPathClassForNodeDepth = function (depth) {
     var nodeDepthPathClass = {
         1: 'thick-link',
         2: 'link',
@@ -513,7 +521,7 @@ App.getPathClassForNodeDepth = function(depth) {
     return Object.keys(nodeDepthPathClass).indexOf(depth) != -1 ? nodeDepthPathClass[depth] : 'link';
 };
 
-App.checkIfSiblings = function(nodesList) {
+App.checkIfSiblings = function (nodesList) {
     for (var i = 0; i < nodesList.length - 1; i++) {
         if (nodesList[i].parentId != nodesList[i + 1].parentId)
             return false;
