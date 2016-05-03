@@ -30,7 +30,7 @@ Router.route('/create/:_id', {
     onBeforeAction: function () {
         var self = this;
         var error_msg;
-        if (mindMapService.findTree(this.params._id).length == 0 || Mindmaps.find({rootId:null}).count() == 0) {
+        if (mindMapService.findTree(this.params._id).length == 0 || Mindmaps.find({rootId: null}).count() == 0) {
             Meteor.call("isInvalidMindmap", this.params._id, function (error, result) {
                 if (result == true) {
                     error_msg = "Invalid Mindmap";
@@ -88,6 +88,7 @@ Router.route('/sharedLink/:link', {
         var self = this;
         setTimeout(function () {
             if (App.isSharedMindmap == App.Constants.Mode.READ) {
+                Meteor.call("addMapToUser", getMeteorUser(), App.currentMap, 'r');
                 self.render("create");
             }
             else {
@@ -99,6 +100,7 @@ Router.route('/sharedLink/:link', {
                         self.render("login_loading_page");
 
                     } else {
+                        Meteor.call("addMapToUser", getMeteorUser(), App.currentMap, 'w');
                         self.render("create");
                     }
 
@@ -117,7 +119,9 @@ Router.route('/sharedLink/:link', {
         var link = this.params.link;
 
         Meteor.call("getRootNodeFromLink", "sharedLink/" + this.params.link, function (error, value) {
+
             App.currentMap = value.rootId;
+
             App.isSharedMindmap = App.Constants.Mode.READ;
 
             if (value.readWriteLink == "sharedLink/" + link) {
@@ -154,13 +158,13 @@ Router.route('/embed/:link', {
     waitOn: function () {
         var self = this;
         Meteor.call("getRootNodeFromLink", "sharedLink/" + self.params.link, function (error, value) {
-            console.log("Value",value);
+            console.log("Value", value);
             App.currentMap = value.rootId;
             App.isSharedMindmap = App.Constants.Mode.READ;
             App.isPublicMindMap = true;
             Meteor.subscribe("mindmap", App.currentMap, "*", App.isSharedMindmap);
         });
-      return Meteor.subscribe("mindmap", App.currentMap);
+        return Meteor.subscribe("mindmap", App.currentMap);
     },
     data: function () {
         return {id: App.currentMap, data: mindMapService.findTree(App.currentMap)};
