@@ -62,38 +62,3 @@ describe("Database operations calculation test", function () {
 
     });
 });
-
-
-xdescribe("ACL entry addition and updation test based on calculated Database operations", function () {
-    it("New ACL entry is inserted when calculated Database operation is 'INSERT'", function () {
-        spyOn(global, "fetchACLRecordByUserAndMindMap");
-        spyOn(global, "getDatabaseOperation").and.returnValue("INSERT");
-        spyOn(global, "insertNewMappingInACL");
-
-        App.DbService.addUser();
-
-        expect(insertNewMappingInACL).toHaveBeenCalled();
-    });
-
-    it("ACL entry is updated when calculated Database operation is 'UPDATE'", function () {
-        spyOn(global, "fetchACLRecordByUserAndMindMap");
-        spyOn(global, "getDatabaseOperation").and.returnValue("UPDATE");
-        spyOn(global, "updateMappingInACL");
-
-        App.DbService.addUser();
-
-        expect(updateMappingInACL).toHaveBeenCalled();
-    });
-
-    it("No insert or update on ACL is performed when calculated Database operation is 'NONE'", function () {
-        spyOn(global, "fetchACLRecordByUserAndMindMap");
-        spyOn(global, "getDatabaseOperation").and.returnValue("NONE");
-        spyOn(global, "updateMappingInACL");
-        spyOn(global, "insertNewMappingInACL");
-
-        App.DbService.addUser();
-
-        expect(updateMappingInACL).not.toHaveBeenCalled();
-        expect(insertNewMappingInACL).not.toHaveBeenCalled();
-    });
-});
