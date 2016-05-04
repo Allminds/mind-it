@@ -105,9 +105,9 @@ Router.route('/sharedLink/:link', {
                     }
 
                 }
-                else
+                else {
                     this.render("error_page");
-
+                }
             }
         }, 2000);
 

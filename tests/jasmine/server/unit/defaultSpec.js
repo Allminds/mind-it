@@ -94,7 +94,7 @@ describe('default.js', function () {
                 })
             });
 
-            it("Should remove www.mindit.xyz from sharable read-write link and return modified link", function(){
+            it("Should remove www.mindit.xyz from sharable read-write link and return modified link", function () {
                 var document = {
                     rootId: "abcDW122Mxk",
                     owner: '*',
@@ -103,7 +103,7 @@ describe('default.js', function () {
                 };
                 spyOn(MindmapMetadata, 'findOne').and.returnValue(document);
                 var modifiedLink = "abc";
-                Meteor.call("getSharableWriteLink","abcDW122Mxk",function(error, value){
+                Meteor.call("getSharableWriteLink", "abcDW122Mxk", function (error, value) {
                     modifiedLink = value;
                     expect(modifiedLink).toBe("sharedLink/adsdsvsdv");
                 });
@@ -161,18 +161,18 @@ describe('default.js', function () {
 
         describe('updateUserStatus', function () {
             it("Should call  App.usersStatusService.updateUserStatus", function () {
-                spyOn(Meteor , "userId").and.returnValue("1_id");
-                spyOn(Meteor.users , 'findOne').and.returnValue({services: { google : { email : "dummy@mail.com" }}});
+                spyOn(Meteor, "userId").and.returnValue("1_id");
+                spyOn(Meteor.users, 'findOne').and.returnValue({services: {google: {email: "dummy@mail.com"}}});
                 spyOn(App.usersStatusService, 'updateUserStatus');
                 Meteor.call("updateUserStatus", "dummyMindmapId", "dummyNodeId", function (error, value) {
                     if (!error) {
-                        expect(App.usersStatusService.updateUserStatus).toHaveBeenCalledWith("dummy@mail.com" , "dummyMindmapId" , "dummyNodeId");
+                        expect(App.usersStatusService.updateUserStatus).toHaveBeenCalledWith("dummy@mail.com", "dummyMindmapId", "dummyNodeId");
                     }
                 })
             });
 
             it("Should not call App.usersStatusService.updateUserStatus when user is not logged In", function () {
-                spyOn(Meteor , "userId").and.returnValue(null);
+                spyOn(Meteor, "userId").and.returnValue(null);
                 spyOn(App.usersStatusService, 'updateUserStatus');
                 Meteor.call("updateUserStatus", "dummyMindmapId", "dummyNodeId", function (error, value) {
                     if (!error) {
@@ -215,14 +215,12 @@ describe('default.js', function () {
         describe('isPublicMindmap', function () {
             it("Should return true if given mindmap is public", function () {
                 var DUMMY_PUBLIC_MINDMAPID = "QHYW2owkLbjbNnE4H";
-                var result=[];
-                var obj={
-                    fetch: function(){
-                        //some dummy functionality.
+                var obj = {
+                    count: function () {
+                        return 1;
                     }
                 };
-                spyOn(acl,'find').and.returnValue(obj);
-                spyOn(obj,'fetch').and.returnValue(result);
+                spyOn(MindmapMetadata, 'find').and.returnValue(obj);
                 Meteor.call("isPublicMindmap", DUMMY_PUBLIC_MINDMAPID, function (error, value) {
                     expect(value).toBe(true);
                 })
@@ -230,14 +228,14 @@ describe('default.js', function () {
             });
             it("Should return false if given mindmap is private", function () {
                 var DUMMY_PRIVATE_MINDMAPID = "QHYW2owkLbjbNnE4H";
-                var result=["some enrty"];
-                var obj={
-                    fetch: function(){
+                var result = ["some enrty"];
+                var obj = {
+                    fetch: function () {
                         //some dummy functionality.
                     }
                 };
-                spyOn(acl,'find').and.returnValue(obj);
-                spyOn(obj,'fetch').and.returnValue(result);
+                spyOn(acl, 'find').and.returnValue(obj);
+                spyOn(obj, 'fetch').and.returnValue(result);
                 Meteor.call("isPublicMindmap", DUMMY_PRIVATE_MINDMAPID, function (error, value) {
                     expect(value).toBe(false);
                 })
@@ -245,7 +243,6 @@ describe('default.js', function () {
             });
 
         })
-
 
 
     })

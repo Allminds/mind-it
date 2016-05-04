@@ -13,13 +13,13 @@ Meteor.publish('mindmap', function (id, user_email_id, isSharedMindmap) {
     }, function (e) {
     }));
 
-    var readPermitted = acl.findOne({user_id: {$in: [user_email_id, "*"]}, mind_map_id: id});
+    var readPermitted = acl.findOne({user_id: user_email_id, mind_map_id: id});
     if (readPermitted || isSharedMindmap) {
         return Mindmaps.find({$or: [{_id: id}, {rootId: id}]});
 
     }
     else {
-        if (acl.find({mind_map_id: id}).count() == 0) {
+        if (acl.find({mind_map_id: id}).count() == 0 || MindmapMetadata.find({rootId: id, owner: '*'})) {
             return Mindmaps.find({$or: [{_id: id}, {rootId: id}]});
         } else {
 
@@ -56,14 +56,14 @@ Meteor.publish('onlineusers', function (mindmap) {
     this._session.socket.on("close", Meteor.bindEnvironment(function () {
         onlineUsers = MindmapMetadata.findOne({rootId: mindmap}).onlineUsers;
 
-        onlineUsers = onlineUsers.filter(function(user) {
+        onlineUsers = onlineUsers.filter(function (user) {
             return user.email != currentUser.services.google.email;
         });
 
         MindmapMetadata.update({rootId: mindmap}, {$set: {onlineUsers: onlineUsers}});
 
     }, function (e) {
-        console.log("Error : " , e);
+        console.log("Error : ", e);
     }));
 
     var i = 0;
@@ -80,7 +80,7 @@ Meteor.publish('onlineusers', function (mindmap) {
 
     MindmapMetadata.update({rootId: mindmap}, {$set: {onlineUsers: onlineUsers}});
 
-    return  MindmapMetadata.find({rootId: mindmap} , {fields : {onlineUsers : 1 , rootId : 1}});
+    return MindmapMetadata.find({rootId: mindmap}, {fields: {onlineUsers: 1, rootId: 1}});
 
 });
 Meteor.publish('acl', function (user_id) {
@@ -145,14 +145,15 @@ Meteor.methods({
         generateData(AllNodes);
     },
     isWritable: function (mindMapId, emailId) {
-        var b = acl.find({
+
+        if (MindmapMetadata.find({rootId: mindMapId, owner: '*'}).count() == 1)
+            return true;
+
+        return acl.find({
                 mind_map_id: mindMapId,
                 user_id: {$in: [emailId, "*"]},
                 permissions: {$in: ["w", "o"]}
             }).count() > 0;
-        if (acl.find({mind_map_id: mindMapId}).count() == 0)
-            b = true;
-        return b;
     },
     countNodes: function () {
         return Mindmaps.find({}).count();
@@ -203,8 +204,8 @@ Meteor.methods({
     },
     getRootNodeFromLink: function (link) {
         var doc = MindmapMetadata.findOne({$or: [{readOnlyLink: link}, {readWriteLink: link}]});
-        if(!doc){
-             throw new Meteor.Error(
+        if (!doc) {
+            throw new Meteor.Error(
                 803, "Invalid Link");
         }
 
@@ -217,10 +218,10 @@ Meteor.methods({
         return doc;
     },
     updateUserStatus: function (mindMapId, nodeId) {
-        if(!Meteor.userId()) {
+        if (!Meteor.userId()) {
             return;
         }
-        var emailId = Meteor.users.findOne({_id : this.userId}).services.google.email;
+        var emailId = Meteor.users.findOne({_id: this.userId}).services.google.email;
         App.usersStatusService.updateUserStatus(emailId, mindMapId, nodeId);
     },
     createUserFromAdmin: function (username, profile, services) {
@@ -283,11 +284,7 @@ Meteor.methods({
         mindMapService.updateNode(id, data);
     },
     isPublicMindmap: function (id) {
-        var results = acl.find({mind_map_id: id}).fetch();
-        if (results.length != 0)
-            return false;
-        else
-            return true;
+        return MindmapMetadata.find({rootId: id, owner: '*'}).count() == 1;
     }
 
 });
