@@ -583,7 +583,7 @@ describe('eventBinding.js', function () {
                     'down', 'right', 'left', 'space', 'mod+shift+p', 'pageup', 'pagedown'];
 
                 App.eventBinding.unbindEditableEvents();
-                for (var event of allowedInReadOnlyModeEvents) {
+                for (var event in allowedInReadOnlyModeEvents) {
                     expect(Mousetrap.unbind).not.toHaveBeenCalledWith(event);
                 }
             });
