@@ -60,7 +60,8 @@ Template.create.rendered = function rendered() {
     Mindmaps.find({$or: [{_id: this.data.id}, {rootId: this.data.id}]}).observeChanges(App.tracker);
     MindmapMetadata.find().observeChanges(App.cursorTracker);
 
-    App.retainCollapsed();
+    App.presentation.collapseAllMindmap();
+    
 };
 
 Template.readOnly.helpers({
