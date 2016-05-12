@@ -1,40 +1,48 @@
 App.cursorTracker = {
-    changed: function (id , fields) {
-        if(Meteor.settings.public.cursorMovement == true) {
-            console.log("In Cursor tracker Fields : " , fields.onlineUsers );
+    changed: function (id, fields) {
+        App.onlineUsers = fields.onlineUsers;
+        App.showCursorLabels(App.onlineUsers);
+    }
+};
+App.showCursorLabels = function (onlineUsers) {
 
-            var onlineUsers = fields.onlineUsers;
+    if (onlineUsers == null) {
+        return;
+    }
+    d3.selectAll("circle.user-cursor").remove();
+    for (var index = 0; index < onlineUsers.length; index++) {
 
-
-            var node = d3.select(".cursorSelected-0");
-            //console.log("Node 1 : " , node);
-            node.classed("cursorSelected-0", false);
-
-            node = d3.select(".cursorSelected-1");
-            //console.log("Node 2 : " , node);
-            node.classed("cursorSelected-1", false);
-
-            node = d3.select(".cursorSelected-2");
-            //console.log("Node 3 : " , node);
-            node.classed("cursorSelected-2", false);
-
-            for(var index = 0; index < onlineUsers.length ; index++) {
-                if(onlineUsers[index].email != Meteor.user().services.google.email) {
-                    var id = onlineUsers[index].currentWorkingNode;
-
-                    if(id == null) {
-                        continue;
+        if (onlineUsers[index].email != Meteor.user().services.google.email) {
+            var id = onlineUsers[index].currentWorkingNode;
+            if (id == null) {
+                continue;
+            }
+            var d3Node = App.presentation.getD3Node(id);
+            if (d3Node == null) {
+                console.log("Null d3 Id : ", id);
+            } else {
+                if (onlineUsers.length < App.colorMap.length) {
+                    while (App.colorMap[App.colorCursorPosition].isAssigned == true) {
+                        App.colorCursorPosition = App.colorCursorPosition % App.colorMap.length;
                     }
-
-                    var d3Node = App.presentation.getD3Node(id);
-                    if(d3Node == null) {
-                        console.log("Null d3 Id : " , id);
+                    var color;
+                    if (App.colorUserMap[onlineUsers[index].email]) {
+                        color = App.colorUserMap[onlineUsers[index].email];
+                    } else {
+                        color = App.colorMap[App.colorCursorPosition].code;
+                        App.colorMap[App.colorCursorPosition].isAssigned = true;
+                        App.colorUserMap[onlineUsers[index].email] = App.colorMap[App.colorCursorPosition].code;
+                        App.colorCursorPosition++;
                     }
-                    if(d3Node != d3.select(".selected")[0][0]) {
-                        var cssClassName = "cursorSelected-" + index;
-                        console.log("CSSCLASS : " , cssClassName , " Name: " , d3Node.__data__.name , " user Name : " , onlineUsers[index].email);
-                        d3.select(d3Node).classed(cssClassName , true);
+                    var cy = 7;
+                    if (d3Node.__data__.rootId == null) {
+                        cy = 15;
                     }
+                    d3.select(d3Node).append("circle")
+                        .attr("class", "user-cursor")
+                        .attr("cx", 0)
+                        .attr("cy", cy)
+                        .attr("r", 5).attr("fill", color);
                 }
             }
         }

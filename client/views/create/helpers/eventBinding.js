@@ -6,7 +6,7 @@ App.allDescendants = [];
 App.indexDescendants = 0;
 
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
-    var parent   = removedNode.parent,
+    var parent = removedNode.parent,
         siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
     var focusableNode = siblings[removedNodeIndex];
     if (siblings.length == 0) {
@@ -25,10 +25,10 @@ App.cutNode = function (selectedNode) {
 
     App.nodeCutToPaste.push(selectedNode);
 
-    var dir               = App.Node.getDirection(selectedNode),
-        parent            = selectedNode.parent,
-        siblings          = App.Node.getSubTree(parent, dir),
-        siblingsIDList    = siblings.map(function (_) {
+    var dir = App.Node.getDirection(selectedNode),
+        parent = selectedNode.parent,
+        siblings = App.Node.getSubTree(parent, dir),
+        siblingsIDList = siblings.map(function (_) {
             return _._id;
         }),
         selectedNodeIndex = siblingsIDList.indexOf(selectedNode._id);
@@ -59,28 +59,28 @@ App.eventBinding.f2Action = function (event) {
 
 var f2ActionEvent = {
     allowedInReadOnlyMode: false,
-    method:                 function () {
+    method: function () {
         App.eventBinding.f2Action(this.event);
     }
 };
 
 var undoEvent = {
     allowedInReadOnlyMode: false,
-    method:                 function () {
+    method: function () {
         App.RepeatHandler.undo();
     }
 };
 
 var redoEvent = {
     allowedInReadOnlyMode: false,
-    method:                 function () {
+    method: function () {
         App.RepeatHandler.redo();
     }
 };
 
 var cutEvent = {
     allowedInReadOnlyMode: false,
-    method:                 function () {
+    method: function () {
         var selectedNodes = [];
         selectedNodes = App.multiSelectedNodes.map(function (elem) {
             return elem.__data__;
@@ -190,7 +190,7 @@ App.eventBinding.copyAction = function () {
 
 var copyEvent = {
     allowedInReadOnlyMode: false,
-    method:                 function () {
+    method: function () {
         App.eventBinding.copyAction();
     }
 };
@@ -249,7 +249,7 @@ var sortNodesAccToUi = function (nodes) {
 
 var shiftUpEvent = {
     allowedInReadOnlyMode: true,
-    method:                 function () {
+    method: function () {
 
         var node = d3.select('.selected').node();
         var nextNode = getNextSiblingForShift(node.__data__, App.Constants.KeyPressed.UP);
@@ -423,7 +423,7 @@ var pasteEvent = {
         } else {
             var undoArray = App.nodeToPasteBulleted.map(function (sourceNodeBulleted) {
                 var headerNode = App.CopyParser.populateObjectFromBulletedList(sourceNodeBulleted, targetNode),
-                    index      = App.Node.getSubTree(App.map.getNodeDataWithNodeId(headerNode.parentId),
+                    index = App.Node.getSubTree(App.map.getNodeDataWithNodeId(headerNode.parentId),
                         App.getDirection(headerNode)).length;
 
 
@@ -566,7 +566,6 @@ var spaceEvent = {
         event = arguments[0];
         (event.preventDefault || event.stop || event.stopPropagation || function () {
         }).call(event);
-
         var multiStackData = [];
         for (var i = 0; i < App.multiSelectedNodes.length; i++) {
             App.toggleCollapsedNode(App.multiSelectedNodes[i].__data__);
@@ -585,14 +584,14 @@ var spaceEvent = {
 
 var expandAllEvent = {
     allowedInReadOnlyMode: true,
-    method:                function () {
+    method: function () {
         App.presentation.expandAll();
     }
 };
 
 var collapseAllEvent = {
     allowedInReadOnlyMode: true,
-    method:                function () {
+    method: function () {
         App.presentation.collapseAllMindmap();
     }
 };
@@ -620,7 +619,7 @@ var presentationModeEvent = {
 
 var pageUpEvent = {
     allowedInReadOnlyMode: true,
-    method:                function () {
+    method: function () {
         e = arguments[0];
         e.preventDefault();
         if (App.presentation.presentationMode) {
@@ -631,7 +630,7 @@ var pageUpEvent = {
 
 var pageDownEvent = {
     allowedInReadOnlyMode: true,
-    method:                function () {
+    method: function () {
         e = arguments[0];
         e.preventDefault();
         if (App.presentation.presentationMode) {
@@ -641,36 +640,36 @@ var pageDownEvent = {
 };
 
 App.eventBinding.EventsMap = {
-    'mod+z':       undoEvent,
+    'mod+z': undoEvent,
     'cmd+shift+z': redoEvent,
-    'ctrl+y':      redoEvent,
-    'mod+x':       cutEvent,
-    'mod+c':       copyEvent,
-    'shift+up':    shiftUpEvent,
-    'shift+down':  shiftDownEvent,
+    'ctrl+y': redoEvent,
+    'mod+x': cutEvent,
+    'mod+c': copyEvent,
+    'shift+up': shiftUpEvent,
+    'shift+down': shiftDownEvent,
     'shift+right': shiftRightEvent,
-    'shift+left':  shiftLeftEvent,
-    'mod+v':       pasteEvent,
-    'enter':       enterEvent,
-    'tab':         tabEvent,
-    'del':         delEvent,
-    'mod+e':       exportEvent,
-    'mod+left':    modLeftEvent,
-    'mod+right':   modRightEvent,
-    'mod+up':      modUpEvent,
-    'mod+down':    modDownEvent,
-    'esc':         escEvent,
-    '?':           helpEvent,
-    'f2':          f2ActionEvent,
-    'up':          upEvent,
-    'down':        downEvent,
-    'right':       rightEvent,
-    'left':        leftEvent,
-    'space':       spaceEvent,
+    'shift+left': shiftLeftEvent,
+    'mod+v': pasteEvent,
+    'enter': enterEvent,
+    'tab': tabEvent,
+    'del': delEvent,
+    'mod+e': exportEvent,
+    'mod+left': modLeftEvent,
+    'mod+right': modRightEvent,
+    'mod+up': modUpEvent,
+    'mod+down': modDownEvent,
+    'esc': escEvent,
+    '?': helpEvent,
+    'f2': f2ActionEvent,
+    'up': upEvent,
+    'down': downEvent,
+    'right': rightEvent,
+    'left': leftEvent,
+    'space': spaceEvent,
     'mod+shift+p': presentationModeEvent,
-    'pageup':      pageUpEvent,
-    'pagedown':    pageDownEvent,
-    'mod+u':       expandAllEvent,
+    'pageup': pageUpEvent,
+    'pagedown': pageDownEvent,
+    'mod+u': expandAllEvent,
     'mod+shift+u': collapseAllEvent
 };
 
@@ -730,9 +729,9 @@ App.eventBinding.newNodeAddAction = function (action) {
 };
 
 App.eventBinding.enterAction = function (selectedNode) {
-    var dbNode   = App.Node.d3NodeToDbNode(selectedNode),
-        parent   = dbNode.parentId ? dbNode.parent : dbNode,
-        dir      = App.calculateDirection(parent),
+    var dbNode = App.Node.d3NodeToDbNode(selectedNode),
+        parent = dbNode.parentId ? dbNode.parent : dbNode,
+        dir = App.calculateDirection(parent),
         siblings = App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree;
 
     var childIndex = App.Node.isRoot(dbNode) ? siblings.length : siblings.map(function (child) {
@@ -746,9 +745,9 @@ App.eventBinding.tabAction = function (selectedNode) {
     if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
         App.expand(selectedNode, selectedNode._id);
     }
-    var dbNode     = App.Node.d3NodeToDbNode(selectedNode),
-        dir        = App.calculateDirection(dbNode),
-        siblings   = dbNode.position ? dbNode.childSubTree : dbNode[dir],
+    var dbNode = App.Node.d3NodeToDbNode(selectedNode),
+        dir = App.calculateDirection(dbNode),
+        siblings = dbNode.position ? dbNode.childSubTree : dbNode[dir],
         childIndex = siblings.length;
 
     return App.map.addNewNode(dbNode, dir, childIndex);
@@ -840,7 +839,7 @@ App.eventBinding.performLogicalVerticalMovement = function (node, keyPressed) {
     var direction = App.getDirection(node);
     if (direction === 'root') return;
 
-    var parent   = node.parent,
+    var parent = node.parent,
         siblings = (App.Node.isRoot(parent) ? parent[direction] : parent.childSubTree) || [],
         iterator = (keyPressed === App.Constants.KeyPressed.DOWN) ? 0 : 1;
 
@@ -948,7 +947,7 @@ App.eventBinding.horizontalRepositionAction = function (repositionDirection) {
         var indexOfDeletedNode = nodes.findIndex(function (node) {
                 return App.Node.isDeleted(node)
             }),
-            siblings           = App.Node.getSubTree(nodes[0].parent, App.Node.getDirection(nodes[0]));
+            siblings = App.Node.getSubTree(nodes[0].parent, App.Node.getDirection(nodes[0]));
 
         if (indexOfDeletedNode != -1) return;
 

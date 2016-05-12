@@ -227,7 +227,6 @@ App.select = function (node, softSelect) {
         App.deselectNode();
         d3.select(node).classed("selected", true);
         App.clearAllSelected();
-
     }
     if (Meteor.user()) {
         Meteor.call("updateUserStatus", d3.select(".node.level-0")[0][0].__data__._id, node.__data__._id);

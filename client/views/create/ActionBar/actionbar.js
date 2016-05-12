@@ -1,5 +1,5 @@
-    Template.ActionBar.helpers({
-    userimages:      function () {
+Template.ActionBar.helpers({
+    userimages: function () {
         return extractUserImage();
     },
     hideInEmbedMode: function () {
@@ -32,20 +32,18 @@ extractUserImage = function () {
     if (!Meteor.user()) {
         return [];
     }
-
     var usersAvailable = MindmapMetadata.findOne();
-
     usersAvailable = usersAvailable.onlineUsers.filter(function (user) {
         return user.email != Meteor.user().services.google.email;
     });
 
     var Srcs = usersAvailable.map(function (x) {
-        return {name: x.profile.name, picture: x.picture};
+        return {name: x.profile.name, picture: x.picture, color: App.colorUserMap[x.email]};
     });
-    var imageSrcs = Srcs.filter(function (y) {
-        return (y != undefined && y != null);
+    var imageSrcsAndColors = Srcs.filter(function (y) {
+        return (y.name != undefined && y.name != null);
     });
-    return imageSrcs;
+    return imageSrcsAndColors;
 };
 App.toggleFullscreen = function () {
     if (!screenfull.isFullscreen) {

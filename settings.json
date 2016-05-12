@@ -1,6 +1,6 @@
 {
   "public": {
     "shareThroughEmail" : false ,
-    "cursorMovement" : false
+    "cursorMovement" : true
   }
 }

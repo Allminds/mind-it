@@ -10,15 +10,13 @@
       {{> readOnly }}
     </div>
 
-    <div class="container-fluid">
+    <div class="container-fluid" id="userLabel">
       <div>
         {{#each ui in userimages}}
-        <div>
-          <!--  <b>ui</b>   -->
-          {{>UserImage profile = ui}}
-        </div>
-        {{/each}}
 
+          {{>UserImage profile = ui}}
+
+        {{/each}}
       </div>
       <div class="collapse navbar-collapse" id="myActionBar">
       </div>
@@ -33,8 +31,9 @@
 </template>
 
 <template name="UserImage">
-  <img src={{ profile.picture }} class="img-circle dropdown-toggle arrow bounce" title={{ profile.name }}
-       alt="Cinque Terre"
-       style="float: right; margin-top: 5px; margin-left: -10px; margin-right: 15px;"
-       width="30" height="30">
+  <div class="userImgLabel" title={{ profile.name }}>
+    <img src={{ profile.picture }} class="img-circle dropdown-toggle arrow bounce userimg"
+         alt="Cinque Terre">
+    <div class="colorLabel" style="background-color:{{ profile.color }}"></div>
+  </div>
 </template>
