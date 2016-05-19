@@ -10,3 +10,17 @@ tests/jasmine/server/unit/package-stubs.js
 tests/jasmine/server/unit/packageMocksSpec.js
 
 *#*
+
+# Ignore Sample Tests
+# Ignore Sample Client Integration Tests
+tests/jasmine/client/integration/sample/spec/**
+
+# Ignore Sample Server Integration Tests
+tests/jasmine/server/integration/sample/spec/**
+
+# Ignore Sample Source Code
+# Ignore Sample Client Integration Source Code
+tests/jasmine/client/integration/sample/src/**
+
+# Ignore Sample Server Integration Source Code
+tests/jasmine/server/integration/sample/src/**
