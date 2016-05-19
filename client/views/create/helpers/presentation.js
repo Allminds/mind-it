@@ -4,7 +4,6 @@ Template.PresentImageButton.events({
     }
 });
 
-
 App.presentation = {};
 App.presentation.presentationArray = [];
 App.presentation.length = 0;
@@ -16,20 +15,22 @@ App.presentation.initialSetup = false;
 
 App.presentation.getRootNode = function () {
     var root = d3.select(".node.level-0")[0][0].__data__._id;
-    var rootNode = Mindmaps.findOne({rootId: null, _id: root});
-    return rootNode;
+    return Mindmaps.findOne({rootId: null, _id: root});
 };
 
 App.presentation.preparePresentationUI = function () {
     if (screenfull.enabled) {
         screenfull.request();
     }
+
     $("#topBarDiv").hide();
     $("#onlineUsers").hide();
+
     App.presentation.collapseAllMindmap();
     var rootNode = App.presentation.getRootNode();
 
     var d3Node = App.presentation.getD3Node(rootNode._id);
+
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
@@ -50,6 +51,7 @@ var show_hide_header = function () {
         App.presentation.presentationMode = true;
     }
 };
+
 document.addEventListener(screenfull.raw.fullscreenchange, show_hide_header);
 
 App.presentation.collapseAllMindmap = function () {
@@ -61,6 +63,7 @@ App.presentation.collapseAllMindmap = function () {
     //Collapse code.
     App.presentation.initialSetup = true;
     App.presentation.collapseAll();
+
     App.chart.update();
 
     App.presentation.initialSetup = false;
@@ -81,31 +84,26 @@ App.presentation.collapseAll = function () {
     performExpandAllCollapseAll(collapseSubTree);
 };
 
-
 var performExpandAllCollapseAll = function (operationToBePerformed) {
-
     var rootNode = App.presentation.getRootNode();
 
-    for (var i = 0; i < rootNode.right.length; i++) {
-        var node = Mindmaps.findOne({_id: rootNode.right[i]});
-        operationToBePerformed(node);
+    for (var rightNodeCounter = 0; rightNodeCounter < rootNode.right.length; rightNodeCounter++) {
+        var rightNode = Mindmaps.findOne({_id: rootNode.right[rightNodeCounter]});
+        operationToBePerformed(rightNode);
     }
 
-    for (var i = 0; i < rootNode.left.length; i++) {
-        var node = Mindmaps.findOne({_id: rootNode.left[i]});
-        operationToBePerformed(node);
+    for (var leftNodeCounter = 0; leftNodeCounter < rootNode.left.length; leftNodeCounter++) {
+        var leftNode = Mindmaps.findOne({_id: rootNode.left[leftNodeCounter]});
+        operationToBePerformed(leftNode);
     }
 };
 
 var collapseSubTree = function (node) {
-
-    if (node == null) {
+    if (node === null) {
         return;
     }
     else {
-
         App.presentation.presentationArray[App.presentation.length++] = node._id;
-
 
         var childSubTree = node.childSubTree;
 
@@ -121,8 +119,7 @@ var collapseSubTree = function (node) {
 };
 
 var expandSubTree = function (node) {
-
-    if (node == null) {
+    if (node === null) {
         return;
     }
     else {
@@ -143,12 +140,11 @@ var expandSubTree = function (node) {
     }
 };
 
-
 App.presentation.getD3Node = function (nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
-    for (var i = 0; i < d3Nodes.length; i++) {
-        if (d3Nodes[i].__data__._id == nodeId) {
-            return d3Nodes[i];
+    for (var nodeCounter = 0; nodeCounter < d3Nodes.length; nodeCounter++) {
+        if (d3Nodes[nodeCounter].__data__._id == nodeId) {
+            return d3Nodes[nodeCounter];
         }
     }
 };
@@ -166,11 +162,9 @@ App.presentation.moveCursorToNextNode = function () {
 
     var d3Node = App.presentation.getD3Node(App.presentation.presentationArray[App.presentation.index]);
 
-
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
-
 
     if (App.presentation.previousNode.depth > d3Node.__data__.depth) {
         var difference = App.presentation.previousNode.depth - d3Node.__data__.depth;
@@ -180,13 +174,10 @@ App.presentation.moveCursorToNextNode = function () {
         }
     }
 
-
     App.presentation.previousNode = d3Node.__data__;
 };
 
-
 App.presentation.moveCursorToPreviousNode = function () {
-
     var d3Node = App.presentation.getD3Node(App.presentation.presentationArray[App.presentation.index]);
 
     if (d3Node.__data__.childSubTree != null && d3Node.__data__.isCollapsed == false) {
@@ -201,7 +192,6 @@ App.presentation.moveCursorToPreviousNode = function () {
 
     d3Node = App.presentation.getD3Node(App.presentation.presentationArray[App.presentation.index]);
 
-
     App.deselectNode();
     d3.select(d3Node).classed("selected", true);
     App.clearAllSelected();
@@ -210,13 +200,8 @@ App.presentation.moveCursorToPreviousNode = function () {
         App.toggleCollapsedNode(App.presentation.previousNode.parent);
     }
 
-    // if(d3Node.__data__.isCollapsed == true) {
-    //     App.toggleCollapsedNode(d3Node.__data__);
-    // }
-
     App.presentation.previousNode = d3Node.__data__;
 };
-
 
 var setIndexValue = function () {
     var id = d3.select(".selected")[0][0].__data__._id;
@@ -225,7 +210,6 @@ var setIndexValue = function () {
 };
 
 var expandParentRecursively = function (nodeId) {
-
     var d3Node = App.presentation.getD3Node(nodeId);
 
     if (d3Node == null) {

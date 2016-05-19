@@ -1,4 +1,4 @@
-fdescribe("Tests for user to current node mapping.", function () {
+describe("Tests for user to current node mapping.", function () {
     var current_working_node_id, current_user_email, currentUserDetails;
 
     beforeEach(function () {

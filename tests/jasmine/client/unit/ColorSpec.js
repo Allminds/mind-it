@@ -1,4 +1,4 @@
-fdescribe("Tests for colors of online user position indicators in Mindmap nodes", function () {
+describe("Tests for colors of online user position indicators in Mindmap nodes", function () {
     it("Should return color for first online user.", function () {
         var sequenceNumberOfFirstOnlineUser = 0;
         var expectedColorCode = "#d82735";

@@ -508,15 +508,19 @@ describe('eventBinding.js', function () {
         beforeEach(function () {
             parent = new App.Node("parent", "left", null, 0);
             parent._id = "parent";
+
             child1 = new App.Node("child1", "left", parent, 0);
             child1._id = "child1";
+            child1.parent = parent;
+
             child2 = new App.Node("child2", "left", parent, 1);
             child2._id = "child2";
+            child2.parent = parent;
+
             child3 = new App.Node("child3", "left", parent, 2);
             child3._id = "child3";
-            child1.parent = parent;
-            child2.parent = parent;
             child3.parent = parent;
+
             parent.left = [child1, child2, child3];
         });
 
@@ -544,8 +548,8 @@ describe('eventBinding.js', function () {
         })
     });
 
-    describe("expandAll collapseAll", function(){
-        xit("should call expandAll function when cmd+U is pressed ", function(){
+    describe("expandAll collapseAll", function () {
+        xit("should call expandAll function when cmd+U is pressed ", function () {
             spyOn(App.presentation, 'expandAll');
             var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);

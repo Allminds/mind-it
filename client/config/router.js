@@ -174,14 +174,19 @@ Router.route('/embed/:link', {
 function renderHomePage() {
     var self = this;
     App.isSharedMindmap = null;
-    if (!Meteor.user()) {
+
+    if (!Boolean(Meteor.user())) {
         self.render("home");
     }
     else {
         Meteor.subscribe("userdata", Meteor.userId());
-        Meteor.subscribe("myRootNodes", Meteor.user().services.google.email);
-        Meteor.subscribe("acl", Meteor.user().services.google.email);
-        self.render("dashboard");
+
+        if (Meteor.user().services !== undefined) {
+            Meteor.subscribe("myRootNodes", Meteor.user().services.google.email);
+            Meteor.subscribe("acl", Meteor.user().services.google.email);
+
+            self.render("dashboard");
+        }
     }
 }
 

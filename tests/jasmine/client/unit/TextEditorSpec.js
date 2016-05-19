@@ -1,6 +1,4 @@
 describe('text editor', function () {
-
-
     var createFixture = function(nodeText, rectWidth) {
         var fixture = '<div id="mindmap">' +
             '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="15560">' +

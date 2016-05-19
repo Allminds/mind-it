@@ -16,7 +16,7 @@ $(window).on('popstate', function () {
 var update = function (data) {
     window.data = data;
     d3.select('#mindmap svg').datum(data).call(App.chart);
-    App.chart.update();
+
     App.getChartInFocus();
 
     $(window).resize(function () {
