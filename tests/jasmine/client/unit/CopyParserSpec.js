@@ -1,65 +1,101 @@
-describe("Create BulletedList from Node", function () {
-    var root, left1, left2, child1, child2, child3;
+describe("Create Bulleted List from Node", function () {
+    var rootNode, rightSubNode, leftSubNode, rightLeafNode, leftLeafNode;
     beforeEach(function () {
-        root = new App.Node("root");
-        root._id = "root";
+        rootNode = new App.Node("root");
+        rootNode._id = "rootNode";
 
-        left1 = new App.Node("left1", "left", root, 0);
-        left1._id = "left1";
-        left1.parent = root;
+        rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNode._id = "rightSubNode";
+        rightSubNode.parent = rootNode;
 
-        left2 = new App.Node("left2", "left", root, 0);
-        left2._id = "left2";
-        left2.parent = root;
+        leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+        leftSubNode._id = "leftSubNode";
+        leftSubNode.parent = rootNode;
 
-        child1 = new App.Node("child1", "left", left1, 0);
-        child1._id = "child1";
-        child1.parent = left1;
+        rightLeafNode = new App.Node("right leaf", App.Constants.Direction.RIGHT, rightSubNode, 1);
+        rightLeafNode._id = "rightLeafNode";
+        rightLeafNode.parent = rightSubNode;
 
-        child2 = new App.Node("child2", "left", left1, 1);
-        child2._id = "child2";
-        child2.parent = left1;
+        leftLeafNode = new App.Node("left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        leftLeafNode._id = "leftLeafNode";
+        leftLeafNode.parent = leftSubNode;
 
-        child3 = new App.Node("child3", "left", left1, 1);
-        child3._id = "child3";
-        child3.parent = left1;
+        rootNode.left = [leftSubNode];
+        rootNode.right = [rightSubNode];
 
-        root.left = [left1, left2];
-
-        left1.childSubTree = [child1, child2, child3];
+        rightSubNode.childSubTree = [rightLeafNode];
+        leftSubNode.childSubTree = [leftLeafNode];
     });
 
-    it("Should return empty string for noObjects", function () {
-        var returnString = App.CopyParser.populateBulletedFromObject();
-        expect(returnString).toEqual("");
+    it("Should return empty string when no node object is passed", function () {
+        var actual = App.CopyParser.populateBulletedFromObject();
+
+        expect(actual).toEqual("");
     });
 
-    it("Should return 'child1' when passing the node child1", function () {
-        var returnString = App.CopyParser.populateBulletedFromObject(child1);
-        expect(returnString).toEqual('child1');
+    it("Should return bulleted list starting from root node when root node is passed", function () {
+        var actual = App.CopyParser.populateBulletedFromObject(rootNode);
+
+        expect(actual).toEqual('root\n\tleft\n\t\tleft leaf\n\tright\n\t\tright leaf');
     });
 
-    it("Should return proper bulleted list when passing the node left1", function () {
-        var returnString = App.CopyParser.populateBulletedFromObject(left1);
-        expect(returnString).toEqual('left1\n\tchild1\n\tchild2\n\tchild3');
+    it("Should return node name when leaf node is passed", function () {
+        var actual = App.CopyParser.populateBulletedFromObject(rightLeafNode);
+
+        expect(actual).toEqual('right leaf');
     });
 
-    it("Should return proper bulleted list when passing the root node", function () {
-        var returnString = App.CopyParser.populateBulletedFromObject(root);
-        expect(returnString).toEqual('root\n\tleft1\n\t\tchild1\n\t\tchild2\n\t\tchild3\n\tleft2');
+    it("Should return node name when node name has line break", function () {
+        var rightLeafNodeWithLineBreakInNodeName = new App.Node('aashish\nsingh', App.Constants.Direction.RIGHT, rightSubNode, 1);
+
+        var actual = App.CopyParser.populateBulletedFromObject(rightLeafNodeWithLineBreakInNodeName);
+
+        expect(actual).toEqual('aashish‡singh');
+    });
+
+    it("Should return node name node name is empty string", function () {
+        var emptyStringRightNode = new App.Node('', App.Constants.Direction.RIGHT, rightSubNode, 1);
+
+        var actual = App.CopyParser.populateBulletedFromObject(emptyStringRightNode);
+
+        expect(actual).toEqual('§');
+    });
+
+    it("Should return bulleted list starting sub node when sub node is passed", function () {
+        var actual = App.CopyParser.populateBulletedFromObject(leftSubNode);
+
+        expect(actual).toEqual('left\n\tleft leaf');
     });
 });
 
 describe("Create Node from Bulleted list", function () {
-    var root, parent;
-    var mindmapService;
+    var rootNode, rightSubNode, leftSubNode, rightLeafNode, leftLeafNode, mindmapService;
 
     beforeEach(function () {
-        root = new App.Node("root");
-        root._id = "root";
+        rootNode = new App.Node("root");
+        rootNode._id = "rootNode";
 
-        parent = new App.Node("parent", "left", root, 0);
-        parent._id = "parent";
+        rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNode._id = "rightSubNode";
+        rightSubNode.parent = rootNode;
+
+        leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+        leftSubNode._id = "leftSubNode";
+        leftSubNode.parent = rootNode;
+
+        rightLeafNode = new App.Node("right leaf", App.Constants.Direction.RIGHT, rightSubNode, 1);
+        rightLeafNode._id = "rightLeafNode";
+        rightLeafNode.parent = rightSubNode;
+
+        leftLeafNode = new App.Node("left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        leftLeafNode._id = "leftLeafNode";
+        leftLeafNode.parent = leftSubNode;
+
+        rootNode.left = [leftSubNode];
+        rootNode.right = [rightSubNode];
+
+        rightSubNode.childSubTree = [rightLeafNode];
+        leftSubNode.childSubTree = [leftLeafNode];
 
         mindmapService = App.MindMapService.getInstance();
 
@@ -70,33 +106,49 @@ describe("Create Node from Bulleted list", function () {
         spyOn(mindmapService, "updateNode");
     });
 
-    it("Should return no Object for empty BulletedList", function () {
+    it("Should return no Object for empty Bulleted List", function () {
         var bulletedList = "";
-        App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(parent.childSubTree.length).toEqual(0);
 
+        expect(rightLeafNode.childSubTree.length).toEqual(0);
+
+        App.CopyParser.populateObjectFromBulletedList(bulletedList, rightLeafNode);
+
+        expect(rightLeafNode.childSubTree.length).toEqual(0);
     });
 
-
     it("Should append child id to parent, call addNode and updateNode for child and parent respectively", function () {
-
         var bulletedList = "child1";
-        App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
-        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[0]).toEqual("child1");
 
+        var actual = App.CopyParser.populateObjectFromBulletedList(bulletedList, rightLeafNode);
+        var expected = {name: bulletedList, left: [], right: [], childSubTree: [], position: "childSubTree"};
+
+        expect(actual.name).toEqual(expected.name);
+        expect(actual.left).toEqual(expected.left);
+        expect(actual.right).toEqual(expected.right);
+        expect(actual.childSubTree).toEqual(expected.childSubTree);
+        expect(actual.position).toEqual(expected.position);
+        expect(actual.parent).toEqual(rightLeafNode);
     });
 
     it("Should append to the child of parent", function () {
         var bulletedList = "child1\nchild2";
-        App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
-        expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual(parent._id);
-        expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[1]).toEqual("child2");
+
+        var actual = App.CopyParser.populateObjectFromBulletedList(bulletedList, rightLeafNode);
+        var expected = {name: "child1", left: [], right: [], childSubTree: [], position: "childSubTree"};
+
+        expect(actual.name).toEqual("child1");
+        expect(actual.left).toEqual(expected.left);
+        expect(actual.right).toEqual(expected.right);
+        expect(actual.childSubTree).toEqual(expected.childSubTree);
+        expect(actual.position).toEqual(expected.position);
+        expect(actual.parent).toEqual(rightLeafNode);
     });
 
     it("Should properly parse for level 2 children", function () {
         var bulletedList = "child1\nchild2\n\tchild2.1\n\tchild2.2\nchild3";
-        App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
+
+        App.CopyParser.populateObjectFromBulletedList(bulletedList, rightLeafNode);
+
         expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child2");
         expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[1]).toEqual("child2.2");
         expect(mindmapService.updateNode.calls.argsFor(0)[1].childSubTree).toEqual(["child1", "child2", "child3"]);
@@ -104,7 +156,9 @@ describe("Create Node from Bulleted list", function () {
 
     it("Should properly parse for level 2 children for two level 1 nodes with children", function () {
         var bulletedList = "child1\nchild2\n\tchild2.1\n\tchild2.2\nchild3\n\tchild3.1\n\tchild3.2\nchild4";
-        App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
+
+        App.CopyParser.populateObjectFromBulletedList(bulletedList, rightLeafNode);
+
         expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child3");
         expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[1]).toEqual("child3.2");
         expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
@@ -112,7 +166,9 @@ describe("Create Node from Bulleted list", function () {
 
     it("Should properly parse for level 3 children", function () {
         var bulletedList = "child1\nchild2\n\tchild2.1\n\tchild2.2\nchild3\n\tchild3.1\n\t\tchild3.1.1\n\tchild3.2\nchild4";
-        App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
+
+        App.CopyParser.populateObjectFromBulletedList(bulletedList, rightLeafNode);
+
         expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child3.1");
         expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[0]).toEqual("child3.1.1");
         expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
@@ -121,7 +177,9 @@ describe("Create Node from Bulleted list", function () {
 
     it("Should properly parse for children with multiple tabs", function () {
         var bulletedList = "child1\nchild2\n\t\t\t\tchild2.1\n\tchild2.2\nchild3\n\t\t\t\tchild3.1\n\t\t\t\t\tchild3.1.1\n\tchild3.2\nchild4";
-        App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
+
+        App.CopyParser.populateObjectFromBulletedList(bulletedList, rightLeafNode);
+
         expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child3.1");
         expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[0]).toEqual("child3.1.1");
         expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
@@ -130,12 +188,195 @@ describe("Create Node from Bulleted list", function () {
 
     it("Should properly parse for children with multiple tabs with carriage return", function () {
         var bulletedList = "child1\n\rchild2\n\r\t\t\t\tchild2.1\n\r\tchild2.2\n\rchild3\n\r\t\t\t\tchild3.1\n\r\t\t\t\t\tchild3.1.1\n\r\tchild3.2\n\rchild4";
-        App.CopyParser.populateObjectFromBulletedList(bulletedList, parent);
+
+        App.CopyParser.populateObjectFromBulletedList(bulletedList, rightLeafNode);
+
         expect(mindmapService.addNode.calls.mostRecent().args[0].parentId).toEqual("child3.1");
         expect(mindmapService.updateNode.calls.mostRecent().args[1].childSubTree[0]).toEqual("child3.1.1");
         expect(mindmapService.updateNode.calls.argsFor(1)[1].childSubTree).toEqual(["child2.1", "child2.2"]);
         expect(mindmapService.updateNode.calls.argsFor(2)[1].childSubTree).toEqual(["child3.1", "child3.2"]);
     });
+});
 
+describe('Get formatted text for Node provided', function () {
+    it('Should return empty string when no node passed', function () {
+        expect(App.CopyParser.getFormattedText()).toBe('');
+    });
 
+    xit('Should return node name with HTML formatting', function () {
+        var nodeId = 'Node Id';
+        var nodeName = 'Node Name';
+
+        var fixture = '<g transform="translate(0,0)" class="node level-0"></g>';
+
+        setFixtures(fixture);
+
+        var node = $('.node.level-0')[0];
+
+        console.log('Node : ', node.className);
+
+        var nodeData = {};
+        nodeData._id = nodeId;
+        nodeData.name = nodeName;
+
+        node.__data__ = nodeData;
+
+        expect(App.CopyParser.getFormattedText(node)).toBe('<b>' + nodeName + '</b>');
+    });
+});
+
+describe('Plain text formatting for pasting as plain text', function () {
+    var rootNode, rightSubNode, leftSubNode, rightLeafNode, firstLeftLeafNode, secondLeftLeafNode;
+
+    beforeEach(function () {
+        rootNode = new App.Node("root");
+        rootNode._id = "rootNode";
+
+        var rootNodeData = {};
+        rootNodeData.name = rootNode.name;
+        rootNodeData.left = [leftSubNode];
+        rootNodeData.right = [rightSubNode];
+        rootNodeData.childSubTree = [];
+
+        rootNode.__data__ = rootNodeData;
+
+        rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNode._id = "rightSubNode";
+        rightSubNode.parent = rootNode;
+
+        var rightSubNodeData = {};
+        rightSubNodeData.name = rightSubNode.name;
+        rightSubNodeData.left = [];
+        rightSubNodeData.right = [];
+        rightSubNodeData.childSubTree = [rightLeafNode];
+
+        rightSubNode.__data__ = rightSubNodeData;
+
+        leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+        leftSubNode._id = "leftSubNode";
+        leftSubNode.parent = rootNode;
+
+        var leftSubNodeData = {};
+        leftSubNodeData.name = leftSubNode.name;
+        leftSubNodeData.left = [];
+        leftSubNodeData.right = [];
+        leftSubNodeData.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+
+        leftSubNode.__data__ = leftSubNodeData;
+
+        rightLeafNode = new App.Node("right leaf", App.Constants.Direction.RIGHT, rightSubNode, 1);
+        rightLeafNode._id = "rightLeafNode";
+        rightLeafNode.parent = rightSubNode;
+
+        firstLeftLeafNode = new App.Node("first left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        firstLeftLeafNode._id = "firstLeftLeafNode";
+        firstLeftLeafNode.parent = leftSubNode;
+
+        var firstLeftLeafNodeData = {};
+        firstLeftLeafNodeData.name = firstLeftLeafNode.name;
+        firstLeftLeafNodeData.left = [];
+        firstLeftLeafNodeData.right = [];
+
+        firstLeftLeafNode.__data__ = firstLeftLeafNodeData;
+
+        secondLeftLeafNode = new App.Node("second left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        secondLeftLeafNode._id = "secondLeftLeafNode";
+        secondLeftLeafNode.parent = leftSubNode;
+
+        var secondLeftLeafNodeData = {};
+        secondLeftLeafNodeData.name = secondLeftLeafNode.name;
+        secondLeftLeafNodeData.left = [];
+        secondLeftLeafNodeData.right = [];
+
+        secondLeftLeafNode.__data__ = secondLeftLeafNodeData;
+
+        rootNode.left = [leftSubNode];
+        rootNode.right = [rightSubNode];
+
+        rightSubNode.childSubTree = [rightLeafNode];
+        leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+    });
+
+    it('Should return empty string when nothing is passed', function () {
+        var actual = App.CopyParser.PlainText();
+        var expected = '';
+
+        expect(actual).toBe(expected);
+    });
+
+    it('Should return leaf node name when one leaf node passed', function () {
+        var actual = App.CopyParser.PlainText(firstLeftLeafNode);
+        var expected = 'first left leaf';
+
+        expect(actual).toBe(expected);
+    });
+
+    it('Should return leaf node name(s) when two leaf node passed', function () {
+        var actual = App.CopyParser.PlainText([firstLeftLeafNode, secondLeftLeafNode]);
+        var expected = 'first left leaf\nsecond left leaf';
+
+        expect(actual).toBe(expected);
+    });
+
+    it('Should return sub node name and leaf node name(s) when sub node passed', function () {
+        var actual = App.CopyParser.PlainText(leftSubNode);
+        var expected = 'left\n\tfirst left leaf\n\tsecond left leaf';
+
+        expect(actual).toBe(expected);
+    });
+
+    it('Should return sub node name(s) and leaf node name(s) when two sub node passed', function () {
+        var actual = App.CopyParser.PlainText([leftSubNode, rightSubNode]);
+        var expected = 'left\n\tfirst left leaf\n\tsecond left leaf\nright\n\tright leaf';
+
+        expect(actual).toBe(expected);
+    });
+
+    it('Should return root node name, sub node name(s) and leaf node name(s) when root node passed', function () {
+        var actual = App.CopyParser.PlainText(rootNode);
+        var expected = 'root\n\tleft\n\t\tfirst left leaf\n\t\tsecond left leaf\n\tright\n\t\tright leaf';
+
+        expect(actual).toBe(expected);
+    });
+});
+
+describe('Get only immediate child nodes', function () {
+    var rootNode, rightSubNode, leftSubNode, firstLeftLeafNode, secondLeftLeafNode;
+    beforeEach(function () {
+        rootNode = new App.Node("root");
+        rootNode._id = "rootNode";
+
+        rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNode._id = "rightSubNode";
+        rightSubNode.parent = rootNode;
+
+        leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+        leftSubNode._id = "leftSubNode";
+        leftSubNode.parent = rootNode;
+
+        firstLeftLeafNode = new App.Node("first left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        firstLeftLeafNode._id = "firstLeftLeafNode";
+        firstLeftLeafNode.parent = leftSubNode;
+
+        secondLeftLeafNode = new App.Node("second left leaf", App.Constants.Direction.RIGHT, rightSubNode, 1);
+        secondLeftLeafNode._id = "secondLeftLeafNode";
+        secondLeftLeafNode.parent = leftSubNode;
+
+        rootNode.left = [leftSubNode];
+        rootNode.right = [rightSubNode];
+
+        leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+    });
+
+    it('Should return empty array when leaf node is passed', function () {
+        expect(App.CopyParser.immediateSubNodes(firstLeftLeafNode)).toEqual([]);
+    });
+
+    it('Should return all leaf nodes when sub node is passed', function () {
+        expect(App.CopyParser.immediateSubNodes(leftSubNode)).toEqual([firstLeftLeafNode, secondLeftLeafNode]);
+    });
+
+    it('Should return all sub nodes when root node is passed', function () {
+        expect(App.CopyParser.immediateSubNodes(rootNode)).toEqual([leftSubNode, rightSubNode]);
+    });
 });

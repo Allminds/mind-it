@@ -4,21 +4,6 @@ describe('lib.Node.js', function () {
             expect(App.Node).not.toBeNull();
         });
 
-        it("isRoot should return true for root node", function () {
-            var rootNode = new App.Node('root');
-            expect(App.Node.isRoot(rootNode)).toBe(true);
-        });
-
-        it("isRoot should return false for any child node", function () {
-            var rootNode = new App.Node('root');
-            rootNode._id = 'root';
-
-            var childnode = new App.Node('child1', 'right', rootNode);
-            childnode.parent = rootNode;
-
-            expect(App.Node.isRoot(childnode)).toBe(false);
-        });
-
         it("parentId should be root node id for level-1 child", function () {
             var rootNode = new App.Node('root');
             rootNode._id = 'rootId';
@@ -47,58 +32,182 @@ describe('lib.Node.js', function () {
         });
     });
 
-
     describe('App.Node.js methods', function () {
         var mindMapService;
         beforeEach(function () {
             mindMapService = App.MindMapService.getInstance();
         });
 
-        it("should return root for root node on getDirection]", function () {
-            var data = new App.Node('root');
-            var direction = App.getDirection(data);
-            expect(direction).toBe('root');
+        describe('getDirection', function () {
+            var rootNode, rightSubNode, leftSubNode, rightLeafNode, leftLeafNode;
+            beforeEach(function () {
+                rootNode = new App.Node("root");
+                rootNode._id = "rootNode";
+
+                rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+                rightSubNode._id = "rightSubNode";
+                rightSubNode.parent = rootNode;
+
+                leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+                leftSubNode._id = "leftSubNode";
+                leftSubNode.parent = rootNode;
+
+                rightLeafNode = new App.Node("right leaf one", App.Constants.Direction.RIGHT, rightSubNode, 1);
+                rightLeafNode._id = "rightLeafNode";
+                rightLeafNode.parent = rightSubNode;
+
+                leftLeafNode = new App.Node("left leaf one", App.Constants.Direction.LEFT, leftSubNode, 1);
+                leftLeafNode._id = "leftLeafNode";
+                leftLeafNode.parent = leftSubNode;
+
+                rootNode.left = [leftSubNode];
+                rootNode.right = [rightSubNode];
+
+                rightSubNode.childSubTree = [rightLeafNode];
+                leftSubNode.childSubTree = [leftLeafNode];
+            });
+
+            it("should return 'root' for root node", function () {
+                var direction = App.Node.getDirection(rootNode);
+                expect(direction).toBe(App.Constants.Direction.ROOT);
+            });
+
+            it("should return 'right' for right sub node", function () {
+                var direction = App.Node.getDirection(rightSubNode);
+
+                expect(direction).toBe(App.Constants.Direction.RIGHT);
+            });
+
+            it("should return 'left' for left sub node", function () {
+                var direction = App.Node.getDirection(leftSubNode);
+
+                expect(direction).toBe(App.Constants.Direction.LEFT);
+            });
+
+            it("should return 'right' for right leaf node", function () {
+                var direction = App.Node.getDirection(rightLeafNode);
+
+                expect(direction).toBe(App.Constants.Direction.RIGHT);
+            });
+
+            it("should return 'left' for left leaf node", function () {
+                var direction = App.Node.getDirection(leftLeafNode);
+
+                expect(direction).toBe(App.Constants.Direction.LEFT);
+            });
         });
 
-        it("should return 'right' for immediate chidl in right subtree of root node on getDirection", function () {
-            var root = new App.Node("root");
-            root._id = "root";
-            var right1 = new App.Node("right1", "right", root, 0);
-            right1._id = "right1";
-            right1.parent = root;
-            root.right = [right1];
+        describe('isRoot', function () {
+            var rootNode, rightSubNode, leftSubNode, rightLeafNode, leftLeafNode;
+            beforeEach(function () {
+                rootNode = new App.Node("root");
+                rootNode._id = "rootNode";
 
-            var direction = App.getDirection(right1);
-            expect(direction).toBe('right');
+                rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+                rightSubNode._id = "rightSubNode";
+                rightSubNode.parent = rootNode;
+
+                leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+                leftSubNode._id = "leftSubNode";
+                leftSubNode.parent = rootNode;
+
+                rightLeafNode = new App.Node("right leaf one", App.Constants.Direction.RIGHT, rightSubNode, 1);
+                rightLeafNode._id = "rightLeafNode";
+                rightLeafNode.parent = rightSubNode;
+
+                leftLeafNode = new App.Node("left leaf one", App.Constants.Direction.LEFT, leftSubNode, 1);
+                leftLeafNode._id = "leftLeafNode";
+                leftLeafNode.parent = leftSubNode;
+
+                rootNode.left = [leftSubNode];
+                rootNode.right = [rightSubNode];
+
+                rightSubNode.childSubTree = [rightLeafNode];
+                leftSubNode.childSubTree = [leftLeafNode];
+            });
+
+            it("isRoot should return 'true' for root node", function () {
+                expect(App.Node.isRoot(rootNode)).toBe(true);
+            });
+
+            it("isRoot should return 'false' for right sub node", function () {
+                expect(App.Node.isRoot(rightSubNode)).toBe(false);
+            });
+
+            it("isRoot should return 'false' for left sub node", function () {
+                expect(App.Node.isRoot(leftSubNode)).toBe(false);
+            });
+
+            it("isRoot should return 'false' for right leaf node", function () {
+                expect(App.Node.isRoot(rightLeafNode)).toBe(false);
+            });
+
+            it("isRoot should return 'false' for left leaf node", function () {
+                expect(App.Node.isRoot(leftLeafNode)).toBe(false);
+            });
         });
 
-        it("should return left for a child on left subtree of root node on getDirection", function () {
-            var root = new App.Node("root");
-            root._id = "root";
+        describe('getSubTree', function () {
+            var rootNode, rightSubNode, leftSubNode, firstRightLeafNode, secondRightLeafNode;
+            beforeEach(function () {
+                rootNode = new App.Node("root");
+                rootNode._id = "rootNode";
 
-            var left1 = new App.Node("left1", "left", root, 0);
-            left1._id = "left1";
-            left1.parent = root;
+                rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+                rightSubNode._id = "rightSubNode";
+                rightSubNode.parent = rootNode;
 
-            var child1 = new App.Node("child1", "left", left1, 0);
-            child1._id = "child1";
-            child1.parent = left1;
+                leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+                leftSubNode._id = "leftSubNode";
+                leftSubNode.parent = rootNode;
 
-            var child2 = new App.Node("child2", "left", left1, 1);
-            child2.parent = left1;
-            child2._id = "child2";
+                firstRightLeafNode = new App.Node("right leaf one", App.Constants.Direction.RIGHT, rightSubNode, 1);
+                firstRightLeafNode._id = "firstRightLeafNode";
+                firstRightLeafNode.parent = rightSubNode;
 
-            var child3 = new App.Node("child3", "left", left1, 1);
-            child3._id = "child3";
-            child3.parent = left1;
+                secondRightLeafNode = new App.Node("right leaf two", App.Constants.Direction.RIGHT, rightSubNode, 1);
+                secondRightLeafNode._id = "secondRightLeafNode";
+                secondRightLeafNode.parent = rightSubNode;
 
-            root.left = [left1];
+                rootNode.right = [rightSubNode];
+                rootNode.left = [leftSubNode];
 
-            left1.childSubTree = [child1, child2, child3];
+                rightSubNode.childSubTree = [firstRightLeafNode, secondRightLeafNode];
+            });
 
-            var direction = App.getDirection(child2);
+            it('should return child nodes for provided root node without direction', function () {
+                var actual = App.Node.getSubTree(rootNode);
 
-            expect(direction).toBe('left');
+                expect(actual).toEqual(undefined);
+            });
+
+            it('should return child nodes for provided root node for right direction', function () {
+                var actual = App.Node.getSubTree(rootNode, App.Constants.Direction.RIGHT);
+                var expected = [rightSubNode];
+
+                expect(actual).toEqual(expected);
+            });
+
+            it('should return child nodes for provided root node for left direction', function () {
+                var actual = App.Node.getSubTree(rootNode, App.Constants.Direction.LEFT);
+                var expected = [leftSubNode];
+
+                expect(actual).toEqual(expected);
+            });
+
+            it('should return child nodes for provided non root parent node with direction value', function () {
+                var actual = App.Node.getSubTree(rightSubNode, App.Constants.Direction.RIGHT);
+                var expected = [firstRightLeafNode, secondRightLeafNode];
+
+                expect(actual).toEqual(expected);
+            });
+
+            it('should return child nodes for provided non root parent node without direction value', function () {
+                var actual = App.Node.getSubTree(rightSubNode);
+                var expected = [firstRightLeafNode, secondRightLeafNode];
+
+                expect(actual).toEqual(expected);
+            });
         });
 
         describe("App.Node db methods", function () {
@@ -206,7 +315,6 @@ describe('lib.Node.js', function () {
                 expect(mindMapService.updateNode).not.toHaveBeenCalled();
             });
 
-
             it("should call circularReposition method for mod+UP key press on first element", function () {
                 spyOn(App, "circularReposition");
                 spyOn(mindMapService, "updateNode");
@@ -237,6 +345,7 @@ describe('lib.Node.js', function () {
                 expect(App.swapElements.calls.mostRecent().args[2]).toBe(2);
             });
         });
+
         describe("Repositioning Horizontal", function () {
             var root, left1, child1, child2, child3;
             beforeEach(function () {
@@ -431,7 +540,7 @@ describe('lib.Node.js', function () {
                 child3.parent = left1;
 
                 root.left = [left1];
-                
+
                 left1.childSubTree = [child1, child2, child3];
             });
 
@@ -460,7 +569,6 @@ describe('lib.Node.js', function () {
                 expect(App.Node.updateChildTree.calls.argsFor(0)[2]).toEqual(["child1", "child1", "child2", "child3"]);
                 expect(App.Node.updateChildTree.calls.count()).toBe(2);
             });
-
         });
     });
 });

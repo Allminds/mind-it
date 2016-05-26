@@ -107,11 +107,14 @@ MindMap = function MindMap() {
                 .attr("class", "root-ellipse");
 
             d3.select(rootNode).classed('rootNode', true);
+
             node.append('svg:rect');
+
             node.append("svg:text")
                 .attr("cols", 60)
                 .attr("rows", 4)
                 .call(text);
+
             node.attr('class', function (d) {
                 return d.depth < 4 ? ('node level-' + d.depth) : 'node';
             });
@@ -140,7 +143,6 @@ MindMap = function MindMap() {
                 }
                 else {
                     return 9;
-
                 }
             });
 
@@ -320,8 +322,12 @@ MindMap = function MindMap() {
                     var result = left.concat(right);
 
                     function getTotalWidth(node) {
-                        if (!node) return 0;
+                        if (!node) {
+                            return 0;
+                        }
+
                         var width = getTextWidth(node._id, node.name) / 2, parent = node.parent;
+
                         while (parent) {
                             width += getTextWidth(parent._id, parent.name) * (App.Node.isRoot(parent) ? 0.5 : 1);
                             parent = parent.parent;
@@ -390,11 +396,10 @@ MindMap = function MindMap() {
                     droppedOnElement = null;
 
                 function dragStart() {
-
-                    //App.select(this);
                     var currentNodeRect = d3.select(this).select('rect');
                     var currentNodeText = d3.select(this).select('text');
                     draggedNode = d3.select(this).node().__data__;
+                    
                     if (App.Node.isRoot(d3.select(this).node().__data__)) {
                         return;
                     }

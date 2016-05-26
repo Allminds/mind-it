@@ -146,28 +146,32 @@ var cutEvent = {
 
 var finalNodes = function (nodes) {
     var mapNodes = new Map();
-
     var descendants = [];
-    for (var i = 0; i < nodes.length; i++) {
+
+    for (var nodesCounter = 0; nodesCounter < nodes.length; nodesCounter++) {
         App.allDescendants = [];
         App.indexDescendants = 0;
-        selectAllDescendants(nodes[i].__data__);
+
+        selectAllDescendants(nodes[nodesCounter].__data__);
         descendants = App.allDescendants;
+
         for (var j = 0; j < nodes.length; j++) {
             if (descendants.indexOf(nodes[j].__data__) > -1) {
                 mapNodes.set(nodes[j], true);
             }
         }
     }
+
     var nodes1 = [];
+
     for (var k = 0; k < nodes.length; k++) {
         if (mapNodes.get(nodes[k])) {
         }
         else {
             nodes1.push(nodes[k]);
         }
-
     }
+
     return nodes1;
 };
 
@@ -178,14 +182,18 @@ App.eventBinding.copyAction = function () {
 
     App.nodeCutToPaste = [];
 
-
     App.nodeToPasteBulleted = [];
     nodes = finalNodes(nodes);
 
-    nodes.forEach(function (element) {
-        var node = element.__data__;
-        App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
+    nodes.forEach(function (node) {
+        var nodeData = node.__data__;
+
+        var nodeString = App.CopyParser.populateBulletedFromObject(nodeData);
+
+        App.nodeToPasteBulleted.push(nodeString);
     });
+
+    App.CopyParser.CopyNodesToClipboard(nodes);
 };
 
 var copyEvent = {
@@ -245,7 +253,7 @@ var sortNodesAccToUi = function (nodes) {
 
     }
     return nodes;
-}
+};
 
 var shiftUpEvent = {
     allowedInReadOnlyMode: true,
@@ -295,17 +303,19 @@ var shiftDownEvent = {
     }
 };
 
-var selectAllDescendants = function (selectedNode) {
-    children = App.Node.isRoot(selectedNode) ? App.Node.getSubTree(selectedNode, "right").concat(App.Node.getSubTree(selectedNode, "left")) : selectedNode.childSubTree;
+var selectAllDescendants = function (node) {
+    children = App.Node.isRoot(node) ?
+        App.Node.getSubTree(node, App.Constants.Direction.RIGHT).concat(App.Node.getSubTree(node, App.Constants.Direction.LEFT)) :
+        App.Node.getSubTree(node);
+
     if (children) {
         children.forEach(function (child) {
-                App.allDescendants[App.indexDescendants++] = child;
+            App.allDescendants[App.indexDescendants++] = child;
 
-                selectAllDescendants(child);
-            }
-        );
+            selectAllDescendants(child);
+        });
     }
-}
+};
 
 var shiftRightEvent = {
     allowedInReadOnlyMode: true, method: function () {
@@ -407,17 +417,20 @@ var pasteEvent = {
     allowedInReadOnlyMode: false, method: function () {
         var targetNode = App.map.getDataOfNodeWithClassNamesString(".node.selected");
         var dir = App.calculateDirection(targetNode);
-        if (targetNode.isCollapsed)
+
+        if (targetNode.isCollapsed) {
             App.expandRecursive(targetNode, targetNode._id);
+        }
 
         if (App.nodeCutToPaste != null && App.nodeCutToPaste.length) {
             var undoArray = App.nodeCutToPaste.map(function (element) {
                 App.Node.reposition(element, targetNode, null, null, dir);
+
                 var stackData = new App.stackData(element, "cutNode");
                 stackData.oldParentId = element.parentId;
                 return stackData;
-
             });
+
             App.RepeatHandler.addToActionStack(undoArray);
             App.nodeCutToPaste = [];
         } else {
@@ -426,14 +439,13 @@ var pasteEvent = {
                     index = App.Node.getSubTree(App.map.getNodeDataWithNodeId(headerNode.parentId),
                         App.getDirection(headerNode)).length;
 
-
                 var stackData = new App.stackData(headerNode, "deleteNode", App.getDirection(headerNode), index);
                 stackData.oldParentId = headerNode.parentId;
                 return stackData;
             });
+
             App.RepeatHandler.addToActionStack(undoArray.reverse());
         }
-
     }
 };
 
@@ -561,24 +573,29 @@ var rightEvent = {
 };
 
 var spaceEvent = {
-    allowedInReadOnlyMode: true, method: function () {
-
+    allowedInReadOnlyMode: true,
+    method: function () {
         event = arguments[0];
+
         (event.preventDefault || event.stop || event.stopPropagation || function () {
         }).call(event);
+
         var multiStackData = [];
-        for (var i = 0; i < App.multiSelectedNodes.length; i++) {
-            App.toggleCollapsedNode(App.multiSelectedNodes[i].__data__);
-            multiStackData.push(new App.stackData(App.multiSelectedNodes[i].__data__, "toggleCollapse"));
+
+        for (var multiSelectNodeCounter = 0; multiSelectNodeCounter < App.multiSelectedNodes.length; multiSelectNodeCounter++) {
+            App.toggleCollapsedNode(App.multiSelectedNodes[multiSelectNodeCounter].__data__);
+
+            multiStackData.push(new App.stackData(App.multiSelectedNodes[multiSelectNodeCounter].__data__, "toggleCollapse"));
         }
+
         App.multiSelectedNodes = d3.selectAll(".softSelected")[0];
 
         App.deselectNode();
+
         var node = App.multiSelectedNodes[App.multiSelectedNodes.length - 1];
         d3.select(node).classed("selected", true);
 
         App.RepeatHandler.addToActionStack(multiStackData.reverse());
-
     }
 };
 
@@ -645,11 +662,11 @@ App.eventBinding.EventsMap = {
     'ctrl+y': redoEvent,
     'mod+x': cutEvent,
     'mod+c': copyEvent,
+    'mod+v': pasteEvent,
     'shift+up': shiftUpEvent,
     'shift+down': shiftDownEvent,
     'shift+right': shiftRightEvent,
     'shift+left': shiftLeftEvent,
-    'mod+v': pasteEvent,
     'enter': enterEvent,
     'tab': tabEvent,
     'del': delEvent,
@@ -745,6 +762,7 @@ App.eventBinding.tabAction = function (selectedNode) {
     if (selectedNode.hasOwnProperty('isCollapsed') && selectedNode.isCollapsed) {
         App.expand(selectedNode, selectedNode._id);
     }
+
     var dbNode = App.Node.d3NodeToDbNode(selectedNode),
         dir = App.calculateDirection(dbNode),
         siblings = dbNode.position ? dbNode.childSubTree : dbNode[dir],

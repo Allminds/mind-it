@@ -40,6 +40,7 @@ describe('eventBinding.js', function () {
                 var node = {};
                 expect(App.eventBinding.findSameLevelChild(node, 2, 0)).toBe(node);
             });
+
             it("should return passed node as sameLevelChild if it has same depth", function () {
                 var node = {children: []};
                 node.depth = 2;
@@ -113,19 +114,25 @@ describe('eventBinding.js', function () {
         beforeEach(function () {
             root = new App.Node("root");
             root._id = "root";
+
             parent = new App.Node("parent", "right", root, 0);
             parent._id = "parent";
             parent.parent = root;
+
             child1 = new App.Node("child1", "right", parent, 0);
             child1._id = "child1";
+            child1.parent = parent;
+
             child2 = new App.Node("child2", "right", parent, 1);
             child2._id = "child2";
-            child3 = new App.Node("child3", "right", parent, 1);
-            child2._id = "child3";
-            child1.parent = parent;
             child2.parent = parent;
+
+            child3 = new App.Node("child3", "right", parent, 1);
+            child3._id = "child3";
             child3.parent = parent;
+
             parent.childSubTree = [child1, child2, child3];
+            
             root.left.push(parent);
         });
 
@@ -164,7 +171,7 @@ describe('eventBinding.js', function () {
             });
             App.eventBinding.copyAction();
             expect(App.clearAllSelected).toHaveBeenCalled();
-        })
+        });
     });
 
     describe("Mousetrap ModX bindings", function () {
@@ -378,7 +385,6 @@ describe('eventBinding.js', function () {
 
                 expect(window.alert).toHaveBeenCalled();
             });
-
         });
 
         describe("node editing on f2", function () {
