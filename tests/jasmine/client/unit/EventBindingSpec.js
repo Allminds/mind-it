@@ -132,7 +132,7 @@ describe('eventBinding.js', function () {
             child3.parent = parent;
 
             parent.childSubTree = [child1, child2, child3];
-            
+
             root.left.push(parent);
         });
 
@@ -165,11 +165,14 @@ describe('eventBinding.js', function () {
                     right: []
                 }
             }];
+
             spyOn(App, "clearAllSelected");
             spyOn(App.CopyParser, "populateBulletedFromObject").and.callFake(function () {
-                return "child"
+                return "child";
             });
+
             App.eventBinding.copyAction();
+
             expect(App.clearAllSelected).toHaveBeenCalled();
         });
     });

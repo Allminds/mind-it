@@ -21,12 +21,12 @@ App.CopyParser.populateBulletedFromObject = function (nodeData, depthOfNode) {
     return temp.length === 0 ? returnString : (returnString + temp);
 };
 
-App.CopyParser.immediateSubNodes = function (nodeData) {
-    if (App.Node.isRoot(nodeData)) {
-        return nodeData.left.concat(nodeData.right);
+App.CopyParser.immediateSubNodes = function (node) {
+    if (App.Node.isRoot(node)) {
+        return node.left.concat(node.right);
     }
 
-    return App.Node.getSubTree(nodeData);
+    return App.Node.getSubTree(node);
 };
 
 App.CopyParser.getFormattedText = function (node) {
@@ -140,9 +140,12 @@ App.CopyParser.populateObjectFromBulletedList = function (bulletedString, parent
 };
 
 App.CopyParser.CopyNodesToClipboard = function (nodes) {
+    var plainTextValue = App.CopyParser.PlainText(nodes);
+    var htmlValue = App.CopyParser.Html(nodes);
+
     clipboard.copy({
-        "text/plain": App.CopyParser.PlainText(nodes),
-        "text/html": ''
+        "text/plain": plainTextValue,
+        "text/html": htmlValue
     });
 };
 
@@ -166,7 +169,23 @@ App.CopyParser.PlainText = function (nodes) {
     return plainTextValue.trim();
 };
 
-var cssClassName = function (nodeDepth) {
+App.CopyParser.Html = function (nodes) {
+    var htmlValue = '';
+
+    if (!Boolean(nodes)) {
+        return htmlValue;
+    }
+
+    if (!Array.isArray(nodes)) {
+        nodes = [nodes];
+    }
+
+    htmlValue += formattedText(nodes);
+
+    return htmlValue;
+};
+
+App.CopyParser.CssClassName = function (nodeDepth) {
     if (nodeDepth >= 0 && nodeDepth <= 3) {
         return 'level-' + nodeDepth;
     }
@@ -174,11 +193,107 @@ var cssClassName = function (nodeDepth) {
     return 'level';
 };
 
-var formattedText = function (painTextValue, cssClassInlineValue) {
-    return '<p style=\'' + cssClassInlineValue + '\'>' + painTextValue + '</p>';
+var formattedText = function (nodes, depthOfNode) {
+    var formattedTextValue = '';
+
+    var currentDepth = depthOfNode ? depthOfNode : 0;
+    var nextDepth = currentDepth + 1;
+
+    nodes.forEach(function (node) {
+        var nodeDataValue = nodeData(node);
+
+        var cssClassNameValue = App.CopyParser.CssClassName(nodeDataValue.depth);
+        var cssClassInlineValue = App.CopyParser.CssClassValue(cssClassNameValue);
+
+        if (currentDepth === 0) {
+            formattedTextValue += nodeNameWithParagraphHTML(cssClassInlineValue, nodeDataValue.name);
+
+            formattedTextValue += formattedText(App.CopyParser.immediateSubNodes(nodeDataValue), nextDepth);
+        }
+        else {
+            var listStyleValue = listStyleTypeValue(currentDepth);
+
+            var subNodes = App.CopyParser.immediateSubNodes(nodeDataValue);
+
+            if (subNodes.length > 0) {
+                formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
+                formattedTextValue += startingListItemWithValue(nodeNameWithParagraphHTML(cssClassInlineValue, nodeDataValue.name));
+                formattedTextValue += formattedText(App.CopyParser.immediateSubNodes(nodeDataValue), nextDepth);
+                formattedTextValue += "</li>";
+                formattedTextValue += "</ul>";
+            }
+            else {
+                formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
+                formattedTextValue += startingListItemWithValue(nodeNameWithParagraphHTML(cssClassInlineValue, nodeDataValue.name));
+                formattedTextValue += "</li>";
+                formattedTextValue += "</ul>";
+            }
+        }
+    });
+
+    return formattedTextValue;
 };
 
-var cssClassValue = function (cssClassName) {
+var listStyleTypeValue = function (depth) {
+    switch (depth) {
+        case 1:
+            return 'circle';
+        case 2:
+            return 'disc';
+        default:
+            return 'square';
+    }
+};
+
+var nodeNameWithParagraphHTML = function (cssClassInlineValue, nodeName) {
+    return "<p style='" + cssClassInlineValue + "'>" + nodeName + "</p>";
+};
+
+var startingListItemWithValue = function (listItemText) {
+    return "<li>" + listItemText;
+};
+
+var startingUnorderedListWithStyle = function (listStyle) {
+    return '<ul list-style-type=\'' + listStyle + '\'>';
+};
+
+var nodeData = function (node) {
+    var nodeDataValue = node.__data__;
+    
+    var nodeData = {};
+
+    if (Boolean(nodeDataValue)) {
+        nodeData.name = nodeDataValue.name;
+        nodeData.depth = nodeDataValue.depth;
+        nodeData.left = nodeDataValue.left;
+        nodeData.right = nodeDataValue.right;
+        nodeData.isCollapsed = nodeDataValue.isCollapsed;
+        nodeData._childSubTree = nodeDataValue._childSubTree;
+        nodeData.childSubTree = nodeDataValue.childSubTree;
+        nodeData.parentId = nodeDataValue.parentId;
+        nodeData.rootId = nodeDataValue.rootId;
+
+        return nodeData;
+    }
+
+    if (Boolean(node)) {
+        nodeData.name = node.name;
+        nodeData.depth = node.depth;
+        nodeData.left = node.left;
+        nodeData.right = node.right;
+        nodeData.isCollapsed = node.isCollapsed;
+        nodeData._childSubTree = node._childSubTree;
+        nodeData.childSubTree = node.childSubTree;
+        nodeData.parentId = node.parentId;
+        nodeData.rootId = node.rootId;
+
+        return nodeData;
+    }
+
+    return nodeData;
+};
+
+App.CopyParser.CssClassValue = function (cssClassName) {
     var cssClassValue = '';
 
     for (var styleSheetCounter = 0; styleSheetCounter < document.styleSheets.length; styleSheetCounter++) {

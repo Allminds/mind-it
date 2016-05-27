@@ -142,6 +142,7 @@ var expandSubTree = function (node) {
 
 App.presentation.getD3Node = function (nodeId) {
     var d3Nodes = d3.selectAll(".node")[0];
+
     for (var nodeCounter = 0; nodeCounter < d3Nodes.length; nodeCounter++) {
         if (d3Nodes[nodeCounter].__data__._id == nodeId) {
             return d3Nodes[nodeCounter];

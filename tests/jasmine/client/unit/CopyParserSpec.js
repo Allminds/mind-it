@@ -198,30 +198,139 @@ describe("Create Node from Bulleted list", function () {
     });
 });
 
-describe('Get formatted text for Node provided', function () {
-    it('Should return empty string when no node passed', function () {
-        expect(App.CopyParser.getFormattedText()).toBe('');
+describe('Get formatted text for Nodes provided', function () {
+    var rootNode, rightSubNode, leftSubNode, rightLeafNode, firstLeftLeafNode, secondLeftLeafNode;
+
+    beforeEach(function () {
+        rightLeafNode = new App.Node("right leaf", App.Constants.Direction.RIGHT, rightSubNode, 1);
+        rightLeafNode._id = "rightLeafNode";
+        rightLeafNode.parent = rightSubNode;
+
+        var rightLeafNodeData = {};
+        rightLeafNodeData.name = rightLeafNode.name;
+        rightLeafNodeData.left = [];
+        rightLeafNodeData.right = [];
+
+        rightLeafNode.__data__ = rightLeafNodeData;
+
+        firstLeftLeafNode = new App.Node("first left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        firstLeftLeafNode._id = "firstLeftLeafNode";
+        firstLeftLeafNode.parent = leftSubNode;
+
+        var firstLeftLeafNodeData = {};
+        firstLeftLeafNodeData.name = firstLeftLeafNode.name;
+        firstLeftLeafNodeData.left = [];
+        firstLeftLeafNodeData.right = [];
+
+        firstLeftLeafNode.__data__ = firstLeftLeafNodeData;
+
+        secondLeftLeafNode = new App.Node("second left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        secondLeftLeafNode._id = "secondLeftLeafNode";
+        secondLeftLeafNode.parent = leftSubNode;
+
+        var secondLeftLeafNodeData = {};
+        secondLeftLeafNodeData.name = secondLeftLeafNode.name;
+        secondLeftLeafNodeData.left = [];
+        secondLeftLeafNodeData.right = [];
+
+        secondLeftLeafNode.__data__ = secondLeftLeafNodeData;
+
+        rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNode._id = "rightSubNode";
+        rightSubNode.parent = rootNode;
+
+        var rightSubNodeData = {};
+        rightSubNodeData.name = rightSubNode.name;
+        rightSubNodeData.left = [];
+        rightSubNodeData.right = [];
+        rightSubNodeData.childSubTree = [rightLeafNode];
+
+        rightSubNode.__data__ = rightSubNodeData;
+
+        leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+        leftSubNode._id = "leftSubNode";
+        leftSubNode.parent = rootNode;
+
+        var leftSubNodeData = {};
+        leftSubNodeData.name = leftSubNode.name;
+        leftSubNodeData.left = [];
+        leftSubNodeData.right = [];
+        leftSubNodeData.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+
+        leftSubNode.__data__ = leftSubNodeData;
+
+        rightSubNode.childSubTree = [rightLeafNode];
+        leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+
+        rootNode = new App.Node("root");
+        rootNode._id = "rootNode";
+
+        var rootNodeData = {};
+        rootNodeData.name = rootNode.name;
+        rootNodeData.left = [leftSubNode];
+        rootNodeData.right = [rightSubNode];
+        rootNodeData.childSubTree = [];
+
+        rootNode.__data__ = rootNodeData;
+
+        rootNode.left = [leftSubNode];
+        rootNode.right = [rightSubNode];
     });
 
-    xit('Should return node name with HTML formatting', function () {
-        var nodeId = 'Node Id';
-        var nodeName = 'Node Name';
+    it('Should return leaf node name when leaf node selected', function () {
+        var plainTextValue = 'first left leaf';
+        var selectedNodes = [firstLeftLeafNode];
 
-        var fixture = '<g transform="translate(0,0)" class="node level-0"></g>';
+        var inlineHtmlStyleContents = 'SOME STYLE';
 
-        setFixtures(fixture);
+        spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
 
-        var node = $('.node.level-0')[0];
+        var actual = App.CopyParser.Html(selectedNodes);
+        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>' + plainTextValue + '</p>';
 
-        console.log('Node : ', node.className);
+        expect(actual).toBe(expected);
+    });
 
-        var nodeData = {};
-        nodeData._id = nodeId;
-        nodeData.name = nodeName;
+    it('Should return sub node name and leaf node name as bulleted list when sub node selected', function () {
+        var selectedNodes = [rightSubNode];
 
-        node.__data__ = nodeData;
+        var inlineHtmlStyleContents = 'SOME STYLE';
 
-        expect(App.CopyParser.getFormattedText(node)).toBe('<b>' + nodeName + '</b>');
+        spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
+
+        var actual = App.CopyParser.Html(selectedNodes);
+        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>right</p>' +
+                            '<ul list-style-type=\'circle\'>' +
+                                '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+                            '</ul>';
+
+        expect(actual).toBe(expected);
+    });
+
+    xit('Should return root node name, sub node name and root node name when root node selected', function () {
+        var selectedNodes = [rootNode];
+
+        var inlineHtmlStyleContents = 'SOME STYLE';
+
+        spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
+
+        var actual = App.CopyParser.Html(selectedNodes);
+        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>root</p>' +
+                            '<ul list-style-type=\'circle\'>' +
+                            '<li><p style=\'' + inlineHtmlStyleContents + '\'>left</p>' +
+                                '<ul list-style-type=\'disc\'>' +
+                                '<li><p style=\'' + inlineHtmlStyleContents + '\'>first left leaf</p></li>' +
+                                '<li><p style=\'' + inlineHtmlStyleContents + '\'>second left leaf</p></li>' +
+                                '</ul>' +
+                            '</li>' +
+                            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right</p>' +
+                                '<ul list-style-type=\'disc\'>' +
+                                '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+                                '</ul>' +
+                            '</li>' +
+                            '</ul>';
+
+        expect(actual).toBe(expected);
     });
 });
 
