@@ -198,13 +198,13 @@ describe("Create Node from Bulleted list", function () {
     });
 });
 
-describe('Get formatted text for Nodes provided', function () {
-    var rootNode, rightSubNode, leftSubNode, rightLeafNode, firstLeftLeafNode, secondLeftLeafNode;
+describe('HTML formatting for pasting as HTML', function () {
+    var rootNode, rightSubNodeLevel1, rightSubNodeLevel2, rightSubNodeLevel3, leftSubNode, rightLeafNode, firstLeftLeafNode, secondLeftLeafNode;
 
     beforeEach(function () {
-        rightLeafNode = new App.Node("right leaf", App.Constants.Direction.RIGHT, rightSubNode, 1);
+        rightLeafNode = new App.Node("right leaf", App.Constants.Direction.RIGHT, rightSubNodeLevel3, 1);
         rightLeafNode._id = "rightLeafNode";
-        rightLeafNode.parent = rightSubNode;
+        rightLeafNode.parent = rightSubNodeLevel3;
 
         var rightLeafNodeData = {};
         rightLeafNodeData.name = rightLeafNode.name;
@@ -235,17 +235,41 @@ describe('Get formatted text for Nodes provided', function () {
 
         secondLeftLeafNode.__data__ = secondLeftLeafNodeData;
 
-        rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
-        rightSubNode._id = "rightSubNode";
-        rightSubNode.parent = rootNode;
+        rightSubNodeLevel2 = new App.Node("right sub node level 2", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNodeLevel2._id = "rightSubNodeLevel2";
+        rightSubNodeLevel2.parent = rightSubNodeLevel1;
 
-        var rightSubNodeData = {};
-        rightSubNodeData.name = rightSubNode.name;
-        rightSubNodeData.left = [];
-        rightSubNodeData.right = [];
-        rightSubNodeData.childSubTree = [rightLeafNode];
+        rightSubNodeLevel1 = new App.Node("right sub node level 1", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNodeLevel1._id = "rightSubNodeLevel1";
+        rightSubNodeLevel1.parent = rootNode;
 
-        rightSubNode.__data__ = rightSubNodeData;
+        var rightSubNodeLevel1Data = {};
+        rightSubNodeLevel1Data.name = rightSubNodeLevel1.name;
+        rightSubNodeLevel1Data.left = [];
+        rightSubNodeLevel1Data.right = [];
+        rightSubNodeLevel1Data.childSubTree = [rightSubNodeLevel2];
+
+        rightSubNodeLevel1.__data__ = rightSubNodeLevel1Data;
+
+        var rightSubNodeLevel2Data = {};
+        rightSubNodeLevel2Data.name = rightSubNodeLevel2.name;
+        rightSubNodeLevel2Data.left = [];
+        rightSubNodeLevel2Data.right = [];
+        rightSubNodeLevel2Data.childSubTree = [rightSubNodeLevel3];
+
+        rightSubNodeLevel2.__data__ = rightSubNodeLevel2Data;
+
+        rightSubNodeLevel3 = new App.Node("right sub node level 3", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNodeLevel3._id = "rightSubNodeLevel3";
+        rightSubNodeLevel3.parent = rightSubNodeLevel2;
+
+        var rightSubNodeLevel3Data = {};
+        rightSubNodeLevel3Data.name = rightSubNodeLevel3.name;
+        rightSubNodeLevel3Data.left = [];
+        rightSubNodeLevel3Data.right = [];
+        rightSubNodeLevel3Data.childSubTree = [rightLeafNode];
+
+        rightSubNodeLevel3.__data__ = rightSubNodeLevel3Data;
 
         leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
         leftSubNode._id = "leftSubNode";
@@ -259,7 +283,7 @@ describe('Get formatted text for Nodes provided', function () {
 
         leftSubNode.__data__ = leftSubNodeData;
 
-        rightSubNode.childSubTree = [rightLeafNode];
+        rightSubNodeLevel3.childSubTree = [rightLeafNode];
         leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
 
         rootNode = new App.Node("root");
@@ -268,13 +292,13 @@ describe('Get formatted text for Nodes provided', function () {
         var rootNodeData = {};
         rootNodeData.name = rootNode.name;
         rootNodeData.left = [leftSubNode];
-        rootNodeData.right = [rightSubNode];
+        rootNodeData.right = [rightSubNodeLevel1];
         rootNodeData.childSubTree = [];
 
         rootNode.__data__ = rootNodeData;
 
         rootNode.left = [leftSubNode];
-        rootNode.right = [rightSubNode];
+        rootNode.right = [rightSubNodeLevel3];
     });
 
     it('Should return leaf node name when leaf node selected', function () {
@@ -292,22 +316,22 @@ describe('Get formatted text for Nodes provided', function () {
     });
 
     it('Should return sub node name and leaf node name as bulleted list when sub node selected', function () {
-        var selectedNodes = [rightSubNode];
+        var selectedNodes = [rightSubNodeLevel3];
 
         var inlineHtmlStyleContents = 'SOME STYLE';
 
         spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
 
         var actual = App.CopyParser.Html(selectedNodes);
-        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>right</p>' +
-                            '<ul list-style-type=\'circle\'>' +
-                                '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
-                            '</ul>';
+        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</p>' +
+            '<ul list-style-type=\'circle\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+            '</ul>';
 
         expect(actual).toBe(expected);
     });
 
-    xit('Should return root node name, sub node name and root node name when root node selected', function () {
+    it('Should return root node name, sub node name and root node name when root node selected', function () {
         var selectedNodes = [rootNode];
 
         var inlineHtmlStyleContents = 'SOME STYLE';
@@ -316,19 +340,28 @@ describe('Get formatted text for Nodes provided', function () {
 
         var actual = App.CopyParser.Html(selectedNodes);
         var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>root</p>' +
-                            '<ul list-style-type=\'circle\'>' +
-                            '<li><p style=\'' + inlineHtmlStyleContents + '\'>left</p>' +
-                                '<ul list-style-type=\'disc\'>' +
-                                '<li><p style=\'' + inlineHtmlStyleContents + '\'>first left leaf</p></li>' +
-                                '<li><p style=\'' + inlineHtmlStyleContents + '\'>second left leaf</p></li>' +
-                                '</ul>' +
-                            '</li>' +
-                            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right</p>' +
-                                '<ul list-style-type=\'disc\'>' +
-                                '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
-                                '</ul>' +
-                            '</li>' +
-                            '</ul>';
+            '<ul list-style-type=\'circle\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>left</p>' +
+            '<ul list-style-type=\'disc\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>first left leaf</p></li>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>second left leaf</p></li>' +
+            '</ul>' +
+            '</li>' +
+            '<ul list-style-type=\'circle\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 1</p>' +
+            '<ul list-style-type=\'disc\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 2</p>' +
+            '<ul list-style-type=\'square\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</p>' +
+            '<ul list-style-type=\'square\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+            '</ul>' +
+            '</li>' +
+            '</ul>' +
+            '</li>' +
+            '</ul>' +
+            '</ul>' +
+            '</ul>';
 
         expect(actual).toBe(expected);
     });
