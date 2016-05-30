@@ -331,7 +331,7 @@ describe('HTML formatting for pasting as HTML', function () {
         expect(actual).toBe(expected);
     });
 
-    it('Should return root node name, sub node name and root node name when root node selected', function () {
+    xit('Should return root node name, sub node name and root node name when root node selected', function () {
         var selectedNodes = [rootNode];
 
         var inlineHtmlStyleContents = 'SOME STYLE';
