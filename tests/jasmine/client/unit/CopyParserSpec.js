@@ -301,7 +301,14 @@ describe('HTML formatting for pasting as HTML', function () {
         rootNode.right = [rightSubNodeLevel3];
     });
 
-    it('Should return leaf node name when leaf node selected', function () {
+    it('Should return empty string when nothing is passed', function () {
+        var actual = App.CopyParser.Html();
+        var expected = '';
+
+        expect(actual).toBe(expected);
+    });
+
+    it('Should return leaf node name when single leaf node selected', function () {
         var plainTextValue = 'first left leaf';
         var selectedNodes = [firstLeftLeafNode];
 
@@ -315,7 +322,20 @@ describe('HTML formatting for pasting as HTML', function () {
         expect(actual).toBe(expected);
     });
 
-    it('Should return sub node name and leaf node name as bulleted list when sub node selected', function () {
+    it('Should return leaf node name(s) when multiple leaf nodes selected', function () {
+        var selectedNodes = [firstLeftLeafNode, secondLeftLeafNode];
+
+        var inlineHtmlStyleContents = 'SOME STYLE';
+
+        spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
+
+        var actual = App.CopyParser.Html(selectedNodes);
+        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>first left leaf</p><p style=\'' + inlineHtmlStyleContents + '\'>second left leaf</p>';
+
+        expect(actual).toBe(expected);
+    });
+
+    it('Should return sub node name and leaf node name as bulleted list when single sub node selected', function () {
         var selectedNodes = [rightSubNodeLevel3];
 
         var inlineHtmlStyleContents = 'SOME STYLE';
@@ -326,6 +346,27 @@ describe('HTML formatting for pasting as HTML', function () {
         var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</p>' +
             '<ul list-style-type=\'circle\'>' +
             '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+            '</ul>';
+
+        expect(actual).toBe(expected);
+    });
+
+    xit('Should return sub node name(s) and leaf node name(s) as bulleted list when multiple sub node selected', function () {
+        var selectedNodes = [rightSubNodeLevel3, leftSubNode];
+
+        var inlineHtmlStyleContents = 'SOME STYLE';
+
+        spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
+
+        var actual = App.CopyParser.Html(selectedNodes);
+        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</p>' +
+            '<ul list-style-type=\'circle\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+            '</ul>' +
+            '<p style=\'' + inlineHtmlStyleContents + '\'>left</p>' +
+            '<ul list-style-type=\'circle\'>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>first left leaf</p></li>' +
+            '<li><p style=\'' + inlineHtmlStyleContents + '\'>second left leaf</p></li>' +
             '</ul>';
 
         expect(actual).toBe(expected);
@@ -446,28 +487,28 @@ describe('Plain text formatting for pasting as plain text', function () {
         expect(actual).toBe(expected);
     });
 
-    it('Should return leaf node name when one leaf node passed', function () {
+    it('Should return leaf node name when single leaf node passed', function () {
         var actual = App.CopyParser.PlainText(firstLeftLeafNode);
         var expected = 'first left leaf';
 
         expect(actual).toBe(expected);
     });
 
-    it('Should return leaf node name(s) when two leaf node passed', function () {
+    it('Should return leaf node name(s) when multiple leaf node passed', function () {
         var actual = App.CopyParser.PlainText([firstLeftLeafNode, secondLeftLeafNode]);
         var expected = 'first left leaf\nsecond left leaf';
 
         expect(actual).toBe(expected);
     });
 
-    it('Should return sub node name and leaf node name(s) when sub node passed', function () {
+    it('Should return sub node name and leaf node name(s) when single sub node passed', function () {
         var actual = App.CopyParser.PlainText(leftSubNode);
         var expected = 'left\n\tfirst left leaf\n\tsecond left leaf';
 
         expect(actual).toBe(expected);
     });
 
-    it('Should return sub node name(s) and leaf node name(s) when two sub node passed', function () {
+    it('Should return sub node name(s) and leaf node name(s) when multiple sub node passed', function () {
         var actual = App.CopyParser.PlainText([leftSubNode, rightSubNode]);
         var expected = 'left\n\tfirst left leaf\n\tsecond left leaf\nright\n\tright leaf';
 
