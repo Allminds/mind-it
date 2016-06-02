@@ -16,12 +16,12 @@ Template.ModalBody.helpers({
         if (App.editable) {
             return true;
         }
-        else
+        else {
             return false;
+        }
     },
     isPublicMindmap: function () {
         return App.isPublicMindMap;
-
     }
 });
 
