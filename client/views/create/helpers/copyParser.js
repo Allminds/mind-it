@@ -206,7 +206,7 @@ var formattedText = function (nodes, depthOfNode) {
         var cssClassInlineValue = App.CopyParser.CssClassValue(cssClassNameValue);
 
         if (currentDepth === 0) {
-            formattedTextValue += nodeNameWithParagraphHTML(cssClassInlineValue, nodeDataValue.name);
+            formattedTextValue += nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name);
 
             formattedTextValue += formattedText(App.CopyParser.immediateSubNodes(nodeDataValue), nextDepth);
         }
@@ -217,14 +217,14 @@ var formattedText = function (nodes, depthOfNode) {
 
             if (subNodes.length > 0) {
                 formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
-                formattedTextValue += startingListItemWithValue(nodeNameWithParagraphHTML(cssClassInlineValue, nodeDataValue.name));
+                formattedTextValue += startingListItemWithValue(nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name));
                 formattedTextValue += formattedText(App.CopyParser.immediateSubNodes(nodeDataValue), nextDepth);
                 formattedTextValue += "</li>";
                 formattedTextValue += "</ul>";
             }
             else {
                 formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
-                formattedTextValue += startingListItemWithValue(nodeNameWithParagraphHTML(cssClassInlineValue, nodeDataValue.name));
+                formattedTextValue += startingListItemWithValue(nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name));
                 formattedTextValue += "</li>";
                 formattedTextValue += "</ul>";
             }
@@ -245,8 +245,8 @@ var listStyleTypeValue = function (depth) {
     }
 };
 
-var nodeNameWithParagraphHTML = function (cssClassInlineValue, nodeName) {
-    return "<p style='" + cssClassInlineValue + "'>" + nodeName + "</p>";
+var nodeNameWithHtml = function (cssClassInlineValue, nodeName) {
+    return "<span style='" + cssClassInlineValue + "'>" + nodeName + "</span>";
 };
 
 var startingListItemWithValue = function (listItemText) {

@@ -317,7 +317,7 @@ describe('HTML formatting for pasting as HTML', function () {
         spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
 
         var actual = App.CopyParser.Html(selectedNodes);
-        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>' + plainTextValue + '</p>';
+        var expected = '<span style=\'' + inlineHtmlStyleContents + '\'>' + plainTextValue + '</span>';
 
         expect(actual).toBe(expected);
     });
@@ -330,7 +330,8 @@ describe('HTML formatting for pasting as HTML', function () {
         spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
 
         var actual = App.CopyParser.Html(selectedNodes);
-        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>first left leaf</p><p style=\'' + inlineHtmlStyleContents + '\'>second left leaf</p>';
+        var expected = '<span style=\'' + inlineHtmlStyleContents + '\'>first left leaf</span>' +
+                        '<span style=\'' + inlineHtmlStyleContents + '\'>second left leaf</span>';
 
         expect(actual).toBe(expected);
     });
@@ -343,9 +344,11 @@ describe('HTML formatting for pasting as HTML', function () {
         spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
 
         var actual = App.CopyParser.Html(selectedNodes);
-        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</p>' +
+        var expected = '<span style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</span>' +
             '<ul list-style-type=\'circle\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+            '<li>' +
+                '<span style=\'' + inlineHtmlStyleContents + '\'>right leaf</span>' +
+            '</li>' +
             '</ul>';
 
         expect(actual).toBe(expected);
