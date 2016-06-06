@@ -23,7 +23,7 @@ App.CopyParser.populateBulletedFromObject = function (nodeData, depthOfNode) {
 
 App.CopyParser.immediateSubNodes = function (node) {
     if (App.Node.isRoot(node)) {
-        return node.left.concat(node.right);
+        return node.right.concat(node.left);
     }
 
     return App.Node.getSubTree(node);
@@ -219,14 +219,14 @@ var formattedText = function (nodes, depthOfNode) {
                 formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
                 formattedTextValue += startingListItemWithValue(nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name));
                 formattedTextValue += formattedText(App.CopyParser.immediateSubNodes(nodeDataValue), nextDepth);
-                formattedTextValue += "</li>";
-                formattedTextValue += "</ul>";
+                formattedTextValue += endingListItem();
+                formattedTextValue += endingUnorderedList();
             }
             else {
                 formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
                 formattedTextValue += startingListItemWithValue(nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name));
-                formattedTextValue += "</li>";
-                formattedTextValue += "</ul>";
+                formattedTextValue += endingListItem();
+                formattedTextValue += endingUnorderedList();
             }
         }
     });
@@ -253,13 +253,21 @@ var startingListItemWithValue = function (listItemText) {
     return "<li>" + listItemText;
 };
 
+var endingListItem = function () {
+    return "</li>";
+};
+
 var startingUnorderedListWithStyle = function (listStyle) {
     return '<ul list-style-type=\'' + listStyle + '\'>';
 };
 
+var endingUnorderedList = function () {
+    return '</ul>';
+};
+
 var nodeData = function (node) {
     var nodeDataValue = node.__data__;
-    
+
     var nodeData = {};
 
     if (Boolean(nodeDataValue)) {

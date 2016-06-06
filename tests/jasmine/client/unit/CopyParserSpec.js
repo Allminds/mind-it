@@ -36,7 +36,7 @@ describe("Create Bulleted List from Node", function () {
     it("Should return bulleted list starting from root node when root node is passed", function () {
         var actual = App.CopyParser.populateBulletedFromObject(rootNode);
 
-        expect(actual).toEqual('root\n\tleft\n\t\tleft leaf\n\tright\n\t\tright leaf');
+        expect(actual).toEqual('root\n\tright\n\t\tright leaf\n\tleft\n\t\tleft leaf');
     });
 
     it("Should return node name when leaf node is passed", function () {
@@ -331,7 +331,7 @@ describe('HTML formatting for pasting as HTML', function () {
 
         var actual = App.CopyParser.Html(selectedNodes);
         var expected = '<span style=\'' + inlineHtmlStyleContents + '\'>first left leaf</span>' +
-                        '<span style=\'' + inlineHtmlStyleContents + '\'>second left leaf</span>';
+            '<span style=\'' + inlineHtmlStyleContents + '\'>second left leaf</span>';
 
         expect(actual).toBe(expected);
     });
@@ -347,7 +347,7 @@ describe('HTML formatting for pasting as HTML', function () {
         var expected = '<span style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</span>' +
             '<ul list-style-type=\'circle\'>' +
             '<li>' +
-                '<span style=\'' + inlineHtmlStyleContents + '\'>right leaf</span>' +
+            '<span style=\'' + inlineHtmlStyleContents + '\'>right leaf</span>' +
             '</li>' +
             '</ul>';
 
@@ -362,20 +362,20 @@ describe('HTML formatting for pasting as HTML', function () {
         spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
 
         var actual = App.CopyParser.Html(selectedNodes);
-        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</p>' +
+        var expected = '<span style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</span>' +
             '<ul list-style-type=\'circle\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>right leaf</span></li>' +
             '</ul>' +
-            '<p style=\'' + inlineHtmlStyleContents + '\'>left</p>' +
+            '<span style=\'' + inlineHtmlStyleContents + '\'>left</span>' +
             '<ul list-style-type=\'circle\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>first left leaf</p></li>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>second left leaf</p></li>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>first left leaf</span></li>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>second left leaf</span></li>' +
             '</ul>';
 
         expect(actual).toBe(expected);
     });
 
-    xit('Should return root node name, sub node name and root node name when root node selected', function () {
+    xit('Should return root node name, sub node name and leaf node name when root node selected', function () {
         var selectedNodes = [rootNode];
 
         var inlineHtmlStyleContents = 'SOME STYLE';
@@ -383,28 +383,29 @@ describe('HTML formatting for pasting as HTML', function () {
         spyOn(App.CopyParser, 'CssClassValue').and.returnValue(inlineHtmlStyleContents);
 
         var actual = App.CopyParser.Html(selectedNodes);
-        var expected = '<p style=\'' + inlineHtmlStyleContents + '\'>root</p>' +
+        var expected = '<span style=\'' + inlineHtmlStyleContents + '\'>root</span>' +
             '<ul list-style-type=\'circle\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>left</p>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>right sub node level 1</span>' +
             '<ul list-style-type=\'disc\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>first left leaf</p></li>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>second left leaf</p></li>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>right sub node level 2</span>' +
+            '<ul list-style-type=\'square\'>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</span>' +
+            '<ul list-style-type=\'square\'>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>right leaf</span></li>' +
             '</ul>' +
             '</li>' +
+            '</ul>' +
+            '</li>' +
+            '</ul>' +
+            '</li>' +
+            '</ul>' +
             '<ul list-style-type=\'circle\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 1</p>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>left</span>' +
             '<ul list-style-type=\'disc\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 2</p>' +
-            '<ul list-style-type=\'square\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right sub node level 3</p>' +
-            '<ul list-style-type=\'square\'>' +
-            '<li><p style=\'' + inlineHtmlStyleContents + '\'>right leaf</p></li>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>first left leaf</span></li>' +
+            '<li><span style=\'' + inlineHtmlStyleContents + '\'>second left leaf</span></li>' +
             '</ul>' +
             '</li>' +
-            '</ul>' +
-            '</li>' +
-            '</ul>' +
-            '</ul>' +
             '</ul>';
 
         expect(actual).toBe(expected);
@@ -520,7 +521,7 @@ describe('Plain text formatting for pasting as plain text', function () {
 
     it('Should return root node name, sub node name(s) and leaf node name(s) when root node passed', function () {
         var actual = App.CopyParser.PlainText(rootNode);
-        var expected = 'root\n\tleft\n\t\tfirst left leaf\n\t\tsecond left leaf\n\tright\n\t\tright leaf';
+        var expected = 'root\n\tright\n\t\tright leaf\n\tleft\n\t\tfirst left leaf\n\t\tsecond left leaf';
 
         expect(actual).toBe(expected);
     });
@@ -562,7 +563,7 @@ describe('Get only immediate child nodes', function () {
         expect(App.CopyParser.immediateSubNodes(leftSubNode)).toEqual([firstLeftLeafNode, secondLeftLeafNode]);
     });
 
-    it('Should return all sub nodes when root node is passed', function () {
-        expect(App.CopyParser.immediateSubNodes(rootNode)).toEqual([leftSubNode, rightSubNode]);
+    it('Should return right sub nodes then left sub nodes when root node is passed', function () {
+        expect(App.CopyParser.immediateSubNodes(rootNode)).toEqual([rightSubNode, leftSubNode]);
     });
 });
