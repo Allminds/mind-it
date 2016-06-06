@@ -16,17 +16,9 @@ App.CopyParser.populateBulletedFromObject = function (nodeData, depthOfNode) {
 
     returnString += getNodeName(nodeData);
 
-    var temp = getSubNodeNames(App.CopyParser.immediateSubNodes(nodeData), depth + 1);
+    var temp = getSubNodeNames(App.Node.immediateSubNodes(nodeData), depth + 1);
 
     return temp.length === 0 ? returnString : (returnString + temp);
-};
-
-App.CopyParser.immediateSubNodes = function (node) {
-    if (App.Node.isRoot(node)) {
-        return node.right.concat(node.left);
-    }
-
-    return App.Node.getSubTree(node);
 };
 
 App.CopyParser.getFormattedText = function (node) {
@@ -208,17 +200,17 @@ var formattedText = function (nodes, depthOfNode) {
         if (currentDepth === 0) {
             formattedTextValue += nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name);
 
-            formattedTextValue += formattedText(App.CopyParser.immediateSubNodes(nodeDataValue), nextDepth);
+            formattedTextValue += formattedText(App.Node.immediateSubNodes(nodeDataValue), nextDepth);
         }
         else {
             var listStyleValue = listStyleTypeValue(currentDepth);
 
-            var subNodes = App.CopyParser.immediateSubNodes(nodeDataValue);
+            var subNodes = App.Node.immediateSubNodes(nodeDataValue);
 
             if (subNodes.length > 0) {
                 formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
                 formattedTextValue += startingListItemWithValue(nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name));
-                formattedTextValue += formattedText(App.CopyParser.immediateSubNodes(nodeDataValue), nextDepth);
+                formattedTextValue += formattedText(App.Node.immediateSubNodes(nodeDataValue), nextDepth);
                 formattedTextValue += endingListItem();
                 formattedTextValue += endingUnorderedList();
             }

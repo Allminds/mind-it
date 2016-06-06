@@ -570,5 +570,46 @@ describe('lib.Node.js', function () {
                 expect(App.Node.updateChildTree.calls.count()).toBe(2);
             });
         });
+
+        describe('Get only immediate child nodes', function () {
+            var rootNode, rightSubNode, leftSubNode, firstLeftLeafNode, secondLeftLeafNode;
+            beforeEach(function () {
+                rootNode = new App.Node("root");
+                rootNode._id = "rootNode";
+
+                rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+                rightSubNode._id = "rightSubNode";
+                rightSubNode.parent = rootNode;
+
+                leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+                leftSubNode._id = "leftSubNode";
+                leftSubNode.parent = rootNode;
+
+                firstLeftLeafNode = new App.Node("first left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+                firstLeftLeafNode._id = "firstLeftLeafNode";
+                firstLeftLeafNode.parent = leftSubNode;
+
+                secondLeftLeafNode = new App.Node("second left leaf", App.Constants.Direction.RIGHT, rightSubNode, 1);
+                secondLeftLeafNode._id = "secondLeftLeafNode";
+                secondLeftLeafNode.parent = leftSubNode;
+
+                rootNode.left = [leftSubNode];
+                rootNode.right = [rightSubNode];
+
+                leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+            });
+
+            it('Should return empty array when leaf node is passed', function () {
+                expect(App.Node.immediateSubNodes(firstLeftLeafNode)).toEqual([]);
+            });
+
+            it('Should return all leaf nodes when sub node is passed', function () {
+                expect(App.Node.immediateSubNodes(leftSubNode)).toEqual([firstLeftLeafNode, secondLeftLeafNode]);
+            });
+
+            it('Should return right sub nodes then left sub nodes when root node is passed', function () {
+                expect(App.Node.immediateSubNodes(rootNode)).toEqual([rightSubNode, leftSubNode]);
+            });
+        });
     });
 });
