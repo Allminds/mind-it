@@ -611,5 +611,75 @@ describe('lib.Node.js', function () {
                 expect(App.Node.immediateSubNodes(rootNode)).toEqual([rightSubNode, leftSubNode]);
             });
         });
+
+        describe('isDeleted', function () {
+            var rootNode, rightSubNode, leftSubNode, rightLeafNode, leftLeafNode;
+            beforeEach(function () {
+                rootNode = new App.Node("root");
+                rootNode._id = "rootNode";
+
+                rightSubNode = new App.Node("right", App.Constants.Direction.RIGHT̰, rootNode, 0);
+                rightSubNode._id = "rightSubNode";
+                rightSubNode.parent = rootNode;
+
+                leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+                leftSubNode._id = "leftSubNode";
+                leftSubNode.parent = rootNode;
+
+                rightLeafNode = new App.Node("right leaf node", App.Constants.Direction.LEFT, rightSubNode, 1);
+                rightLeafNode._id = "rightLeafNode";
+                rightLeafNode.parent = rightSubNode;
+
+                leftLeafNode = new App.Node("left leaf node", App.Constants.Direction.RIGHT, leftSubNode, 1);
+                leftLeafNode._id = "leftLeafNode";
+                leftLeafNode.parent = leftSubNode;
+
+                rootNode.left = [leftSubNode];
+                rootNode.right = [rightSubNode];
+
+                rightSubNode.childSubTree = [rightLeafNode];
+                leftSubNode.childSubTree = [leftLeafNode];
+            });
+
+            it('Should return false when root node', function () {
+                expect(App.Node.isDeleted(rootNode)).toBe(false);
+            });
+
+            it('Should return false when right sub node', function () {
+                expect(App.Node.isDeleted(rightSubNode)).toBe(false);
+            });
+
+            it('Should return false when left sub node', function () {
+                expect(App.Node.isDeleted(leftSubNode)).toBe(false);
+            });
+
+            it('Should return false when right leaf node', function () {
+                expect(App.Node.isDeleted(leftSubNode)).toBe(false);
+            });
+
+            it('Should return false when left leaf node', function () {
+                expect(App.Node.isDeleted(leftSubNode)).toBe(false);
+            });
+
+            it('Should return true when right sub node is deleted', function () {
+                rootNode.right = [];
+                expect(App.Node.isDeleted(rightSubNode)).toBe(true);
+            });
+
+            it('Should return true when left sub node is deleted', function () {
+                rootNode.left = [];
+                expect(App.Node.isDeleted(leftSubNode)).toBe(true);
+            });
+
+            it('Should return true when right leaf node is deleted', function () {
+                rightSubNode.childSubTree = [];
+                expect(App.Node.isDeleted(rightLeafNode)).toBe(true);
+            });
+
+            it('Should return true when left leaf node is deleted', function () {
+                leftSubNode.childSubTree = [];
+                expect(App.Node.isDeleted(leftLeafNode)).toBe(true);
+            });
+        });
     });
 });
