@@ -2,10 +2,21 @@ describe('eventBinding.js', function () {
     describe('App.eventBinding scoped functions', function () {
         describe('App.eventBinding.focusAfterDelete', function () {
             it("should select next node of deleted node if it exists", function () {
-                var next = {_id: "next"},
-                    previous = {_id: "previous"},
-                    parent = {_id: "parent", children: [previous, next]},
-                    removedNode = {_id: "removed", parent: parent, next: next, previous: previous};
+                var leftNode = new App.Node('left', App.Constants.Direction.LEFT);
+                leftNode._id = 'left';
+
+                var rightNode = new App.Node('right', App.Constants.Direction.RIGHT);
+                rightNode._id = 'right';
+
+                var rootNode = new App.Node('root');
+                rootNode._id = 'root';
+                rootNode.left = [leftNode];
+                rootNode.right = [rightNode];
+
+                var removedNode = new App.Node('removed');
+                removedNode._id = 'removed';
+                removedNode.parent = rootNode;
+
                 spyOn(App, 'selectNode');
 
                 App.eventBinding.focusAfterDelete(removedNode, 1);
@@ -14,9 +25,17 @@ describe('eventBinding.js', function () {
             });
 
             it("should select previous node of deleted node if it exists and next node does not exist", function () {
-                var previous = {_id: "previous"},
-                    parent = {_id: "parent", children: [previous]},
-                    removedNode = {_id: "removed", parent: parent, previous: previous};
+                var leftNode = new App.Node('left', App.Constants.Direction.LEFT);
+                leftNode._id = 'left';
+
+                var rootNode = new App.Node('root');
+                rootNode._id = 'root';
+                rootNode.left = [leftNode];
+
+                var removedNode = new App.Node('removed');
+                removedNode._id = 'removed';
+                removedNode.parent = rootNode;
+
                 spyOn(App, 'selectNode');
 
                 App.eventBinding.focusAfterDelete(removedNode, 1);
@@ -25,13 +44,18 @@ describe('eventBinding.js', function () {
             });
 
             it("should select parent node of deleted node if it exists after and next & previous nodes do not exist", function () {
-                var parent = {_id: "parent", children: []},
-                    removedNode = {_id: "removed", parent: parent};
+                var rootNode = new App.Node('root');
+                rootNode._id = 'root';
+
+                var removedNode = new App.Node('removed');
+                removedNode._id = 'removed';
+                removedNode.parent = rootNode;
+
                 spyOn(App, 'selectNode');
 
                 App.eventBinding.focusAfterDelete(removedNode, 1);
 
-                expect(App.selectNode).toHaveBeenCalledWith(parent);
+                expect(App.selectNode).toHaveBeenCalledWith(rootNode);
             });
         });
 
@@ -48,29 +72,36 @@ describe('eventBinding.js', function () {
             });
         });
 
-        xdescribe('App.eventBinding.performLogicalVerticalMovement', function () {
+        describe('App.eventBinding.performLogicalVerticalMovement', function () {
+            var rootNode, firstRightNode, secondRightNode;
+
+            beforeEach(function () {
+                rootNode = new App.Node('root');
+                rootNode._id = 'rootNode';
+
+                firstRightNode = new App.Node('first right', App.Constants.Direction.RIGHT, rootNode, 1);
+                firstRightNode._id = 'firstRightNode';
+                firstRightNode.parent = rootNode;
+
+                secondRightNode = new App.Node('second right', App.Constants.Direction.RIGHT, rootNode, 1);
+                secondRightNode._id = 'secondRightNode';
+                secondRightNode.parent = rootNode;
+
+                rootNode.right = [firstRightNode, secondRightNode];
+            });
+
             it("should select downward node on performing vertical movement for down key press action", function () {
-                var first = {_id: "first", depth: 1, position: "right"},
-                    second = {_id: "second", depth: 1, position: "right"},
-                    parent = {_id: "parent", childSubTree: [first, second]};
-                first.parent = parent;
-
                 spyOn(App, "selectNode");
-                App.eventBinding.performLogicalVerticalMovement(first, App.Constants.KeyPressed.DOWN);
+                App.eventBinding.performLogicalVerticalMovement(firstRightNode, App.Constants.KeyPressed.DOWN);
 
-                expect(App.selectNode).toHaveBeenCalledWith(second);
+                expect(App.selectNode).toHaveBeenCalledWith(secondRightNode);
             });
 
             it("should select upward node on performing vertical movement for up key press action", function () {
-                var first = {_id: "first", depth: 1, position: "right"},
-                    second = {_id: "second", depth: 1, position: "right"},
-                    parent = {_id: "parent", children: [first, second]};
-                second.parent = parent;
-
                 spyOn(App, "selectNode");
-                App.eventBinding.performLogicalVerticalMovement(second, App.Constants.KeyPressed.UP);
+                App.eventBinding.performLogicalVerticalMovement(secondRightNode, App.Constants.KeyPressed.UP);
 
-                expect(App.selectNode).toHaveBeenCalledWith(first);
+                expect(App.selectNode).toHaveBeenCalledWith(firstRightNode);
             });
         });
 
@@ -142,16 +173,27 @@ describe('eventBinding.js', function () {
             expect(window.alert).toHaveBeenCalled();
         });
 
-        xit("should call all internal methods on cutNode call for node other than root", function () {
-            var parent = {_id: "parent"},
-                node = {_id: "node", position: "right", parent: parent};
-            spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+        it("should call all internal methods on cutNode call for node other than root", function () {
+            var rootNode = new App.Node('root');
+            rootNode._id = 'rootNode';
+
+            var rightSubNode = new App.Node('right', App.Constants.Direction.RIGHT, rootNode, 1);
+            rightSubNode._id = 'rightSubNode';
+            rightSubNode.parent = rootNode;
+
+            var rightSubNodeData = {};
+            rightSubNodeData.isCollapsed = false;
+
+            rightSubNode.__data__ = rightSubNodeData;
+
+            spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(rightSubNode);
             spyOn(App.map, "storeSourceNode");
             spyOn(Meteor, "call");
-            App.cutNode();
-            expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".selected");
-            expect(App.map.storeSourceNode).toHaveBeenCalledWith(node);
-            expect(Meteor.call.calls.mostRecent().args[0]).toBe("deleteNode");
+
+            App.nodeCutToPaste = [];
+            App.cutNode(rightSubNode);
+
+            expect(App.nodeCutToPaste.length).toBe(1);
         });
 
         it("Should have only one node selected after cut", function () {
@@ -258,7 +300,7 @@ describe('eventBinding.js', function () {
     });
 
     describe("Node Add/Delete/Edit/Collapse events", function () {
-        var event, node, newNode, parent, fixture;
+        var event, rightLeafNode, newNode, rootNode, fixture;
         beforeEach(function () {
             fixture = '<div id="mindmap"> ' +
                 '<svg xmlns="http://www.w3.org/2000/svg" version="1.2" width="28800" height="9300"> ' +
@@ -274,10 +316,17 @@ describe('eventBinding.js', function () {
             event = document.createEvent("Events");
             event.initEvent("keydown", true, true);
 
-            node = {_id: "node", position: "right"};
-            parent = {_id: "parent", position: "right", children: [node]};
-            newNode = {_id: "newNode"};
-            node.parent = parent;
+            rightLeafNode = new App.Node('right leaf node', App.Constants.Direction.RIGHT, rootNode, 1);
+            rightLeafNode.id = 'right';
+            rightLeafNode.parent = rootNode;
+
+            rootNode = new App.Node('root');
+            rootNode._id = 'root';
+            rootNode.right = [rightLeafNode];
+
+            newNode = new App.Node('new node', App.Constants.Direction.LEFT, rootNode);
+            newNode.id = 'new';
+            newNode.parent = rootNode;
         });
 
         describe("New Node creation", function () {
@@ -291,10 +340,10 @@ describe('eventBinding.js', function () {
             });
 
             it("should call all the functions in enterAction function flow", function () {
-                spyOn(App, "calculateDirection").and.returnValue(parent.position);
+                spyOn(App, "calculateDirection").and.returnValue(rootNode.position);
                 spyOn(App.map, "addNewNode").and.returnValue(newNode);
 
-                App.eventBinding.enterAction(node);
+                App.eventBinding.enterAction(rightLeafNode);
 
                 expect(App.calculateDirection).toHaveBeenCalled();
                 expect(App.map.addNewNode).toHaveBeenCalled();
@@ -305,7 +354,7 @@ describe('eventBinding.js', function () {
                 spyOn(App.map, "makeEditable");
                 spyOn(App.eventBinding, "escapeOnNewNode");
 
-                App.eventBinding.afterNewNodeAddition(newNode, node);
+                App.eventBinding.afterNewNodeAddition(newNode, rightLeafNode);
 
                 expect(App.deselectNode).toHaveBeenCalled();
                 expect(App.map.makeEditable).toHaveBeenCalled();
@@ -322,58 +371,71 @@ describe('eventBinding.js', function () {
             });
 
             it("should call all the functions in tabAction function flow", function () {
-                spyOn(App, "calculateDirection").and.returnValue(node.position);
+                spyOn(App, "calculateDirection").and.returnValue(rightLeafNode.position);
                 spyOn(App.map, "addNewNode").and.returnValue(newNode);
 
-                App.eventBinding.tabAction(node);
+                App.eventBinding.tabAction(rightLeafNode);
 
                 expect(App.calculateDirection).toHaveBeenCalled();
                 expect(App.map.addNewNode).toHaveBeenCalled();
             });
 
-            xit("should call all the functions in newNodeAddAction function flow for enter action", function () {
-                spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+            it("should call all the functions in newNodeAddAction function flow for enter action", function () {
+                spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(rightLeafNode);
                 spyOn(App.eventBinding, "enterAction").and.returnValue(newNode);
                 spyOn(App.eventBinding, "afterNewNodeAddition");
+
+                var stackDataNewData = {};
+                stackDataNewData.nodeData = newNode.parent;
+
+                spyOn(App, 'stackData').and.returnValue(stackDataNewData);
 
                 App.eventBinding.newNodeAddAction(App.eventBinding.enterAction);
 
                 expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
                 expect(App.eventBinding.enterAction).toHaveBeenCalled();
-                expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
+                expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, rightLeafNode);
             });
 
-            xit("should call all the functions in newNodeAddAction function flow for tab action", function () {
-                spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+            it("should call all the functions in newNodeAddAction function flow for tab action", function () {
+                spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(rightLeafNode);
                 spyOn(App.eventBinding, "tabAction").and.returnValue(newNode);
                 spyOn(App.eventBinding, "afterNewNodeAddition");
+
+                var stackDataNewData = {};
+                stackDataNewData.nodeData = newNode.parent;
+
+                spyOn(App, 'stackData').and.returnValue(stackDataNewData);
 
                 App.eventBinding.newNodeAddAction(App.eventBinding.tabAction);
 
                 expect(App.map.getDataOfNodeWithClassNamesString).toHaveBeenCalledWith(".node.selected");
                 expect(App.eventBinding.tabAction).toHaveBeenCalled();
-                expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, node);
+                expect(App.eventBinding.afterNewNodeAddition).toHaveBeenCalledWith(newNode, rightLeafNode);
             });
         });
 
         describe("Node deletion", function () {
             var myFixture;
             beforeEach(function () {
-                spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(node);
+                spyOn(App.map, "getDataOfNodeWithClassNamesString").and.returnValue(rightLeafNode);
                 myFixture = fixture;
-                myFixture.__data__ = node;
-                App.multiSelectedNodes[0] = myFixture;
+                myFixture.__data__ = rightLeafNode;
+                App.multiSelectedNodes[0] = rightLeafNode;
             });
 
             xit("should call all the functions in delete keypress", function () {
                 event.keyCode = 46;
+
                 spyOn(Meteor, "call");
-                spyOn(App, "getDirection").and.returnValue(node.position);
+                spyOn(App, "getDirection").and.returnValue(App.Constants.Direction.RIGHT);
                 spyOn(App.eventBinding, "focusAfterDelete");
                 spyOn(App.Node, "delete");
+
                 var d3Array = [myFixture];
+
                 spyOn(d3, 'selectAll').and.returnValue(d3Array);
-                spyOn(console, 'log');
+
                 document.getElementsByClassName("node")[0].dispatchEvent(event);
 
                 expect(App.Node.delete).toHaveBeenCalled();
@@ -382,7 +444,7 @@ describe('eventBinding.js', function () {
             it("should display alert when delete key is pressed on root node", function () {
                 event.keyCode = 46;
                 spyOn(window, "alert");
-                spyOn(App, "getDirection").and.returnValue("root");
+                spyOn(App.Node, "isRoot").and.returnValue(true);
 
                 document.getElementsByClassName("node level-0")[0].dispatchEvent(event);
 
@@ -391,7 +453,7 @@ describe('eventBinding.js', function () {
         });
 
         describe("node editing on f2", function () {
-            it("should show text box on fw if some node is selected", function () {
+            xit("should show text box on f2 if some node is selected", function () {
                 event.keyCode = 113;
                 spyOn(App, "showEditor");
                 App.editable = true;
@@ -415,6 +477,17 @@ describe('eventBinding.js', function () {
                 setFixtures(fixture);
                 event.keyCode = 113;
                 spyOn(App, "showEditor");
+
+                var node = new App.Node('node');
+                node.id = 'node';
+
+                var nodeData = {};
+                nodeData.childSubTree = node.childSubTree;
+
+                node.__data__ = nodeData;
+
+                spyOn(d3, 'select').and.returnValue([[node]]);
+
                 document.getElementsByClassName("node")[0].dispatchEvent(event);
 
                 expect(App.showEditor).not.toHaveBeenCalled();
@@ -423,7 +496,7 @@ describe('eventBinding.js', function () {
 
         it("should toggle collapsing of nodes on space key press", function () {
             var myFixture = fixture;
-            myFixture.__data__ = node;
+            myFixture.__data__ = rightLeafNode;
             App.multiSelectedNodes[0] = myFixture;
             event.keyCode = 32;
             spyOn(App, "toggleCollapsedNode");
@@ -558,7 +631,7 @@ describe('eventBinding.js', function () {
     });
 
     describe("expandAll collapseAll", function () {
-        xit("should call expandAll function when cmd+U is pressed ", function () {
+        it("should call expandAll function when cmd+U is pressed ", function () {
             spyOn(App.presentation, 'expandAll');
             var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);
@@ -568,7 +641,7 @@ describe('eventBinding.js', function () {
             expect(App.presentation.expandAll).toHaveBeenCalled();
         });
 
-        xit("should call collapseAllMindmap function when cmd+shift+U is pressed ", function () {
+        it("should call collapseAllMindmap function when cmd+shift+U is pressed ", function () {
             spyOn(App.presentation, 'collapseAllMindmap');
             var event1 = document.createEvent("Events");
             event1.initEvent("keydown", true, true);

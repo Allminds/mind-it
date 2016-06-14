@@ -18,7 +18,7 @@ App.CopyParser.populateBulletedFromObject = function (nodeData, depthOfNode) {
 
     var temp = getSubNodeNames(App.Node.immediateSubNodes(nodeData), depth + 1);
 
-    return temp.length === 0 ? returnString : (returnString + temp);
+    return returnString + temp;
 };
 
 App.CopyParser.getFormattedText = function (node) {
@@ -162,19 +162,19 @@ App.CopyParser.PlainText = function (nodes) {
 };
 
 App.CopyParser.Html = function (nodes) {
-    var htmlValue = '';
+    var htmlOutput = '';
 
     if (!Boolean(nodes)) {
-        return htmlValue;
+        return htmlOutput;
     }
 
     if (!Array.isArray(nodes)) {
         nodes = [nodes];
     }
 
-    htmlValue += formattedText(nodes);
+    htmlOutput += html(nodes, 0);
 
-    return htmlValue;
+    return htmlOutput;
 };
 
 App.CopyParser.CssClassName = function (nodeDepth) {
@@ -185,45 +185,55 @@ App.CopyParser.CssClassName = function (nodeDepth) {
     return 'level';
 };
 
-var formattedText = function (nodes, depthOfNode) {
-    var formattedTextValue = '';
-
-    var currentDepth = depthOfNode ? depthOfNode : 0;
-    var nextDepth = currentDepth + 1;
+var html = function (nodes, depthOfNode) {
+    var html = '';
 
     nodes.forEach(function (node) {
-        var nodeDataValue = nodeData(node);
+        var nodeDataValue = nodeData(node, depthOfNode);
 
-        var cssClassNameValue = App.CopyParser.CssClassName(nodeDataValue.depth);
-        var cssClassInlineValue = App.CopyParser.CssClassValue(cssClassNameValue);
-
-        if (currentDepth === 0) {
-            formattedTextValue += nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name);
-
-            formattedTextValue += formattedText(App.Node.immediateSubNodes(nodeDataValue), nextDepth);
-        }
-        else {
-            var listStyleValue = listStyleTypeValue(currentDepth);
-
-            var subNodes = App.Node.immediateSubNodes(nodeDataValue);
-
-            if (subNodes.length > 0) {
-                formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
-                formattedTextValue += startingListItemWithValue(nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name));
-                formattedTextValue += formattedText(App.Node.immediateSubNodes(nodeDataValue), nextDepth);
-                formattedTextValue += endingListItem();
-                formattedTextValue += endingUnorderedList();
-            }
-            else {
-                formattedTextValue += startingUnorderedListWithStyle(listStyleValue);
-                formattedTextValue += startingListItemWithValue(nodeNameWithHtml(cssClassInlineValue, nodeDataValue.name));
-                formattedTextValue += endingListItem();
-                formattedTextValue += endingUnorderedList();
-            }
-        }
+        html += selectedNodeHtml(nodeDataValue);
+        html += unSelectedNodeHtml(nodeDataValue);
     });
 
-    return formattedTextValue;
+    return html;
+};
+
+var isSelectedNode = function (depthOfNode) {
+    return depthOfNode === 0;
+};
+
+var selectedNodeHtml = function (nodeData) {
+    var selectedNodeHtml = '';
+
+    if (isSelectedNode(nodeData.depthOfNode)) {
+        selectedNodeHtml += nodeData.name;
+
+        selectedNodeHtml += html(App.Node.immediateSubNodes(nodeData), nodeData.depthOfNode + 1);
+    }
+
+    return selectedNodeHtml;
+};
+
+var unSelectedNodeHtml = function (nodeData) {
+    var unSelectedNodeHtml = '';
+
+    if (!isSelectedNode(nodeData.depthOfNode) && (App.Node.isSubNode(nodeData) || App.Node.isLeafNode(nodeData))) {
+        unSelectedNodeHtml = nodeHtml(nodeData);
+    }
+
+    return unSelectedNodeHtml;
+};
+
+var nodeHtml = function (nodeData) {
+    var nodeHtml = startingUnorderedList(listStyleTypeValue(nodeData.depthOfNode));
+    nodeHtml += startingListItem(nodeData.name);
+
+    nodeHtml += html(App.Node.immediateSubNodes(nodeData), nodeData.depthOfNode + 1);
+
+    nodeHtml += endingListItem();
+    nodeHtml += endingUnorderedList();
+
+    return nodeHtml;
 };
 
 var listStyleTypeValue = function (depth) {
@@ -237,11 +247,11 @@ var listStyleTypeValue = function (depth) {
     }
 };
 
-var nodeNameWithHtml = function (cssClassInlineValue, nodeName) {
+var nodeName = function (cssClassInlineValue, nodeName) {
     return "<span style='" + cssClassInlineValue + "'>" + nodeName + "</span>";
 };
 
-var startingListItemWithValue = function (listItemText) {
+var startingListItem = function (listItemText) {
     return "<li>" + listItemText;
 };
 
@@ -249,7 +259,7 @@ var endingListItem = function () {
     return "</li>";
 };
 
-var startingUnorderedListWithStyle = function (listStyle) {
+var startingUnorderedList = function (listStyle) {
     return '<ul list-style-type=\'' + listStyle + '\'>';
 };
 
@@ -257,14 +267,15 @@ var endingUnorderedList = function () {
     return '</ul>';
 };
 
-var nodeData = function (node) {
+var nodeData = function (node, depthOfNode) {
     var nodeDataValue = node.__data__;
 
     var nodeData = {};
+    nodeData.depthOfNode = depthOfNode;
+
+    var cssClassNameValue, cssClassInlineValue;
 
     if (Boolean(nodeDataValue)) {
-        nodeData.name = nodeDataValue.name;
-        nodeData.depth = nodeDataValue.depth;
         nodeData.left = nodeDataValue.left;
         nodeData.right = nodeDataValue.right;
         nodeData.isCollapsed = nodeDataValue.isCollapsed;
@@ -273,12 +284,15 @@ var nodeData = function (node) {
         nodeData.parentId = nodeDataValue.parentId;
         nodeData.rootId = nodeDataValue.rootId;
 
+        cssClassNameValue = App.CopyParser.CssClassName(nodeDataValue.depth);
+        cssClassInlineValue = App.CopyParser.CssClassValue(cssClassNameValue);
+
+        nodeData.name = nodeName(cssClassInlineValue, nodeDataValue.name);
+
         return nodeData;
     }
 
     if (Boolean(node)) {
-        nodeData.name = node.name;
-        nodeData.depth = node.depth;
         nodeData.left = node.left;
         nodeData.right = node.right;
         nodeData.isCollapsed = node.isCollapsed;
@@ -286,6 +300,11 @@ var nodeData = function (node) {
         nodeData.childSubTree = node.childSubTree;
         nodeData.parentId = node.parentId;
         nodeData.rootId = node.rootId;
+
+        cssClassNameValue = App.CopyParser.CssClassName(node.depth);
+        cssClassInlineValue = App.CopyParser.CssClassValue(cssClassNameValue);
+
+        nodeData.name = nodeName(cssClassInlineValue, node.name);
 
         return nodeData;
     }

@@ -238,7 +238,10 @@ MindMap = function MindMap() {
     };
 
     var getX = function (node, defaultHeight) {
-        if (!node.parent) return 0;
+        if (!node.parent) {
+            return 0;
+        }
+
         var siblings = App.Node.isRoot(node.parent) ? node.parent[App.getDirection(node)] : node.parent.childSubTree,
             siblingHeights = siblings.map(function (sibling) {
                 return getNodeHeight(sibling, defaultHeight);
@@ -344,6 +347,7 @@ MindMap = function MindMap() {
 
                         node.y = dir * (node.depth * nodeSize[1] + textWidth);
                         node.y += dir * Constants.deltaFromRoot;
+
                         node.x = getX(node, nodeSize[0]);
                         node.x += (node.parent ? node.parent.x : 0);
                     });
@@ -399,7 +403,7 @@ MindMap = function MindMap() {
                     var currentNodeRect = d3.select(this).select('rect');
                     var currentNodeText = d3.select(this).select('text');
                     draggedNode = d3.select(this).node().__data__;
-                    
+
                     if (App.Node.isRoot(d3.select(this).node().__data__)) {
                         return;
                     }

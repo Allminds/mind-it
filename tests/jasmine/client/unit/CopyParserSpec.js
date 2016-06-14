@@ -15,10 +15,12 @@ describe("Create Bulleted List from Node", function () {
         rightLeafNode = new App.Node("right leaf", App.Constants.Direction.RIGHT, rightSubNode, 1);
         rightLeafNode._id = "rightLeafNode";
         rightLeafNode.parent = rightSubNode;
+        rightLeafNode.childSubTree = [];
 
         leftLeafNode = new App.Node("left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
         leftLeafNode._id = "leftLeafNode";
         leftLeafNode.parent = leftSubNode;
+        leftLeafNode.childSubTree = [];
 
         rootNode.left = [leftSubNode];
         rootNode.right = [rightSubNode];
@@ -47,14 +49,20 @@ describe("Create Bulleted List from Node", function () {
 
     it("Should return node name when node name has line break", function () {
         var rightLeafNodeWithLineBreakInNodeName = new App.Node('aashish\nsingh', App.Constants.Direction.RIGHT, rightSubNode, 1);
+        rightLeafNodeWithLineBreakInNodeName._id = 'rightLeafNodeWithLineBreakInNodeName';
+        rightLeafNodeWithLineBreakInNodeName.parent = rightSubNode;
+        rightLeafNodeWithLineBreakInNodeName.childSubTree = [];
 
         var actual = App.CopyParser.populateBulletedFromObject(rightLeafNodeWithLineBreakInNodeName);
 
         expect(actual).toEqual('aashish‡singh');
     });
 
-    it("Should return node name node name is empty string", function () {
+    it("Should return node name node name as empty string", function () {
         var emptyStringRightNode = new App.Node('', App.Constants.Direction.RIGHT, rightSubNode, 1);
+        emptyStringRightNode._id = 'emptyStringRightNode';
+        emptyStringRightNode.parent = rightSubNode;
+        emptyStringRightNode.childSubTree = [];
 
         var actual = App.CopyParser.populateBulletedFromObject(emptyStringRightNode);
 
@@ -202,6 +210,60 @@ describe('HTML formatting for pasting as HTML', function () {
     var rootNode, rightSubNodeLevel1, rightSubNodeLevel2, rightSubNodeLevel3, leftSubNode, rightLeafNode, firstLeftLeafNode, secondLeftLeafNode;
 
     beforeEach(function () {
+        rootNode = new App.Node("root");
+        rootNode._id = "rootNode";
+
+        var rootNodeData = {};
+        rootNodeData.name = rootNode.name;
+        rootNodeData.childSubTree = [];
+
+        rootNode.__data__ = rootNodeData;
+
+        rightSubNodeLevel1 = new App.Node("right sub node level 1", App.Constants.Direction.RIGHT̰, rootNode, 0);
+        rightSubNodeLevel1._id = "rightSubNodeLevel1";
+        rightSubNodeLevel1.parent = rootNode;
+
+        var rightSubNodeLevel1Data = {};
+        rightSubNodeLevel1Data.name = rightSubNodeLevel1.name;
+        rightSubNodeLevel1Data.left = [];
+        rightSubNodeLevel1Data.right = [];
+
+        rightSubNodeLevel1.__data__ = rightSubNodeLevel1Data;
+
+        rightSubNodeLevel2 = new App.Node("right sub node level 2", App.Constants.Direction.RIGHT̰, rightSubNodeLevel1, 0);
+        rightSubNodeLevel2._id = "rightSubNodeLevel2";
+        rightSubNodeLevel2.parent = rightSubNodeLevel1;
+
+        var rightSubNodeLevel2Data = {};
+        rightSubNodeLevel2Data.name = rightSubNodeLevel2.name;
+        rightSubNodeLevel2Data.left = [];
+        rightSubNodeLevel2Data.right = [];
+
+        rightSubNodeLevel2.__data__ = rightSubNodeLevel2Data;
+
+        rightSubNodeLevel3 = new App.Node("right sub node level 3", App.Constants.Direction.RIGHT̰, rightSubNodeLevel2, 0);
+        rightSubNodeLevel3._id = "rightSubNodeLevel3";
+        rightSubNodeLevel3.parent = rightSubNodeLevel2;
+
+        var rightSubNodeLevel3Data = {};
+        rightSubNodeLevel3Data.name = rightSubNodeLevel3.name;
+        rightSubNodeLevel3Data.left = [];
+        rightSubNodeLevel3Data.right = [];
+
+        rightSubNodeLevel3.__data__ = rightSubNodeLevel3Data;
+
+        leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+        leftSubNode._id = "leftSubNode";
+        leftSubNode.parent = rootNode;
+
+        var leftSubNodeData = {};
+        leftSubNodeData.name = leftSubNode.name;
+        leftSubNodeData.parent = rootNode;
+        leftSubNodeData.left = [];
+        leftSubNodeData.right = [];
+
+        leftSubNode.__data__ = leftSubNodeData;
+
         rightLeafNode = new App.Node("right leaf", App.Constants.Direction.RIGHT, rightSubNodeLevel3, 1);
         rightLeafNode._id = "rightLeafNode";
         rightLeafNode.parent = rightSubNodeLevel3;
@@ -210,6 +272,7 @@ describe('HTML formatting for pasting as HTML', function () {
         rightLeafNodeData.name = rightLeafNode.name;
         rightLeafNodeData.left = [];
         rightLeafNodeData.right = [];
+        rightLeafNodeData.parentId = rightSubNodeLevel3._id;
 
         rightLeafNode.__data__ = rightLeafNodeData;
 
@@ -221,6 +284,9 @@ describe('HTML formatting for pasting as HTML', function () {
         firstLeftLeafNodeData.name = firstLeftLeafNode.name;
         firstLeftLeafNodeData.left = [];
         firstLeftLeafNodeData.right = [];
+        firstLeftLeafNodeData.childSubTree = [];
+        firstLeftLeafNodeData.parentId = "leftSubNode";
+
 
         firstLeftLeafNode.__data__ = firstLeftLeafNodeData;
 
@@ -232,73 +298,38 @@ describe('HTML formatting for pasting as HTML', function () {
         secondLeftLeafNodeData.name = secondLeftLeafNode.name;
         secondLeftLeafNodeData.left = [];
         secondLeftLeafNodeData.right = [];
+        secondLeftLeafNodeData.childSubTree = [];
+        secondLeftLeafNodeData.parentId = "leftSubNode";
 
         secondLeftLeafNode.__data__ = secondLeftLeafNodeData;
 
-        rightSubNodeLevel2 = new App.Node("right sub node level 2", App.Constants.Direction.RIGHT̰, rootNode, 0);
-        rightSubNodeLevel2._id = "rightSubNodeLevel2";
-        rightSubNodeLevel2.parent = rightSubNodeLevel1;
+        rootNode.left = [leftSubNode];
+        rootNode.right = [rightSubNodeLevel1];
 
-        rightSubNodeLevel1 = new App.Node("right sub node level 1", App.Constants.Direction.RIGHT̰, rootNode, 0);
-        rightSubNodeLevel1._id = "rightSubNodeLevel1";
-        rightSubNodeLevel1.parent = rootNode;
-
-        var rightSubNodeLevel1Data = {};
-        rightSubNodeLevel1Data.name = rightSubNodeLevel1.name;
-        rightSubNodeLevel1Data.left = [];
-        rightSubNodeLevel1Data.right = [];
-        rightSubNodeLevel1Data.childSubTree = [rightSubNodeLevel2];
-
-        rightSubNodeLevel1.__data__ = rightSubNodeLevel1Data;
-
-        var rightSubNodeLevel2Data = {};
-        rightSubNodeLevel2Data.name = rightSubNodeLevel2.name;
-        rightSubNodeLevel2Data.left = [];
-        rightSubNodeLevel2Data.right = [];
-        rightSubNodeLevel2Data.childSubTree = [rightSubNodeLevel3];
-
-        rightSubNodeLevel2.__data__ = rightSubNodeLevel2Data;
-
-        rightSubNodeLevel3 = new App.Node("right sub node level 3", App.Constants.Direction.RIGHT̰, rootNode, 0);
-        rightSubNodeLevel3._id = "rightSubNodeLevel3";
-        rightSubNodeLevel3.parent = rightSubNodeLevel2;
-
-        var rightSubNodeLevel3Data = {};
-        rightSubNodeLevel3Data.name = rightSubNodeLevel3.name;
-        rightSubNodeLevel3Data.left = [];
-        rightSubNodeLevel3Data.right = [];
-        rightSubNodeLevel3Data.childSubTree = [rightLeafNode];
-
-        rightSubNodeLevel3.__data__ = rightSubNodeLevel3Data;
-
-        leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
-        leftSubNode._id = "leftSubNode";
-        leftSubNode.parent = rootNode;
-
-        var leftSubNodeData = {};
-        leftSubNodeData.name = leftSubNode.name;
-        leftSubNodeData.left = [];
-        leftSubNodeData.right = [];
-        leftSubNodeData.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
-
-        leftSubNode.__data__ = leftSubNodeData;
-
-        rightSubNodeLevel3.childSubTree = [rightLeafNode];
-        leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
-
-        rootNode = new App.Node("root");
-        rootNode._id = "rootNode";
-
-        var rootNodeData = {};
-        rootNodeData.name = rootNode.name;
         rootNodeData.left = [leftSubNode];
         rootNodeData.right = [rightSubNodeLevel1];
-        rootNodeData.childSubTree = [];
 
-        rootNode.__data__ = rootNodeData;
+        rightSubNodeLevel1.childSubTree = [rightSubNodeLevel2];
+        rightSubNodeLevel2.childSubTree = [rightSubNodeLevel3];
+        rightSubNodeLevel3.childSubTree = [rightLeafNode];
 
-        rootNode.left = [leftSubNode];
-        rootNode.right = [rightSubNodeLevel3];
+        rightSubNodeLevel1Data.childSubTree = [rightSubNodeLevel2];
+        rightSubNodeLevel2Data.childSubTree = [rightSubNodeLevel3];
+        rightSubNodeLevel3Data.childSubTree = [rightLeafNode];
+
+        leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+
+        leftSubNodeData.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+
+        rightLeafNode.childSubTree = [];
+
+        rightLeafNodeData.childSubTree = [];
+
+        firstLeftLeafNode.childSubTree = [];
+        secondLeftLeafNode.childSubTree = [];
+
+        firstLeftLeafNodeData.childSubTree = [];
+        secondLeftLeafNodeData.childSubTree = [];
     });
 
     it('Should return empty string when nothing is passed', function () {
@@ -420,9 +451,8 @@ describe('Plain text formatting for pasting as plain text', function () {
         rootNode._id = "rootNode";
 
         var rootNodeData = {};
+        rootNodeData._id = rootNode._id;
         rootNodeData.name = rootNode.name;
-        rootNodeData.left = [leftSubNode];
-        rootNodeData.right = [rightSubNode];
         rootNodeData.childSubTree = [];
 
         rootNode.__data__ = rootNodeData;
@@ -432,10 +462,10 @@ describe('Plain text formatting for pasting as plain text', function () {
         rightSubNode.parent = rootNode;
 
         var rightSubNodeData = {};
+        rightSubNodeData._id = rightSubNode._id;
         rightSubNodeData.name = rightSubNode.name;
         rightSubNodeData.left = [];
         rightSubNodeData.right = [];
-        rightSubNodeData.childSubTree = [rightLeafNode];
 
         rightSubNode.__data__ = rightSubNodeData;
 
@@ -444,10 +474,11 @@ describe('Plain text formatting for pasting as plain text', function () {
         leftSubNode.parent = rootNode;
 
         var leftSubNodeData = {};
+        leftSubNodeData._id = leftSubNode._id;
         leftSubNodeData.name = leftSubNode.name;
         leftSubNodeData.left = [];
         leftSubNodeData.right = [];
-        leftSubNodeData.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+        leftSubNodeData.isCollapsed = false;
 
         leftSubNode.__data__ = leftSubNodeData;
 
@@ -460,9 +491,11 @@ describe('Plain text formatting for pasting as plain text', function () {
         firstLeftLeafNode.parent = leftSubNode;
 
         var firstLeftLeafNodeData = {};
+        firstLeftLeafNodeData._id = firstLeftLeafNode._id;
         firstLeftLeafNodeData.name = firstLeftLeafNode.name;
         firstLeftLeafNodeData.left = [];
         firstLeftLeafNodeData.right = [];
+        firstLeftLeafNodeData.childSubTree = [];
 
         firstLeftLeafNode.__data__ = firstLeftLeafNodeData;
 
@@ -471,17 +504,25 @@ describe('Plain text formatting for pasting as plain text', function () {
         secondLeftLeafNode.parent = leftSubNode;
 
         var secondLeftLeafNodeData = {};
+        secondLeftLeafNodeData._id = secondLeftLeafNode._id;
         secondLeftLeafNodeData.name = secondLeftLeafNode.name;
         secondLeftLeafNodeData.left = [];
         secondLeftLeafNodeData.right = [];
+        secondLeftLeafNodeData.childSubTree = [];
 
         secondLeftLeafNode.__data__ = secondLeftLeafNodeData;
 
         rootNode.left = [leftSubNode];
         rootNode.right = [rightSubNode];
 
+        rootNodeData.left = [leftSubNode];
+        rootNodeData.right = [rightSubNode];
+
         rightSubNode.childSubTree = [rightLeafNode];
         leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+
+        rightSubNodeData.childSubTree = [rightLeafNode];
+        leftSubNodeData.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
     });
 
     it('Should return empty string when nothing is passed', function () {

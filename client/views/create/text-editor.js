@@ -56,6 +56,7 @@ Editor.prototype.calculateAdjustmentFactor = function (textBoxWidth) {
     var rectWidth = elementToEdit.select("rect").attr("width");
     var leftAdjustment = rectWidth / 2 - textBoxWidth;
     var rightAdjustment = rectWidth / 2 * -1;
+    
     return App.getDirection(elementToEdit[0][0].__data__) == "left" ? leftAdjustment : rightAdjustment;
 };
 

@@ -53,16 +53,14 @@ App.removeAllLevelClass = function (d3Callable) {
 
 App.getNewlyAddedNodeId = function (parent, fields) {
     var key = Object.keys(fields)[0],
-        subTree = App.Node.isRoot(parent) ? parent[key] : (parent.isCollapsed ? parent._childSubTree : parent.childSubTree),
-        childIdTree = subTree.map(
-            function (child) {
-                return child._id;
-            }),
-        newlyAddedId = fields[key].find(
-            function (child) {
-                return childIdTree.indexOf(child) == -1;
-            });
-    return newlyAddedId;
+        subNodes = App.Node.getSubTree(parent, key),
+        subNodeIds = subNodes.map(function (subNode) {
+            return subNode._id;
+        });
+
+    return fields[key].find(function (child) {
+        return subNodeIds.indexOf(child) === -1;
+    });
 };
 
 App.checkRepositionUpdateOnRoot = function (root, updatedDirection, addedId) {
@@ -174,12 +172,12 @@ App.nodeSelector = {
 };
 
 App.selectShiftHorizontal = function (node) {
-    {
-        d3.select(node).classed("softSelected", true);
-        App.deselectNode();
-        d3.select(node).classed("selected", true);
-        if (App.multiSelectedNodes.indexOf(node) < 0)
-            App.multiSelectedNodes.push(node);
+    d3.select(node).classed("softSelected", true);
+    App.deselectNode();
+    d3.select(node).classed("selected", true);
+
+    if (App.multiSelectedNodes.indexOf(node) < 0) {
+        App.multiSelectedNodes.push(node);
     }
 };
 
@@ -536,9 +534,9 @@ App.getPathClassForNodeDepth = function (depth) {
     return Object.keys(nodeDepthPathClass).indexOf(depth) != -1 ? nodeDepthPathClass[depth] : 'link';
 };
 
-App.checkIfSiblings = function (nodesList) {
-    for (var i = 0; i < nodesList.length - 1; i++) {
-        if (nodesList[i].parentId != nodesList[i + 1].parentId) {
+App.checkIfSiblings = function (nodes) {
+    for (var nodeCounter = 0; nodeCounter < nodes.length - 1; nodeCounter++) {
+        if (nodes[nodeCounter].parentId !== nodes[nodeCounter + 1].parentId) {
             return false;
         }
     }

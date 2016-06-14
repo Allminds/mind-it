@@ -6,14 +6,16 @@ describe('MindMapService', function () {
     });
 
     describe("addChild", function () {
-        xit('Should add a node to an existing node', function () {
-            var name = "new mindmap", dir = "right",
-                parent_node = {name: name, children: [], direction: dir},
-                new_node = {name: name, children: [], direction: dir};
-            mindMapService.addChild(parent_node);
-            parent_node.children[0] = new_node;
-            expect(parent_node.children.length).toBe(1);
+        it('Should add a node to an existing node', function () {
+            var parent_node = new App.Node('parent'),
+                new_node = new App.Node('new ', App.Constants.Direction.RIGHT, parent_node, 1);
 
+            parent_node.right = [new_node];
+
+            mindMapService.addChild(parent_node, new_node);
+            parent_node.right[0] = new_node;
+
+            expect(parent_node.right.length).toBe(1);
         });
     });
 
@@ -156,4 +158,3 @@ describe('MindMapService', function () {
         });
     })
 });
-

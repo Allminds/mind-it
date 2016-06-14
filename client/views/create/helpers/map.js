@@ -7,33 +7,43 @@ App.map.getDataOfNodeWithClassNamesString = function (classNames) {
 
 App.map.addNodeToUI = function (parent, newNode) {
     var subTree = parent ? (App.Node.isRoot(parent) ? parent[newNode.position] : parent.childSubTree) : null;
-    if (subTree)
+
+    if (subTree) {
         subTree.splice(newNode.index, 0, newNode);
+    }
+
     App.chart.update();
 };
 
 App.map.addNewNode = function (parent, dir, childIndex) {
     var node = new App.Node("", dir, parent, childIndex);
+
     App.Node.addToDatabase(node);
     App.Node.addChild(parent, node);
+
     return node;
 };
 
 App.map.makeEditable = function (nodeId) {
-    var node = d3.selectAll('#mindmap svg .node').filter(function (d) {
-        return d._id == nodeId
+    var node = d3.selectAll('#mindmap svg .node').filter(function (node) {
+        return node._id === nodeId
     })[0][0];
-    
-    if (node)
+
+    if (node) {
         App.showEditor(node);
+    }
 };
 
 App.map.findOne = function (node, fun) {
-    if (fun(node)) return node;
-    var children = (node.children || node._children || []),
+    if (fun(node)) {
+        return node;
+    }
+
+    var children = node.children || node._children || [],
         res = children.reduce(function (result, child) {
             return result || App.map.findOne(child, fun);
         }, null);
+
     return res;
 };
 

@@ -130,33 +130,69 @@ describe('helper.js tests', function () {
     });
 
     it("should be able to get nodes in order of appearance in the child sub tree", function () {
-        var parent = new App.Node("parent", "left", null, 0);
-        parent._id = "parent";
+        var rootNode, leftSubNode, firstLeftLeafNode, secondLeftLeafNode;
 
-        var child1 = new App.Node("child1", "left", parent, 0);
-        child1._id = "child1";
-        child1.parent = parent;
+        rootNode = new App.Node("root");
+        rootNode._id = "rootNode";
 
-        var child2 = new App.Node("child2", "left", parent, 1);
-        child2._id = "child2";
-        child2.parent = parent;
+        var rootNodeData = {};
+        rootNodeData._id = rootNode._id;
+        rootNodeData.name = rootNode.name;
+        rootNodeData.childSubTree = [];
 
-        var child3 = new App.Node("child3", "left", parent, 1);
-        child3._id = "child3";
-        child3.parent = parent;
+        rootNode.__data__ = rootNodeData;
 
-        parent.childSubTree = [child1, child2, child3];
+        leftSubNode = new App.Node("left", App.Constants.Direction.LEFT, rootNode, 0);
+        leftSubNode._id = "leftSubNode";
+        leftSubNode.parent = rootNode;
 
-        spyOn(App, "getDirection").and.returnValue("left");
+        var leftSubNodeData = {};
+        leftSubNodeData._id = leftSubNode._id;
+        leftSubNodeData.name = leftSubNode.name;
+        leftSubNodeData.left = [];
+        leftSubNodeData.right = [];
 
-        var nodes = [{__data__: child3}, {__data__: child1}, {__data__: child2}];
-        var actualOrder = App.getInOrderOfAppearance(nodes).map(function (node) {
+        leftSubNode.__data__ = leftSubNodeData;
+
+        firstLeftLeafNode = new App.Node("first left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        firstLeftLeafNode._id = "firstLeftLeafNode";
+        firstLeftLeafNode.parent = leftSubNode;
+
+        var firstLeftLeafNodeData = {};
+        firstLeftLeafNodeData._id = firstLeftLeafNode._id;
+        firstLeftLeafNodeData.name = firstLeftLeafNode.name;
+        firstLeftLeafNodeData.left = [];
+        firstLeftLeafNodeData.right = [];
+        firstLeftLeafNodeData.parent = leftSubNode;
+
+        firstLeftLeafNode.__data__ = firstLeftLeafNodeData;
+
+        secondLeftLeafNode = new App.Node("second left leaf", App.Constants.Direction.LEFT, leftSubNode, 1);
+        secondLeftLeafNode._id = "secondLeftLeafNode";
+        secondLeftLeafNode.parent = leftSubNode;
+
+        var secondLeftLeafNodeData = {};
+        secondLeftLeafNodeData._id = secondLeftLeafNode._id;
+        secondLeftLeafNodeData.name = secondLeftLeafNode.name;
+        secondLeftLeafNodeData.left = [];
+        secondLeftLeafNodeData.right = [];
+        secondLeftLeafNodeData.parent = leftSubNode;
+        secondLeftLeafNodeData.childSubTree = [];
+
+        secondLeftLeafNode.__data__ = secondLeftLeafNodeData;
+
+        rootNode.left = [leftSubNode];
+
+        leftSubNode.childSubTree = [firstLeftLeafNode, secondLeftLeafNode];
+
+        var orderedNodes = App.getInOrderOfAppearance([secondLeftLeafNode, firstLeftLeafNode]);
+
+        var actualOrder = orderedNodes.map(function (node) {
             return node.name;
         });
 
-        expect(actualOrder[0]).toBe(child1.name);
-        expect(actualOrder[1]).toBe(child2.name);
-        expect(actualOrder[2]).toBe(child3.name);
+        expect(actualOrder[0]).toBe(firstLeftLeafNode.name);
+        expect(actualOrder[1]).toBe(secondLeftLeafNode.name);
     });
 
     it("should return false when nodes are not siblings on same side", function () {

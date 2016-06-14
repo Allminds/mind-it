@@ -7,41 +7,41 @@ App.indexDescendants = 0;
 
 App.eventBinding.focusAfterDelete = function (removedNode, removedNodeIndex) {
     var parent = removedNode.parent,
-        siblings = (App.Node.isRoot(parent) ? parent[removedNode.position] : parent.childSubTree) || [];
+        direction = App.Node.getDirection(removedNode),
+        siblings = App.Node.getSubTree(parent, direction);
+
     var focusableNode = siblings[removedNodeIndex];
-    if (siblings.length == 0) {
+
+    if (siblings.length === 0) {
         focusableNode = parent;
-    } else if (removedNodeIndex == siblings.length) {
+    } else if (removedNodeIndex === siblings.length) {
         focusableNode = siblings[removedNodeIndex - 1];
     }
+
     App.selectNode(focusableNode);
 };
 
-App.cutNode = function (selectedNode) {
-    if (App.Node.isRoot(selectedNode) == true) {
+App.cutNode = function (node) {
+    if (App.Node.isRoot(node)) {
         alert("The root node cannot be cut!");
         return;
     }
 
-    App.nodeCutToPaste.push(selectedNode);
+    App.nodeCutToPaste.push(node);
 
-    var dir = App.Node.getDirection(selectedNode),
-        parent = selectedNode.parent,
-        siblings = App.Node.getSubTree(parent, dir),
-        siblingsIDList = siblings.map(function (_) {
+    var direction = App.Node.getDirection(node),
+        parent = node.parent,
+        subNodes = App.Node.getSubTree(parent, direction),
+        subNodeIds = subNodes.map(function (_) {
             return _._id;
         }),
-        selectedNodeIndex = siblingsIDList.indexOf(selectedNode._id);
-    siblingsIDList.splice(selectedNodeIndex, 1);
-    siblings.splice(selectedNodeIndex, 1);
+        selectedNodeIndex = subNodeIds.indexOf(node._id);
 
+    subNodeIds.splice(selectedNodeIndex, 1);
+    subNodes.splice(selectedNodeIndex, 1);
 
-    App.Node.updateChildTree(parent, dir, siblingsIDList);
-    App.Node.updateParentIdOfNode(selectedNode, "None");
-
-
-    //App.eventBinding.focusAfterDelete(selectedNode, selectedNodeIndex);
-
+    App.Node.updateChildTree(parent, direction, subNodeIds);
+    App.Node.updateParentIdOfNode(node, "None");
 };
 
 App.eventBinding.f2Action = function (event) {
@@ -81,29 +81,29 @@ var redoEvent = {
 var cutEvent = {
     allowedInReadOnlyMode: false,
     method: function () {
-        var selectedNodes = [];
-        selectedNodes = App.multiSelectedNodes.map(function (elem) {
-            return elem.__data__;
+        var selectedNodeData = App.multiSelectedNodes.map(function (node) {
+            return node.__data__;
         });
+
         App.multiSelectedNodes = [];
         App.clearAllSelected();
         App.nodeToPasteBulleted = [];
         App.nodeCutToPaste = [];
-        for (var i = 0; i < selectedNodes.length; i++) {
-            if (App.Node.isRoot(selectedNodes[i])) {
-                alert("Selection Contains Root and the root node cannot be cut!");
-                return;
-            }
+
+        if (isRootNodeSelected(App.multiSelectedNodes)) {
+            alert("Selection contains root node and root node cannot be cut!");
+            return;
         }
-        var nodeToBeFocussed = null;
+
+        var nodeToBeFocused = null;
         var removedNodeIndex = null;
         var parentOfSelectedNode = null;
-        var nodeToBeFocussedPosition = null;
+        var nodeToBeFocusedPosition = null;
         var selectedNode = null;
         var selectedNodesArray = [];
         var parent = null;
-        var elementToBePushed = selectedNodes.map(function (element) {
-            //var node = element.__data__;
+
+        var elementToBePushed = selectedNodeData.map(function (element) {
             var node = element;
             selectedNodesArray.push(node);
             parent = element.parent;
@@ -111,33 +111,37 @@ var cutEvent = {
             var indexOfNode = App.Node.getIndexOfNode(node);
             selectedNode = node;
             parentOfSelectedNode = node.parent;
-            nodeToBeFocussed = selectedNode.parentId;
+            nodeToBeFocused = selectedNode.parentId;
             removedNodeIndex = indexOfNode;
-            nodeToBeFocussedPosition = parentOfSelectedNode.position;
+            nodeToBeFocusedPosition = parentOfSelectedNode.position;
             App.nodeToPasteBulleted.push(App.CopyParser.populateBulletedFromObject(node));
             App.cutNode(node);
-            // selectedNodes = App.multiSelectedNodes;
             return new App.stackData(node, "addNodeAfterCut", direction, indexOfNode, parent);
         });
-        var areSiblings = App.checkIfSiblings(selectedNodes);
+
+        var areSiblings = App.checkIfSiblings(selectedNodeData);
+
         if (areSiblings) {
             var nodeToFocus = null;
-            var siblings = (App.Node.isRoot(parent) ? parent[nodeToBeFocussedPosition] : parent.childSubTree) || [];
-            if (siblings.length == 0) {
+            var siblings = (App.Node.isRoot(parent) ? parent[nodeToBeFocusedPosition] : parent.childSubTree) || [];
+
+            if (siblings.length === 0) {
                 nodeToFocus = parent;
             } else if (removedNodeIndex <= siblings.length) {
                 nodeToFocus = siblings[removedNodeIndex - 1];
             }
+
             App.selectNode(nodeToFocus);
-        } else if (nodeToBeFocussed) {
+        } else if (nodeToBeFocused) {
             var existingNodesInUI = d3.selectAll(".node")[0];
-            nodeToBeFocussed = existingNodesInUI.filter(
-                function (_) {
-                    if (_.__data__._id == nodeToBeFocussed)
-                        return _;
+
+            nodeToBeFocused = existingNodesInUI.filter(function (_) {
+                if (_.__data__._id === nodeToBeFocused) {
+                    return _;
                 }
-            );
-            App.select(nodeToBeFocussed[0]);
+            });
+
+            App.select(nodeToBeFocused[0]);
         }
 
         App.RepeatHandler.addToActionStack(elementToBePushed.reverse());
@@ -470,7 +474,6 @@ var delEvent = {
         App.eventBinding.deleteAction();
 
         App.getChartInFocus();
-
     }
 };
 
@@ -734,12 +737,11 @@ App.eventBinding.newNodeAddAction = function (action) {
 
     if (selectedNode) {
         var newNode = action(selectedNode);
+        var stackData = new App.stackData(App.map.getNodeDataWithNodeId(newNode._id), "deleteNode");
 
-        var stackData1 = new App.stackData(App.map.getNodeDataWithNodeId(newNode._id), "deleteNode");
+        stackData.destinationDirection = App.Node.isRoot(stackData.nodeData.parent) ? stackData.nodeData.position : App.Node.getDirection(stackData.nodeData);
 
-        stackData1.destinationDirection = App.Node.isRoot(stackData1.nodeData.parent) ? stackData1.nodeData.position : App.Node.getDirection(stackData1.nodeData);
-
-        App.RepeatHandler.addToActionStack([stackData1]);
+        App.RepeatHandler.addToActionStack([stackData]);
 
         App.eventBinding.afterNewNodeAddition(newNode, selectedNode);
     }
@@ -748,14 +750,14 @@ App.eventBinding.newNodeAddAction = function (action) {
 App.eventBinding.enterAction = function (selectedNode) {
     var dbNode = App.Node.d3NodeToDbNode(selectedNode),
         parent = dbNode.parentId ? dbNode.parent : dbNode,
-        dir = App.calculateDirection(parent),
-        siblings = App.Node.isRoot(parent) ? parent[dir] : parent.childSubTree;
+        direction = App.calculateDirection(parent),
+        siblings = App.Node.getSubTree(parent, direction);
 
     var childIndex = App.Node.isRoot(dbNode) ? siblings.length : siblings.map(function (child) {
         return child._id;
     }).indexOf(dbNode._id) + 1;
 
-    return App.map.addNewNode(parent, dir, childIndex);
+    return App.map.addNewNode(parent, direction, childIndex);
 };
 
 App.eventBinding.tabAction = function (selectedNode) {
@@ -772,32 +774,31 @@ App.eventBinding.tabAction = function (selectedNode) {
 };
 
 App.eventBinding.deleteAction = function () {
-
-    for (var i = 0; i < App.multiSelectedNodes.length; i++) {
-        var selectedNode = App.multiSelectedNodes[i].__data__;
-        var dir = App.getDirection(selectedNode);
-        if (dir === 'root') {
-            alert('Can\'t delete root');
-            return;
-        }
+    if (isRootNodeSelected(App.multiSelectedNodes)) {
+        alert('Can\'t delete root');
+        return;
     }
 
     var areSiblings = App.checkIfSiblings(App.multiSelectedNodes);
 
-    var nodeToBeFocussed = null;
+    var nodeToBeFocused = null;
     var removedNodeIndex = null;
     var elementToPush = [];
-    var selectedNode = null;
-    for (var i = 0; i < App.multiSelectedNodes.length; i++) {
-        selectedNode = App.multiSelectedNodes[i].__data__;
-        var existingNodesInUI = d3.selectAll(".node")[0];
-        if (existingNodesInUI.indexOf(App.multiSelectedNodes[i]) < 0)
-            continue;
-        var directionForUndo = App.getDirection(selectedNode);
-        removedNodeIndex = App.Node.delete(selectedNode);
-        nodeToBeFocussed = selectedNode.parentId;
+    var selectedNodeData = null;
 
-        var stackData = new App.stackData(selectedNode, "addNode");
+    for (var selectedNodesCounter = 0; selectedNodesCounter < App.multiSelectedNodes.length; selectedNodesCounter++) {
+        selectedNodeData = App.multiSelectedNodes[selectedNodesCounter].__data__;
+        var existingNodesInUI = d3.selectAll(".node")[0];
+
+        if (existingNodesInUI.indexOf(App.multiSelectedNodes[selectedNodesCounter]) < 0) {
+            continue;
+        }
+
+        var directionForUndo = App.getDirection(selectedNodeData);
+        removedNodeIndex = App.Node.delete(selectedNodeData);
+        nodeToBeFocused = selectedNodeData.parentId;
+
+        var stackData = new App.stackData(selectedNodeData, "addNode");
         stackData.destinationDirection = directionForUndo;
         stackData.destinationIndex = removedNodeIndex;
 
@@ -807,18 +808,29 @@ App.eventBinding.deleteAction = function () {
     App.RepeatHandler.addToActionStack(elementToPush.reverse());
 
     if (areSiblings) {
-        App.eventBinding.focusAfterDelete(selectedNode, removedNodeIndex);
-    } else if (nodeToBeFocussed) {
+        App.eventBinding.focusAfterDelete(selectedNodeData, removedNodeIndex);
+    } else if (nodeToBeFocused) {
         var existingNodesInUI = d3.selectAll(".node")[0];
-        nodeToBeFocussed = existingNodesInUI.filter(
-            function (_) {
-                if (_.__data__._id == nodeToBeFocussed)
-                    return _;
-            }
-        );
-        App.select(nodeToBeFocussed[0]);
+        nodeToBeFocused = existingNodesInUI.filter(function (_) {
+            if (_.__data__._id === nodeToBeFocused)
+                return _;
+        });
+
+        App.select(nodeToBeFocused[0]);
+    }
+};
+
+var isRootNodeSelected = function (nodes) {
+    for (var nodesCounter = 0; nodesCounter < nodes.length; nodesCounter++) {
+        var node = nodes[nodesCounter];
+        var nodeData = node.__data__;
+
+        if (App.Node.isRoot(nodeData)) {
+            return true;
+        }
     }
 
+    return false;
 };
 
 App.eventBinding.findSameLevelChild = function (node, depth, keyPressed) {
@@ -930,16 +942,17 @@ App.eventBinding.getParentForEventBinding = function (data, dir) {
 
 App.getInOrderOfAppearance = function (multiSelectedNodes) {
     var firstSelection = multiSelectedNodes[0].__data__;
+
     var direction = App.getDirection(firstSelection);
     var parent = firstSelection.parent;
     var subTree = App.Node.getSubTree(parent, direction);
     var selectedNodeIds = multiSelectedNodes.map(function (selection) {
         return selection.__data__._id;
     });
-    var orderedNodes = subTree.filter(function (selection) {
+
+    return subTree.filter(function (selection) {
         return selectedNodeIds.indexOf(selection._id) >= 0;
     });
-    return orderedNodes;
 };
 
 App.areSiblingsOnSameSide = function (nodes) {

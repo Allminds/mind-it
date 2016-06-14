@@ -3,7 +3,7 @@ App.ImportParser = {};
 App.ImportParser.errorMessage = "";
 
 var isValidTag = function (nodeName) {
-    return App.Constants.tagsSupported.indexOf(nodeName) != -1;
+    return App.Constants.tagsSupported.indexOf(nodeName) !== -1;
 };
 
 var hasProcessableNodes = function (nodes) {
@@ -11,6 +11,7 @@ var hasProcessableNodes = function (nodes) {
     for (var index = 0; index < nodes.length; index++) {
         childNodeNames.push(nodes[index].nodeName);
     }
+
     return nodes.length > 0 && childNodeNames.every(isValidTag);
 };
 
@@ -62,7 +63,7 @@ App.ImportParser.createNode = function (parent, newNodeName, direction, rootId) 
 App.ImportParser.createRootNode = function (rootId, rootName) {
     return {
         name: rootName, position: null,
-        children: [], _id: rootId
+        childSubTree: [], _id: rootId
     };
 };
 

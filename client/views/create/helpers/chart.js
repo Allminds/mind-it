@@ -17,15 +17,19 @@ App.chart = MindMap()
     .height(20 * dims.height)
     .text(function (textSelector) {
         var texts = textSelector[0];
+
         texts.forEach(function (text) {
             var currentTextSelector = d3.select(text);
             currentTextSelector.selectAll('tspan').remove();
+
             var node = currentTextSelector.node();
+
             if (node) {
-                //var lines = node.__data__.name.wrapString(1000);
                 var lines = node.__data__.name.split("\n");
+
                 lines.forEach(function (line, index) {
                     var dy = index == 0 ? 0 : 30;
+
                     currentTextSelector.append('svg:tspan').attr('x', 0).attr('dy', dy).text(line);
                 });
             }
@@ -45,7 +49,7 @@ App.chart = MindMap()
 
             App.nodeSelector.setPrevDepth(this.__data__.depth);
             App.select(this);
-            
+
             lastClick = newClickTime;
         }
     });
