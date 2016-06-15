@@ -630,49 +630,53 @@ describe('eventBinding.js', function () {
         })
     });
 
-    describe("expandAll collapseAll", function () {
+    xdescribe("expandAll collapseAll", function () {
         it("should call expandAll function when cmd+U is pressed ", function () {
             spyOn(App.presentation, 'expandAll');
-            var event1 = document.createEvent("Events");
-            event1.initEvent("keydown", true, true);
-            event1.keyCode = 85;
-            event1.metaKey = true;
-            document.dispatchEvent(event1);
+
+            var expandAllEvent = document.createEvent("Events");
+            expandAllEvent.initEvent("keydown", true, true);
+            expandAllEvent.keyCode = 85;
+            expandAllEvent.metaKey = true;
+            document.dispatchEvent(expandAllEvent);
+
             expect(App.presentation.expandAll).toHaveBeenCalled();
         });
 
         it("should call collapseAllMindmap function when cmd+shift+U is pressed ", function () {
             spyOn(App.presentation, 'collapseAllMindmap');
-            var event1 = document.createEvent("Events");
-            event1.initEvent("keydown", true, true);
-            event1.keyCode = 85;
-            event1.metaKey = true;
-            event1.shiftKey = true;
-            document.dispatchEvent(event1);
+
+            var collapseAllEvent = document.createEvent("Events");
+            collapseAllEvent.initEvent("keydown", true, true);
+            collapseAllEvent.keyCode = 85;
+            collapseAllEvent.metaKey = true;
+            collapseAllEvent.shiftKey = true;
+            document.dispatchEvent(collapseAllEvent);
+
             expect(App.presentation.collapseAllMindmap).toHaveBeenCalled();
         });
+    });
 
-        describe("Bind and Unbind events", function () {
-            it("should bind all events which are in the events map", function () {
-                spyOn(Mousetrap, "bind");
+    describe("Bind and Unbind events", function () {
+        it("should bind all events which are in the events map", function () {
+            spyOn(Mousetrap, "bind");
 
-                App.eventBinding.bindAllEvents();
-                var eventsMap = App.eventBinding.EventsMap;
-                for (var event in eventsMap) {
-                    expect(Mousetrap.bind).toHaveBeenCalledWith(event, eventsMap[event].method);
-                }
-            });
+            App.eventBinding.bindAllEvents();
+            var eventsMap = App.eventBinding.EventsMap;
+            for (var event in eventsMap) {
+                expect(Mousetrap.bind).toHaveBeenCalledWith(event, eventsMap[event].method);
+            }
+        });
 
-            it("should not unbind events which are allowed in read only mode", function () {
-                spyOn(Mousetrap, "unbind");
-                var allowedInReadOnlyModeEvents = ['shift+up', 'shift+down', 'shift+right', 'shift+left', 'mod+e', 'esc', '?', 'up',
-                    'down', 'right', 'left', 'space', 'mod+shift+p', 'pageup', 'pagedown'];
+        it("should not unbind events which are allowed in read only mode", function () {
+            spyOn(Mousetrap, "unbind");
+            var allowedInReadOnlyModeEvents = ['shift+up', 'shift+down', 'shift+right', 'shift+left', 'mod+e', 'esc', '?', 'up',
+                'down', 'right', 'left', 'space', 'mod+shift+p', 'pageup', 'pagedown'];
 
-                App.eventBinding.unbindEditableEvents();
-                for (var event in allowedInReadOnlyModeEvents) {
-                    expect(Mousetrap.unbind).not.toHaveBeenCalledWith(event);
-                }
-            });
+            App.eventBinding.unbindEditableEvents();
+            for (var event in allowedInReadOnlyModeEvents) {
+                expect(Mousetrap.unbind).not.toHaveBeenCalledWith(event);
+            }
         });
     });
 });
