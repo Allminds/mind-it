@@ -1,78 +1,54 @@
 App.exportParser = {};
 
-App.exportParser.positions = {
-    LEFT: "left",
-    RIGHT: "right"
-};
-
 App.exportParser.export = function (rootNodeName) {
-    var XMLString = App.JSONConverter();
-    var blob = new Blob([XMLString], {type: "text/plain;charset=utf-8"});
-    App.saveAs(blob, rootNodeName + ".mm");
-};
+    var exportedMindmapString = App.JSONConverter();
+    if (!Boolean(exportedMindmapString)) {
+        alert('Invalid mindmap, can not be exported.');
 
-var XMLString = [];
-App.JSONConverter = function () {
-    XMLString = "<map version=\"1.0.1\">\n";
-    var rootNode = App.presentation.getRootNode();
-    XMLString += App.exportParser.nodeString(rootNode._id, rootNode.name);
-
-    var leftChildren = rootNode.left;
-    var rightChildren = rootNode.right;
-
-    leftChildren.forEach(function (leftChildId) {
-        var leftNode = Mindmaps.findOne({_id: leftChildId});
-
-        if (leftNode == null) {
-            console.log("NULL LeftNode : ", leftChildId);
-        }
-
-        var leftChildName = leftNode.name;
-        XMLString += App.exportParser.nodeString(leftChildId, leftChildName, App.exportParser.positions.LEFT);
-
-        App.exportParser.children_recurse(leftChildId);
-
-        XMLString += "</node>\n";
-    });
-
-    rightChildren.forEach(function (rightChildId) {
-        var rightNode = Mindmaps.findOne({_id: rightChildId});
-
-        if (rightNode == null) {
-            console.log("NULL RightNode : ", rightChildId);
-        }
-
-        var rightChildName = rightNode.name;
-        XMLString += App.exportParser.nodeString(rightChildId, rightChildName, App.exportParser.positions.RIGHT);
-
-        App.exportParser.children_recurse(rightChildId);
-
-        XMLString += "</node>\n";
-    });
-
-    XMLString += "</node>\n";
-    XMLString += "</map>";
-    return XMLString;
-};
-
-App.exportParser.children_recurse = function (childNodeId) {
-    var childNode = Mindmaps.findOne({_id: childNodeId});
-
-    if (!Boolean(childNode)) {
         return;
     }
 
-    var children = childNode.childSubTree;
+    var blob = new Blob([exportedMindmapString], {type: "text/plain;charset=utf-8"});
+    App.saveAs(blob, rootNodeName + ".mm");
+};
 
-    children.forEach(function (nodeId) {
-        var name = Mindmaps.findOne({_id: nodeId}).name;
+var nodesString = function (nodes, direction) {
+    var xmlString = '';
 
-        XMLString += App.exportParser.nodeString(nodeId, name);
+    nodes.forEach(function (nodeId) {
+        var node = Mindmaps.findOne({_id: nodeId});
 
-        App.exportParser.children_recurse(nodeId);
+        if (Boolean(node)) {
+            xmlString += App.exportParser.nodeString(node.name, direction);
 
-        XMLString += "</node>\n";
+            xmlString += nodesString(node.childSubTree);
+
+            xmlString += "</node>\n";
+        }
     });
+
+    return xmlString;
+};
+
+App.JSONConverter = function () {
+    var xmlString = '';
+    var rootNode = App.presentation.getRootNode();
+
+    if (Boolean(rootNode)) {
+        xmlString = "<map version=\"1.0.1\">\n";
+
+        xmlString += App.exportParser.nodeString(rootNode.name);
+
+        xmlString += nodesString(rootNode.left, App.Constants.Direction.LEFT);
+
+        xmlString += nodesString(rootNode.right, App.Constants.Direction.RIGHT);
+
+        xmlString += "</node>\n";
+
+        xmlString += "</map>";
+    }
+
+    return xmlString;
 };
 
 App.exportParser.parseSymbols = function (nodeTextValue) {
@@ -88,7 +64,7 @@ App.exportParser.parseSymbols = function (nodeTextValue) {
     return nodeTextValue.replaceAll('&', '&amp;').replaceAll('"', "&quot;").replaceAll("'", '&apos;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 };
 
-App.exportParser.nodeString = function (nodeId, nodeText, nodePosition) {
+App.exportParser.nodeString = function (nodeText, nodePosition) {
     if (Boolean(nodePosition)) {
         return "<node TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
     }
