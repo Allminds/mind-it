@@ -63,17 +63,8 @@ App.JSONConverter = function () {
     return xmlString;
 };
 
-App.exportParser.parseSymbols = function (nodeTextValue) {
-    if (!Boolean(nodeTextValue)) {
-        return "";
-    }
-
-    String.prototype.replaceAll = function (search, replacement) {
-        var target = this;
-        return target.split(search).join(replacement);
-    };
-
-    return nodeTextValue.replaceAll('&', '&amp;').replaceAll('"', "&quot;").replaceAll("'", '&apos;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+App.exportParser.parseSymbols = function (nodeText) {
+    return App.Reform.XmlAttributeEncode(nodeText);
 };
 
 App.exportParser.nodeStart = function (nodeText, nodePosition) {

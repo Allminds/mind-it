@@ -23,7 +23,7 @@ describe('App.exportParser', function () {
         spyOn(Mindmaps, 'findOne').and.returnValues(null);
 
         var actualString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text with &lt; symbol\"></node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;with&#32;&#60;&#32;symbol\"></node>\n</map>";
 
         expect(actualString).toBe(expectedString);
     });
@@ -36,7 +36,7 @@ describe('App.exportParser', function () {
         spyOn(Mindmaps, 'findOne').and.returnValues(undefined);
 
         var actualString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text with &lt; symbol\"></node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;with&#32;&#60;&#32;symbol\"></node>\n</map>";
 
         expect(actualString).toBe(expectedString);
     });
@@ -49,7 +49,7 @@ describe('App.exportParser', function () {
         spyOn(Mindmaps, 'findOne').and.returnValues(null);
 
         var actualString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text with &lt; symbol\"></node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;with&#32;&#60;&#32;symbol\"></node>\n</map>";
 
         expect(actualString).toBe(expectedString);
     });
@@ -62,7 +62,7 @@ describe('App.exportParser', function () {
         spyOn(Mindmaps, 'findOne').and.returnValues(undefined);
 
         var actualString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text with &lt; symbol\"></node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;with&#32;&#60;&#32;symbol\"></node>\n</map>";
 
         expect(actualString).toBe(expectedString);
     });
@@ -80,7 +80,7 @@ describe('App.exportParser', function () {
         spyOn(Mindmaps, 'findOne').and.returnValues(leftSubNode, null);
 
         var actualString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text\" POSITION=\"left\"></node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;\"><node TEXT=\"left&#32;node&#32;text\" POSITION=\"left\"></node>\n</node>\n</map>";
 
         expect(actualString).toBe(expectedString);
     });
@@ -98,7 +98,7 @@ describe('App.exportParser', function () {
         spyOn(Mindmaps, 'findOne').and.returnValues(leftSubNode, undefined);
 
         var actualString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text\" POSITION=\"left\"></node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;\"><node TEXT=\"left&#32;node&#32;text\" POSITION=\"left\"></node>\n</node>\n</map>";
 
         expect(actualString).toBe(expectedString);
     });
@@ -116,7 +116,7 @@ describe('App.exportParser', function () {
         spyOn(Mindmaps, 'findOne').and.returnValues(rightSubNode, null);
 
         var actualString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text\" POSITION=\"right\"></node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;\"><node TEXT=\"left&#32;node&#32;text\" POSITION=\"right\"></node>\n</node>\n</map>";
 
         expect(actualString).toBe(expectedString);
     });
@@ -134,7 +134,7 @@ describe('App.exportParser', function () {
         spyOn(Mindmaps, 'findOne').and.returnValues(rightSubNode, undefined);
 
         var actualString = App.JSONConverter();
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text\" POSITION=\"right\"></node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;\"><node TEXT=\"left&#32;node&#32;text\" POSITION=\"right\"></node>\n</node>\n</map>";
 
         expect(actualString).toBe(expectedString);
     });
@@ -144,7 +144,7 @@ describe('App.exportParser', function () {
 
         spyOn(App.presentation, 'getRootNode').and.returnValue(rootNode);
 
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text with &lt; symbol\"></node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;with&#32;&#60;&#32;symbol\"></node>\n</map>";
         var actualString = App.JSONConverter();
 
         expect(actualString).toBe(expectedString);
@@ -159,7 +159,7 @@ describe('App.exportParser', function () {
         spyOn(App.presentation, 'getRootNode').and.returnValues(rootNode);
         spyOn(Mindmaps, 'findOne').and.returnValues(leftLeafNode);
 
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text with &gt; sign\" POSITION=\"left\"></node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;\"><node TEXT=\"left&#32;node&#32;text&#32;with&#32;&#62;&#32;sign\" POSITION=\"left\"></node>\n</node>\n</map>";
         var actualString = App.JSONConverter();
 
         expect(actualString).toBe(expectedString);
@@ -174,7 +174,7 @@ describe('App.exportParser', function () {
         spyOn(App.presentation, 'getRootNode').and.returnValues(rootNode);
         spyOn(Mindmaps, 'findOne').and.returnValues(rightLeafNode);
 
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"right node text with &amp; sign\" POSITION=\"right\"></node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;\"><node TEXT=\"right&#32;node&#32;text&#32;with&#32;&#38;&#32;sign\" POSITION=\"right\"></node>\n</node>\n</map>";
         var actualString = App.JSONConverter();
 
         expect(actualString).toBe(expectedString);
@@ -191,7 +191,7 @@ describe('App.exportParser', function () {
         spyOn(App.presentation, 'getRootNode').and.returnValues(rootNode);
         spyOn(Mindmaps, 'findOne').and.returnValues(leftSubNode, leftLeafNode);
 
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"left node text\" POSITION=\"left\"><node TEXT=\"left node child text with &quot; sign\"></node>\n</node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;\"><node TEXT=\"left&#32;node&#32;text\" POSITION=\"left\"><node TEXT=\"left&#32;node&#32;child&#32;text&#32;with&#32;&#34;&#32;sign\"></node>\n</node>\n</node>\n</map>";
         var actualString = App.JSONConverter();
 
         expect(actualString).toBe(expectedString);
@@ -208,7 +208,7 @@ describe('App.exportParser', function () {
         spyOn(App.presentation, 'getRootNode').and.returnValues(rootNode);
         spyOn(Mindmaps, 'findOne').and.returnValues(rightSubNode, rightLeafNode);
 
-        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root node text \"><node TEXT=\"right node text\" POSITION=\"right\"><node TEXT=\"right node child text with &apos; sign\"></node>\n</node>\n</node>\n</map>";
+        var expectedString = "<map version=\"1.0.1\">\n<node TEXT=\"root&#32;node&#32;text&#32;\"><node TEXT=\"right&#32;node&#32;text\" POSITION=\"right\"><node TEXT=\"right&#32;node&#32;child&#32;text&#32;with&#32;&#39;&#32;sign\"></node>\n</node>\n</node>\n</map>";
         var actualString = App.JSONConverter();
 
         expect(actualString).toBe(expectedString);
@@ -218,7 +218,7 @@ describe('App.exportParser', function () {
         it('should ensure node text can have special character like less than sign', function () {
             var nodeText = "<";
 
-            var expectedValue = "&lt;";
+            var expectedValue = "&#60;";
             var actualValue = App.exportParser.parseSymbols(nodeText);
 
             expect(actualValue).toBe(expectedValue);
@@ -227,7 +227,7 @@ describe('App.exportParser', function () {
         it('should ensure node text can have special character like greater than sign', function () {
             var nodeText = ">";
 
-            var expectedValue = "&gt;";
+            var expectedValue = "&#62;";
             var actualValue = App.exportParser.parseSymbols(nodeText);
 
             expect(actualValue).toBe(expectedValue);
@@ -236,7 +236,7 @@ describe('App.exportParser', function () {
         it('should ensure node text can have special character like Quote sign', function () {
             var nodeText = "\"";
 
-            var expectedValue = "&quot;";
+            var expectedValue = "&#34;";
             var actualValue = App.exportParser.parseSymbols(nodeText);
 
             expect(actualValue).toBe(expectedValue);
@@ -245,7 +245,7 @@ describe('App.exportParser', function () {
         it('should ensure node text can have special character like apostrophe sign', function () {
             var nodeText = "'";
 
-            var expectedValue = "&apos;";
+            var expectedValue = "&#39;";
             var actualValue = App.exportParser.parseSymbols(nodeText);
 
             expect(actualValue).toBe(expectedValue);
@@ -254,7 +254,7 @@ describe('App.exportParser', function () {
         it('should ensure node text can have special character like ampersand sign', function () {
             var nodeText = "&";
 
-            var expectedValue = "&amp;";
+            var expectedValue = "&#38;";
             var actualValue = App.exportParser.parseSymbols(nodeText);
 
             expect(actualValue).toBe(expectedValue);
@@ -263,7 +263,7 @@ describe('App.exportParser', function () {
         it('should ensure node text can have multiple special characters', function () {
             var nodeText = "<>";
 
-            var expectedValue = "&lt;&gt;";
+            var expectedValue = "&#60;&#62;";
             var actualValue = App.exportParser.parseSymbols(nodeText);
 
             expect(actualValue).toBe(expectedValue);
@@ -297,7 +297,7 @@ describe('App.exportParser', function () {
         it('should ensure node text is white space', function () {
             var nodeText = " ";
 
-            var expectedValue = " ";
+            var expectedValue = "&#32;";
             var actualValue = App.exportParser.parseSymbols(nodeText);
 
             expect(actualValue).toBe(expectedValue);
@@ -306,7 +306,7 @@ describe('App.exportParser', function () {
         it('should ensure node text does not have any special character', function () {
             var nodeText = "no special character";
 
-            var expectedValue = "no special character";
+            var expectedValue = "no&#32;special&#32;character";
             var actualValue = App.exportParser.parseSymbols(nodeText);
 
             expect(actualValue).toBe(expectedValue);
