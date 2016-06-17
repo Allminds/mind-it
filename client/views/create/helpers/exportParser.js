@@ -2,32 +2,46 @@ App.exportParser = {};
 
 App.exportParser.export = function (rootNodeName) {
     var exportedMindmapString = App.JSONConverter();
+
     if (!Boolean(exportedMindmapString)) {
         alert('Invalid mindmap, can not be exported.');
-
         return;
     }
 
+    var mindMapExportFileName = rootNodeName + App.Constants.MindmapFileExtension;
+
     var blob = new Blob([exportedMindmapString], {type: "text/plain;charset=utf-8"});
-    App.saveAs(blob, rootNodeName + ".mm");
+    App.saveAs(blob, mindMapExportFileName);
 };
 
-var nodesString = function (nodes, direction) {
+var nodeEnd = function () {
+    return "</node>\n";
+};
+
+var nodesToXmlString = function (nodes, direction) {
     var xmlString = '';
 
     nodes.forEach(function (nodeId) {
         var node = Mindmaps.findOne({_id: nodeId});
 
         if (Boolean(node)) {
-            xmlString += App.exportParser.nodeString(node.name, direction);
+            xmlString += App.exportParser.nodeStart(node.name, direction);
 
-            xmlString += nodesString(node.childSubTree);
+            xmlString += nodesToXmlString(node.childSubTree);
 
-            xmlString += "</node>\n";
+            xmlString += nodeEnd();
         }
     });
 
     return xmlString;
+};
+
+var mapEnd = function () {
+    return "</map>";
+};
+
+var mapStart = function () {
+    return "<map version=\"1.0.1\">\n";
 };
 
 App.JSONConverter = function () {
@@ -35,17 +49,15 @@ App.JSONConverter = function () {
     var rootNode = App.presentation.getRootNode();
 
     if (Boolean(rootNode)) {
-        xmlString = "<map version=\"1.0.1\">\n";
+        xmlString += mapStart();
+        xmlString += App.exportParser.nodeStart(rootNode.name);
 
-        xmlString += App.exportParser.nodeString(rootNode.name);
+        xmlString += nodesToXmlString(rootNode.left, App.Constants.Direction.LEFT);
 
-        xmlString += nodesString(rootNode.left, App.Constants.Direction.LEFT);
+        xmlString += nodesToXmlString(rootNode.right, App.Constants.Direction.RIGHT);
 
-        xmlString += nodesString(rootNode.right, App.Constants.Direction.RIGHT);
-
-        xmlString += "</node>\n";
-
-        xmlString += "</map>";
+        xmlString += nodeEnd();
+        xmlString += mapEnd();
     }
 
     return xmlString;
@@ -64,7 +76,7 @@ App.exportParser.parseSymbols = function (nodeTextValue) {
     return nodeTextValue.replaceAll('&', '&amp;').replaceAll('"', "&quot;").replaceAll("'", '&apos;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 };
 
-App.exportParser.nodeString = function (nodeText, nodePosition) {
+App.exportParser.nodeStart = function (nodeText, nodePosition) {
     if (Boolean(nodePosition)) {
         return "<node TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
     }

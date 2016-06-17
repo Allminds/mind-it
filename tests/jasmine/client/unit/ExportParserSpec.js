@@ -313,12 +313,12 @@ describe('App.exportParser', function () {
         });
     });
 
-    describe('should ensure nodeString functionality', function () {
+    describe('should ensure nodeStart functionality', function () {
         it('should return node string for a node with position missing', function () {
             var nodeText = "nodeText";
 
             var expectedValue = "<node TEXT=\"nodeText\">";
-            var actualValue = App.exportParser.nodeString(nodeText);
+            var actualValue = App.exportParser.nodeStart(nodeText);
 
             expect(actualValue).toBe(expectedValue);
         });
@@ -328,7 +328,7 @@ describe('App.exportParser', function () {
             var nodePosition = App.Constants.Direction.LEFT;
 
             var expectedValue = "<node TEXT=\"nodeText\" POSITION=\"left\">";
-            var actualValue = App.exportParser.nodeString(nodeText, nodePosition);
+            var actualValue = App.exportParser.nodeStart(nodeText, nodePosition);
 
             expect(actualValue).toBe(expectedValue);
         });
@@ -338,7 +338,7 @@ describe('App.exportParser', function () {
             var nodePosition = App.Constants.Direction.RIGHT;
 
             var expectedValue = "<node TEXT=\"nodeText\" POSITION=\"right\">";
-            var actualValue = App.exportParser.nodeString(nodeText, nodePosition);
+            var actualValue = App.exportParser.nodeStart(nodeText, nodePosition);
 
             expect(actualValue).toBe(expectedValue);
         });
@@ -348,7 +348,7 @@ describe('App.exportParser', function () {
             var nodePosition = null;
 
             var expectedValue = "<node TEXT=\"nodeText\">";
-            var actualValue = App.exportParser.nodeString(nodeText, nodePosition);
+            var actualValue = App.exportParser.nodeStart(nodeText, nodePosition);
 
             expect(actualValue).toBe(expectedValue);
         });
@@ -358,7 +358,7 @@ describe('App.exportParser', function () {
             var nodePosition = undefined;
 
             var expectedValue = "<node TEXT=\"nodeText\">";
-            var actualValue = App.exportParser.nodeString(nodeText, nodePosition);
+            var actualValue = App.exportParser.nodeStart(nodeText, nodePosition);
 
             expect(actualValue).toBe(expectedValue);
         });
@@ -368,7 +368,7 @@ describe('App.exportParser', function () {
             var nodePosition = "";
 
             var expectedValue = "<node TEXT=\"nodeText\">";
-            var actualValue = App.exportParser.nodeString(nodeText, nodePosition);
+            var actualValue = App.exportParser.nodeStart(nodeText, nodePosition);
 
             expect(actualValue).toBe(expectedValue);
         });
@@ -378,7 +378,7 @@ describe('App.exportParser', function () {
             var nodePosition = "nodePosition";
 
             var expectedValue = "<node TEXT=\"nodeText\" POSITION=\"nodePosition\">";
-            var actualValue = App.exportParser.nodeString(nodeText, nodePosition);
+            var actualValue = App.exportParser.nodeStart(nodeText, nodePosition);
 
             expect(actualValue).toBe(expectedValue);
         });
@@ -388,7 +388,7 @@ describe('App.exportParser', function () {
             var nodePosition = " ";
 
             var expectedValue = "<node TEXT=\"nodeText\" POSITION=\" \">";
-            var actualValue = App.exportParser.nodeString(nodeText, nodePosition);
+            var actualValue = App.exportParser.nodeStart(nodeText, nodePosition);
 
             expect(actualValue).toBe(expectedValue);
         });
