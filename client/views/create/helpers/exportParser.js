@@ -63,14 +63,10 @@ App.JSONConverter = function () {
     return xmlString;
 };
 
-App.exportParser.parseSymbols = function (nodeText) {
-    return App.Reform.XmlAttributeEncode(nodeText);
-};
-
 App.exportParser.nodeStart = function (nodeText, nodePosition) {
     if (Boolean(nodePosition)) {
-        return "<node TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
+        return "<node TEXT=\"" + App.Reform.XmlAttributeEncode(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
     }
 
-    return "<node TEXT=\"" + App.exportParser.parseSymbols(nodeText) + "\">";
+    return "<node TEXT=\"" + App.Reform.XmlAttributeEncode(nodeText) + "\">";
 };
