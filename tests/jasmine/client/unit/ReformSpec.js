@@ -25,17 +25,15 @@ describe('Reform.js', function () {
         });
 
         it('Unicode characters to 6000', function () {
-            var toEncode = '',
-                encodedStr = '';
+            var inputUnicodeCharacters = '',
+                encodedUnicodeCharacters = '';
 
-            for (var counter = 127; counter < 6000; counter++) {
-                toEncode += String.fromCharCode(counter);
-                encodedStr += "&#" + counter + ';';
-
-                expect(App.Reform.HtmlEncode(String.fromCharCode(counter))).toBe("&#" + counter + ';');
+            for (var unicodeCharacterCounter = 127; unicodeCharacterCounter < 6000; unicodeCharacterCounter++) {
+                inputUnicodeCharacters += String.fromCharCode(unicodeCharacterCounter);
+                encodedUnicodeCharacters += "&#" + unicodeCharacterCounter + ';';
             }
 
-            expect(App.Reform.HtmlEncode(toEncode)).toBe(encodedStr);
+            expect(App.Reform.HtmlEncode(inputUnicodeCharacters)).toBe(encodedUnicodeCharacters);
         });
     });
 
@@ -65,15 +63,15 @@ describe('Reform.js', function () {
         });
 
         it('Unicode characters to 6000', function () {
-            var toEncode = '',
-                encodedStr = '';
+            var inputUnicodeCharacters = '',
+                encodedUnicodeCharacters = '';
 
-            for (var counter = 127; counter < 6000; counter++) {
-                toEncode += String.fromCharCode(counter);
-                encodedStr += "&#" + counter + ';';
+            for (var unicodeCharacterCounter = 127; unicodeCharacterCounter < 6000; unicodeCharacterCounter++) {
+                inputUnicodeCharacters += String.fromCharCode(unicodeCharacterCounter);
+                encodedUnicodeCharacters += "&#" + unicodeCharacterCounter + ';';
             }
 
-            expect(App.Reform.HtmlAttributeEncode(toEncode)).toBe(encodedStr);
+            expect(App.Reform.HtmlAttributeEncode(inputUnicodeCharacters)).toBe(encodedUnicodeCharacters);
         });
     });
 
@@ -103,15 +101,15 @@ describe('Reform.js', function () {
         });
 
         it('Unicode characters to 6000', function () {
-            var toEncode = '',
-                encodedStr = '';
+            var inputUnicodeCharacters = '',
+                encodedUnicodeCharacters = '';
 
-            for (var counter = 127; counter < 6000; counter++) {
-                toEncode += String.fromCharCode(counter);
-                encodedStr += "&#" + counter + ';';
+            for (var unicodeCharacterCounter = 127; unicodeCharacterCounter < 6000; unicodeCharacterCounter++) {
+                inputUnicodeCharacters += String.fromCharCode(unicodeCharacterCounter);
+                encodedUnicodeCharacters += "&#" + unicodeCharacterCounter + ';';
             }
 
-            expect(App.Reform.XmlEncode(toEncode)).toBe(encodedStr);
+            expect(App.Reform.XmlEncode(inputUnicodeCharacters)).toBe(encodedUnicodeCharacters);
         });
     });
 
@@ -141,15 +139,15 @@ describe('Reform.js', function () {
         });
 
         it('Unicode characters to 6000', function () {
-            var toEncode = '',
-                encodedStr = '';
+            var inputUnicodeCharacters = '',
+                encodedUnicodeCharacters = '';
 
-            for (var counter = 127; counter < 6000; counter++) {
-                toEncode += String.fromCharCode(counter);
-                encodedStr += "&#" + counter + ';';
+            for (var unicodeCharacterCounter = 127; unicodeCharacterCounter < 6000; unicodeCharacterCounter++) {
+                inputUnicodeCharacters += String.fromCharCode(unicodeCharacterCounter);
+                encodedUnicodeCharacters += "&#" + unicodeCharacterCounter + ';';
             }
 
-            expect(App.Reform.XmlAttributeEncode(toEncode)).toBe(encodedStr);
+            expect(App.Reform.XmlAttributeEncode(inputUnicodeCharacters)).toBe(encodedUnicodeCharacters);
         });
     });
 });
