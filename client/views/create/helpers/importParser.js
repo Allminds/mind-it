@@ -3,7 +3,7 @@ App.ImportParser = {};
 App.ImportParser.errorMessage = "";
 
 var isValidTag = function (nodeName) {
-    return App.Constants.tagsSupported.indexOf(nodeName) !== -1;
+    return App.Constants.Mindmap.tagsSupported.indexOf(nodeName) !== -1;
 };
 
 var hasProcessableNodes = function (nodes) {
