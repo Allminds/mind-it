@@ -19,7 +19,7 @@ var closeXmlElement = function (xmlElement) {
 };
 
 var nodeEnd = function () {
-    return closeXmlElement(App.Constants.Mindmap.NodeXmlNodeText) + "\n";
+    return closeXmlElement(App.Constants.Mindmap.NodeXmlElementName) + "\n";
 };
 
 var nodesToXmlString = function (nodes, direction) {
@@ -41,11 +41,11 @@ var nodesToXmlString = function (nodes, direction) {
 };
 
 var mapEnd = function () {
-    return closeXmlElement(App.Constants.Mindmap.MapXmlNodeText);
+    return closeXmlElement(App.Constants.Mindmap.MapXmlElementName);
 };
 
 var mapStart = function () {
-    return "<" + App.Constants.Mindmap.MapXmlNodeText + " version=\"" + App.Constants.Mindmap.ExportedMindmapVersion + "\">\n";
+    return "<" + App.Constants.Mindmap.MapXmlElementName + " version=\"" + App.Constants.Mindmap.VersionXmlAttributeValue + "\">\n";
 };
 
 App.JSONConverter = function () {
@@ -69,8 +69,8 @@ App.JSONConverter = function () {
 
 App.exportParser.nodeStart = function (nodeText, nodePosition) {
     if (Boolean(nodePosition)) {
-        return "<" + App.Constants.Mindmap.NodeXmlNodeText + " TEXT=\"" + App.Reform.XmlAttributeEncode(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
+        return "<" + App.Constants.Mindmap.NodeXmlElementName + " TEXT=\"" + App.Reform.XmlAttributeEncode(nodeText) + "\" POSITION=\"" + nodePosition + "\">";
     }
 
-    return "<" + App.Constants.Mindmap.NodeXmlNodeText + " TEXT=\"" + App.Reform.XmlAttributeEncode(nodeText) + "\">";
+    return "<" + App.Constants.Mindmap.NodeXmlElementName + " TEXT=\"" + App.Reform.XmlAttributeEncode(nodeText) + "\">";
 };
