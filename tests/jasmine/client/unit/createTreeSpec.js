@@ -136,6 +136,15 @@ describe('Create Tree', function () {
         expect(delhiNode.name).toBe('Delhi');
         expect(chandigarhNode.name).toBe('Chandigarh');
     });
-    
 
+    it('Should return node with tab when given input with tab', function () {
+        var inputText = "Hello\n\tNamaste\t\n\t\tPeri pauna";
+        var helloNode = App.CreateTree.MakeTree(inputText);
+        var namasteNode = App.Node.getChildren(helloNode)[0];
+        var periPaunaNode = App.Node.getChildren(namasteNode)[0];
+
+        expect(helloNode.name).toBe('Hello');
+        expect(namasteNode.name).toBe('Namaste');
+        expect(periPaunaNode.name).toBe('Peri pauna');
+    });
 });

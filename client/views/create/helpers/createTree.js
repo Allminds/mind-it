@@ -1,22 +1,27 @@
 App.CreateTree = {};
-
+App.CreateTree.Constants = {};
+App.CreateTree.Constants.tabEscapeCharacter = '\t';
+App.CreateTree.Constants.newlineEscapeCharacter = '\n';
+App.CreateTree.Constants.tabCharacterCode=9;
+App.CreateTree.Constants.newLineCharacterCode = 10;
+App.CreateTree.Constants.doulbeSlash='\\';
 var isNewLineCharacter = function (inputString, counter) {
-    var newLineCharacterCode = 10;
-    return inputString.charCodeAt(counter) === newLineCharacterCode;
+
+    return inputString.charCodeAt(counter) === App.CreateTree.Constants.newLineCharacterCode;
 };
 
 var isTabCharacter = function (inputString, counter) {
-    var tabCharacterCode = 9;
-    return inputString.charCodeAt(counter) === tabCharacterCode;
+
+    return inputString.charCodeAt(counter) === App.CreateTree.Constants.tabCharacterCode;
 };
 
 var replaceNewLineCharacterWithEscapeCharacter = function (inputString) {
     var inputCharacters = inputString.split('');
-    var newLineEscapeCharacter = '\n';
+
 
     for (var charCounter = 0; charCounter < inputCharacters.length; charCounter++) {
         if (isNewLineCharacter(inputString, charCounter)) {
-            inputCharacters[charCounter] = newLineEscapeCharacter;
+            inputCharacters[charCounter] = App.CreateTree.Constants.newlineEscapeCharacter;
         }
     }
 
@@ -25,11 +30,10 @@ var replaceNewLineCharacterWithEscapeCharacter = function (inputString) {
 
 var replaceTabCharacterWithEscapeCharacter = function (inputString) {
     var inputCharacters = inputString.split('');
-    var tabEscapeCharacter = '\t';
 
     for (var charCounter = 0; charCounter < inputCharacters.length; charCounter++) {
         if (isTabCharacter(inputString, charCounter)) {
-            inputCharacters[charCounter] = tabEscapeCharacter;
+            inputCharacters[charCounter] = App.CreateTree.Constants.tabEscapeCharacter;
         }
     }
 
@@ -55,7 +59,7 @@ var isCharacter = function (arrayCounter, array, character) {
 };
 
 var isSlashCharacter = function (arrayCounter, array) {
-    return isCharacter(arrayCounter, array, '\\');
+    return isCharacter(arrayCounter, array, App.CreateTree.Constants.doulbeSlash);
 };
 
 var isCharacterN = function (arrayCounter, array) {
@@ -66,6 +70,10 @@ var isCharacterT = function (arrayCounter, array) {
     return isCharacter(arrayCounter, array, 't');
 };
 
+var isCharacterTab = function (arrayCounter, array) {
+    return charFromArray(arrayCounter, array) === App.CreateTree.Constants.tabEscapeCharacter;
+};
+
 var isNonLastSlashCharacter = function (arrayCounter, array) {
     return isSlashCharacter(arrayCounter, array) && !isLastCharacterOfArray(arrayCounter, array);
 };
@@ -74,14 +82,13 @@ var sanitizeForNewLineEscapeCharacter = function (inputString) {
     var inputCharacters = inputString.split('');
     var outputCharacters = [];
     var outputCharacterCounter = 0;
-    var newLineEscapeCharacter = '\n';
 
     for (var inputCharacterCounter = 0; inputCharacterCounter < inputCharacters.length; inputCharacterCounter++) {
         outputCharacters[outputCharacterCounter] = charFromArray(inputCharacterCounter, inputCharacters);
 
         var nextInputCharacterCounter = inputCharacterCounter + 1;
         if (isNonLastSlashCharacter(inputCharacterCounter, inputCharacters) && isCharacterN(nextInputCharacterCounter, inputCharacters)) {
-            outputCharacters[outputCharacterCounter] = newLineEscapeCharacter;
+            outputCharacters[outputCharacterCounter] = App.CreateTree.Constants.newlineEscapeCharacter;
             inputCharacterCounter++;
         }
 
@@ -129,21 +136,34 @@ var validateInput = function (inputString) {
 var createNode = function (nodeName, nodes, tabCount) {
     var newNode = new App.Node(nodeName);
     var parentNode = nodes[tabCount - 1];
-
     newNode.parent = parentNode;
     parentNode.childSubTree.push(newNode);
 
     return newNode;
 };
 
-var nodeData = function (array, arrayCounter) {
-    var tabEscapeCharacter = '\t';
-    var tabs = array[arrayCounter].split(tabEscapeCharacter);
-    var lastTabCount = tabs.length - 1;
+var leftTrimArrayForTabCharacter = function (array, arrayCounter) {
+    var characterArray = array[arrayCounter].split('');
+    var characterCounter = 0;
+    var inputTabCount = 0;
 
+    while (isCharacterTab(characterCounter, characterArray)) {
+        inputTabCount++;
+        characterArray.shift();
+    }
+
+    var tabCount={};
+    tabCount.characterArray=characterArray;
+    tabCount.inputTabCount=inputTabCount;
+    return tabCount;
+};
+
+var nodeData = function (array, arrayCounter) {
+    var tabCountValue=leftTrimArrayForTabCharacter(array, arrayCounter);
+    var nodeName = tabCountValue.characterArray.join('');
     var nodeData = {};
-    nodeData.name = tabs[lastTabCount];
-    nodeData.tabCount = lastTabCount;
+    nodeData.name = nodeName.trim();
+    nodeData.tabCount = tabCountValue.inputTabCount;
 
     return nodeData;
 };
