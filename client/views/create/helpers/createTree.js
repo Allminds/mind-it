@@ -2,22 +2,20 @@ App.CreateTree = {};
 App.CreateTree.Constants = {};
 App.CreateTree.Constants.tabEscapeCharacter = '\t';
 App.CreateTree.Constants.newlineEscapeCharacter = '\n';
-App.CreateTree.Constants.tabCharacterCode=9;
+App.CreateTree.Constants.tabCharacterCode = 9;
 App.CreateTree.Constants.newLineCharacterCode = 10;
-App.CreateTree.Constants.doulbeSlash='\\';
-var isNewLineCharacter = function (inputString, counter) {
+App.CreateTree.Constants.doulbeSlash = '\\';
 
+var isNewLineCharacter = function (inputString, counter) {
     return inputString.charCodeAt(counter) === App.CreateTree.Constants.newLineCharacterCode;
 };
 
 var isTabCharacter = function (inputString, counter) {
-
     return inputString.charCodeAt(counter) === App.CreateTree.Constants.tabCharacterCode;
 };
 
 var replaceNewLineCharacterWithEscapeCharacter = function (inputString) {
     var inputCharacters = inputString.split('');
-
 
     for (var charCounter = 0; charCounter < inputCharacters.length; charCounter++) {
         if (isNewLineCharacter(inputString, charCounter)) {
@@ -152,15 +150,16 @@ var leftTrimArrayForTabCharacter = function (array, arrayCounter) {
         characterArray.shift();
     }
 
-    var tabCount={};
-    tabCount.characterArray=characterArray;
-    tabCount.inputTabCount=inputTabCount;
+    var tabCount = {};
+    tabCount.characterArray = characterArray;
+    tabCount.inputTabCount = inputTabCount;
     return tabCount;
 };
 
 var nodeData = function (array, arrayCounter) {
-    var tabCountValue=leftTrimArrayForTabCharacter(array, arrayCounter);
+    var tabCountValue = leftTrimArrayForTabCharacter(array, arrayCounter);
     var nodeName = tabCountValue.characterArray.join('');
+    
     var nodeData = {};
     nodeData.name = nodeName.trim();
     nodeData.tabCount = tabCountValue.inputTabCount;
