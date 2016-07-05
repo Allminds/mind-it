@@ -1,39 +1,39 @@
 describe('Create Tree', function () {
     it('Should return null when input string is null', function () {
-        expect(App.CreateTree.MakeTree(null)).toBeNull()
+        expect(App.MindmapTextParser.parse(null)).toBeNull()
     });
 
     it('Should return null when input string is undefined', function () {
-        expect(App.CreateTree.MakeTree(undefined)).toBeNull();
+        expect(App.MindmapTextParser.parse(undefined)).toBeNull();
     });
 
     it('Should return null when input is empty string', function () {
-        expect(App.CreateTree.MakeTree('')).toBeNull();
+        expect(App.MindmapTextParser.parse('')).toBeNull();
     });
 
     it('Should return input string\'s only name as root node name', function () {
         var inputNodeText = "TW";
 
-        var node = App.CreateTree.MakeTree(inputNodeText);
+        var node = App.MindmapTextParser.parse(inputNodeText);
         expect(node.name).toBe('TW');
     });
 
     it('Should return input string\'s first name as root node name', function () {
         var inputNodeText = "TW";
-        var node = App.CreateTree.MakeTree(inputNodeText);
+        var node = App.MindmapTextParser.parse(inputNodeText);
         expect(node.name).toBe('TW');
     });
 
     it('Root\'s child name should be Asia', function () {
         var inputNodeText = "TW\n\tAsia";
-        var node = App.CreateTree.MakeTree(inputNodeText);
+        var node = App.MindmapTextParser.parse(inputNodeText);
         expect(node.name).toBe('TW');
         expect(App.Node.getChildren(node)[0].name).toBe('Asia');
     });
 
     it('Should return China and India as root\'s grandchildren', function () {
         var inputNodeText = "TW\n\tAsia\n\t\tChina\n\t\tIndia";
-        var node = App.CreateTree.MakeTree(inputNodeText);
+        var node = App.MindmapTextParser.parse(inputNodeText);
         var child = App.Node.getChildren(node)[0];
 
 
@@ -45,7 +45,7 @@ describe('Create Tree', function () {
 
     it('Two children with equal number of tabs should be at equal level', function () {
         var inputNodeText = "Asia\n\tChina\n\tIndia";
-        var node = App.CreateTree.MakeTree(inputNodeText);
+        var node = App.MindmapTextParser.parse(inputNodeText);
 
         expect(node.name).toBe('Asia');
         expect(App.Node.getChildren(node)[0].name).toBe('China');
@@ -54,19 +54,19 @@ describe('Create Tree', function () {
 
     it('For multiple consecutive line breaks it should consider line break only once', function () {
         var inputNodeText = "Asia\n\n\n\n";
-        var node = App.CreateTree.MakeTree(inputNodeText);
+        var node = App.MindmapTextParser.parse(inputNodeText);
         expect(node.name).toBe('Asia');
     });
 
     it('Should create root node with no name when supplied with blank name', function () {
         var inputNodeText = "\n\t";
-        var rootNode = App.CreateTree.MakeTree(inputNodeText);
+        var rootNode = App.MindmapTextParser.parse(inputNodeText);
         expect(rootNode.name).toBe('');
     });
 
     it('Should ignore nodes with blank name', function () {
         var inputNodeText = "Asia\n\t\n";
-        var rootNode = App.CreateTree.MakeTree(inputNodeText);
+        var rootNode = App.MindmapTextParser.parse(inputNodeText);
         expect(rootNode.name).toBe('Asia');
         expect(App.Node.hasChildren(rootNode)).toBe(false);
     });
@@ -74,7 +74,7 @@ describe('Create Tree', function () {
     it('Should return with root nodes and sub nodes when given a input string with depth 6', function () {
         var inputNodeText = "TW\n\tAsia\n\t\tChina\n\t\tIndia\n\t\t\tPune\n\t\t\t\t4th floor\n\t\t\t\t6th floor\n\t\t\tBangalore\n\t\t\t\tKormangla\n\t\t\t\t\tBuilding One\n\t\t\t\t\tBuilding Two";
 
-        var rootNode = App.CreateTree.MakeTree(inputNodeText);
+        var rootNode = App.MindmapTextParser.parse(inputNodeText);
 
         var asiaNode = App.Node.getChildren(rootNode)[0];
         var chinaNode = App.Node.getChildren(asiaNode)[0];
@@ -107,7 +107,7 @@ describe('Create Tree', function () {
 
     it('Should return with root nodes and sub nodes when given a input string with depth 5', function () {
         var inputNodeText = 'India\n\tState\n\t\tRajasthan\n\t\t\tJaipur\n\t\t\t\tMansarovar\n\t\t\tAjmer\n\t\tMaharastra\n\t\t\tPune\n\tUnion Territory\n\t\tDelhi\n\t\tChandigarh';
-        var rootNode = App.CreateTree.MakeTree(inputNodeText);
+        var rootNode = App.MindmapTextParser.parse(inputNodeText);
 
         var stateNode = App.Node.getChildren(rootNode)[0];
         var rajasthanNode = App.Node.getChildren(stateNode)[0];
@@ -139,7 +139,7 @@ describe('Create Tree', function () {
 
     it('Should return node with tab when given input with tab', function () {
         var inputText = "Hello\n\tNamaste\t\n\t\tPeri pauna";
-        var helloNode = App.CreateTree.MakeTree(inputText);
+        var helloNode = App.MindmapTextParser.parse(inputText);
         var namasteNode = App.Node.getChildren(helloNode)[0];
         var periPaunaNode = App.Node.getChildren(namasteNode)[0];
 

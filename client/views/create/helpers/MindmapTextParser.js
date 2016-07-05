@@ -1,17 +1,17 @@
-App.CreateTree = {};
-App.CreateTree.Constants = {};
-App.CreateTree.Constants.tabEscapeCharacter = '\t';
-App.CreateTree.Constants.newlineEscapeCharacter = '\n';
-App.CreateTree.Constants.tabCharacterCode = 9;
-App.CreateTree.Constants.newLineCharacterCode = 10;
-App.CreateTree.Constants.doulbeSlash = '\\';
+App.MindmapTextParser = {};
+App.MindmapTextParser.Constants = {};
+App.MindmapTextParser.Constants.tabEscapeCharacter = '\t';
+App.MindmapTextParser.Constants.newlineEscapeCharacter = '\n';
+App.MindmapTextParser.Constants.tabCharacterCode = 9;
+App.MindmapTextParser.Constants.newLineCharacterCode = 10;
+App.MindmapTextParser.Constants.doulbeSlash = '\\';
 
 var isNewLineCharacter = function (inputString, counter) {
-    return inputString.charCodeAt(counter) === App.CreateTree.Constants.newLineCharacterCode;
+    return inputString.charCodeAt(counter) === App.MindmapTextParser.Constants.newLineCharacterCode;
 };
 
 var isTabCharacter = function (inputString, counter) {
-    return inputString.charCodeAt(counter) === App.CreateTree.Constants.tabCharacterCode;
+    return inputString.charCodeAt(counter) === App.MindmapTextParser.Constants.tabCharacterCode;
 };
 
 var replaceNewLineCharacterWithEscapeCharacter = function (inputString) {
@@ -19,7 +19,7 @@ var replaceNewLineCharacterWithEscapeCharacter = function (inputString) {
 
     for (var charCounter = 0; charCounter < inputCharacters.length; charCounter++) {
         if (isNewLineCharacter(inputString, charCounter)) {
-            inputCharacters[charCounter] = App.CreateTree.Constants.newlineEscapeCharacter;
+            inputCharacters[charCounter] = App.MindmapTextParser.Constants.newlineEscapeCharacter;
         }
     }
 
@@ -31,7 +31,7 @@ var replaceTabCharacterWithEscapeCharacter = function (inputString) {
 
     for (var charCounter = 0; charCounter < inputCharacters.length; charCounter++) {
         if (isTabCharacter(inputString, charCounter)) {
-            inputCharacters[charCounter] = App.CreateTree.Constants.tabEscapeCharacter;
+            inputCharacters[charCounter] = App.MindmapTextParser.Constants.tabEscapeCharacter;
         }
     }
 
@@ -57,7 +57,7 @@ var isCharacter = function (arrayCounter, array, character) {
 };
 
 var isSlashCharacter = function (arrayCounter, array) {
-    return isCharacter(arrayCounter, array, App.CreateTree.Constants.doulbeSlash);
+    return isCharacter(arrayCounter, array, App.MindmapTextParser.Constants.doulbeSlash);
 };
 
 var isCharacterN = function (arrayCounter, array) {
@@ -69,7 +69,7 @@ var isCharacterT = function (arrayCounter, array) {
 };
 
 var isCharacterTab = function (arrayCounter, array) {
-    return charFromArray(arrayCounter, array) === App.CreateTree.Constants.tabEscapeCharacter;
+    return charFromArray(arrayCounter, array) === App.MindmapTextParser.Constants.tabEscapeCharacter;
 };
 
 var isNonLastSlashCharacter = function (arrayCounter, array) {
@@ -86,7 +86,7 @@ var sanitizeForNewLineEscapeCharacter = function (inputString) {
 
         var nextInputCharacterCounter = inputCharacterCounter + 1;
         if (isNonLastSlashCharacter(inputCharacterCounter, inputCharacters) && isCharacterN(nextInputCharacterCounter, inputCharacters)) {
-            outputCharacters[outputCharacterCounter] = App.CreateTree.Constants.newlineEscapeCharacter;
+            outputCharacters[outputCharacterCounter] = App.MindmapTextParser.Constants.newlineEscapeCharacter;
             inputCharacterCounter++;
         }
 
@@ -106,7 +106,7 @@ var sanitizeForTabEscapeCharacter = function (inputString) {
 
         var nextInputCharacterCounter = inputCharacterCounter + 1;
         if (isNonLastSlashCharacter(inputCharacterCounter, inputCharacters) && isCharacterT(nextInputCharacterCounter, inputCharacters)) {
-            outputCharacters[outputCharacterCounter] = App.CreateTree.Constants.tabEscapeCharacter;
+            outputCharacters[outputCharacterCounter] = App.MindmapTextParser.Constants.tabEscapeCharacter;
             inputCharacterCounter++;
         }
 
@@ -172,7 +172,7 @@ var formatString = function (inputString) {
 };
 
 var nodeNames = function (formattedString) {
-    return formattedString.split(App.CreateTree.Constants.newlineEscapeCharacter);
+    return formattedString.split(App.MindmapTextParser.Constants.newlineEscapeCharacter);
 };
 
 var appendChildNodes = function (nodeNames, nodes) {
@@ -192,7 +192,7 @@ var firstNode = function (nodeNames) {
     return new App.Node(firstNodeName);
 };
 
-App.CreateTree.MakeTree = function (inputString) {
+App.MindmapTextParser.parse = function (inputString) {
     if (!Boolean(validateInput(inputString))) {
         return null;
     }
