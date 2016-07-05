@@ -100,14 +100,13 @@ var sanitizeForTabEscapeCharacter = function (inputString) {
     var inputCharacters = inputString.split('');
     var outputCharacters = [];
     var outputCharacterCounter = 0;
-    var tabEscapeCharacter = '\t';
 
     for (var inputCharacterCounter = 0; inputCharacterCounter < inputCharacters.length; inputCharacterCounter++) {
         outputCharacters[outputCharacterCounter] = charFromArray(inputCharacterCounter, inputCharacters);
 
         var nextInputCharacterCounter = inputCharacterCounter + 1;
         if (isNonLastSlashCharacter(inputCharacterCounter, inputCharacters) && isCharacterT(nextInputCharacterCounter, inputCharacters)) {
-            outputCharacters[outputCharacterCounter] = tabEscapeCharacter;
+            outputCharacters[outputCharacterCounter] = App.CreateTree.Constants.tabEscapeCharacter;
             inputCharacterCounter++;
         }
 
@@ -173,8 +172,7 @@ var formatString = function (inputString) {
 };
 
 var nodeNames = function (formattedString) {
-    var newLineEscapeCharacter = '\n';
-    return formattedString.split(newLineEscapeCharacter);
+    return formattedString.split(App.CreateTree.Constants.newlineEscapeCharacter);
 };
 
 var appendChildNodes = function (nodeNames, nodes) {
