@@ -52,6 +52,12 @@
                     <li> {{> HelpImageButton}}</li>
                     {{/if}}
 
+
+                    {{#if requireTextInputImageButton}}
+                    <li> {{> TextInputImageButton}}</li>
+                    {{/if}}
+
+
                     {{#if topbarText}}
                     <li><a href="#"
                            id={{topbarTagID linkId}}>{{topbarText}}</a></li>

@@ -1,4 +1,4 @@
-describe('Create Tree', function () {
+describe('Mindmap Text Parser', function () {
     it('Should return null when input string is null', function () {
         expect(App.MindmapTextParser.parse(null)).toBeNull()
     });
@@ -90,7 +90,6 @@ describe('Create Tree', function () {
         var buildingOneNode = App.Node.getChildren(kormanglaNode)[0];
         var buildingTwoNode = App.Node.getChildren(kormanglaNode)[1];
 
-
         expect(rootNode.name).toBe('TW');
         expect(asiaNode.name).toBe('Asia');
         expect(chinaNode.name).toBe('China');
@@ -102,7 +101,6 @@ describe('Create Tree', function () {
         expect(kormanglaNode.name).toBe('Kormangla');
         expect(buildingOneNode.name).toBe('Building One');
         expect(buildingTwoNode.name).toBe('Building Two');
-
     });
 
     it('Should return with root nodes and sub nodes when given a input string with depth 5', function () {
@@ -147,4 +145,5 @@ describe('Create Tree', function () {
         expect(namasteNode.name).toBe('Namaste');
         expect(periPaunaNode.name).toBe('Peri pauna');
     });
+
 });

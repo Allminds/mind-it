@@ -195,7 +195,7 @@ var firstNode = function (nodeNames) {
 App.MindmapTextParser.parse = function (inputString) {
     if (!Boolean(validateInput(inputString))) {
         return null;
-    }
+    }   
 
     var formattedString = formatString(inputString);
     var nodes = [];

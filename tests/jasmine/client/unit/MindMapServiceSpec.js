@@ -11,10 +11,8 @@ describe('MindMapService', function () {
                 new_node = new App.Node('new ', App.Constants.Direction.RIGHT, parent_node, 1);
 
             parent_node.right = [new_node];
-
             mindMapService.addChild(parent_node, new_node);
             parent_node.right[0] = new_node;
-
             expect(parent_node.right.length).toBe(1);
         });
     });
@@ -45,7 +43,8 @@ describe('MindMapService', function () {
             expect(root1.left[0].childSubTree[0]._id).toBe(leftNode2._id);
             expect(root1.right[0]._id).toBe(rightNode1._id);
             expect(root1.right[0].childSubTree[0]._id).toBe(rightNode2._id);
-        })
+
+        });
     });
 
     describe("Update root node", function () {
