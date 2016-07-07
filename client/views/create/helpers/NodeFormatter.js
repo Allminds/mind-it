@@ -21,7 +21,7 @@ var parseAllNodes = function (parent, children) {
     return parent;
 };
 
-var direction = function (parent) {
+var directionOfParent = function (parent) {
     if (App.Node.isRoot(parent)) {
         return App.Constants.Direction.RIGHT;
     }
@@ -32,7 +32,7 @@ var direction = function (parent) {
 var addParentAndChildNodeToDb = function (parentNode, childNode) {
     var childNodeFromDb;
     var newChildNode;
-    var direction = direction(parentNode);
+    var direction = directionOfParent(parentNode);
 
     newChildNode = new App.Node(childNode.name, direction, parentNode);
     childNodeFromDb = App.Node.addToDatabase(newChildNode);
