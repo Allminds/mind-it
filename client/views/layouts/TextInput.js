@@ -13,8 +13,8 @@ var clickEventHandler = function (e) {
     $('#myModalHorizontal').modal('show');
 };
 
-var getSelectedNode = function () {
-    return d3.selectAll(".softSelected")[0][0].__data__;
+var getFirstSelectedNodeData = function () {
+    return App.Node.selectedNodes()[0].__data__;
 };
 
 var getModalTextValue = function () {
@@ -31,7 +31,7 @@ var saveButtonClickHandler = function () {
         var inputRootNode = App.MindmapTextParser.parse(inputString);
 
         if (Boolean(inputRootNode)) {
-            var currentNode = getSelectedNode();
+            var currentNode = getFirstSelectedNodeData();
             App.NodeFormatter.format(currentNode, inputRootNode);
         }
 

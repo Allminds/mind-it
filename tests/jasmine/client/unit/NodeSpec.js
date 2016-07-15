@@ -810,6 +810,42 @@ describe('lib.Node.js', function () {
             });
         });
 
+        describe('selectedNodes', function () {
+            it('Should return empty array when no nodes selected', function () {
+                var actualSelectedNodes = App.Node.selectedNodes();
+                expect(actualSelectedNodes.length).toBe(0);
+            });
+
+            it('Should return one selected node when only one node is selected', function () {
+                var expectedNode = new App.Node('ExpectedNode');
+
+                var selectedNodes = [[expectedNode]];
+                spyOn(d3, "selectAll").and.returnValue(selectedNodes);
+
+                var actualSelectedNodes = App.Node.selectedNodes();
+                var selectedNode = actualSelectedNodes[0];
+
+                expect(actualSelectedNodes.length).toBe(1);
+                expect(selectedNode.name).toBe(expectedNode.name);
+            });
+
+            it('Should more than one node when more than one node is selected', function () {
+                var firstExpectedNode = new App.Node('firstExpectedNode');
+                var secondExpectedNode = new App.Node('secondExpectedNode');
+
+                var selectedNodes = [[firstExpectedNode, secondExpectedNode]];
+                spyOn(d3, "selectAll").and.returnValue(selectedNodes);
+
+                var actualSelectedNodes = App.Node.selectedNodes();
+                var firstSelectedNode = actualSelectedNodes[0];
+                var secondSelectedNode = actualSelectedNodes[1];
+
+                expect(actualSelectedNodes.length).toBeGreaterThan(1);
+                expect(firstSelectedNode.name).toBe(firstExpectedNode.name);
+                expect(secondSelectedNode.name).toBe(secondExpectedNode.name);
+            });
+        });
+
         describe('isSubNode and isLeafNode are mutually exclusive except when root node', function () {
             var rootNode, rightSubNode, leftSubNode, rightLeafNode, leftLeafNode;
             beforeEach(function () {
