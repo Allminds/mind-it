@@ -1,7 +1,7 @@
 mindMapService = App.MindMapService.getInstance();
 
-Template.MyButton.events({
-    'click #clickme': function () {
+Template.CreateMindmapButton.events({
+    'click #createMindmap': function () {
         // 1. cretate root node with defualt title
         var user = Meteor.user() ? Meteor.user().services.google.email : "*";
         var mindMapId = mindMapService.createRootNode('New Mindmap', user),
@@ -20,7 +20,7 @@ Template.MyButton.events({
     }
 });
 
-Template.MyButton.onRendered(function () {
+Template.CreateMindmapButton.onRendered(function () {
 
     $('#fileID').change(function (evt) {
         var fileName = this.value;
