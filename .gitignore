@@ -8,7 +8,7 @@ node_modules/**
 TAGS
 tests/jasmine/server/unit/package-stubs.js
 tests/jasmine/server/unit/packageMocksSpec.js
-
+mind-it.iml
 *#*
 
 # Ignore Sample Tests
