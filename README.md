@@ -1,3 +1,5 @@
+[ ![Codeship Status for amolrv/allminds](https://app.codeship.com/projects/a8eedf80-4316-0133-5a3b-1e208d677ac2/status?branch=master)](https://app.codeship.com/projects/103945)
+
 #AllMinds
 AllMinds is an open source tool for creating collaborative mindmaps.
 
