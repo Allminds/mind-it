@@ -44,7 +44,11 @@ AllMinds is an open source tool for creating collaborative mindmaps.
 6) Meteor Deployment tool
    http://meteortips.com/deployment-tutorial/
 
-
+7) Setup following in your ~/.bashrc or ~/.zshrc so that login will work on your local dev machine: 
+	1. clientId
+	2. secret 
+	3. service
+	
 #Features
 
 Web Based Collaboration for mindmap.
